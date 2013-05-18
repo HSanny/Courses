@@ -13,6 +13,7 @@
             citecolor=green
             ]{hyperref}
 %}}}
+\usepackage{verbatimbox}
 \usepackage{tikz,multicol,amsfonts,wallpaper}
 % file info macros and package parameters
 %{{{
@@ -1685,7 +1686,11 @@ and specific error rates of each validation set. \\
 \end{center}
 \htab Note that my implementation for obtaining cross validation set in the above 10-fold 
 cross validation is called "repeatedly random subsamppling validation", which is widely used.
-(Refer to \url{http://en.wikipedia.org/wiki/Cross-validation\_(statistics)})
+(Refer to \url{http://en.wikipedia.org/wiki/Cross-validation\_(statistics)}) \\
+\htab To run my program, please type the following in the command. 
+\begin{verbatim}
+    python ./Supervised.py
+\end{verbatim}
 %}}}
 \subsection{Unsupervised Learning}
 %{{{ 7.2 Unsupervised Learning
@@ -1706,7 +1711,17 @@ the results are different from each others. There are many possible reasons as f
     \item{MultiModial Distribution}
     \item{Sensitivity to Initilisation}
         \end{itemize}
-\htab Note that here we count a pair of E-step and M-step as one iteration.
+\htab Note that here we count a pair of E-step and M-step as one iteration. \\
+\htab To run my program, please type the following in the command. 
+\begin{verbatim}
+    python ./Unsupervised.py
+\end{verbatim}
+\htab Note that all the parameters have default values, for details of command line argument, please
+ see help documentation by typing 
+ \begin{verbatim}
+    python ./Unsupervised.py -h
+\end{verbatim}
+
 \newpage
 %}}}
 \subsection{Semi-supervised Learning}

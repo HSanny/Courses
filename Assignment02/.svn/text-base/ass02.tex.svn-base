@@ -1,0 +1,533 @@
+% -----
+% COMP 4670 Assignment 02
+% Jimmy Lin
+% -----
+% -
+\documentclass[11pt,a4paper]{article}
+% package used
+%{{{
+\usepackage{geometry,amsthm,amsmath,graphicx}
+\usepackage[colorlinks,
+            linkcolor=blue,
+            anchorcolor=red,
+            citecolor=green
+            ]{hyperref}
+%}}}
+\usepackage{tikz,multicol}
+% file info macros and package parameters
+%{{{
+\newcommand{\AUTHOR}{Jimmy Lin}
+\newcommand{\UID}{u5223173}
+\newcommand{\UNIVERSITY}{Australian National University}
+\newcommand{\COLLEGE}{College of Engineering and Computer Science}
+\newcommand{\COURSE}{COMP4670 Introduction to Machine Learning}
+\newcommand{\LECTURER}{Christfried Webers}
+\newcommand{\TUTOR}{Wen Shao}
+\newcommand{\TASK}{Assignment 02}
+\newcommand{\RELEASEDATE}{April. 22 2013}
+\newcommand{\DUEDATE}{May. 19 2013}
+\newcommand{\TIMECONSUME}{12 hours}
+
+\usepackage{geometry}
+\usepackage{fancyheadings}
+\geometry{top=18mm,bottom=18mm,left=20mm,right=20mm}
+\pagestyle{fancyplain}
+\lhead{\COURSE}     
+\rhead{\TASK}  
+\lfoot{\copyright\ \AUTHOR\ (\UID)}
+\rfoot{\UNIVERSITY}
+%}}}
+% new command definition
+%{{{
+\newcommand{\htab}{\hspace*{0.63cm}}
+\newcommand{\dhtab}{\hspace*{1.26cm}}
+\newcommand{\dd}[2]{\mathcal{D}\{ #1 \} (#2)}
+\newcommand{\ddt}[2]{\mathcal{D}^{2}\{ #1 \} (#2)}
+\newcommand{\bs}[1]{\boldsymbol{#1}}
+\newcommand{\pg}{\\[0.3cm]}
+\newcommand{\infint}{\int_{-\infty}^{+\infty}}
+\newcommand{\dinfint}{\int_{-\infty}^{+\infty}\int_{-\infty}^{+\infty}}
+%}}}
+\newcommand{\bmu}{\boldsymbol{\mu}}
+\newcommand{\bsum}{\boldsymbol{\Sigma}}
+\newcommand{\xv}{\textbf{x}}
+\newcommand{\xnv}{\boldsymbol{x}_{n}}
+\newcommand{\C}{\mathcal{C}}
+\newcommand{\bx}{\boldsymbol{x}}
+\newcommand{\R}{\mathcal{R}}
+\newcommand{\W}{\boldsymbol{W}}
+\newcommand{\D}{\mathcal{D}}
+\newcommand{\m}{\boldsymbol{m}}
+\newcommand{\V}{\mathcal{V}}
+\newcommand{\N}{\mathcal{N}}
+%
+\newcommand{\half}{\frac{1}{2}}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+% - 
+\begin{document}
+% title page
+%{{{
+\begin{titlepage}
+    \begin{center}
+        \vspace*{0.5cm}
+% add uni photo here.
+\includegraphics[width=0.2\textwidth]{/Users/JimmyLin/ANU.png}\\[1cm]
+\textsc{\LARGE \UNIVERSITY}\\[1.2cm]
+
+% Title
+\rule{\linewidth}{0.5mm} \\[0.4cm]
+{ \textsc{\Large \COURSE}\\[0.5cm]
+ \huge \bfseries \TASK}\\[0.4cm]
+ \footnotesize Edited by \LaTeX \\[0.25cm]
+ \normalsize{\COLLEGE}
+\rule{\linewidth}{0.5mm} \\[2cm]
+
+% other information
+\begin{center}
+\copyright \emph{\large Author} \\
+\Large \textbf{\AUTHOR} \\ \UID \vspace*{0.6cm}
+
+\P \emph{ Lecturer} \\
+\Large \textbf{\LECTURER} \vspace*{0.6cm}
+
+\P \emph{ Tutor} \\
+\Large \textbf{\TUTOR} \vspace*{0.6cm}
+
+$\dagger$ \emph{Release Date}  \\
+\Large \textbf{\RELEASEDATE} \vspace*{0.6cm} 
+
+$\ddagger$ \emph{Due Date}  \\
+\Large \textbf{\DUEDATE} \vspace*{0.6cm}
+
+$\tau$ \emph{Time Spent} \\
+\Large \textbf{\TIMECONSUME} \vspace*{0.6cm} 
+\end{center}
+% foot
+\vfill
+{\large \today}
+\end{center}
+\end{titlepage}
+%}}}
+% table of content
+\begin{center} \tableofcontents \end{center}
+%\begin{center} \tableofcontents \end{center}
+\newpage
+% 1
+\section{Sampling from a Multivariate Normal Distribution}
+%{{{
+\htab First and foremost, we assume the identical and independently distributed property of this random number generator while producing the vectorial data $x \in R^{n}$. Since the random number generator only produce scalar value, the number of times to apply this generator is $n\times m$ times if $m$ $n$-dimensional data objects are desired.\\
+\htab For each dimension, we use the random number generator with specific $\mu$ and $\sigma$ to produce the value. Therefore, for each dimension $i = 1,..,n$, we have the following probability distribution
+    \begin{align}
+        p (x_{i}) = \N (x_{i} | \mu_{i}, \sigma_{i}^{2}) 
+        = \frac{1}{(2\pi)^{\frac{1}{2}} \sigma} 
+        exp\Big( -\frac{(x_{i} - \mu_{i} )^{2}}{2\sigma^{2}} \Big)
+    \end{align}
+\htab Due to the iid assumption we have made at the beginning, 
+\begin{align}
+        p(\xv) &= \prod_{i=1}^{n} p(x_{i})  \\
+               & = \prod_{i=1}^{n} \frac{1} {(2\pi)^{ \frac{1}{2}} \sigma} 
+    exp\Big( -\frac{(x_{i} - \mu_{i})^{2}}{2\sigma^{2}} \Big) \\
+        & = \frac{1}{(2\pi)^{\frac{n}{2}} \sigma^{n}}
+        exp\Big( - \sum_{i=1}^{n} \frac{(x_{i} - \mu_{i})^{2}}{2\sigma^{2}}  \Big)
+        \end{align}
+\htab Now we introduce two vectorial notation $\bmu \in R^{n\times 1}$ and $\bsum \in R^{n\times n}$, 
+    \begin{align}
+        \bmu = \{ \mu_{1}, \mu_{2}, ... , \mu_{n}\}^{T} \\
+        \bsum = \{ \sigma \}
+    \end{align}
+\newpage
+%}}}
+\section{Reverse Prediction}
+% Local Command List
+%{{{
+\newcommand{\ww}{\boldsymbol{w}}
+\newcommand{\wws}{\boldsymbol{w}^{*}}
+\newcommand{\wwt}{\boldsymbol{w}^{T}}
+\newcommand{\xxi}{\boldsymbol{x_{i}} }
+\newcommand{\xxib}{\overset{\sim}{\xxi}}
+\newcommand{\XX}{\boldsymbol{X}}
+\newcommand{\XXt}{\boldsymbol{X}^{T}}
+\newcommand{\XXi}{\boldsymbol{X}^{-1}}
+\newcommand{\tti}{t_{i}}
+\newcommand{\TT}{\boldsymbol{T}}
+\newcommand{\TTt}{\boldsymbol{T}^{T}}
+\newcommand{\uus}{\boldsymbol{u}^{*}}
+\newcommand{\uu}{\boldsymbol{u}}
+%}}}
+% 2.1-2.2 deal with w
+%{{{
+\subsection{Complete optimisation problem for $\wws$}
+\htab Since the optimal $\ww$ minimising the quadratic regression error of all data for a linear model,
+we can write down the optimisation problem as follows,
+    \begin{equation}
+        \wws =  \argmin_{\ww} \half \sum_{i=1}^{n} (\wwt \xxi - \tti)^{2} \\
+    \end{equation}
+\subsection{Solution for $\wws$ and condition of Uniqueness}
+\htab Define error function 
+    \begin{align}
+    E(\ww)  =  \half \sum_{i=1}^{n} (\wwt \xxi - \tti)^{2}
+    \end{align}
+\htab Take derivative to the error function $E(\ww)$ with regard to $\ww$,
+    \begin{align}
+    \frac{\partial E(\ww)} {\partial \ww} =  \sum_{i=1}^{n} (\wwt \xxi - \tti)\xxi
+    \end{align}
+\htab Written the equation above in the form of matrix, 
+    \begin{align}
+        E(\ww) = \XXt (\XX \ww - \TT)
+    \end{align}
+\htab where, $\XX$ is a matrix, each row of whom is $\xxi$, and $\TT$ is a column vector of $\tti$
+\htab Set $E(\ww) = 0$,
+    \begin{align}
+        \XXt (\XX \wws - \TT) &= 0 \\
+        \XXt \XX \wws - \XXt \TT &= 0 \\
+        \XXt \XX \wws &= \XXt \TT \\
+        \wws &= (\XXt \XX)^{-1} \XXt \TT \label{2:wws}
+    \end{align}
+\htab when $\XXt \XX$ is inverible, $\wws$ has unique solution $(\XXt \XX)^{-1} \XXt \TT$.
+\newpage
+%}}}
+% 2.3-2.4 deal with u
+%{{{
+\subsection{Optimisation problem for $\uu$}
+\htab The squared error for between target variable $\xxi$ and $\xxib $
+    \begin{align}
+        \argmin_{\uu} \half \Big( \sum_{i=1}^{n} \sum_{j=1}^{d} \tti u_{j} - x_{ij} \Big)^{2}
+    \end{align}
+    \htab where $u_{d}$ is the j-th element of vector $\uu$, $x_{ij}$ is the j-th element of $\xxi$.
+\subsection{Solution for $\wws$ and condition of Uniqueness}
+\htab Define the error function $E_{2}(\uu)$ as follows,
+    \begin{align}
+        E_{2}(\uu) = \half \Big( \sum_{i=1}^{n} \sum_{j=1}^{d} \tti u_{d} - x_{id} \Big)^{2}
+    \end{align}
+\htab where $\TT$ is the column vector for $\tti$, $\XX$ is matrix whose row is $\xxi$.\\ 
+\htab The formula above can be written as,
+    \begin{align}
+        E_{2}(\uu) = (\TT \uu^{T} - \XX) ^{T} \TT
+    \end{align}
+\htab Set $E_{2}(\uu) = 0$, we have
+    \begin{align}
+        (\TT (\uus)^{T} - \XX) ^{T} \TT &= 0 \\
+        (\uus \TTt - \XXt)) \TT &= 0 \\
+        \uus \TTt \TT - \XXt \TT & = 0 \\
+        \uus \TTt \TT &= \XXt \TT \\
+        \uus &= \XXt \TT (\TT^{T} \TT)^{-1} \label{2:uus}
+    \end{align}
+\htab When $\TTt \TT$ is invertible, we have unique solution for $\uus$. However, it is obvious that the $\TTt \TT$ is a scalar value, more specifically, invertibility corresponds to whether that scalar is zero. Therefore, the condition for unique $\uus$ is whether $\TTt \TT$ is non-zero.
+%}}}
+% 2.5 Relation
+%{{{
+\subsection{Relation between unique $\wws$ and $\uus$}
+\htab From \eqref{2:wws} and \eqref{2:uus}, we have
+    \begin{align}
+        \wws &= (\XXt \XX)^{-1} \XXt \TT  \\
+        \uus &= \XXt \TT (\TT^{T} \TT)^{-1} 
+    \end{align}
+\htab The heuristics of relation between $\wws$ and $\uus$ comes from their mutual inverse definition, therefore, we try $(\wws)^{T} \uus$,
+    \begin{align}
+        (\wws)^{T} \uus &= ((\XXt \XX)^{-1} \XXt \TT)^{T} \XXt \TT (\TT^{T} \TT)^{-1} \\
+        &=  \TT^{T} \XX (\XXt \XX)^{-T} \XXt \TT (\TT^{T} \TT)^{-1} \label{2:transpose}\\
+        &=  \TT^{T} \XX \XXi \XX^{-T} \XXt \TT (\TT^{T} \TT)^{-1} \label{2:Xinvertible} \\
+        &=  \TT^{T} \bs{I} \TT  (\TT^{T} \TT)^{-1} \label{2:removeX} \\
+        &=  \TT^{T} \TT  (\TT^{T} \TT)^{-1} \label{2:removeI} \\
+        &=  \bs{I} \label{2:removeT} 
+    \end{align}
+\htab Note that to derive \eqref{2:Xinvertible}, we use the assumption that $\wws$ happens to be unique. And to derive \eqref{2:removeT}, we use the assumption that $\uus$ happens to be unique. \\
+\htab Therefore, we derive the relation between $\wws$ and $\uus$,
+    \begin{align}
+        (\wws)^{T} \uus = I
+    \end{align}
+\newpage
+%}}}
+\section{Conditional Probability and Variance via Parzen Estimator}
+\newpage
+\section{Maximum Margin Hyperplane}
+\newpage
+\section{Kernels and Feature Maps}
+% Local Command List
+%{{{
+\newcommand{\kernel}{k(\bs{x},\bs{z})}
+\newcommand{\xx}{\bs{x}}
+\newcommand{\xone}{x_{1}}
+\newcommand{\xtwo}{x_{2}}
+\newcommand{\zz}{\bs{z}}
+\newcommand{\zone}{z_{1}}
+\newcommand{\ztwo}{z_{2}}
+\newcommand{\xzcombo}{\xone\zone + \xtwo\ztwo}
+\newcommand{\xzMM}{x_{M+1}z_{M+1}}
+\newcommand{\xzone}[1]{\xone^{#1}\zone^{#1}}
+\newcommand{\xztwo}[1]{\xtwo^{#1}\ztwo^{#1}}
+\newcommand{\xxp}{\xx^{*}}
+\newcommand{\zzp}{\zz^{*}}
+\newcommand{\kold}{k_{M}(\bs{x},\bs{z})}
+\newcommand{\knew}{k_{M+1}(\xxp,\zzp)}
+\newcommand{\kpold}{k_{Q}(\bs{x},\bs{z})}
+\newcommand{\kpnew}{k_{Q+1}(\xx,\zz)}
+\newcommand{\sumxzM}{\sum_{i=1}^{M} x_{i} z_{i}}
+\newcommand{\sumxzMM}{\sum_{i=1}^{M+1} x_{i} z_{i}}
+\newcommand{\sumxzn}{\sum_{i=1}^{n} x_{i} z_{i}}
+\newcommand{\PhiM}{\Phi_{M}}
+\newcommand{\PhiMM}{\Phi_{M+1}}
+\newcommand{\PhiMMs}[1]{\Phi_{(M+1)(sub#1)}}
+\newcommand{\PhiQ}{\Phi_{Q}}
+\newcommand{\PhiQQ}{\Phi_{Q+1}}
+%}}}
+% 5.1 2-dimensional proof
+\subsection{Prove $\kernel$ to be Valid Kernel in 2 Dimension} \label{sec:2dkernel}
+%{{{
+\htab To prove $\kernel$ is a valid kernel in 2 dimension, we should figure out the specific feature mapping that corresponds to the $\kernel$. But first we declare 
+    \begin{align}
+    \xx = \begin{pmatrix} \xone \\ \xtwo \\ \end{pmatrix} \htab
+    \zz = \begin{pmatrix} \zone \\ \ztwo \\ \end{pmatrix}
+    \end{align}
+\htab Then we start to figure out the feature map,
+    \begin{align}
+        \kernel &= (\xx^{T} \zz + 1)^{3} \\
+                & = (\xzcombo + 1)^{3} \\
+                & = (\xzcombo)^{3} + 3(\xzcombo)^{2} + 3(\xzcombo) + 1 \\
+                & = \xzone{3} + 3\xzone{2}\xztwo{1} + 3\xzone{1}\xztwo{2} + \xztwo{3} \nonumber \\ 
+                & \htab + 3\xzone{2} + 6 \xzone{1}\xztwo{1} + 3\xztwo{2} + 3\xzone{1} + 3\xztwo{1} + 1 
+    \end{align}
+\htab Next, define feature map $\Phi(\xx)$ to be,
+    \begin{align}
+        \Phi(\xx) = \begin{pmatrix} 
+            \xone^{3} \\ \sqrt{3} \xone^{2}\xtwo \\ \sqrt{3}\xone\xtwo^{2} \\ \xtwo^{3} \\
+            \sqrt{3} \xone^{2} \\ \sqrt{6}\xone\xtwo \\ \sqrt{3}\xtwo^{2} \\ 
+            \sqrt{3}\xone \\ \sqrt{3} \xtwo \\ 1
+        \end{pmatrix}
+    \end{align}
+\htab Obviously, $\kernel$ can be decomposed as inner product of $\Phi(\xx)$ and $\Phi(\zz)$
+    \begin{align} \label{5:n2result}
+        \kernel = \langle \Phi(\xx), \Phi(\zz) \rangle
+    \end{align}
+\htab where the inner product is defined to be,
+    \begin{align}
+        \langle A, B\rangle = tr (A^{T} B) \label{5:innerprod}
+    \end{align}
+\htab Therefore, we can conclude that 
+    \begin{center}    
+        $\kernel = (\xx^{T} \zz + 1)^{3} $ is valid when input space has only two dimensions. 
+    \end{center}
+\newpage
+%}}}
+% 5.2 Generalization on dimension
+\subsection{Generalize Input Space to Higher Dimension} \label{sec:ngene}
+%{{{
+\htab \textbf{Yes!} We can use the same method in section \ref{sec:2dkernel} to validate the extrapolation on dimension $n$. The specific technique is to utilise the Mathematical Induction. \pg
+\htab \textbf{Proof Objective}: 
+    \begin{equation}
+        \forall n \geq 2,\ len(\xx) = len(\zz) = n,\ \kernel = (\xx^{T} \zz + 1)^{3} \ is \ valid.
+    \end{equation}
+\htab \htab where the $len()$ operator returns the dimensionality of its argument. \pg
+\htab \textbf{Base case}: \\ 
+\htab \htab the statement that kernel $\kernel = (\xx^{T} \zz + 1)^{3}$ is valid
+    for $n = 2$ has been proven in \eqref{5:n2result}. \pg
+\htab \textbf{Inductive cases}: Assume that the 
+    \begin{equation}    \label{5:assume}
+        \kold = (\xx^{T} \zz + 1)^{3},\ len(\xx) = len(\zz) = M\ is\ valid\ kernel\ function.
+    \end{equation}
+\htab Prove that 
+    \begin{equation}
+        \knew = ((\xxp)^{T} \zzp + 1)^{3},\ is\ also\ valid\ kernel\ function. \label{5:inductive}
+    \end{equation}
+    \htab \htab where $\xxp = (\xx, x_{M+1}),\ \zzp = (\zz, z_{M+1})$.\\[0.2cm]
+\htab \textbf{Proof for Inductive Cases}:\\
+\htab First of all, extend $\kold$,
+    \begin{align} 
+        \kold &= (\xx^{T} \zz + 1)^{3} \\
+              &= \big( (\sumxzM) + 1\big)^{3} \\
+              &= (\sumxzM)^{3} + 3(\sumxzM)^{2} + 3(\sumxzM)^{1} + 1 
+        \end{align}
+\htab And from the assumption of inductive cases \eqref{5:assume}, we have,
+    \begin{align}
+        \exists \Phi(\cdot),\ such\ that\ \PhiM^{T}(\xx) \PhiM(\zz) = \kold
+    \end{align}
+\htab Then use $\PhiM(\cdot)$ to denote the $\Phi(\cdot)$ above in the extension of $\kold$
+    \begin{align} 
+        \kold = (\sumxzM)^{3} + 3(\sumxzM)^{2} + 3(\sumxzM)^{1} + 1 
+        = \PhiM^{T}(\xx) \PhiM(\zz) \label{5:substitution}
+    \end{align}
+\htab Now, start to manipulate $\knew$ as follows, 
+    \begin{align}
+        \knew &= \big( (\sumxzMM) + 1 \big)^{3} \\
+              &= \big( (\sumxzM) + (\xzMM + 1) \big)^{3} \\
+              &= (\sumxzM)^{3} + 3(\sumxzM)^{2}(\xzMM + 1) \nonumber \\
+              & \htab \htab + 3(\sumxzM)(\xzMM + 1)^{2} + (\xzMM + 1)^{3} \\
+              &= 
+        \tikz[baseline]{ \node[draw=blue,rounded corners,anchor=base] (m1) {$(\sumxzM)^{3}$} ;}
+    + 3(\sumxzM)^{2}\xzMM + 
+    \tikz[baseline]{ \node[draw=blue,rounded corners,anchor=base] (m2) {$3(\sumxzM)^{2}$} ;}  \nonumber \\
+              & \htab \htab + 3(\sumxzM)(\xzMM)^{2} + 6(\sumxzM)(\xzMM)+ 
+    \tikz[baseline]{ \node[draw=blue,rounded corners,anchor=base] (m3) {$3(\sumxzM)$} ;} \nonumber \\
+              & \htab \htab + (\xzMM)^{3} + 3(\xzMM)^{2} + 3\xzMM + 
+    \tikz[baseline]{ \node[draw=blue,rounded corners,anchor=base] (m4) {$1$} ;} \label{5:boxed}
+    \end{align}
+\newpage
+Next, replace the sum of boxed terms in \eqref{5:boxed} by using \eqref{5:substitution}, we have the followings,
+    \begin{align}
+        \knew = 
+        \tikz[baseline]{ \node[draw=blue,rounded corners,anchor=base] (m5) {$ \PhiM^{T}(\xx) \PhiM(\zz)$} ;
+        \node[above of=m5] (l5) {$\PhiM(\xx)$};
+        \draw[-,blue] (l5) -- (m5);
+        }
+         + 
+        \tikz[baseline]{ \node[draw=blue,rounded corners,anchor=base] (m6) {$3(\sumxzM)^{2}\xzMM$} ;
+        \node[above of=m6] (l6) {$\PhiMMs{1}(\xxp)$};
+        \draw[-,blue] (l6) -- (m6);
+        } 
+        +
+        \tikz[baseline]{ \node[draw=blue,rounded corners,anchor=base] (m7) {$3(\sumxzM)(\xzMM)^{2}$} ;
+        \node[above of=m7] (l7) {$\PhiMMs{2}(\xxp)$};
+        \draw[-,blue] (l7) -- (m7);
+        }
+        \nonumber \\
+         + 
+        \tikz[baseline]{ \node[draw=blue,rounded corners,anchor=base] (m8) {$6(\sumxzM)(\xzMM)$} ;
+        \node[below of=m8] (l8) {$\PhiMMs{3}(\xxp)$};
+        \draw[-,blue] (l8) -- (m8);
+        }
+         +
+        \tikz[baseline]{ \node[draw=blue,rounded corners,anchor=base] (m9) {$(\xzMM)^{3}$} ;
+        \node[below of=m9] (l9) {$x_{M+1}^{3}$};
+        \draw[-,blue] (l9) -- (m9);
+        }
+        +
+        \tikz[baseline]{ \node[draw=blue,rounded corners,anchor=base] (m10) {$3(\xzMM)^{2}$} ;
+        \node[below of=m10] (l10) {$\sqrt{3} x_{M+1}^{2}$};
+        \draw[-,blue] (l10) -- (m10);
+        }
+        +
+        \tikz[baseline]{ \node[draw=blue,rounded corners,anchor=base] (m11) {$3\xzMM$} ;
+        \node[below of=m10] (l11) {$\sqrt{3} x_{M+1}$};
+        \draw[-,blue] (l11) -- (m11);
+        }
+        \label{5:afterSubstitution}
+    \end{align}
+\htab Then, we can figure out the feature mapping $\PhiMM$, such that the following is satisfied,
+    \begin{align}
+        \knew = \PhiMM^{T}(\xx) \PhiMM(\zz)
+    \end{align}
+\htab Based on the \eqref{5:afterSubstitution}, we have the feature mapping as follows,
+    \begin{align}
+    \PhiMM (\xxp) = 
+    \begin{pmatrix} \PhiM(\xx) \\ \PhiMMs{1}(\xxp) \\ \PhiMMs{2}(\xxp) \\ \PhiMMs{3}(\xxp) \\
+            x_{M+1}^{3} \\ \sqrt{3} x_{M+1}^{2} \\ \sqrt{3} x_{M+1} 
+        \end{pmatrix}
+    \end{align}
+\htab \htab where $\PhiMMs{1}$, $\PhiMMs{1}$, $\PhiMMs{1}$ are defined as follows,
+\begin{multicols}{2}
+    \begin{align}
+    \PhiMMs{1}(\xxp) = \begin{pmatrix} 
+            \sqrt{3} x_{1} x_{1} x_{M+1}  \\ \sqrt{3} x_{1}x_{2} x_{M+1}  \\ \vdots \\ 
+            \sqrt{3} x_{1} x_{j} x_{M+1}  \\ \sqrt{3} x_{1}x_{j+1} x_{M+1}  \\ \vdots \\ 
+            \sqrt{3} x_{1} x_{M} x_{M+1}  \\ \sqrt{3} x_{2}x_{1} x_{M+1}  \\ \vdots \\ 
+            \sqrt{3} x_{i} x_{j} x_{M+1}  \\ \sqrt{3} x_{i}x_{j+1} x_{M+1}  \\ \vdots \\ 
+            \sqrt{3} x_{i} x_{M} x_{M+1}  \\ \sqrt{3} x_{i+1}x_{1} x_{M+1}  \\ \vdots \\ 
+            \sqrt{3} x_{M} x_{M} x_{M+1}
+        \end{pmatrix} 
+    \end{align}
+    \begin{align} \nonumber \\
+    \PhiMMs{2} (\xxp)= 
+        \begin{pmatrix} 
+            \sqrt{3} x_{1} x_{M+1}^{2} \\ \sqrt{3} x_{2} x_{M+1}^{2} \\ \vdots  \\
+            \sqrt{3}x_{i} x_{M+1}^{2} \\ \sqrt{3}x_{i+1} x_{M+1}^{2} \\ \vdots  \\ 
+            \sqrt{3} x_{M} x_{M+1}^{2} 
+        \end{pmatrix} \\[0.8cm]
+        \PhiMMs{3}(\xxp) = 
+        \begin{pmatrix} 
+            \sqrt{6} x_{1} x_{M+1} \\ \sqrt{6} x_{2} x_{M+1} \\ \vdots  \\
+            \sqrt{6}x_{i} x_{M+1} \\ \sqrt{6}x_{i+1} x_{M+1} \\ \vdots  \\ 
+            \sqrt{6} x_{M} x_{M+1} 
+        \end{pmatrix}
+    \end{align} 
+\end{multicols}
+Therefore, $\knew$ is also a valid function since we have proven that
+    \begin{align}
+        \exists \PhiMM(\xxp),\ such\ that\ \knew = \langle \PhiMM(\xxp),\ \PhiMM(\zzp) \rangle
+    \end{align}
+    \htab \htab where the definition of inner product follows \eqref{5:innerprod}. \\[0.1cm]
+\htab Hence, we successfully prove the inductive part \eqref{5:inductive}. Based on the theory of Mathematical Induction, it is concluded that 
+    \begin{align}
+        \forall n \geq 2,\ len(\xx) = len(\zz) = n,\ \kernel = (\xx^{T} \zz + 1)^{3} \ is \ valid.
+    \end{align}
+\newpage
+%}}}
+% 5.3 Generalization on power
+\subsection{Generalize Kernel to Higher Power}
+%{{{
+\htab \textbf{Still Yes.} We can still prove the validity of generalized kernel by finding feature map. The technique for proving generalization on $p$ is rather similiar to section \ref{sec:ngene}.\pg
+\htab \textbf{Proof Objective}:
+    \begin{equation}
+        \forall p \geq 3, \kernel = (\xx^{T}\zz + 1)^{p}\ is\ a\ valid\ kernel.
+    \end{equation}
+\htab \textbf{Base Case}: $p = 3$ \\
+\htab \htab The statement that $\kernel = (\xx^{T}\zz + 1)^{3}$ is valid has been proven in last section \ref{sec:ngene}. \pg
+\htab \textbf{Inductive Cases:} \\
+\htab Assume that 
+    \begin{align} \label{5:assumption2}
+        \kpold = (\xx^{T}\zz + 1)^{Q}\ is\ valid\ kernel\ function
+    \end{align}
+\htab Prove that 
+    \begin{align} \label{5:inducive}
+        \kpnew = (\xx^{T}\zz + 1)^{Q+1}\ is\ also\ valid\ kernel\ function
+    \end{align}
+\htab \textbf{Proof for Inductive Cases}: \\
+\htab Start from the assumption \eqref{5:assumption2} and the definition of valid kernel,
+    \begin{align}
+        \exists \Phi(\xx)\ such\ that\ \kpold = \langle \Phi(\xx), \Phi(\zz) \rangle 
+        = \Phi^{T}(\xx) \Phi(\zz)
+    \end{align}
+\htab Since the $\kold$ we talk about has the form,
+    \begin{align}
+        \kpold = (\xx^{T}\zz + 1)^{Q} = (\sumxzn + 1)^{Q}
+    \end{align}
+    \dhtab where $n$ is the dimensionality of vector $\xx$ and $\zz$. \\[0.1cm]
+\htab We can derive the feature map for $\kpold$, denoted by $\PhiQ$ as follows,
+    \begin{align}
+        (\PhiQ(\xx))^{T} \PhiQ(\zz) = (\sumxzn + 1)^{Q}
+    \end{align}
+\htab Then start to manipulate the $\kpnew$,
+    \begin{align}
+        \kpnew &= (\xx^{T}\zz + 1)^{Q+1} \\
+        &= (\xx^{T}\zz + 1)^{Q}\ (\xx^{T}\zz + 1) \\
+        &= 
+        \tikz[baseline]{ \node[draw=blue,rounded corners,anchor=base] (m15) 
+            {$(\PhiQ(\xx))^{T} \PhiQ(\zz) \big(\sumxzn\big)$} ;
+        \node[below of=m15] (l15) {$x_{i} \PhiQ(\xx)$};
+        \draw[-,blue] (l15) -- (m15);
+        } + 
+        \tikz[baseline]{ \node[draw=blue,rounded corners,anchor=base] (m16) 
+            {$(\PhiQ(\xx))^{T} \PhiQ(\zz)$} ;
+        \node[below of=m16] (l16) {$\PhiQ(\xx)$};
+        \draw[-,blue] (l16) -- (m16);
+        } 
+    \end{align}
+\htab Obviously, we can derive the feature map $\PhiQQ(\xx)$ for $\kpnew$, that is,
+    \begin{align}
+        \PhiQQ (\xx)= 
+        \begin{pmatrix} 
+            x_{1} \PhiQ(\xx) \\
+            \vdots \\
+            x_{i} \PhiQ(\xx) \\
+            \vdots \\
+            x_{n} \PhiQ(\xx) \\
+            \PhiQ(\xx)     
+        \end{pmatrix}
+    \end{align}
+\htab Such that,
+    \begin{align}
+        \kpnew = (\PhiQQ (\xx))^{T} \PhiQQ (\zz) = \langle \PhiQQ (\xx), \PhiQQ (\zz) \rangle 
+        \Rightarrow\ valid\ kernel
+    \end{align}
+    \htab Therefore, we successfully prove the inductive cases \eqref{5:inductive}. Based on the theory of Mathematical Induction, it is concluded that 
+        \begin{equation}
+        \forall p \geq 3, \kernel = (\xx^{T}\zz + 1)^{p}\ is\ a\ valid\ kernel.
+    \end{equation}
+\newpage
+%}}}
+\section{EM for Trees}
+\newpage
+\section{(Semi-/Un-)Supervised Learning and EM}
+\newpage
+\end{document}

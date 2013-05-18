@@ -1,0 +1,408 @@
+errorRate: 2.6667%
+ [ 0.000%, 6.667%, 0.000%, 0.000%, 0.000%, 6.667%, 0.000%, 6.667%, 6.667%, 0.000%,] 
+
+
+Cross Validation Set 1: \\
+\htab Error of this Testing Set: $0.00\%$ 
+
+\textbf{For class Iris-setosa}:
+\begin{align} \bs{\mu}_{0} = \begin{pmatrix} 
+5.01777778 & 3.44666667 & 1.46444444 & 0.25111111 
+ \end{pmatrix}  \end{align} 
+\vspace{-1cm}
+\begin{align} \bs{\Sigma}_{0} = \begin{pmatrix} 
+0.12104040 & 0.10028788 & 0.01951010 & 0.01088889 \\ 
+0.10028788 & 0.15163636 & 0.01351515 & 0.00937879 \\ 
+0.01951010 & 0.01351515 & 0.03143434 & 0.00663131 \\ 
+0.01088889 & 0.00937879 & 0.00663131 & 0.01210101 \\ 
+\end{pmatrix} \end{align}
+
+\textbf{For class Iris-versicolor}:
+\begin{align} \bs{\mu}_{1} = \begin{pmatrix} 
+5.92444444 & 2.76666667 & 4.26000000 & 1.33333333 
+ \end{pmatrix}  \end{align} 
+\vspace{-1cm}
+\begin{align} \bs{\Sigma}_{1} = \begin{pmatrix} 
+0.27416162 & 0.08174242 & 0.18645455 & 0.05553030 \\ 
+0.08174242 & 0.09909091 & 0.08000000 & 0.03977273 \\ 
+0.18645455 & 0.08000000 & 0.22927273 & 0.07409091 \\ 
+0.05553030 & 0.03977273 & 0.07409091 & 0.03909091 \\ 
+\end{pmatrix} \end{align}
+
+\textbf{For class Iris-virginica}:
+\begin{align} \bs{\mu}_{2} = \begin{pmatrix} 
+6.63777778 & 2.96444444 & 5.58666667 & 2.01555556 
+ \end{pmatrix}  \end{align} 
+\vspace{-1cm}
+\begin{align} \bs{\Sigma}_{2} = \begin{pmatrix} 
+0.41967677 & 0.10637374 & 0.31574242 & 0.06098990 \\ 
+0.10637374 & 0.10961616 & 0.08133333 & 0.05011111 \\ 
+0.31574242 & 0.08133333 & 0.31845455 & 0.05748485 \\ 
+0.06098990 & 0.05011111 & 0.05748485 & 0.07497980 \\ 
+\end{pmatrix} \end{align}
+
+
+Cross Validation Set 2: \\
+\htab Error of this Testing Set: $6.67\%$ 
+
+\textbf{For class Iris-setosa}:
+\begin{align} \bs{\mu}_{0} = \begin{pmatrix} 
+5.01333333 & 3.43555556 & 1.47555556 & 0.24666667 
+ \end{pmatrix}  \end{align} 
+\vspace{-1cm}
+\begin{align} \bs{\Sigma}_{0} = \begin{pmatrix} 
+0.12345455 & 0.10451515 & 0.01737879 & 0.01163636 \\ 
+0.10451515 & 0.15370707 & 0.01225253 & 0.01080303 \\ 
+0.01737879 & 0.01225253 & 0.03143434 & 0.00662121 \\ 
+0.01163636 & 0.01080303 & 0.00662121 & 0.01209091 \\ 
+\end{pmatrix} \end{align}
+
+\textbf{For class Iris-versicolor}:
+\begin{align} \bs{\mu}_{1} = \begin{pmatrix} 
+5.97777778 & 2.76888889 & 4.27111111 & 1.32222222 
+ \end{pmatrix}  \end{align} 
+\vspace{-1cm}
+\begin{align} \bs{\Sigma}_{1} = \begin{pmatrix} 
+0.26494949 & 0.08724747 & 0.18161616 & 0.05573232 \\ 
+0.08724747 & 0.10037374 & 0.07635354 & 0.03707071 \\ 
+0.18161616 & 0.07635354 & 0.21528283 & 0.06679293 \\ 
+0.05573232 & 0.03707071 & 0.06679293 & 0.03494949 \\ 
+\end{pmatrix} \end{align}
+
+\textbf{For class Iris-virginica}:
+\begin{align} \bs{\mu}_{2} = \begin{pmatrix} 
+6.60888889 & 2.96444444 & 5.55333333 & 2.01111111 
+ \end{pmatrix}  \end{align} 
+\vspace{-1cm}
+\begin{align} \bs{\Sigma}_{2} = \begin{pmatrix} 
+0.41946465 & 0.10305051 & 0.32156061 & 0.05694444 \\ 
+0.10305051 & 0.11143434 & 0.07557576 & 0.04926768 \\ 
+0.32156061 & 0.07557576 & 0.31618182 & 0.04734848 \\ 
+0.05694444 & 0.04926768 & 0.04734848 & 0.07782828 \\ 
+\end{pmatrix} \end{align}
+
+\newpage
+
+Cross Validation Set 3: \\
+\htab Error of this Testing Set: $0.00\%$ 
+
+\textbf{For class Iris-setosa}:
+\begin{align} \bs{\mu}_{0} = \begin{pmatrix} 
+5.01041667 & 3.41875000 & 1.46250000 & 0.25000000 
+ \end{pmatrix}  \end{align} 
+\vspace{-1cm}
+\begin{align} \bs{\Sigma}_{0} = \begin{pmatrix} 
+0.12520833 & 0.09873670 & 0.01635638 & 0.01095745 \\ 
+0.09873670 & 0.13900266 & 0.01135638 & 0.01159574 \\ 
+0.01635638 & 0.01135638 & 0.03132979 & 0.00638298 \\ 
+0.01095745 & 0.01159574 & 0.00638298 & 0.01106383 \\ 
+\end{pmatrix} \end{align}
+
+\textbf{For class Iris-versicolor}:
+\begin{align} \bs{\mu}_{1} = \begin{pmatrix} 
+5.91428571 & 2.75952381 & 4.25238095 & 1.32857143 
+ \end{pmatrix}  \end{align} 
+\vspace{-1cm}
+\begin{align} \bs{\Sigma}_{1} = \begin{pmatrix} 
+0.29344948 & 0.08937282 & 0.19679443 & 0.05519164 \\ 
+0.08937282 & 0.10783391 & 0.08851336 & 0.04191638 \\ 
+0.19679443 & 0.08851336 & 0.23718931 & 0.07700348 \\ 
+0.05519164 & 0.04191638 & 0.07700348 & 0.03721254 \\ 
+\end{pmatrix} \end{align}
+
+\textbf{For class Iris-virginica}:
+\begin{align} \bs{\mu}_{2} = \begin{pmatrix} 
+6.60666667 & 2.98000000 & 5.57333333 & 2.03777778 
+ \end{pmatrix}  \end{align} 
+\vspace{-1cm}
+\begin{align} \bs{\Sigma}_{2} = \begin{pmatrix} 
+0.39972727 & 0.09786364 & 0.29290909 & 0.04542424 \\ 
+0.09786364 & 0.11118182 & 0.07445455 & 0.05100000 \\ 
+0.29290909 & 0.07445455 & 0.29018182 & 0.04512121 \\ 
+0.04542424 & 0.05100000 & 0.04512121 & 0.08104040 \\ 
+\end{pmatrix} \end{align}
+
+
+Cross Validation Set 4: \\
+\htab Error of this Testing Set: $0.00\%$ 
+
+\textbf{For class Iris-setosa}:
+\begin{align} \bs{\mu}_{0} = \begin{pmatrix} 
+5.04047619 & 3.47619048 & 1.45952381 & 0.24761905 
+ \end{pmatrix}  \end{align} 
+\vspace{-1cm}
+\begin{align} \bs{\Sigma}_{0} = \begin{pmatrix} 
+0.12929733 & 0.09586527 & 0.01704413 & 0.01168409 \\ 
+0.09586527 & 0.12771196 & 0.00828107 & 0.01042973 \\ 
+0.01704413 & 0.00828107 & 0.02978513 & 0.00782811 \\ 
+0.01168409 & 0.01042973 & 0.00782811 & 0.01182346 \\ 
+\end{pmatrix} \end{align}
+
+\textbf{For class Iris-versicolor}:
+\begin{align} \bs{\mu}_{1} = \begin{pmatrix} 
+5.92978723 & 2.76170213 & 4.25744681 & 1.32978723 
+ \end{pmatrix}  \end{align} 
+\vspace{-1cm}
+\begin{align} \bs{\Sigma}_{1} = \begin{pmatrix} 
+0.27909343 & 0.08551341 & 0.18586031 & 0.05604995 \\ 
+0.08551341 & 0.09806660 & 0.07985661 & 0.03964385 \\ 
+0.18586031 & 0.07985661 & 0.21423682 & 0.07107771 \\ 
+0.05604995 & 0.03964385 & 0.07107771 & 0.03735430 \\ 
+\end{pmatrix} \end{align}
+
+\textbf{For class Iris-virginica}:
+\begin{align} \bs{\mu}_{2} = \begin{pmatrix} 
+6.59565217 & 2.95000000 & 5.56086957 & 2.01739130 
+ \end{pmatrix}  \end{align} 
+\vspace{-1cm}
+\begin{align} \bs{\Sigma}_{2} = \begin{pmatrix} 
+0.37953623 & 0.07911111 & 0.28915942 & 0.06074396 \\ 
+0.07911111 & 0.09277778 & 0.06244444 & 0.05111111 \\ 
+0.28915942 & 0.06244444 & 0.30110145 & 0.05514010 \\ 
+0.06074396 & 0.05111111 & 0.05514010 & 0.07613527 \\ 
+\end{pmatrix} \end{align}
+
+\newpage
+
+Cross Validation Set 5: \\
+\htab Error of this Testing Set: $0.00\%$ 
+
+\textbf{For class Iris-setosa}:
+\begin{align} \bs{\mu}_{0} = \begin{pmatrix} 
+4.99565217 & 3.43043478 & 1.45652174 & 0.25000000 
+ \end{pmatrix}  \end{align} 
+\vspace{-1cm}
+\begin{align} \bs{\Sigma}_{0} = \begin{pmatrix} 
+0.11642512 & 0.09502415 & 0.01380676 & 0.00977778 \\ 
+0.09502415 & 0.14527536 & 0.01024155 & 0.00822222 \\ 
+0.01380676 & 0.01024155 & 0.03140097 & 0.00622222 \\ 
+0.00977778 & 0.00822222 & 0.00622222 & 0.01144444 \\ 
+\end{pmatrix} \end{align}
+
+\textbf{For class Iris-versicolor}:
+\begin{align} \bs{\mu}_{1} = \begin{pmatrix} 
+5.91739130 & 2.76956522 & 4.24565217 & 1.31521739 
+ \end{pmatrix}  \end{align} 
+\vspace{-1cm}
+\begin{align} \bs{\Sigma}_{1} = \begin{pmatrix} 
+0.27257971 & 0.09298551 & 0.18429952 & 0.05439614 \\ 
+0.09298551 & 0.09994203 & 0.08808696 & 0.04180676 \\ 
+0.18429952 & 0.08808696 & 0.22698068 & 0.07351208 \\ 
+0.05439614 & 0.04180676 & 0.07351208 & 0.03865217 \\ 
+\end{pmatrix} \end{align}
+
+\textbf{For class Iris-virginica}:
+\begin{align} \bs{\mu}_{2} = \begin{pmatrix} 
+6.61162791 & 2.96744186 & 5.56511628 & 2.01627907 
+ \end{pmatrix}  \end{align} 
+\vspace{-1cm}
+\begin{align} \bs{\Sigma}_{2} = \begin{pmatrix} 
+0.41629014 & 0.10205426 & 0.32232004 & 0.05933001 \\ 
+0.10205426 & 0.11320044 & 0.07598007 & 0.04911406 \\ 
+0.32232004 & 0.07598007 & 0.31375415 & 0.05677187 \\ 
+0.05933001 & 0.04911406 & 0.05677187 & 0.07901440 \\ 
+\end{pmatrix} \end{align}
+
+
+Cross Validation Set 6: \\
+\htab Error of this Testing Set: $6.67\%$ 
+
+\textbf{For class Iris-setosa}:
+\begin{align} \bs{\mu}_{0} = \begin{pmatrix} 
+5.03043478 & 3.42826087 & 1.46956522 & 0.25217391 
+ \end{pmatrix}  \end{align} 
+\vspace{-1cm}
+\begin{align} \bs{\Sigma}_{0} = \begin{pmatrix} 
+0.12616425 & 0.10689855 & 0.01428019 & 0.00971014 \\ 
+0.10689855 & 0.15273913 & 0.01510145 & 0.01049275 \\ 
+0.01428019 & 0.01510145 & 0.02749758 & 0.00606763 \\ 
+0.00971014 & 0.01049275 & 0.00606763 & 0.01143961 \\ 
+\end{pmatrix} \end{align}
+
+\textbf{For class Iris-versicolor}:
+\begin{align} \bs{\mu}_{1} = \begin{pmatrix} 
+5.94000000 & 2.76666667 & 4.25777778 & 1.32222222 
+ \end{pmatrix}  \end{align} 
+\vspace{-1cm}
+\begin{align} \bs{\Sigma}_{1} = \begin{pmatrix} 
+0.26972727 & 0.09227273 & 0.19331818 & 0.06113636 \\ 
+0.09227273 & 0.10909091 & 0.09106061 & 0.04598485 \\ 
+0.19331818 & 0.09106061 & 0.23840404 & 0.08073232 \\ 
+0.06113636 & 0.04598485 & 0.08073232 & 0.04267677 \\ 
+\end{pmatrix} \end{align}
+
+\textbf{For class Iris-virginica}:
+\begin{align} \bs{\mu}_{2} = \begin{pmatrix} 
+6.57045455 & 2.95000000 & 5.53863636 & 2.05227273 
+ \end{pmatrix}  \end{align} 
+\vspace{-1cm}
+\begin{align} \bs{\Sigma}_{2} = \begin{pmatrix} 
+0.33561839 & 0.05872093 & 0.26767970 & 0.05251057 \\ 
+0.05872093 & 0.09279070 & 0.04965116 & 0.05337209 \\ 
+0.26767970 & 0.04965116 & 0.29777484 & 0.05281712 \\ 
+0.05251057 & 0.05337209 & 0.05281712 & 0.07604123 \\ 
+\end{pmatrix} \end{align}
+
+\newpage
+
+Cross Validation Set 7: \\
+\htab Error of this Testing Set: $0.00\%$ 
+
+\textbf{For class Iris-setosa}:
+\begin{align} \bs{\mu}_{0} = \begin{pmatrix} 
+5.03777778 & 3.45111111 & 1.46888889 & 0.25111111 
+ \end{pmatrix}  \end{align} 
+\vspace{-1cm}
+\begin{align} \bs{\Sigma}_{0} = \begin{pmatrix} 
+0.12194949 & 0.09393434 & 0.01438384 & 0.01075253 \\ 
+0.09393434 & 0.12801010 & 0.00844444 & 0.01210101 \\ 
+0.01438384 & 0.00844444 & 0.03173737 & 0.00662626 \\ 
+0.01075253 & 0.01210101 & 0.00662626 & 0.01164646 \\ 
+\end{pmatrix} \end{align}
+
+\textbf{For class Iris-versicolor}:
+\begin{align} \bs{\mu}_{1} = \begin{pmatrix} 
+5.94666667 & 2.77777778 & 4.26888889 & 1.32666667 
+ \end{pmatrix}  \end{align} 
+\vspace{-1cm}
+\begin{align} \bs{\Sigma}_{1} = \begin{pmatrix} 
+0.26072727 & 0.07310606 & 0.17921212 & 0.05077273 \\ 
+0.07310606 & 0.09176768 & 0.07611111 & 0.03833333 \\ 
+0.17921212 & 0.07611111 & 0.22810101 & 0.07334848 \\ 
+0.05077273 & 0.03833333 & 0.07334848 & 0.03972727 \\ 
+\end{pmatrix} \end{align}
+
+\textbf{For class Iris-virginica}:
+\begin{align} \bs{\mu}_{2} = \begin{pmatrix} 
+6.58666667 & 2.95777778 & 5.55777778 & 2.02888889 
+ \end{pmatrix}  \end{align} 
+\vspace{-1cm}
+\begin{align} \bs{\Sigma}_{2} = \begin{pmatrix} 
+0.40709091 & 0.08328788 & 0.29192424 & 0.04471212 \\ 
+0.08328788 & 0.09931313 & 0.05908586 & 0.05033838 \\ 
+0.29192424 & 0.05908586 & 0.28658586 & 0.04261111 \\ 
+0.04471212 & 0.05033838 & 0.04261111 & 0.08073737 \\ 
+\end{pmatrix} \end{align}
+
+
+Cross Validation Set 8: \\
+\htab Error of this Testing Set: $6.67\%$ 
+
+\textbf{For class Iris-setosa}:
+\begin{align} \bs{\mu}_{0} = \begin{pmatrix} 
+4.99782609 & 3.42173913 & 1.46086957 & 0.24565217 
+ \end{pmatrix}  \end{align} 
+\vspace{-1cm}
+\begin{align} \bs{\Sigma}_{0} = \begin{pmatrix} 
+0.13266184 & 0.10471498 & 0.01769082 & 0.01121256 \\ 
+0.10471498 & 0.15062802 & 0.01264734 & 0.00920773 \\ 
+0.01769082 & 0.01264734 & 0.03265700 & 0.00649275 \\ 
+0.01121256 & 0.00920773 & 0.00649275 & 0.01142512 \\ 
+\end{pmatrix} \end{align}
+
+\textbf{For class Iris-versicolor}:
+\begin{align} \bs{\mu}_{1} = \begin{pmatrix} 
+5.94090909 & 2.75454545 & 4.23409091 & 1.31136364 
+ \end{pmatrix}  \end{align} 
+\vspace{-1cm}
+\begin{align} \bs{\Sigma}_{1} = \begin{pmatrix} 
+0.28154334 & 0.08934461 & 0.20089852 & 0.05905920 \\ 
+0.08934461 & 0.10393235 & 0.08484144 & 0.03959831 \\ 
+0.20089852 & 0.08484144 & 0.23718288 & 0.07448732 \\ 
+0.05905920 & 0.03959831 & 0.07448732 & 0.03730973 \\ 
+\end{pmatrix} \end{align}
+
+\textbf{For class Iris-virginica}:
+\begin{align} \bs{\mu}_{2} = \begin{pmatrix} 
+6.58000000 & 2.96000000 & 5.57111111 & 2.00888889 
+ \end{pmatrix}  \end{align} 
+\vspace{-1cm}
+\begin{align} \bs{\Sigma}_{2} = \begin{pmatrix} 
+0.43254545 & 0.10100000 & 0.33395455 & 0.04563636 \\ 
+0.10100000 & 0.11336364 & 0.08086364 & 0.04945455 \\ 
+0.33395455 & 0.08086364 & 0.32846465 & 0.05412626 \\ 
+0.04563636 & 0.04945455 & 0.05412626 & 0.07582828 \\ 
+\end{pmatrix} \end{align}
+
+\newpage
+
+Cross Validation Set 9: \\
+\htab Error of this Testing Set: $6.67\%$ 
+
+\textbf{For class Iris-setosa}:
+\begin{align} \bs{\mu}_{0} = \begin{pmatrix} 
+5.00444444 & 3.43111111 & 1.44666667 & 0.23777778 
+ \end{pmatrix}  \end{align} 
+\vspace{-1cm}
+\begin{align} \bs{\Sigma}_{0} = \begin{pmatrix} 
+0.13816162 & 0.10963131 & 0.01728788 & 0.01119192 \\ 
+0.10963131 & 0.15219192 & 0.01033333 & 0.00788889 \\ 
+0.01728788 & 0.01033333 & 0.02800000 & 0.00410606 \\ 
+0.01119192 & 0.00788889 & 0.00410606 & 0.00876768 \\ 
+\end{pmatrix} \end{align}
+
+\textbf{For class Iris-versicolor}:
+\begin{align} \bs{\mu}_{1} = \begin{pmatrix} 
+5.94772727 & 2.78409091 & 4.26363636 & 1.33636364 
+ \end{pmatrix}  \end{align} 
+\vspace{-1cm}
+\begin{align} \bs{\Sigma}_{1} = \begin{pmatrix} 
+0.25371564 & 0.08403277 & 0.17014799 & 0.05078224 \\ 
+0.08403277 & 0.10695032 & 0.08429175 & 0.04268499 \\ 
+0.17014799 & 0.08429175 & 0.19306554 & 0.06437632 \\ 
+0.05078224 & 0.04268499 & 0.06437632 & 0.03725159 \\ 
+\end{pmatrix} \end{align}
+
+\textbf{For class Iris-virginica}:
+\begin{align} \bs{\mu}_{2} = \begin{pmatrix} 
+6.56956522 & 2.97826087 & 5.54347826 & 2.03043478 
+ \end{pmatrix}  \end{align} 
+\vspace{-1cm}
+\begin{align} \bs{\Sigma}_{2} = \begin{pmatrix} 
+0.42216425 & 0.10376812 & 0.32135266 & 0.05516908 \\ 
+0.10376812 & 0.11151691 & 0.08052174 & 0.05156522 \\ 
+0.32135266 & 0.08052174 & 0.32428986 & 0.05464734 \\ 
+0.05516908 & 0.05156522 & 0.05464734 & 0.08038647 \\ 
+\end{pmatrix} \end{align}
+
+
+Cross Validation Set 10: \\
+\htab Error of this Testing Set: $0.00\%$ 
+
+\textbf{For class Iris-setosa}:
+\begin{align} \bs{\mu}_{0} = \begin{pmatrix} 
+4.98888889 & 3.39777778 & 1.46000000 & 0.24222222 
+ \end{pmatrix}  \end{align} 
+\vspace{-1cm}
+\begin{align} \bs{\Sigma}_{0} = \begin{pmatrix} 
+0.12146465 & 0.09747475 & 0.01568182 & 0.00934343 \\ 
+0.09747475 & 0.13976768 & 0.01172727 & 0.01009596 \\ 
+0.01568182 & 0.01172727 & 0.03200000 & 0.00559091 \\ 
+0.00934343 & 0.01009596 & 0.00559091 & 0.01067677 \\ 
+\end{pmatrix} \end{align}
+
+\textbf{For class Iris-versicolor}:
+\begin{align} \bs{\mu}_{1} = \begin{pmatrix} 
+5.89534884 & 2.76279070 & 4.22790698 & 1.30465116 
+ \end{pmatrix}  \end{align} 
+\vspace{-1cm}
+\begin{align} \bs{\Sigma}_{1} = \begin{pmatrix} 
+0.28188261 & 0.09410853 & 0.19156146 & 0.05430786 \\ 
+0.09410853 & 0.10239203 & 0.09225360 & 0.04589147 \\ 
+0.19156146 & 0.09225360 & 0.23253599 & 0.07415282 \\ 
+0.05430786 & 0.04589147 & 0.07415282 & 0.03902547 \\ 
+\end{pmatrix} \end{align}
+
+\textbf{For class Iris-virginica}:
+\begin{align} \bs{\mu}_{2} = \begin{pmatrix} 
+6.59574468 & 2.96595745 & 5.57021277 & 2.03191489 
+ \end{pmatrix}  \end{align} 
+\vspace{-1cm}
+\begin{align} \bs{\Sigma}_{2} = \begin{pmatrix} 
+0.42954672 & 0.10093895 & 0.32117484 & 0.05122572 \\ 
+0.10093895 & 0.10925069 & 0.07874653 & 0.05154487 \\ 
+0.32117484 & 0.07874653 & 0.31691952 & 0.05118871 \\ 
+0.05122572 & 0.05154487 & 0.05118871 & 0.07917669 \\ 
+\end{pmatrix} \end{align}
+
+\newpage

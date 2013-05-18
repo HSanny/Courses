@@ -1,0 +1,19 @@
+# COMP4670 assignment 01 MAKEFILE
+# Jimmy Lin <u5223173@anu.edu.au> 
+
+#######################################################################
+# DO NOT EDIT THIS MAKEFILE UNLESS YOU KNOW WHAT YOU ARE DOING. 
+#######################################################################	
+
+COMP4670_ASS01_PATH = $(shell pwd)
+
+all: 
+	pdflatex ass02.tex
+
+full:
+	pdflatex ass02.tex
+	pdflatex ass02.tex
+	rm -f ass02.aux ass02.lof ass02.log ass02.out ass02.toc ass02.lot q.log texput.log
+
+clean:
+	rm -f ass02.aux ass02.lof ass02.log ass02.out ass02.toc ass02.lot q.log texput.log

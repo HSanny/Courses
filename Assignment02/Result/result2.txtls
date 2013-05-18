@@ -1,0 +1,61 @@
+This is 0repetition:
+Initilisation of parameters:
+\begin{align} \bs{\mu}_{0} = \begin{pmatrix} 
+6.07489191 & 3.15939003 & 2.82757197 & -0.13834940 
+ \end{pmatrix}  \end{align} 
+\begin{align} \bs{\Sigma}_{0}\begin{pmatrix} 
+1.00000000 & 0.00000000 & 0.00000000 & 0.00000000 \\ 
+0.00000000 & 1.00000000 & 0.00000000 & 0.00000000 \\ 
+0.00000000 & 0.00000000 & 1.00000000 & 0.00000000 \\ 
+0.00000000 & 0.00000000 & 0.00000000 & 1.00000000 \\ 
+\end{pmatrix} \end{align}
+Initilisation of parameters:
+\begin{align} \bs{\mu}_{1} = \begin{pmatrix} 
+4.69450517 & 2.29117205 & 3.85762349 & 1.02609932 
+ \end{pmatrix}  \end{align} 
+\begin{align} \bs{\Sigma}_{1}\begin{pmatrix} 
+1.00000000 & 0.00000000 & 0.00000000 & 0.00000000 \\ 
+0.00000000 & 1.00000000 & 0.00000000 & 0.00000000 \\ 
+0.00000000 & 0.00000000 & 1.00000000 & 0.00000000 \\ 
+0.00000000 & 0.00000000 & 0.00000000 & 1.00000000 \\ 
+\end{pmatrix} \end{align}
+Initilisation of parameters:
+\begin{align} \bs{\mu}_{2} = \begin{pmatrix} 
+5.63114224 & 4.10633919 & 3.20178334 & 0.37088075 
+ \end{pmatrix}  \end{align} 
+\begin{align} \bs{\Sigma}_{2}\begin{pmatrix} 
+1.00000000 & 0.00000000 & 0.00000000 & 0.00000000 \\ 
+0.00000000 & 1.00000000 & 0.00000000 & 0.00000000 \\ 
+0.00000000 & 0.00000000 & 1.00000000 & 0.00000000 \\ 
+0.00000000 & 0.00000000 & 0.00000000 & 1.00000000 \\ 
+\end{pmatrix} \end{align}
+[ 0.13440198  0.45490332  0.4106947 ]
+Current Criteria: -344.17972395
+Criteria: previous - > current -344.17972395 -> -304.943135178
+Continues...
+Criteria: previous - > current -304.943135178 -> -281.393184165
+Continues...
+Criteria: previous - > current -281.393184165 -> -237.857927473
+Continues...
+Criteria: previous - > current -237.857927473 -> -213.99422097
+Continues...
+Criteria: previous - > current -213.99422097 -> -207.679225832
+Continues...
+Criteria: previous - > current -207.679225832 -> -203.783602949
+Continues...
+Criteria: previous - > current -203.783602949 -> -201.830203512
+Continues...
+Criteria: previous - > current -201.830203512 -> -200.554094985
+Continues...
+Criteria: previous - > current -200.554094985 -> -199.674891536
+Continues...
+Criteria: previous - > current -199.674891536 -> -199.358116971
+Continues...
+Criteria: previous - > current -199.358116971 -> -199.094444626
+Continues...
+Criteria: previous - > current -199.094444626 -> -198.875495484
+Continues...
+Criteria: previous - > current -198.875495484 -> -198.711357184
+Continues...
+Criteria: previous - > current -198.711357184 -> -198.56036547
+Continues...

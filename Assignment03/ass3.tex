@@ -19,7 +19,7 @@
 \usetikzlibrary{automata,positioning}
 \geometry{top=18mm,bottom=18mm,left=20mm,right=20mm}
 %}}}
-% new command list
+% file information
 %{{{
 \newcommand{\AUTHOR}{Jimmy Lin}
 \newcommand{\UID}{u5223173}
@@ -29,18 +29,20 @@
 \newcommand{\LECTURER}{Jinbo Huang}
 \newcommand{\LECTURERt}{Dirk Pattinson}
 \newcommand{\TASK}{Assignment 03}
-\newcommand{\RELEASEDATE}{May. 6 2013}
-\newcommand{\DUEDATE}{May. 17 2013}
-\newcommand{\TIMECONSUME}{15h}
+\newcommand{\RELEASEDATE}{May. 7 2013}
+\newcommand{\DUEDATE}{May. 20 2013}
+\newcommand{\TIMECONSUME}{18h}
 %}}}
+% new command lst
+%{{{
 \newcommand{\htab}{\hspace*{0.63cm}}
 \newcommand{\dhtab}{\hspace*{1.2cm}}
 \newcommand{\ba}{\hspace*{0.2cm} | \hspace*{0.2cm}}
 \newcommand{\pg}{\\[0.3cm]}
 \newcommand{\lmd}{\underset{lm}{\Longrightarrow}}
 \newcommand{\rmd}{\underset{rm}{\Longrightarrow}}
-\newcommand{\mlmd}{\overset{*}{\underset{lm}{\Longrightarrow}}}
-\newcommand{\mrmd}{\overset{*}{\underset{rm}{\Longrightarrow}}}
+\newcommand{\mlmd}{\overset{*}{\underset{lm}{\Longrightarrow} }}
+\newcommand{\mrmd}{\overset{*}{\underset{rm}{\Longrightarrow} }}
 \newcommand{\ps}{P_{Stack}}
 \newcommand{\pdaid}[2]{(q, #1, #2)}
 \newcommand{\idDerive}[1]{\underset{\ps}{\vdash}}
@@ -48,6 +50,7 @@
 \newcommand{\LL}{L^{*}}
 \newcommand{\lu}{L_{u}}
 \newcommand{\clu}{\overline{L_{u}} }
+%}}}
 %\newcommand{\item}[1]{\hspace*{3cm} #1}
 % -
 \pagestyle{fancyplain}
@@ -189,7 +192,8 @@ is undecidable, where a useless state is defined as a state that is never visite
 construct a Turing machine Q that replaces its input string with $(M, w)$, simulates the universal
 Turing machine, and enters the accepting state $q_{accept}$ if and only if the (simulated) universal
 Turing machine accepts $(M, w)$. The reduction works as the Turing machine Q will have a useless
-state ($q_{accept}$) if and only if the Turing machine $M$ does not accept the string $w$. \pg
+state ($q_{accept}$) if and only if the Turing machine $M$ does not accept the string $w$. 
+\subsection{Flaw of attempted proof}
 \textbf{Flaw}: The reduction did not relate the problem of whether given TM $M$ accept certain 
 string $w$ to our objective problem, which is whether one coded TM will have useless state. Specifically,
 if $M$ accept the string $w$, the accepting state of $Q$ will be reached, which means $q_{accept}$ is not
@@ -197,7 +201,8 @@ if $M$ accept the string $w$, the accepting state of $Q$ will be reached, which 
  (there may exist some other states of TM $Q$ to be useless or may not.) Therefore, what 
  the reduction in the attempted proof do is to relate the problem of whether TM $M$ accepts string
  $w$ to the problem of whether accepting state of $Q$, $q_{accept}$ is useless state, but not our 
- objective problem, that is, whether the TM $Q$ has a useless state. \pg
+ objective problem, that is, whether the TM $Q$ has a useless state. 
+\subsection{Correct Proof}
  \textbf{Correct Proof}: We first will prove that the Turing Machine $M_{c}$ which take 
  a pair of coded TM and one state from that TM as input is undecidable by reducing $\lu$ to 
  $L(M_{c})$. And then we reduce to the problem of given TM and one state of that TM, whether 
@@ -288,7 +293,7 @@ there exists no Turing Machine accepting $\clu$. Therefore, we should negate the
 % Exercise 5 
 %{{{
 \newcommand{\x}[1]{x_{#1}}
-\newcommand{\n}[1]{\overset{-}{x_{#1}}}
+\newcommand{\n}[1]{\overset{-}{x_{#1}} }
 \section{Boolean Encodings of Graph Properties}
 Suppose $G$ is an undirected graph of four nodes: 1, 2, 3, and 4. Let $x_{ij}$ , for $1 \leq i < j \leq 4$,
 be a Boolean variable that we interpret as saying “there is an edge between nodes i and j.”
@@ -394,7 +399,7 @@ the task of figuring out whether there is a dominating set with at most $k$ node
     \text{graph $G$ has cover set of size $K$ \textbf{if and only if} the graph $G'$ has dominating set of size $k$}
 \end{align}
 \htab (If part) If $G$ has a node cover $S$ of size $K$, then the same set of nodes form a dominating set in $G'$. This is because for each edge $(u,v)$ in graph $G$, either $u$ or $v$ must be in the dominating cover consisting of those $K$ nodes, otherwise the $K$-node-cover property of graph $G$ does not hold. And the transformation by replacing edge with triangle will not introduce any inadjacency. That is, for each edge, whatever $u$ or $v$ is in the cover set, newly introduced node $x$ is always adjacent to the node that is in cover set. \\
-\htab (Only-if part) Suppose that there is a dominating set of size $K$ in graph $G'$. We can specify that dominating set only pick up nodes from the set $V$. (if $V_{e_{i}}$ was picked, we can replace it by $v_{k}$ or $v_{l}$ without increasing its size and changing its nature of being a dominating set.) And for each edge $e_{i}$, $v_{e_{i}}$ must have neighbour, either $v_{k}$ or $v_{l}$ in the dominating set. In this manner, the node $v_{e_{i}}$ would be covered (must exist one edge having one end on $v_{e_{i}}$) since it connect to the node, either $v_{k}$ or $v_{l}$ (for each triangle), in the cover (node cover problem). Thus, the dominating set in $G'$ is the node cover set in graph $G$. \pg
+\htab (Only-if part) Suppose that there is a dominating set of size $K$ in graph $G'$. We can specify that dominating set only pick up nodes from the set $V$. If $v_{e_{i}}$ was picked, we can replace it by $v_{k}$ or $v_{l}$ without increasing its size and changing its nature of being a dominating set. In this manner, for each edge $e_{i}$, $v_{e_{i}}$ must have neighbour, either $v_{k}$ or $v_{l}$ in the dominating set. Then, the node $v_{e_{i}}$, edge $(v_{e_{i}}, v_{l})$ and edge $(v_{e_{i}}, v_{k})$ can be removed to derive the original graph $G$ with a node cover of size $K$. The resulted graph has a node cover of size $k$ because we have claimed that, for each triangles, only one edge $(v_{k}, v_{l})$ was reserved and either $v_{k}$ or $v_{l}$ is in the dominating set. Thus, the dominating set in $G'$ is the node cover set in graph $G$. \pg
 \htab In summary, since the Dominating Set Problem is in $\NP$ class and the Node Cover Problem, which has been proven to be $\NP$-complete, can be reducible to Dominating Set Problem, it can be concluded that Dominating Set Problem is $\NP$-complete.
 %}}}
 \end{document}

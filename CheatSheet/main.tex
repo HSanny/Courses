@@ -1,1 +1,32 @@
-
+% -----
+% COMP 4670 Assignment 02
+% Jimmy Lin
+% -----
+% -
+\documentclass[8pt,a4paper]{article}
+% package used
+%{{{
+\usepackage{geometry,amsthm,amsmath,graphicx}
+\usepackage[colorlinks,
+            linkcolor=blue,
+            anchorcolor=red,
+            citecolor=green
+            ]{hyperref}
+\usepackage{verbatimbox}
+\usepackage{tikz,multicol,amsfonts,wallpaper}
+\geometry{top=2mm,bottom=2mm,left=2mm,right=2mm}
+%}}}
+% file info macros and package parameters
+%}}}
+% new command definition
+\newcommand{\topic}[1]{\textbf{#1}}
+% - 
+\begin{document}
+% title page
+\small
+\begin{multicols*}{2}
+    \noindent \topic{good}
+    \noindent add thing here add thing hereadd thing hereadd thing hereadd thing hereadd thing here \\[-1mm] second line \\[-1mm] third line \\[-1mm]
+     add thing here \\[-1mm] second line \\[-1mm] third line \\[-1mm]
+    \end{multicols*}
+\end{document}

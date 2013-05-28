@@ -1,0 +1,30 @@
+CHAPTER
+
+9
+
+Manufacturing Work Cell
+
+Synthesis Any complex application requires prototyping and
+simulation. Simulation is typically used in three different situations:
+When part of the application's functionality is in time-consuming
+computations, or is not ready yet. When the application is a distributed
+system and needs to be tested locally on a single computer. When the
+application interacts with real devices, which can not be used for
+testing and debugging. A typical example is a manufacturing work cell
+made up of a number of physical devices (robots, machines, transporters)
+and a work cell controller, which coordinates and synchronizes the
+concurrent activities of the work cell system (e.g. moving piece,
+machining, loading). The prototype that simulates the work cell system
+is an executable specification on a single processor of the naturally
+concurrent reality. This chapter addresses the problem of building a
+discrete event simulation environment for testing the correct behavior
+of a work cell controller. Focus: The emphasis is on the software
+architecture of the simulator that is general enough to be applied in a
+variety of application scenarios. OO techniques: finite state automata
+to model the components’ dynamics Java features: information hiding
+and inheritance Background: The chapter refers to well known domain
+models for event communication, synchronization, and time simulation.
+
+1
+
+

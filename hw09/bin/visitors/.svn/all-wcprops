@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/SWConstr/homework/!svn/ver/2885/u5223173/hw09/bin/visitors
+END
+Visitor.class
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/SWConstr/homework/!svn/ver/2812/u5223173/hw09/bin/visitors/Visitor.class
+END
+BreadthFirstVisitor.class
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/SWConstr/homework/!svn/ver/2885/u5223173/hw09/bin/visitors/BreadthFirstVisitor.class
+END
+PostOrderVisitor.class
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/SWConstr/homework/!svn/ver/2812/u5223173/hw09/bin/visitors/PostOrderVisitor.class
+END
+InOrderVisitor.class
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/SWConstr/homework/!svn/ver/2885/u5223173/hw09/bin/visitors/InOrderVisitor.class
+END
+PreOrderVisitor.class
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/SWConstr/homework/!svn/ver/2812/u5223173/hw09/bin/visitors/PreOrderVisitor.class
+END

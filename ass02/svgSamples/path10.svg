@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="-10,-10,0,550" onload="startup(evt)" onmouseup="Boo=T(Boo);">
+<script>
+<![CDATA[
+
+xmlns="http://www.w3.org/2000/svg"
+var Doc;
+var O;
+var Col=new Array("red","cyan","green","yellow")
+var P=new Array()
+var Q
+var Boo=true
+function T(Boo){
+	if (Boo)O.pauseAnimations()
+	else O.unpauseAnimations()
+	return !Boo
+}
+function startup(evt){
+	O=evt.target
+	Doc=O.ownerDocument
+	O.setAttribute("onmouseup","Boo=T(Boo);")
+	drawlines(100,10)
+	//O.pauseAnimations()
+	//coolabel(100,150,30,25)
+	//coolabel(250,150,20,15)
+	
+	//coolabel(0,50,20,15)
+	//coolabel(100,400,10,-20)
+
+	
+}
+
+function drawlines(u,t){
+	B=O.getBBox()
+	var w=B.width
+	var h=B.height
+	for (i=0;i<=w/t;i++){
+		L=Doc.createElementNS(xmlns,"line")
+		L.setAttribute("x1",i*t)
+		L.setAttribute("x2",i*t)
+		L.setAttribute("y1",0)
+		L.setAttribute("y2",8)
+		L.setAttribute("stroke","blue")
+		L.setAttribute("stroke-width","1")
+		O.appendChild(L)
+		if (i%10==0){
+			L=Doc.createElementNS(xmlns,"line")
+			L.setAttribute("x1",i*t)
+			L.setAttribute("x2",i*t)
+			L.setAttribute("y1",0)
+			L.setAttribute("y2",h)
+			L.setAttribute("stroke","#8cf")
+			L.setAttribute("stroke-width","1")
+			O.appendChild(L)
+		}
+	}
+	for (i=0;i<=h/t;i++){
+		L=Doc.createElementNS(xmlns,"line")
+		L.setAttribute("x1",0)
+		L.setAttribute("x2",8)
+		L.setAttribute("y1",i*t)
+		L.setAttribute("y2",i*t)
+		L.setAttribute("stroke","blue")
+		L.setAttribute("stroke-width","1")
+		O.appendChild(L)
+		if (i%10==0){
+			L=Doc.createElementNS(xmlns,"line")
+			L.setAttribute("x1",0)
+			L.setAttribute("x2",w)
+			L.setAttribute("y1",i*t)
+			L.setAttribute("y2",i*t)
+			L.setAttribute("stroke","#8cf")
+			L.setAttribute("stroke-width","1")
+			O.appendChild(L)
+		}
+	}
+}
+function coolabel(x,y,ox,oy,l,col){
+	if (l==null) label=x+","+y
+	if (col==null) col="blue"
+	else label=l
+	E=Doc.createElementNS(xmlns,"circle")
+	E.setAttribute("cx",x)
+	E.setAttribute("cy",y)
+	E.setAttribute("r",5)
+	E.setAttribute("stroke","green")
+	E.setAttribute("stroke-width","3")
+	E.setAttribute("opacity",".4")
+	E.setAttribute("fill","yellow")
+	O.appendChild(E)
+	L=Doc.createElementNS(xmlns,"line")
+	L.setAttribute("x1",x)
+	L.setAttribute("x2",x+ox)
+	L.setAttribute("y1",y)
+	L.setAttribute("y2",y+oy)
+	L.setAttribute("stroke","black")
+	L.setAttribute("stroke-width","1.5")
+	L.setAttribute("stroke-dasharray","2,5")
+	O.appendChild(L)
+	T=Doc.createElementNS(xmlns,"text")
+	T.setAttribute("x",x+ox-label.length*2)
+	if (oy>0)
+	T.setAttribute("y",y+oy+12)
+	else
+	T.setAttribute("y",y+oy-4)
+	T.setAttribute("font-size",12)
+	if (l==null) T.setAttribute("fill","blue")
+	else T.setAttribute("fill",col)
+	msg=Doc.createTextNode(label)
+	T.appendChild(msg)
+	O.appendChild(T)
+	
+}
+
+//]]>
+</script>
+<defs>
+    <marker id="Arrow" viewBox="0 0 20 20" refX="4" refY="5" markerUnits="strokeWidth" onclick="alert()" markerWidth="8" markerHeight="8" opacity="0.85" orient="auto">
+      <path d="M 0 0 L 10 5 0 10 3 5 z" fill="yellow" id="Q" stroke="purple" onclick="alert()" stroke-width="1" stroke-linejoin="round">
+	  </path>
+    </marker>
+  </defs>
+
+<rect id="BB" x="0" y="0" height="100%" width="100%" fill="white"/>
+
+
+<path id="P2" stroke="black" stroke-width="3" marker-end="url(#Arrow)" marker-mid="url(#Arrow)" fill="#eec1c2">
+<animate attributeName="d" dur="2s" values="M 100 200  C 100 150 250 150 100 100   C  0  50  100 400 100 200 ; M 100 200  C 100 150 250 150 100 100   C  0  50  100 100 100 200 ; M 100 200  C 100 150 250 150 100 100   C  0  50  100 400 100 200 " repeatCount="indefinite"/>
+</path>
+<line x1="0" x2="0" y1="0" y2="8" stroke="blue" stroke-width="1"/><line x1="0" x2="0" y1="0" y2="0" stroke="#8cf" stroke-width="1"/><line x1="0" x2="8" y1="0" y2="0" stroke="blue" stroke-width="1"/><line x1="0" x2="0" y1="0" y2="0" stroke="#8cf" stroke-width="1"/></svg>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="5.5in" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" height="0.5in">
+<rect x="160" y="20" width="160" height="70" fill="pink"/>
+
+	<text y="75" x="110" fill="red" font-size="40">Hello World! This is SVG.</text>
+	<text y="105" x="90" fill="green">Hello World! This is SVG.</text>
+	<text y="85" x="115" fill="#FF00FF" font-size="20">Hello World! This is SVG.</text>
+<rect x="130" y="60" width="60" height="70" fill="lightgreen"/>
+</svg>
+

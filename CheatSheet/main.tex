@@ -32,15 +32,25 @@
     %% quick look up
     Hexadecimal: Aa-10  Bb-11  Cc-12  Dd-13  Ee-14  Ff-15 \\
     4 bits – nibble, 8bits – Byte, 2 Bytes – Word, 4 Bytes - Double Word\\
+    KiB MiB GiB TiB PiB \\
+    KB MB GB TB PB  \\
     \hrule \noindent
     %% linux command
     \textbf{ltrace}: lists the library calls made by a running process as it is running. 
     \textbf{strace}: list the system calls.  \\
-    \textbf{touch}: change timestamp / create an empty file.
-    
+    \textbf{touch}: change timestamp / create an empty file. \\
+    \textbf{cat}, \textbf{sort}, \textbf{uniq}, \textbf{echo} \\
+    \textbf{stat}: information of a file. \textbf{file}: brief information of a file.\\
+    \textbf{od}: show content of file in various ways. -c character -d \\
+    \textbf{dd}: copy part of file. dd if=.. bs=BUFFER count=NBYTES of=.. \\
+    \textbf{cp}: copy a whole file. \textbf{head}: filter first few lines of content. \\
+    \textbf{/dev/null}: black hole. \textbf{/dev/zero}: all zeros. \\
+    \textbf{/dev/random}: full of random number. \\
+    \textbf{/dev/mem}: overview of main memory. \\
+    \textbf{/dev/hda}: raw block of hard disk. \\
     \hrule \noindent
     %% rPeANUt look up
-\vspace*{-3mm}
+\vspace*{-2mm}
 \begin{verbatim}
 xvar : block #1 ; a global variable xvar initialized to 1
 xvar: block 10 ; an array xvar of length 10, all values 0
@@ -56,6 +66,23 @@ p1.x load from #p1 , p1 -> x load from pp1  \end{verbatim}
     \textbf{negate}:flip all bits then plus 1. \textbf{not}: just filp all bits \\
     \textbf{rotate}:most significant bit will turn back to the least bit? \\
     status 0xFFF1, IO control 0xFFF2 represents? \\
+
+    \hrule \noindent
+    % 
+    \textbf{FLOP}: floating point operation per second. \\
+    \textbf{Mbps}: Mega bit per second. \textbf{MIPS}: Mega instruction persecond. \\
+    Way to represent negative number: \\
+    1. simple offset: normal addtion does not work. \\ 
+    2. reserve 1-bit as sign bit: range -127 to 127. \\
+    3. 2s complement: take advantage of 1 and 2.  \\
+    \textbf{2s complement}: range -127 to 128 \\
+    negate value: flip all bits and plus 1. \\
+    overflow flag: result is too large to be represented. \\
+    \textbf{Fixed point}: $(-1)^s m b^e$ 
+    \textbf{IEEE 754 floating point}:  1 sign bit, 8 exp bits, 24 significand \\
+    subnormal: $(-1)^s \times 0.m \times 2^{e-126}$. 
+    normal: $(-1)^s \times 1.m \times 2^{e-127}$. \\
+    special case: exp $0xFF$, if $m = 0$, value = inf. else, value = NaN \\
 
     \hrule \noindent
     %% concepts of first few chapters

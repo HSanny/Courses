@@ -15,6 +15,8 @@
 %}}}
 \usepackage{verbatimbox}
 \usepackage{tikz,multicol,amsfonts,wallpaper}
+\usepackage{float}
+\usetikzlibrary{automata,positioning}
 % file info macros and package parameters
 %{{{
 \newcommand{\AUTHOR}{Jimmy Lin}
@@ -45,7 +47,6 @@
 \newcommand{\pg}{\\[0.3cm]}
 \newcommand{\infint}{\int_{-\infty}^{+\infty}}
 \newcommand{\dinfint}{\int_{-\infty}^{+\infty}\int_{-\infty}^{+\infty}}
-%}}}
 \newcommand{\bmu}{\boldsymbol{\mu}}
 \newcommand{\bsum}{\boldsymbol{\Sigma}}
 \newcommand{\xv}{\textbf{x}}
@@ -58,6 +59,7 @@
 \newcommand{\V}{\mathcal{V}}
 \newcommand{\N}{\mathcal{N}}
 \newcommand{\BOLD}[1]{\textbf{#1}}
+%}}}
 %
 \newcommand{\half}{\frac{1}{2}}
 \DeclareMathOperator*{\argmin}{arg\,min}
@@ -173,20 +175,22 @@ By the way, in rejection sampling, there is another curse of dimensionality: the
     
     Generally, the generative model is the most expensive model because of the large number of parameter in class-conditional distribution $p(x| C_k)$ to be fitted. 
 
-32. What are the deficiencies of the least squares approach in linear classification? 
+    32. What are the deficiencies of the least squares approach in linear classification? (refer Textbook P185-186)
     
-    \BOLD{TBD}: It may not produce good result. 
-    
-    (refer to the lecture notes 07\_Linear\_Classification\_1 P21-22).
+    (1). Least-squares solutions lack robustness to outliers.
 
+    (2). In some multi-class classification problems that linear decision boundaries can give excellent separation between the classes, the least squares approach will misclassify most of the points from some classes.
+    
 33. What is the idea of Fisher's Linear Discriminant? Derive the fisher's linear discriminant that projects $x \in \mathbb{R}^D$ to $x \in \mathbb{R}^{D'}$ where $D > D'$.
+
+    \BOLD{ADD something here...}
 
 34. What is the perceptron algorithm? Describe it in detail.
 
-    Basic idea of perceptron algorithm is to minimise the number of misclassified patterns.
+    Basic idea of perceptron algorithm is to minimise the number of misclassified patterns in two-class classfication problem.
 
     Generalised linear model:
-    $$ y(x) = f( w^T \Phi(x) )$$
+    $$ y(x) = f( w^T \Phi(x) ) = + 1 \ (w^T \Phi(x) > 0), -1 \ (w^T \Phi(x) < 0) $$
 
     Use Particular coding scheme: $+1$ for $C_1$, $-1$ for $C_2$.
 
@@ -198,10 +202,15 @@ By the way, in rejection sampling, there is another curse of dimensionality: the
     This algorithm guaranteed to converge, applied with stochastic gradient descent:
     $$ - w^{(\tau + 1)} \Phi(x_n) t_n = - w^{(\tau)} \Phi(x_n) t_n - (\Phi(x_n) t_n)^T \Phi(x_n) t_n < - w^{(\tau)} \Phi(x_n) t_n $$
 
-
 35. What is the probalistic generative model? Describe it in detail.
 
+    We have Naive Bayes for the generative model with discrete input. The Naive Bayes make a class conditional independence assumption: all features are independent on each other conditioned on the class.
+
 36. What is logistic regression? Describe it in detail.
+
+    Logistic Regression, in essence, is a discrminative model to solve the classfication problem. It directly model the posterior distribution $y_n = p(C_1 | x_n)$. Its likelihood function is 
+    $$ p(t,X) = \prod_{n=1}^{N} y_{n}^{t_n} (1 - y_n) ^{1 - t_n} $$
+
 
 37. What is the feature mapping in classfication problem? Why we need this feature mapping sometimes?
 
@@ -210,26 +219,117 @@ By the way, in rejection sampling, there is another curse of dimensionality: the
     Sometimes, the patterns in input space is not linearly separable but in feature space it is linearly separable. Note that the overlapping problem cannot be solved by the mapping into feature space.
 
 38. What is Laplace Approximation? Why we need to do Laplace Approximation sometimes? Describe in details. 
-
-    Laplace Approximation is to derive a gaussian distribution to approximate given distribution such that two distribution has the same mode.
-    Given arbitrary probability distribution $q(x)$ which is not gaussian:
-    $$ q(x) = \frac{1}{Z} f(x) $$
-
-    Ignore the normalising factor $Z$, only focus on the $f(x)$ dependent on variable $x$.
-
-    Take logarithm for $f(x)$ and apply taylor expansion on it to second order at point $z_0$, where 
-    $$ ln( f(z) ) = ln( f(z_0) ) + \frac{A}{2} (z - z_0)^2 $$
-
-    where $A = \bigtriangledown \bigtriangledown ln( f(z) )|_{z=z_0}$ and $ \bigtriangledown ln(f(z_0)) = 0 $.
-
-    By exponenting both side, we derive the desired distribution which approximates the $q(x)$.
-    $$
-        g (x) = (\frac{A}{2\pi})^{\half} exp ( \frac{A}{2}(z - z_0)^2 )
-    $$
+{
+    \begin{figure}[H] \centering
+    \includegraphics[width=3in,height=1.4in]{./figure/Laplace_1.png}
+    \includegraphics[width=3in,height=1.5in]{./figure/Laplace_2.png}
+    \caption{Laplace Approximation in vector space.}
+\end{figure}
+}
 
 39. Describe Baysian Logistic Regression in detail.
 
     \BOLD{ADD something here...}
+
+    \newpage
+
+61. Show that Gaussian distribution belongs to exponential family.
+
+\begin{figure}[H] \centering
+    \includegraphics[width=3in,height=2.2in]{./figure/expfamily_1.png}
+    \includegraphics[width=3in,height=2.2in]{./figure/expfamily_2.png}
+    \caption{Demonstrate Gaussian distribution belongs to exponential family.}
+\end{figure}
+
+62. How do we sample from standard distribution?
+
+63. Describe the method you would use to sample from the following distribution:
+$$ p(x=i) = \frac{1}{i} - \frac{1}{i+1},\ i = 1,2,3,4 ...$$
+
+64. Describe rejection sampling in detail.
+
+65. Describe importance sampling in detail.
+
+66. Describe Metropolis-Hasting algorithm in detail.
+
+67. What is the idea behind principle component analysis?
+
+(1) PCA is an algorithm for unsupervised learning. (differ from FDA)
+
+(2) Functionality: Dimensionality Reduction. Project data into a subspace where data objects span the most widely on the bases of subspace.
+
+(3) Functionality: Data Decorelation. Transform the coordinate of original space and apply the scaling on each coordinate axis, such that in new coordinate system, the mean of data objects is zero and covariance matrix is identity.
+
+68. What is a non-stationary distribution?
+
+    Non-stationary distribution is the 
+
+69. Use a Bayesian Network to represent a second-order Markov chain.
+
+\begin{figure}[H] \centering
+\begin{tikzpicture}[shorten >=1pt,accepting/.style={double distance=2pt},on grid,node distance=3cm,auto,bend angle=45] 
+   \node[state] (s0)  {$q_0$}; 
+   \node[state] (s1) [right=of s0] {$q_{1}$}; 
+   \node[state] (s2) [right=of s1] {$q_{2}$}; 
+   \node[state] (s3) [right=of s2] {$q_{3}$}; 
+   \node[state] (s4) [right=of s3] {$q_4$};
+   \path[->] (s0) edge [right] node  {} (s1);
+   \path[->] (s1) edge [right] node  {} (s2);
+   \path[->] (s2) edge [right] node  {} (s3);
+   \path[->] (s3) edge [right] node  {} (s4);
+   \path[->] (s0) edge [bend left] node  {} (s2);
+   \path[->] (s1) edge [bend left] node  {} (s3);
+   \path[->] (s2) edge [bend left] node  {} (s4);
+\end{tikzpicture}\\[0.5cm]
+\caption{Bayesian Network to represent second-order Markov Chain}
+\end{figure}
+
+70. What is the difference between principle component analysis and Fisher's discriminant?
+
+    \begin{itemize}
+        \item Essence: FDA is supervised learning. PCA is unsupervised learning. (differ in existence of labeled data)
+    \item Goal: FDA is to fulfill classification problem. PCA is to do dimensionality reduction or data decorrelation.
+    \item Basic Idea: FDA, given the labels, maximise the between-class covariance and minimise the within-class covariance. PCA consider the maximally reserved data variance (information).
+     \end{itemize}
+
+71. Prove that independence of two random variable implies uncorrelatedness. Give counter example to show that uncorrelatedness does not imply independence.
+
+    Independence: $ P (x,y) = p(x) p(y) $.  Uncorrelatedness: $ cov (x,y) = 0 $
+
+    Proof of $independence \rightarrow uncorrelatedness$:
+    \begin{align}
+        Cov(X,Y) &= \infint \infint (x - E(x))(y - E(y)) p(x,y) dx dy  \\
+        &= \infint \infint (x - E(x))(y - E(y))  p(x)p(y) dx dy \\
+        &= \big( \infint (x - E(x)) p(x) dx \big) \cdot \big( \infint (y - E(y)) p(y) dy \big) \\
+        &=  E(x - E(x)) \cdot E(y - E(y)) \\
+        &=  0 
+    \end{align}
+
+    Counter-example: 
+
+    Suppose $X$ is a normally-distributed random variable with zero mean.  Let Y = $X^2$.  Clearly X and Y are not independent.
+    However, The covariance of X and Y is
+    $$ Cov(X,Y) = E(XY) - E(X)E(Y) = E(X^3) - 0*E(Y) = E(X^3)  = 0 $$
+
+72. Assuming K different states for each variable $x$, how many parameters does M-order Markov chain have?
+    
+    $$ K^M (K - 1)$$
+
+73. What is a homogeneous hidden Markov Model?
+
+    Homogeneousness in hidden markov model means that all the transition probabilities are the same.
+
+    The probability distribution of latent variable is \BOLD{invariant or stationary} if the \BOLD{Detailed balance} is satisfied. (also called \BOLD{reversible}.)
+    $$ p^{*}(z) T(z,z') = p^{*}(z')T(z', z) $$
+
+74. Describe Viterbi algorithm in detail.
+
+75. What are the motivations for combining models?
+    \begin{itemize}
+    \item Motivation: Coming up with a very precise prediction rule can be very hard. It may be easier to come up with a number of not so precise prediction rules.
+    \item Basic Idea: Combine models with different rules to make better prediction.
+        \end{itemize}
+
 
 \end{document}
 

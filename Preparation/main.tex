@@ -116,25 +116,34 @@
     \begin{itemize}
     \item To assess a model, performance on training set is not sufficient since it cannot be generalised to all data set.
     \item When data is scarce, and in order to assess models appropriately, we wish to use as much of the available data as possible for training.
+\end{itemize}
 
-    Drawbacks:
+Drawbacks:
     \begin{itemize}
     \item The number of training runs that must be performed is increased by a factor of S, and this can prove problematic for models whose training is computationally expensive.
     \item Exploring combinations of settings for such parameters could require a number of training runs that is exponential in the number of parameters.
     \end{itemize}
-\end{itemize}
 
+25. Derive a least squre solution for linear regression model (with regularisation). (Refer to P144-145)
+\newcommand{\bw}{\bs{w}}
+\newcommand{\bPhi}{\bs{\Phi}}
+\newcommand{\bphi}{\bs{\phi}}
+%\newcommand{\bx}{\bs{x}}
 
-25. Derive a least squre solution for linear regression model (with regularisation).
     
     The error function for least square error with regularisation:
     \begin{align}
-        E(w) &= \half \sum_{n=1}^{N} (y(x_n) - t_n)^2 + \half w^T w \\
-             &= \half ( w^T )
+        E(\bw) &= E_D(\bw) + \lambda E_w(\bw) \\
+               &= \half \sum_{n=1}^{N} ( \bw^T \bphi(\bx_n) - t_n)^2 + \frac{\lambda}{2} \bw^T \bw 
     \end{align}
-
+    $\lambda$ is the regularization coefficient that controls the relative importance of the data-dependent error $E_D (\bw)$ and the regularization term $E_w (\bw)$.
+    \begin{align}
+        \bigtriangledown E(\bw) &= \sum_{n=1}^{N} ( \bw^T \bphi(\bx_n) - t_n) \bphi(\bx_n) + \lambda \bw  \\
+         &= \bPhi^T (\bPhi \bw - \bs{t}) + \lambda \bw \\
+         &= 0
+    \end{align}
     $$
-    w = (\lambda I - \Phi^T \Phi)^{-1} \Phi t
+    w = (\lambda \bs{I} + \bPhi^T \bPhi)^{-1} \bPhi^T \bs{t}
     $$
 
     26. What is stochastic gradient descent? How to apply it to linear regression problem specifically with the sum-of-squares error function? (Refer to Textbook P144)
@@ -153,7 +162,7 @@
 
 27. What is the bias-variance decomposition? Demonstrate the bias-variance trade-off where the error is measured by the mean squared error. What you can deduce from the result? (Refer to Textbook P149)
     
-Bias-variance trade-off is a frequentist viewpoint of the model complexity issue: \textbf{expected squared error} $\{ y(\bs{x} ; \mathcal{D}) - h(\bs{x}) \}^2$ can be decomposed as summation of squared bias and the variance.
+Bias-variance trade-off is a frequentist viewpoint of the model complexity issue: \textbf{expected squared error} $\mathbb{E}\{ y(\bs{x} ; \mathcal{D}) - h(\bs{x}) \}^2$ can be decomposed as summation of squared bias and the variance.
 
 \begin{figure}[H] \centering
     \includegraphics[width=5.5in,height=2in]{./figure/BVtradeoff.png}
@@ -183,11 +192,12 @@ A prior is conjugate to the likilihood function, if the posterior distribution d
 
 30. What is the curse of dimensionality? Why it can be a problem? (Refer to Textbook P36)
 
-The severe difficulty that can arise in spaces of many dimensions is sometimes called the curse of dimensionality. 
-Not all intuitions or even techniques developed in spaces of low dimensionality will generalize to spaces of many dimensions.
-    
+The severe difficulty that can arise in high-dimensional space is called the curse of dimensionality. 
 
-\BOLD{why it can be a problem?}: the number of parameter in vector $w$ we need to deal with is increased exponentially. 
+Not all intuitions or even techniques developed in spaces of low dimensionality will generalize to spaces of many dimensions.
+
+Why problem? the number of parameter in vector $w$ we need to deal with is increased exponentially. 
+Big limitation for the linear basis function model. $10$ basis function in one dimension. $10^D$ in $D$ dimensions.
 
 By the way, in rejection sampling, there is another curse of dimensionality: the probability of rejection increases exponentially with regard to the dimensionality of the sampled space.
 

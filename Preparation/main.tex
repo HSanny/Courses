@@ -73,12 +73,12 @@
      A = U^T \Sigma V
     $$
 
-22. Calculate the gradient of the following function 
+22. Calculate the gradient of the following function  
     $$
     f(X) = tr\{ X^T C X\}
     $$
 
-    Solutions starting from definition of derivative:
+    Solutions starting from definition of derivative: (Refer to Notes)
 \begin{align}
     & \hspace{0.4cm} \lim_{n \rightarrow 0} \frac{ f(X + n\xi) - f (X) }{n} \\
     &= \lim_{n \rightarrow 0}  \frac{tr\{ (X + n\xi)^T C (X + n\xi)\} -  tr\{ X^T C X\}}{n} \\
@@ -92,7 +92,7 @@
     &=  tr\{ X^T(C + C^T)\xi  \} 
 \end{align}
 
-23. Explain the difference of frequentist's approach and Bayesian approach.
+23. Explain the difference of frequentist's approach and Bayesian approach. (Refer to Textook P23)
 
     Aspects: \BOLD{objective, sequential learning, compromise}    
 
@@ -108,13 +108,22 @@
 
     According to the Bayes Theorem, there is a \BOLD{compromise} between the observation of dataset and the preknowledge. If the amount of data is very large or preknowledge (prior) provides no disparity for various classes, the preknowledge can be ignored. However, when the data is scarce, the preknowledge plays an important role.
 
-24. What is $S$-fold cross validation? Why we use it?
+    24. What is $S$-fold cross validation? Why we use it? (Refer to P32-33)
     
-    A method to compare the performance of each model. Randomly group all labeled data into $S$ sets, and run experiment for $S$ times. Each time leave one set as testing set and others as training set. 
+    Cross validation is Model Selection algorithm, sometimes used for determining the parameters. Randomly group all labeled data into $S$ sets, and for each model run experiment for $S$ times. At each experiment leave one set as testing set and others as training set. Extreme: leave-one-out cross validation, S = N, each set contains only one piece of labeled data.
 
-    Extreme: leave-one-out cross validation, S = N, each set contains only one piece of labeled data.
+    Reason: 
+    \begin{itemize}
+    \item To assess a model, performance on training set is not sufficient since it cannot be generalised to all data set.
+    \item When data is scarce, and in order to assess models appropriately, we wish to use as much of the available data as possible for training.
 
-    Functionality: Model Comparison. Such model can be of different form or of the same form with different parameter (such as to determine K in K-Nearest Neighbour, or determine).
+    Drawbacks:
+    \begin{itemize}
+    \item The number of training runs that must be performed is increased by a factor of S, and this can prove problematic for models whose training is computationally expensive.
+    \item Exploring combinations of settings for such parameters could require a number of training runs that is exponential in the number of parameters.
+    \end{itemize}
+\end{itemize}
+
 
 25. Derive a least squre solution for linear regression model (with regularisation).
     
@@ -128,38 +137,55 @@
     w = (\lambda I - \Phi^T \Phi)^{-1} \Phi t
     $$
 
-26. What is stochastic gradient descent? How to apply it to linear regression problem specifically with the sum-of-squares error function?
+    26. What is stochastic gradient descent? How to apply it to linear regression problem specifically with the sum-of-squares error function? (Refer to Textbook P144)
 
     Stochastic gradient descent is one optimisation algorithm, which consider only the error of one piece of observed data at each iteration of training. That is where it is different from the batch gradient descent, which takes the averaged errors of all the observed data in one training iteration.
-    $$ w^{(\tau+1)} = w^{(\tau)} - \xi \bigtriangledown E(w) $$
+    $$ \bs{w}^{(\tau+1)} = \bs{w}^{(\tau)} - \xi \bigtriangledown E(\bs{w}) $$
 
     In sum-of-square function, we have error function for one observed data as follows,
-    $$ E(w) = ( w^T \Phi(x_n) - t_n)^2 $$
+    $$ E(\bs{w}) = ( \bs{w}^T \Phi(x_n) - t_n)^2 $$
     
     whose gradient is 
-    $$ \bigtriangledown E(w) = (w^T \Phi(x_n) - t_n) \Phi(x_n)$$
+    $$ \bigtriangledown E(\bs{w}) = (\bs{w}^T \Phi(x_n) - t_n) \Phi(x_n)$$
     
     Take this gradient of error function back, we have
-    $$ w^{(\tau+1)} = w^{(\tau)} - \xi (w^T \Phi(x_n) - t_n) \Phi(x_n) $$
+    $$ \bs{w}^{(\tau+1)} = \bs{w}^{(\tau)} - \xi (\bs{w}^T \Phi(x_n) - t_n) \Phi(x_n) $$
 
-27. What is the bias-variance decomposition? Demonstrate the bias-variance trade-off where the error is measured by the mean squared error. What you can deduce from the result?
+27. What is the bias-variance decomposition? Demonstrate the bias-variance trade-off where the error is measured by the mean squared error. What you can deduce from the result? (Refer to Textbook P149)
     
-    \BOLD{\huge add some thing here..}
+Bias-variance trade-off is a frequentist viewpoint of the model complexity issue: \textbf{expected squared error} $\{ y(\bs{x} ; \mathcal{D}) - h(\bs{x}) \}^2$ can be decomposed as summation of squared bias and the variance.
 
-28. What is a conjugate prior? Why we normally use conjugate prior? What is the conjugate prior for Gaussian distribution?
+\begin{figure}[H] \centering
+    \includegraphics[width=5.5in,height=2in]{./figure/BVtradeoff.png}
+    \caption{Sampling from Standard Distributions.}
+\end{figure}
+
+Deduced Condlusion: 
+
+\begin{itemize}
+    \item There is a trade-off between bias and variance, with very flexible models having low bias and high variance, and relatively rigid models having high bias and low variance.
+    \item The model with the optimal predictive capability is the one that leads to the best balance between bias and variance. 
+\end{itemize}
+
+28. What is a conjugate prior? Why we normally use conjugate prior? What is the conjugate prior for Gaussian distribution? (Refer to P117)
 
 A prior is conjugate to the likilihood function, if the posterior distribution derived from the Bayes Theorem shares the same form (perhaps with different parameters) with prior distribution. 
 
-    Use conjugate prior to simplify the sequential learning process in the sense that we make the update formula the same at all iterations. 
+    Use conjugate prior to simplify the Bayesian treatment of sequential learning process, in the sense that we have the same update formula at all iterations. 
+
     Conjugate prior of gaussian distribution is gaussian distribution.
 
-29. What are the limitations of linear basis function models? 
+29. What are the limitations of linear basis function models? (Refer to Textbook P173)
 
-    We have to fix the basis functions before the data is observed. It is very likely that the basis function we choose cannot adapt to the target function. And thus, the lower bound of the error may be quite large.
+    The basis functions are fixed before the data is observed. The chosen basis function may not adapt to the target function. And thus, the lower bound of the error may be quite large.
 
-30. What is the curse of dimensionality? Why it can be a problem?
+    The number of basis functions needs to grow exponentially, with the dimensionality $D$ of the input space. 
+
+30. What is the curse of dimensionality? Why it can be a problem? (Refer to Textbook P36)
+
+The severe difficulty that can arise in spaces of many dimensions is sometimes called the curse of dimensionality. 
+Not all intuitions or even techniques developed in spaces of low dimensionality will generalize to spaces of many dimensions.
     
-Curse of Dimensionality: the number of basis functions (amount of the feature mapping) grows exponentially with regard to the dimensionality $D$.
 
 \BOLD{why it can be a problem?}: the number of parameter in vector $w$ we need to deal with is increased exponentially. 
 
@@ -177,9 +203,11 @@ By the way, in rejection sampling, there is another curse of dimensionality: the
 
     32. What are the deficiencies of the least squares approach in linear classification? (refer Textbook P185-186)
     
-    (1). Least-squares solutions lack robustness to outliers.
+    \begin{itemize}
+    \item Least-squares solutions lack robustness to outliers.
 
-    (2). In some multi-class classification problems that linear decision boundaries can give excellent separation between the classes, the least squares approach will misclassify most of the points from some classes.
+    \item In some multi-class classification problems that linear decision boundaries can give excellent separation between the classes, the least squares approach will misclassify most of the points from some classes.
+    \end{itemize}
     
 33. What is the idea of Fisher's Linear Discriminant? Derive the fisher's linear discriminant that projects $x \in \mathbb{R}^D$ to $x \in \mathbb{R}^{D'}$ where $D > D'$.
 
@@ -218,7 +246,7 @@ By the way, in rejection sampling, there is another curse of dimensionality: the
 
     Sometimes, the patterns in input space is not linearly separable but in feature space it is linearly separable. Note that the overlapping problem cannot be solved by the mapping into feature space.
 
-38. What is Laplace Approximation? Why we need to do Laplace Approximation sometimes? Describe in details. 
+    38. What is Laplace Approximation? Why we need to do Laplace Approximation sometimes? Describe in details. (Refer to Notes)
 {
     \begin{figure}[H] \centering
     \includegraphics[width=3in,height=1.4in]{./figure/Laplace_1.png}
@@ -246,7 +274,7 @@ By the way, in rejection sampling, there is another curse of dimensionality: the
 \end{figure}
 
 62. How do we sample from standard distribution? (Refer to 19\_Sampling.pdf)
-    \begin{figure}[H] \centering
+\begin{figure}[H] \centering
     \includegraphics[width=3in,height=2.2in]{./figure/standardSampling_1.png}
     \includegraphics[width=3in,height=2.2in]{./figure/standardSampling_2.png}
     \caption{Sampling from Standard Distributions.}
@@ -258,9 +286,24 @@ $$ p_y (y) = p_z (z) | \frac{dz}{dy}| $$
 63. Describe the method you would use to sample from the following distribution:
 $$ p(x=i) = \frac{1}{i} - \frac{1}{i+1},\ i = 1,2,3,4 ...$$
 
-64. Describe rejection sampling in detail.
+64. Describe rejection sampling in detail. (Refer to 19\_Sampling.pdf)
+\begin{figure}[H] \centering
+    \includegraphics[width=3in,height=2.2in]{./figure/rejectSampling_1.png}
+    \includegraphics[width=3in,height=2.2in]{./figure/rejectSampling_2.png} \\
+    \caption{Rejection Sampling Details.}
+\end{figure}
+\begin{figure}[H] \centering
+    \includegraphics[width=3in,height=2.2in]{./figure/rejectSampling_3.png}
+    \includegraphics[width=3in,height=2.2in]{./figure/rejectSampling_4.png}
+    \caption{Adaptive Rejection Sampling. Problem of rejection sampling.}
+\end{figure}
 
 65. Describe importance sampling in detail.
+\begin{figure}[H] \centering
+    \includegraphics[width=3in,height=2.2in]{./figure/importanceSampling_1.png}
+    \includegraphics[width=3in,height=2.2in]{./figure/importanceSampling_2.png}
+    \caption{Adaptive Rejection Sampling. Problem of rejection sampling.}
+\end{figure}
 
 66. Describe Metropolis-Hasting algorithm in detail.
 

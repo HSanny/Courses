@@ -317,17 +317,18 @@ $$ p(x=i) = \frac{1}{i} - \frac{1}{i+1},\ i = 1,2,3,4 ...$$
 
 66. Describe Metropolis-Hasting algorithm in detail.
 
-67. (not sure) What is the idea behind principle component analysis?
+67. What is the idea behind principle component analysis?
 
-(1) PCA is an algorithm for unsupervised learning. (differ from FDA)
-
-(2) Functionality: Dimensionality Reduction. Project data into a subspace such that 
 \begin{itemize}
-    \item data objects span the most widely on the bases of projected subspace.
-    \item covariance of data objects would be reduced in the least degree. info retained.
+\item PCA is an algorithm for unsupervised learning. 
+\item Linearly project the data points onto a lower dimensional subspace (principle subspace), such that the variance of the projected data is maximised.
+\item Functionality: Data Decorelation. Transform the coordinate of original space and apply the scaling on each coordinate axis, such that in new coordinate system, the mean of data objects is zero and covariance matrix is identity.
 \end{itemize}
-
-(3) Functionality: Data Decorelation. Transform the coordinate of original space and apply the scaling on each coordinate axis, such that in new coordinate system, the mean of data objects is zero and covariance matrix is identity.
+\begin{figure}[H] \centering
+    \includegraphics[width=3in,height=2.2in]{./figure/PCA_1.png}
+    \includegraphics[width=3in,height=2.2in]{./figure/PCA_2.png}
+    \caption{Principle Component Analysis.}
+\end{figure}
 
 68. What is a non-stationary sequential distribution? (Refer to Textbook P606)
 
@@ -335,6 +336,7 @@ $$ p(x=i) = \frac{1}{i} - \frac{1}{i+1},\ i = 1,2,3,4 ...$$
      \item In the stationary case, the data evolves in time, but the distribution from which it is generated remains the same.
      \item For the more complex nonstationary situation, the generative distribution itself is evolving (varying) with time. 
     \end{itemize}
+
 Note that in this course, we just focus on stationary distribution.
 
 69. Use a Bayesian Network to represent a second-order Markov chain. (Refer to Textbook P608)

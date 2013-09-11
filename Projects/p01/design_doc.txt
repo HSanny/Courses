@@ -54,6 +54,12 @@ Preliminaries
   preparing your submission, other than the Linux documentation,
   course text, and lecture notes.
 
+  The practical usage of nanosleep: 
+    http://stackoverflow.com/questions/7684359/using-nanosleep-in-c
+  The difference between nanosleep, sleep and usleep:
+    http://stackoverflow.com/questions/3072912/boostthis-threadsleep-vs-nanosleep
+    
+
 
 ################
 Questions regarding Part 0
@@ -63,7 +69,11 @@ Questions regarding Part 0
   the processes beginning with 0 (the original process) and incrementing for
   each child process.
 
+    4 child processes are created.
+
+
 (2) In part 0.3, which flavor of exec did you choose to use?  Why?
+    execve
 
 
 ################

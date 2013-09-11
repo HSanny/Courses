@@ -9,5 +9,23 @@
 
 int main(int argc, char **argv)
 {
-  return 0;
+    // argument verification
+    if (argc != 2) {
+        fprintf(stderr, "Error input.\n");
+        exit(-1);
+    }
+
+    // processing for the raw input
+    int pid = atoi(*(argv + 1));
+    if (! (pid > 0)) {
+        fprintf(stderr, "Process Number Must be Non-negative.\n");
+    }
+
+    // type cast
+    pid_t objpid = (pid_t) pid;
+
+    // send the signal to other process by using kill function
+    kill(objpid, SIGUSR1);
+
+    return 0;
 }

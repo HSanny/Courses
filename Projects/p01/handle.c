@@ -8,6 +8,7 @@
 #include "util.h"
 
 
+#define true 1
 /*
  * First, print out the process ID of this process.
  *
@@ -19,7 +20,14 @@
  */
 int main(int argc, char **argv)
 {
-  return 0;
+    pid_t mypid = getpid();
+    printf("pid is: %d\n", mypid);
+    while(true) {
+        printf("Still here\n");
+        sleep(1);
+    }
+
+    return 0;
 }
 
 

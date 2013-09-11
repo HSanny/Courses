@@ -7,18 +7,18 @@ CS login: jimmylin
 Email: JimmyLin@utexas.edu
 Unique Number: 53910
 
-Slip days used:
+Slip days used: 3 days
 
 ****EACH student submits a (unique) design document.****
 
 ################
 YOUR PARTNER'S INFO
 ################
-Name1:
-EID1:
-CS login:
-Email:
-Unique Number:
+Name1: Bochao Zhan
+EID1: BZ2892
+CS login: bzhan
+Email: bzhan927@gmail.com
+Unique Number: 53900
 
 Your partner's ranking (scale below): Excellent
 

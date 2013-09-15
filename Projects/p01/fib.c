@@ -20,13 +20,12 @@
 #include <sys/wait.h>
 #include <errno.h>
 
+#define false 0
+#define true 1
+
 const int MAX = 13;
 
 static void doFib(int n, int doPrint);
-
-// global variables for computation of Fib sequences.
-int LAST_FIB = 0; // also for the 0th Fib number
-int CURT_FIB = 1; // also for the 1st Fib number
 
 /*
  * unix_error - unix-style error routine.
@@ -59,13 +58,7 @@ int main(int argc, char **argv)
     exit(-1);
   }
 
-  // For the output in special case
-  if (arg == 0) printf("%d\n", LAST_FIB);
-  else if (arg == 1) printf("%d\n", CURT_FIB);
-  else {
-    // add the offset in Fib sequence
-    doFib(arg - 1, 1);
-  }
+  doFib(arg, true);
   return 0;
 }
 
@@ -80,36 +73,39 @@ int main(int argc, char **argv)
 static void 
 doFib(int n, int doPrint)
 {
-    int status;
+    int status1, status2;
+    if (n == 0 || n == 1) {
+        // printf("%d\n", n);
+        if (doPrint) {
+            printf("%d\n", n);
+            return ;
+        } else
+            exit(n);
+    }
     // create a new process
-    int child = fork();
+    int child1 = fork(), child2;
+    if (child1) child2 = fork();
 
     // No need for the input check since the argument is verified
     // in the main() function.
-
-    if (child == 0) {
-        // for the child process
-        if (n == 0) {
-            // the current number is what we want.
-            // end of the recursion.
-            printf("%d\n", CURT_FIB);
-            exit(1); // normal exit
-        } else {
-            // Computer the update of fib number
-            int temp = CURT_FIB; 
-            CURT_FIB += LAST_FIB; 
-            LAST_FIB = temp;
-            // Continue to compute the next Fib in the new process.
-            doFib(n - 1, doPrint);
-            waitpid(child, &status, 0);
-        }
+    if (child1 == 0) {
+        // Child Process:
+        doFib(n - 1, false);
+    } else if (child2 == 0) {
+        // Child Process:
+        doFib(n - 2, false);
     } else {
-        // wait for the termination of child process
-        waitpid(child, &status, 0);
-        exit(1);
+        // Parent Process: wait for the termination of child process
+        waitpid(child1, &status1, 0);
+        waitpid(child2, &status2, 0);
+        if (WIFEXITED(status1) && WIFEXITED(status2)) {
+            if (doPrint == true) {
+                printf("%d\n", WEXITSTATUS(status1) + WEXITSTATUS(status2));
+                return ;
+            } else {
+                // printf("%d %d\n", n, WEXITSTATUS(status1) + WEXITSTATUS(status2));
+                exit(WEXITSTATUS(status1) + WEXITSTATUS(status2));
+            }
+        }
     }
-
-    return ;
 }
-
-

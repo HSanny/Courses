@@ -2,9 +2,11 @@
 ## MODULE: psh.c
 ## VERSION: 1.2 
 ## SINCE: 2013-09-11
-## AUTHOR: Jimmy Lin (xl5224) - JimmyLin@utexas.edu  
+## AUTHOR: 
+##     Jimmy Lin (xl5224) - JimmyLin@utexas.edu
+##     Bochao Zhan (bz2892)- bzhan927@gmail.com
 ## DESCRIPTION: 
-##      psh - A prototype tiny shell program with job control
+##     psh - A prototype tiny shell program with job control
 ##
 #################################################################
 ## Edited by MacVim
@@ -31,7 +33,6 @@ int verbose = 0;            /* if true, print additional output */
 extern char **environ;      /* defined in libc */
 static char prompt[] = "psh> ";    /* command line prompt (DO NOT CHANGE) */
 int MAX_NUM_ARGS = 10;
-int MAX_NUM_ENVS = 10;
 /* End global variables */
 
 
@@ -117,83 +118,44 @@ int main(int argc, char **argv)
 */
 void eval(char *cmdline) 
 {
-    rmNewLine(cmdline);
-    rmWhiteSpaces(cmdline);
+    char * delimiter = " \n"; // separator between command and arguments
+    char * command = strtok(cmdline, delimiter);
+    //printf("%s\n", command);
     //printf("%s\n",cmdline);
+    if (!builtin_cmd(&command)) {
+        pid_t child = fork();
+        if (child == 0) {
+            // Initialiization of execution information
+            char * args[MAX_NUM_ARGS];
+            // Set null to all element of args
+            int j;
+            for (j = 0; j < MAX_NUM_ARGS; j ++) 
+                args[j] = NULL;
 
-    if (!builtin_cmd(&cmdline)) {
-        // Initialiization of execution information
-        char * filename;
-        char * args[MAX_NUM_ARGS];
-        char * envs[MAX_NUM_ENVS];
-        
-        char * delimiter = " "; // separator between command and arguments
-
-        // read in the first argument: name of the file to be executed
-        filename = strtok(cmdline, delimiter);
-
-        // configure the arguments
-        int i = 0;
-        args[i++] = filename;
-        char * pch;
-        while ((pch = strtok(NULL, delimiter)) != NULL) {
-            if (!(i < MAX_NUM_ARGS)) {
-                fprintf(stderr, "Too many arguments..");
-                break;
+            // configure the arguments
+            int i = 0;
+            args[i++] = command;
+            char * pch;
+            while ((pch = strtok(NULL, delimiter)) != NULL) {
+                if (!(i < MAX_NUM_ARGS)) {
+                    fprintf(stderr, "Too many arguments..");
+                    break;
+                }
+                args[i++] = pch;
+                // printf("%s\n", pch);
             }
-            args[i] = pch;
-            // printf("%s\n", pch);
-            i ++;
+            // execution
+            if (execvp(args[0], args) == -1) 
+                printf("Wrong usage of PSH.\n");
+            exit(EXIT_SUCCESS);
+        } else {
+            int status = 0;
+            // wait the job to finish
+            waitpid(child, &status, 0);
         }
-        // configure the environment where the execution relies on
-        envs[0] = getenv("home");
-        envs[1] = getenv("logname");
-        envs[2] = NULL;
-        // execution
-        execve(filename, args, envs);
     }
-
     return;
 }
-
-/*
- * Remove the Newline (\n) caused by Enter Press 
- */
-void rmNewLine(char * str) {
-    int i; 
-    for (i = 0; i < strlen(str); i ++) {
-        if (*(str + i) == '\n') {
-            *(str + i) = 0;
-        }
-    }
-}
-
-/* 
- * Remove the whitespaces in the front of command
- */
-void rmWhiteSpaces(char * str) {
-    // initialization
-    int len = strlen(str);
-    int iter, newiter;
-    // ignore the front 'blank' characters
-    for (iter = 0, newiter = 0; iter < len; iter++) {
-        if (*(str + iter) == ' ') {
-            continue;
-        } else {
-            break;
-        }
-    }
-    // copy mediate characters
-    for ( ; iter < len; iter ++, newiter ++) {
-        *(str + newiter) = *(str + iter);
-    }
-    // set the rear characters to empty 
-    for ( ; newiter < len; newiter ++) {
-        *(str + newiter) = 0;
-    }
-    return ;
-}
-
 
 /* 
  * builtin_cmd - If the user has typed a built-in command then execute
@@ -203,7 +165,7 @@ void rmWhiteSpaces(char * str) {
  */
 int builtin_cmd(char **argv) 
 { 
-    // quit processing
+    // The quit command terminates the shell.
     if (strcmp(*argv, "quit") == 0) {
         exit(1); // user-specified quit 
     }

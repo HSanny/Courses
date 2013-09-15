@@ -58,7 +58,7 @@ int addjob(struct job_t *jobs, pid_t pid, int state, char *cmdline)
 	        printf("Added job [%d] %d %s\n", jobs[i].jid, jobs[i].pid, jobs[i].cmdline);
             }
             return 1;
-	}
+        }
     }
     printf("Tried to create too many jobs\n");
     return 0;

@@ -54,13 +54,15 @@ Preliminaries
   preparing your submission, other than the Linux documentation,
   course text, and lecture notes.
 
-  The practical usage of nanosleep: 
+  a. The practical usage of nanosleep: 
     http://stackoverflow.com/questions/7684359/using-nanosleep-in-c
-  The difference between nanosleep, sleep and usleep:
+  b. The difference between nanosleep, sleep and usleep:
     http://stackoverflow.com/questions/3072912/boostthis-threadsleep-vs-nanosleep
+  c. GNU Documentation:  
+    http://www.gnu.org/software/libc/manual/html_node/Signal-and-Sigaction.html
+  d. Signal v.s. Sigaction
+    http://www.alexonlinux.com/signal-handling-in-linux
     
-
-
 ################
 Questions regarding Part 0
 ################
@@ -69,12 +71,31 @@ Questions regarding Part 0
   the processes beginning with 0 (the original process) and incrementing for
   each child process.
 
-    4 child processes are created.
-
+    14 child processes are created.
+    Process 14 has return value: 1.
+    Process 13 has return value: 1.
+    Process 12 has return value: 1.
+    Process 11 has return value: 1.
+    Process 10 has return value: 0.
+    Process 9 has return value: 0.
+    Process 8 has return value: 1.
+    Process 7 has return value: 1.
+    Process 6 has return value: 0.
+    Process 5 has return value: 1.
+    Process 4 has return value: 2.
+    Process 3 has return value: 1.
+    Process 2 has return value: 2.
+    Process 1 has return value: 3.
+    Process 0 has return value: 5.
 
 (2) In part 0.3, which flavor of exec did you choose to use?  Why?
-    execve
 
+    The exec function I use is execvp().
+    This is because the execvp() function:
+        (a) satisfies the our basic execution requirement.
+        (b) searches the directories listed in the PATH environment variable,
+        such that we do not have to specify the current path in the filename
+        once again.
 
 ################
 Questions regarding Part 1
@@ -82,16 +103,35 @@ Questions regarding Part 1
 (1) In the provided utility function Signal(), what does the call to
   sigaction() do?  Why was sigaction() used instead of signal()?
 
+    The functionality of system call sigaction() is to associate a 
+    signal handler to the specified signal, that is, to install a 
+    signal handler.
+
+    Reason that sigaction() is in preference: 
+    The sigaction function specifies more information than the signal
+    function, so the return value from signal cannot express the full
+    range of sigaction possibilities. Besides, sigaction() has more options
+    and is more reliable. If use the sigaction(), we need not reinstall
+    the handler, because it will never be reset. With SA_RESTART, you can
+    also get some system calls to automatically restart.
+
 (2) What is the last assembly language instruction executed by the
   signal handler function that you write?
+   
+    dyld_stub___sigreturn () 
 
 (3) After the instruction identified in the previous question executes, 
   what is the next assembly language instruction executed?
+
+    __sigreturn () 
 
 (4) When the signal handler finishes running, it must restore all of
   the registers from the interrupted thread to exactly their values
   before the signal occurred. How is this done?
 
+    Before the signal handler invocation, the value in the CPU registers
+    will be restored to the stack.
+    
 
 ################
 Questions regarding Part 2
@@ -99,6 +139,5 @@ Questions regarding Part 2
 (1) In msh.c, we use three separate signal handlers to catch our signals. 
   You can also use a single signal handler to catch all three signals.  Is
   there a design advantage of one over the other?  Explain your answer.
-
-
-
+    
+    

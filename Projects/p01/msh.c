@@ -38,6 +38,7 @@ extern char **environ;      /* defined in libc */
 static char prompt[] = "msh> ";    /* command line prompt (DO NOT CHANGE) */
 static struct job_t jobs[MAXJOBS]; /* The job list */
 int MAX_NUM_ARGS = 10;
+sigset_t sig_child;
 /* End global variables */
 
 
@@ -102,6 +103,8 @@ int main(int argc, char **argv)
 
     /* Initialize the job list */
     initjobs(jobs);
+	sigemptyset (&sig_child);
+	sigaddset(&sig_child,SIGCHLD);
 
     /* Execute the shell's read/eval loop */
     while (1) {
@@ -172,12 +175,14 @@ void eval(char *cmdline)
     }
 
     // Inspect whether it is a built-in command
-    if (!builtin_cmd(args)) {
+    if (((pch = strtok(cmdline, delimiter)) != NULL)&&(!builtin_cmd(args))) {
         // it is a executable file
+          sigprocmask(SIG_BLOCK, &sig_child, NULL);
         pid_t child = fork();
 
         if (child == 0) {
             // execution
+             sigprocmask(SIG_UNBLOCK, &sig_child, NULL);
             if (execvp(args[0], args) == -1) {
                 printf("Wrong usage of msh.\n");
                 exit(-1);
@@ -187,12 +192,14 @@ void eval(char *cmdline)
             if (foreground) {
                 // add a new job to job list
                 addjob(jobs, child, FG, cmdline);
+                sigprocmask(SIG_UNBLOCK, &sig_child, NULL);
                 printf(" Job [%d] (%d) {%d} FG %s\n", pid2jid(jobs, child), 
                         child, getpgid(child), jobs[i].cmdline);
             } else {
                 // add a new job to job list
                 setpgid(child, child);
                 addjob(jobs, child, BG, cmdline);
+                sigprocmask(SIG_UNBLOCK, &sig_child, NULL);
                 printf(" Job [%d] (%d) {%d} BG %s\n", pid2jid(jobs, child), 
                         child, getpgid(child), jobs[i].cmdline);
             }
@@ -301,7 +308,12 @@ void waitfg(pid_t pid)
  */
 void sigchld_handler(int sig) 
 {
-
+	int pid,status,exit_value;
+	while((pid=waitpid(-1,&status, WNOHANG))>0){
+    	exit_value=WEXITSTATUS(status);
+    	printf("A Child Process, Which PID= %d, Is Terminated With EXIT Status= %d",pid,exit_value);
+		fflush(stdout);
+		}
     return;
 }
 
@@ -382,6 +394,3 @@ void sigquit_handler(int sig)
     printf("Terminating after receipt of SIGQUIT signal\n");
     exit(1);
 }
-
-
-

@@ -64,7 +64,7 @@ void sigquit_handler(int sig);
  */
 int main(int argc, char **argv) 
 {
-     printf("pid: %d, pgid:%d\n", getpid(), getpgid(getpid()));
+    printf("pid: %d, pgid:%d\n", getpid(), getpgid(getpid()));
     char c;
     char cmdline[MAXLINE];
     int emit_prompt = 1; /* emit prompt (default) */
@@ -138,6 +138,7 @@ int main(int argc, char **argv)
  * background children don't receive SIGINT (SIGTSTP) from the kernel
  * when we type ctrl-c (ctrl-z) at the keyboard.  
 */
+// FIXME: segmentation fault for empty input
 void eval(char *cmdline) 
 {
     int foreground;
@@ -177,6 +178,7 @@ void eval(char *cmdline)
         pid_t child = fork();
 
         if (child == 0) {
+            setpgid(0, 0);
             // execution
             if (execvp(args[0], args) == -1) {
                 printf("Wrong usage of msh.\n");
@@ -191,16 +193,10 @@ void eval(char *cmdline)
                         child, getpgid(child), jobs[i].cmdline);
             } else {
                 // add a new job to job list
-                setpgid(child, child);
                 addjob(jobs, child, BG, cmdline);
                 printf(" Job [%d] (%d) {%d} BG %s\n", pid2jid(jobs, child), 
                         child, getpgid(child), jobs[i].cmdline);
             }
-            int status = 0;
-            // wait the job to finish
-            // wait(&status);
-            // delete the job from job list
-            // deletejob(jobs, child);
         }
     }
     return;
@@ -222,15 +218,22 @@ int builtin_cmd(char **argv)
 
     // The jobs command lists all background jobs.
     if (strcmp(*argv, "jobs") == 0) {
-        if (jobs[0].state == UNDEF) 
+        // count the number of background jobs.
+        int numBG = 0, i;
+        for (i = 0; i < MAXJOBS; i ++) {
+            if (jobs[i].state == BG)
+                numBG ++;
+        }
+        // title display
+        if (!numBG) 
             printf("There are no background jobs.\n");
         else
             printf("All background jobs are listed as follows: \n");
-        int i;
+        // display the specifics of bg jobs to screen
         for (i = 0; i < MAXJOBS; i ++) {
             if (jobs[i].state == BG)
-                printf(" Job [%d] (%d) BG %s", jobs[i].jid, jobs[i].pid,
-                        jobs[i].cmdline);
+                printf(" Job [%d] (%d) {%d} BG %s\n", jobs[i].jid, jobs[i].pid,
+                        getpgid(jobs[i].pid), jobs[i].cmdline);
         }
         return 1;
     }
@@ -246,34 +249,44 @@ int builtin_cmd(char **argv)
 /* 
  * do_bgfg - Execute the builtin bg and fg commands
  * FIXME: exception handling for jid with non-numeric character
+ * FIXME: jid input
  */
 void do_bgfg(char **argv) 
 {
     char * job_argv = *(argv+1);
-    int jid, pid;
+    pid_t pid;
+    int jid;
     struct job_t *job;
     if (*job_argv == '%') { // this is jid input
         jid = atoi(strtok(job_argv, "%"));
         job = getjobjid(jobs, jid);
+        if (job == NULL) {
+            printf("Error Job id input.\n");
+            exit(-1);
+        }
+        pid = job->pid;
+        printf("jid: %d \n",jid);
     } else { // this is pid input
         pid = atoi(job_argv);
         job = getjobpid(jobs, pid);
+        printf("pid: %d \n",pid);
     }
 
     if (strcmp(*argv, "bg") == 0) {
-        // This bg command starts job in the backgroun.
-        // put to background: set process group id to its own pid
-        job->state = BG;
-        setpgid(job->pid, job->pid);
         // send signal to pid and continue the running
-        kill(SIGCONT, job->pid);
+        if (!kill(pid, SIGCONT)) {
+            // This bg command starts job in the background.
+            // put to background: set process group id to its own pid
+            job->state = BG;
+        }
     } else  {
-        // This fg command starts job in the foreground.
-        job->state = FG;
-        // put to foreground: set process group id to its own pid
-        setpgid(job->pid, getpgid(getpid()));
         // send signal to pid and continue the running
-        kill(SIGCONT, job->pid);
+        if (!kill(pid, SIGCONT)) {
+            // This fg command starts job in the foreground.
+            job->state = FG;
+            // put to foreground: set process group id to its own pid
+            setpgid(pid, getpgrp());
+        }
     }
     return;
 }
@@ -322,6 +335,7 @@ void sigint_handler(int sig)
         if (jobs[i].state == FG) {
             printf(" Job [%d] (%d) terminated by signal %d \n", 
                     jobs[i].jid, jobs[i].pid, SIGINT);
+            // FIXME: send signal to main process: SIGCHLD
             deletejob(jobs, jobs[i].pid);
         }
     }
@@ -347,7 +361,9 @@ void sigtstp_handler(int sig)
                     jobs[i].jid, jobs[i].pid, SIGTSTP);
         }
     }
+	fflush(stdout);
     printf("%s", prompt);
+	fflush(stdout);
     return;
 }
 

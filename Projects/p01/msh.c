@@ -64,6 +64,7 @@ void sigquit_handler(int sig);
  */
 int main(int argc, char **argv) 
 {
+     printf("pid: %d, pgid:%d\n", getpid(), getpgid(getpid()));
     char c;
     char cmdline[MAXLINE];
     int emit_prompt = 1; /* emit prompt (default) */
@@ -119,7 +120,6 @@ int main(int argc, char **argv)
 
 	/* Evaluate the command line */
 	eval(cmdline);
-    printf("pid: %d, pgid:%d\n", getpid(), getpgid(getpid()));
 	fflush(stdout);
 	fflush(stdout);
     } 
@@ -178,7 +178,6 @@ void eval(char *cmdline)
 
         if (child == 0) {
             // execution
-            if (!foreground) setpgid(child, child);
             if (execvp(args[0], args) == -1) {
                 printf("Wrong usage of msh.\n");
                 exit(-1);
@@ -192,13 +191,14 @@ void eval(char *cmdline)
                         child, getpgid(child), jobs[i].cmdline);
             } else {
                 // add a new job to job list
+                setpgid(child, child);
                 addjob(jobs, child, BG, cmdline);
                 printf(" Job [%d] (%d) {%d} BG %s\n", pid2jid(jobs, child), 
                         child, getpgid(child), jobs[i].cmdline);
             }
             int status = 0;
             // wait the job to finish
-            waitpid(child, &status, 0);
+            // wait(&status);
             // delete the job from job list
             // deletejob(jobs, child);
         }
@@ -313,12 +313,18 @@ void sigchld_handler(int sig)
 void sigint_handler(int sig) 
 {
     int i;
+    pid_t pgid = getpgid(getpid());
     // loop through all jobs
     // send the signal SIGINT to foreground job
-    kill(SIGINT, -1 * jobs[i].pid);
+    kill(SIGINT, -1 * pgid);
     // print information to screen
-    printf(" Job [%d] (%d) terminated by signal %d \n", 
-            jobs[i].jid, jobs[i].pid, SIGINT);
+    for (i = 0; i < MAXJOBS; i ++) {
+        if (jobs[i].state == FG) {
+            printf(" Job [%d] (%d) terminated by signal %d \n", 
+                    jobs[i].jid, jobs[i].pid, SIGINT);
+            deletejob(jobs, jobs[i].pid);
+        }
+    }
     return;
 }
 
@@ -330,12 +336,18 @@ void sigint_handler(int sig)
 void sigtstp_handler(int sig) 
 {
     int i;
+    pid_t pgid = getpgid(getpid());
     // loop through all jobs
-    // send signal SIGTSTP to foreground job
-    kill(SIGTSTP, -1 * jobs[i].pid);
+    // send the signal SIGINT to foreground job
+    kill(SIGTSTP, -1 * pgid);
     // print information to screen
-    printf(" Job [%d] (%d) stopped by signal %d \n", 
-            jobs[i].jid, jobs[i].pid, SIGTSTP);
+    for (i = 0; i < MAXJOBS; i ++) {
+        if (jobs[i].state == FG) {
+            printf(" Job [%d] (%d) stopped by signal %d \n", 
+                    jobs[i].jid, jobs[i].pid, SIGTSTP);
+        }
+    }
+    printf("%s", prompt);
     return;
 }
 

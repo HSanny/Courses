@@ -11,11 +11,12 @@
 ################################################################*/
 
 #include <stdio.h>
+#include <unistd.h>
 
 int main() {
 
     while(1) {
-        printf("sb\n");
+        printf("pid: %d, pgid: %d\n", getpid(), getpgid(getpid()));
         sleep(1);
     }
 

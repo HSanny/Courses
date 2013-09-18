@@ -3,6 +3,7 @@
 ## VERSION: 2.0 
 ## SINCE: 2013-09-11
 ## AUTHOR: Jimmy Lin (xl5224) - JimmyLin@utexas.edu  
+##         Bochao Zhan () - 
 ## DESCRIPTION: 
 ##      Generate the number in certain position of Fib sequence.
 #################################################################

@@ -14,4 +14,4 @@ jobs
 /bin/echo msh> ./myint 2 
 ./myint 2
 
-bin/echo msh> /bin/ps a
+msh> /bin/ps a

@@ -167,7 +167,7 @@ void eval(char *cmdline)
     while ((pch = strtok(NULL, delimiter)) != NULL) {
         // Exception handling: number limit of arguments
         if (!(i < MAX_NUM_ARGS)) {
-            fprintf(stderr, "Too many arguments..");
+            fprintf(stderr, "Too many arguments..\n");
             break;
         }
         args[i++] = pch;
@@ -196,20 +196,13 @@ void eval(char *cmdline)
             // normal exit after execution
             exit(1);
         } else {
-            if (foreground) {
-                // add a new job to job list
-                addjob(jobs, child, FG, cmdline);
+		// add a new job to job list
+                if(foreground){addjob(jobs, child, FG, cmdline);}
+		else {addjob(jobs, child, BG, cmdline);}                
                 sigprocmask(SIG_UNBLOCK, &sig_child, NULL);
-                printf(" Job [%d] (%d) {%d} FG %s\n", pid2jid(jobs, child), 
-                        child, getpgid(child), jobs[i].cmdline);
-			waitpid(child,NULL,0);
-            } else {
-                // add a new job to job list
-                addjob(jobs, child, BG, cmdline);
-                sigprocmask(SIG_UNBLOCK, &sig_child, NULL);
-                printf(" Job [%d] (%d) {%d} BG %s\n", pid2jid(jobs, child), 
-                        child, getpgid(child), jobs[i].cmdline);
-            }
+               // printf(" Job [%d] (%d) {%d} BG %s\n", pid2jid(jobs, child), 
+               //       child, getpgid(child), jobs[i].cmdline);
+                if(foreground){waitfg(child);}
         }
     }
     return;
@@ -230,28 +223,18 @@ int builtin_cmd(char **argv)
     }
 
     // The jobs command lists all background jobs.
-    if (strcmp(*argv, "jobs") == 0) {
-        // count the number of background jobs.
-        int numBG = 0, i;
-        for (i = 0; i < MAXJOBS; i ++) {
-            if (jobs[i].state == BG)
-                numBG ++;
-        }
+    else if (strcmp(*argv, "jobs") == 0) {
         // title display
-        if (!numBG) 
-            printf("\nThere are no background jobs.\n");
-        else
+        if (!jobs){ 
+            printf("\nThere are no background jobs.\n");}
+        else{
             printf("\nAll background jobs are listed as follows: \n");
-        // display the specifics of bg jobs to screen
-        for (i = 0; i < MAXJOBS; i ++) {
-            if (jobs[i].state == BG)
-                printf(" Job [%d] (%d) {%d} BG %s\n", jobs[i].jid, jobs[i].pid,
-                        getpgid(jobs[i].pid), jobs[i].cmdline);
-        }
+	    listjobs(jobs);
+	    printf("\n");}
         return 1;
     }
 
-    if (strcmp(*argv, "bg") == 0 || strcmp(*argv, "fg") == 0) {
+    else if (strcmp(*argv, "fg") == 0 || strcmp(*argv, "bg") == 0) {
         do_bgfg(argv);     
         return 1;
     }
@@ -274,7 +257,7 @@ void do_bgfg(char **argv)
         job = getjobjid(jobs, jid);
         if (job == NULL) {
             printf("%d: No Such Job.\n", jid);
-            exit(-1);
+	    return;
         }
         pid = job->pid;
         printf("jid: %d \n",jid);
@@ -283,31 +266,22 @@ void do_bgfg(char **argv)
         job = getjobpid(jobs, pid);
         if (job == NULL) {
             printf("%d:No Such Job.\n", pid);
-            exit(-1);
+            return;
         }
         printf("pid: %d \n",pid);
     }
-
+	
+	 kill(-1*(job->pid), SIGCONT); 
     // This bg command starts job in the background.
-    if (strcmp(*argv, "bg") == 0) {
-        // send signal to pid and continue the running
-	job->state = BG;        
-	if (kill(pid, SIGCONT)) {
-            // put to background: set process group id to its own pid
-            printf("-bg Failure\n");
-	    exit(-3);
-        }
-    } else  { // This fg command starts job in the foreground.
+	if(strcmp(*argv, "fg") == 0) { // This fg command starts job in the foreground.
         // send signal to pid and continue the running
         job->state = FG;
-	setpgid(pid, getpgrp());
-	if (!kill(pid, SIGCONT)) {
-            printf("-fg Failure\n");
-	    exit(-4);
-            // put to foreground: set process group id to its own pid
-            
-        }
-    }
+	waitfg(job->pid);
+       }
+	else if (strcmp(*argv, "bg") == 0) {
+        // send signal to pid and continue the running
+	job->state = BG;        
+       } 
     return;
 }
 
@@ -316,8 +290,12 @@ void do_bgfg(char **argv)
  */
 void waitfg(pid_t pid)
 {
-    int status;
-    waitpid(pid, &status, 0);
+    int i=0;
+    while(i<MAXJOBS){
+	for(i=0;i<MAXJOBS;i++){
+		if(jobs[i].state==FG && jobs[i].pid==pid)break;	
+	}
+    }
     return;
 }
 
@@ -334,15 +312,24 @@ void waitfg(pid_t pid)
  */
 void sigchld_handler(int sig) 
 {
-	int pid, status, exit_value;
-    while((pid = waitpid(-1, &status, WNOHANG)) > 0){
-        exit_value = WEXITSTATUS(status);
-        printf("A Child Process, Which PID= %d, Is Terminated With EXIT Status= %d\n", pid, exit_value);
+	int pid, status, i;
+    while((pid = waitpid(-1, &status, WUNTRACED|WNOHANG)) > 0){
+	  if(WIFSTOPPED(status)) {
+	   for(i=0;i<MAXJOBS;i++){
+		if(jobs[i].pid==pid){jobs[i].state=ST;kill(-1*jobs[i].pid,SIGTSTP);break;}
+	    }
+	}
+	else if(WIFSIGNALED(status)){
+	     for(i=0;i<MAXJOBS;i++){
+		if(jobs[i].pid==pid){deletejob(jobs, jobs[i].pid);kill(-1*jobs[i].pid,SIGINT);break;}
+	      }
+	}
+	else{ 
+		for(i=0;i<MAXJOBS;i++){
+ 			if(jobs[i].pid==pid){deletejob(jobs, jobs[i].pid);break;}
+	      }
+	}
     }
-    printf("%s", prompt);
-    fflush(stdout);
-
-    return;
 }
 
 /* 
@@ -358,7 +345,7 @@ void sigint_handler(int sig)
     for (i = 0; i < MAXJOBS; i ++) {
         if (jobs[i].state == FG) {
             // send the signal SIGINT to foreground job
-            if (kill(jobs[i].pid, SIGINT)) {
+            if (kill(-1*jobs[i].pid, SIGINT)) {
                 printf("\n Signal Delivery Failure. \n");  
                 exit(-3);
             }
@@ -381,8 +368,9 @@ void sigtstp_handler(int sig)
     // print information to screen
     for (i = 0; i < MAXJOBS; i ++) {
         if (jobs[i].state == FG) {
+		jobs[i].state=ST;
             // send the signal SIGINT to foreground job
-             if (kill(jobs[i].pid, SIGTSTP)) {
+             if (kill(-1*jobs[i].pid, SIGTSTP)) {
                 printf("\n Signal Delivery Failure. \n");  
                 exit(-3);
             }
@@ -391,7 +379,7 @@ void sigtstp_handler(int sig)
         }
     }
 	fflush(stdout);
-    printf("%s", prompt);
+    printf("\n");
 	fflush(stdout);
     return;
 }

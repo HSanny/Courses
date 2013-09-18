@@ -260,7 +260,6 @@ int builtin_cmd(char **argv)
 
 /* 
  * do_bgfg - Execute the builtin bg and fg commands
- * FIXME: exception handling for jid with non-numeric character
  */
 void do_bgfg(char **argv) 
 {
@@ -384,9 +383,6 @@ void sigtstp_handler(int sig)
                     jobs[i].jid, jobs[i].pid, SIGTSTP);
         }
     }
-	fflush(stdout);
-    printf("%s", prompt);
-	fflush(stdout);
     return;
 }
 

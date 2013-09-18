@@ -353,10 +353,10 @@ void sigchld_handler(int sig)
 void sigint_handler(int sig) 
 {
     int i;
+
     // print information to screen
     for (i = 0; i < MAXJOBS; i ++) {
         if (jobs[i].state == FG) {
-            
             // send the signal SIGINT to foreground job
             if (kill(jobs[i].pid, SIGINT)) {
                 printf("\n Signal Delivery Failure. \n");  
@@ -378,20 +378,14 @@ void sigint_handler(int sig)
 void sigtstp_handler(int sig) 
 {
     int i;
-    if (kill(-1 * getpid(), SIGTSTP)) {
-        printf("Error Signal Delivery.. SIGINT\n");
-        exit(-3);
-    }
     // print information to screen
     for (i = 0; i < MAXJOBS; i ++) {
         if (jobs[i].state == FG) {
-            /*
             // send the signal SIGINT to foreground job
              if (kill(jobs[i].pid, SIGTSTP)) {
                 printf("\n Signal Delivery Failure. \n");  
                 exit(-3);
             }
-            */
             printf("\n Job [%d] (%d) stopped by signal %d \n", 
                     jobs[i].jid, jobs[i].pid, SIGTSTP);
         }

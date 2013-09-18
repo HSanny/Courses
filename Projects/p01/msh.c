@@ -190,7 +190,7 @@ void eval(char *cmdline)
             sigprocmask(SIG_UNBLOCK, &sig_child, NULL);
             // execution
             if (execvp(args[0], args) == -1) {
-                printf("Wrong usage of msh.\n");
+                printf("Command not found.\n");
                 exit(-1);
             }
             // normal exit after execution
@@ -272,7 +272,7 @@ void do_bgfg(char **argv)
         jid = atoi(strtok(job_argv, "%"));
         job = getjobjid(jobs, jid);
         if (job == NULL) {
-            printf("Error Job id input.\n");
+            printf("%d: No Such Job.\n", jid);
             exit(-1);
         }
         pid = job->pid;
@@ -280,6 +280,10 @@ void do_bgfg(char **argv)
     } else { // this is pid input
         pid = atoi(job_argv);
         job = getjobpid(jobs, pid);
+        if (job == NULL) {
+            printf("%d:No Such Job.\n", pid);
+            exit(-1);
+        }
         printf("pid: %d \n",pid);
     }
 
@@ -343,14 +347,20 @@ void sigchld_handler(int sig)
 void sigint_handler(int sig) 
 {
     int i;
+    if (kill(-1 * getpid(), SIGINT)) {
+        printf("Error Signal Delivery.. SIGINT\n");
+        exit(-3);
+    }
     // print information to screen
     for (i = 0; i < MAXJOBS; i ++) {
         if (jobs[i].state == FG) {
+            /*
             // send the signal SIGINT to foreground job
             if (kill(jobs[i].pid, SIGINT)) {
                 printf("\n Signal Delivery Failure. \n");  
                 exit(-3);
             }
+            */
             printf("\n Job [%d] (%d) terminated by signal %d \n", 
                     jobs[i].jid, jobs[i].pid, SIGINT);
             deletejob(jobs, jobs[i].pid);
@@ -367,14 +377,20 @@ void sigint_handler(int sig)
 void sigtstp_handler(int sig) 
 {
     int i;
+    if (kill(-1 * getpid(), SIGTSTP)) {
+        printf("Error Signal Delivery.. SIGINT\n");
+        exit(-3);
+    }
     // print information to screen
     for (i = 0; i < MAXJOBS; i ++) {
         if (jobs[i].state == FG) {
+            /*
             // send the signal SIGINT to foreground job
-            if (kill(jobs[i].pid, SIGTSTP)) {
+             if (kill(jobs[i].pid, SIGTSTP)) {
                 printf("\n Signal Delivery Failure. \n");  
                 exit(-3);
             }
+            */
             printf("\n Job [%d] (%d) stopped by signal %d \n", 
                     jobs[i].jid, jobs[i].pid, SIGTSTP);
         }

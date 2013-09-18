@@ -77,18 +77,18 @@ int main(int argc, char **argv)
     /* Parse the command line */
     while ((c = getopt(argc, argv, "hvp")) != EOF) {
         switch (c) {
-        case 'h':             /* print help message */
-            usage();
-	    break;
-        case 'v':             /* emit additional diagnostic info */
-            verbose = 1;
-	    break;
-        case 'p':             /* don't print a prompt */
-            emit_prompt = 0;  /* handy for automatic testing */
-	    break;
-	default:
-            usage();
-	}
+            case 'h':             /* print help message */
+                usage();
+                break;
+            case 'v':             /* emit additional diagnostic info */
+                verbose = 1;
+                break;
+            case 'p':             /* don't print a prompt */
+                emit_prompt = 0;  /* handy for automatic testing */
+                break;
+            default:
+                usage();
+        }
     }
 
     /* Install the signal handlers */
@@ -103,33 +103,33 @@ int main(int argc, char **argv)
 
     /* Initialize the job list */
     initjobs(jobs);
-	sigemptyset (&sig_child);
-	sigaddset(&sig_child, SIGCHLD);
+    sigemptyset (&sig_child);
+    sigaddset(&sig_child, SIGCHLD);
 
     /* Execute the shell's read/eval loop */
     while (1) {
 
-	/* Read command line */
-	if (emit_prompt) {
-	    printf("%s", prompt);
-	    fflush(stdout);
-	}
-	if ((fgets(cmdline, MAXLINE, stdin) == NULL) && ferror(stdin))
-	    app_error("fgets error");
-	if (feof(stdin)) { /* End of file (ctrl-d) */
-	    fflush(stdout);
-	    exit(0);
-	}
+        /* Read command line */
+        if (emit_prompt) {
+            printf("%s", prompt);
+            fflush(stdout);
+        }
+        if ((fgets(cmdline, MAXLINE, stdin) == NULL) && ferror(stdin))
+            app_error("fgets error");
+        if (feof(stdin)) { /* End of file (ctrl-d) */
+            fflush(stdout);
+            exit(0);
+        }
 
-	/* Evaluate the command line */
-	eval(cmdline);
-	fflush(stdout);
-	fflush(stdout);
+        /* Evaluate the command line */
+        eval(cmdline);
+        fflush(stdout);
+        fflush(stdout);
     } 
 
     exit(0); /* control never reaches here */
 }
-  
+
 /* 
  * eval - Evaluate the command line that the user has just typed in
  * 
@@ -140,7 +140,7 @@ int main(int argc, char **argv)
  * each child process must have a unique process group ID so that our
  * background children don't receive SIGINT (SIGTSTP) from the kernel
  * when we type ctrl-c (ctrl-z) at the keyboard.  
-*/
+ */
 void eval(char *cmdline) 
 {
     int foreground;
@@ -196,13 +196,22 @@ void eval(char *cmdline)
             // normal exit after execution
             exit(1);
         } else {
-		// add a new job to job list
-                if(foreground){addjob(jobs, child, FG, cmdline);}
-		else {addjob(jobs, child, BG, cmdline);}                
-                sigprocmask(SIG_UNBLOCK, &sig_child, NULL);
-               // printf(" Job [%d] (%d) {%d} BG %s\n", pid2jid(jobs, child), 
-               //       child, getpgid(child), jobs[i].cmdline);
-                if(foreground){waitfg(child);}
+            int i = 0;
+            char * simCommand;
+            char * temp;
+            temp = (char *) malloc (1000);
+            *temp = ' ';
+            simCommand = (char *) malloc (1000);
+            while (args[i] != NULL) {
+                simCommand = strcat(strcat(simCommand, temp), args[i++]);
+            }
+            // add a new job to job list
+            if(foreground) addjob(jobs, child, FG, simCommand);
+            else addjob(jobs, child, BG, simCommand);        
+            sigprocmask(SIG_UNBLOCK, &sig_child, NULL);
+            // printf(" Job [%d] (%d) {%d} BG %s\n", pid2jid(jobs, child), 
+            //       child, getpgid(child), jobs[i].cmdline);
+            if(foreground){waitfg(child);}
         }
     }
     return;
@@ -224,13 +233,8 @@ int builtin_cmd(char **argv)
 
     // The jobs command lists all background jobs.
     else if (strcmp(*argv, "jobs") == 0) {
-        // title display
-        if (!jobs){ 
-            printf("\nThere are no background jobs.\n");}
-        else{
-            printf("\nAll background jobs are listed as follows: \n");
-	    listjobs(jobs);
-	    printf("\n");}
+        listjobs(jobs);
+        printf("\n");
         return 1;
     }
 
@@ -256,7 +260,7 @@ void do_bgfg(char **argv)
         job = getjobjid(jobs, jid);
         if (job == NULL) {
             printf("%d: No Such Job.\n", jid);
-	    return;
+            return;
         }
         pid = job->pid;
         printf("jid: %d \n",jid);
@@ -269,18 +273,18 @@ void do_bgfg(char **argv)
         }
         printf("pid: %d \n",pid);
     }
-	
-	 kill(-1*(job->pid), SIGCONT); 
+
+    kill(-1*(job->pid), SIGCONT); 
     // This bg command starts job in the background.
-	if(strcmp(*argv, "fg") == 0) { // This fg command starts job in the foreground.
+    if(strcmp(*argv, "fg") == 0) { // This fg command starts job in the foreground.
         // send signal to pid and continue the running
         job->state = FG;
-	waitfg(job->pid);
-       }
-	else if (strcmp(*argv, "bg") == 0) {
+        waitfg(job->pid);
+    }
+    else if (strcmp(*argv, "bg") == 0) {
         // send signal to pid and continue the running
-	job->state = BG;        
-       } 
+        job->state = BG;        
+    } 
     return;
 }
 
@@ -291,9 +295,9 @@ void waitfg(pid_t pid)
 {
     int i=0;
     while(i<MAXJOBS){
-	for(i=0;i<MAXJOBS;i++){
-		if(jobs[i].state==FG && jobs[i].pid==pid)break;	
-	}
+        for(i=0;i<MAXJOBS;i++){
+            if(jobs[i].state==FG && jobs[i].pid==pid)break;	
+        }
     }
     return;
 }
@@ -311,23 +315,23 @@ void waitfg(pid_t pid)
  */
 void sigchld_handler(int sig) 
 {
-	int pid, status, i;
+    int pid, status, i;
     while((pid = waitpid(-1, &status, WUNTRACED|WNOHANG)) > 0){
-	  if(WIFSTOPPED(status)) {
-	   for(i=0;i<MAXJOBS;i++){
-		if(jobs[i].pid==pid){jobs[i].state=ST;kill(-1*jobs[i].pid,SIGTSTP);break;}
-	    }
-	}
-	else if(WIFSIGNALED(status)){
-	     for(i=0;i<MAXJOBS;i++){
-		if(jobs[i].pid==pid){deletejob(jobs, jobs[i].pid);kill(-1*jobs[i].pid,SIGINT);break;}
-	      }
-	}
-	else{ 
-		for(i=0;i<MAXJOBS;i++){
- 			if(jobs[i].pid==pid){deletejob(jobs, jobs[i].pid);break;}
-	      }
-	}
+        if(WIFSTOPPED(status)) {
+            for(i=0;i<MAXJOBS;i++){
+                if(jobs[i].pid==pid){jobs[i].state=ST;kill(-1*jobs[i].pid,SIGTSTP);break;}
+            }
+        }
+        else if(WIFSIGNALED(status)){
+            for(i=0;i<MAXJOBS;i++){
+                if(jobs[i].pid==pid){deletejob(jobs, jobs[i].pid);kill(-1*jobs[i].pid,SIGINT);break;}
+            }
+        }
+        else{ 
+            for(i=0;i<MAXJOBS;i++){
+                if(jobs[i].pid==pid){deletejob(jobs, jobs[i].pid);break;}
+            }
+        }
     }
 }
 
@@ -367,9 +371,9 @@ void sigtstp_handler(int sig)
     // print information to screen
     for (i = 0; i < MAXJOBS; i ++) {
         if (jobs[i].state == FG) {
-		jobs[i].state=ST;
+            jobs[i].state=ST;
             // send the signal SIGINT to foreground job
-             if (kill(-1*jobs[i].pid, SIGTSTP)) {
+            if (kill(-1*jobs[i].pid, SIGTSTP)) {
                 printf("\n Signal Delivery Failure. \n");  
                 exit(-3);
             }
@@ -377,9 +381,9 @@ void sigtstp_handler(int sig)
                     jobs[i].jid, jobs[i].pid, SIGTSTP);
         }
     }
-	fflush(stdout);
+    fflush(stdout);
     printf("\n");
-	fflush(stdout);
+    fflush(stdout);
     return;
 }
 

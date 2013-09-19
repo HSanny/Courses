@@ -2,8 +2,9 @@
 ## MODULE: fib.c
 ## VERSION: 2.0 
 ## SINCE: 2013-09-11
-## AUTHOR: Jimmy Lin (xl5224) - JimmyLin@utexas.edu  
-##         Bochao Zhan () - 
+## AUTHOR: 
+##     Jimmy Lin (xl5224, loginID: jimmylin) - JimmyLin@utexas.edu  
+##     Bochao Zhan (bz2892, loginID: bzchao)- bzhan927@gmail.com
 ## DESCRIPTION: 
 ##      Generate the number in certain position of Fib sequence.
 #################################################################

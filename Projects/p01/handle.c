@@ -2,7 +2,9 @@
 ## MODULE: handle.c
 ## VERSION: 1.2 
 ## SINCE: 2013-09-11
-## AUTHOR: Jimmy Lin (xl5224) - JimmyLin@utexas.edu  
+## AUTHOR: 
+##     Jimmy Lin (xl5224, loginID: jimmylin) - JimmyLin@utexas.edu  
+##     Bochao Zhan (bz2892, loginID: bzchao)- bzhan927@gmail.com
 ## DESCRIPTION: 
 ##    Usage of sinal handler and nanosleep in the process control.
 ##

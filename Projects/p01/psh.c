@@ -3,8 +3,8 @@
 ## VERSION: 1.2 
 ## SINCE: 2013-09-11
 ## AUTHOR: 
-##     Jimmy Lin (xl5224) - JimmyLin@utexas.edu
-##     Bochao Zhan (bz2892)- bzhan927@gmail.com
+##     Jimmy Lin (xl5224, loginID: jimmylin) - JimmyLin@utexas.edu  
+##     Bochao Zhan (bz2892, loginID: bzchao)- bzhan927@gmail.com
 ## DESCRIPTION: 
 ##     psh - A prototype tiny shell program with job control
 ##
@@ -24,8 +24,6 @@
 #include <sys/wait.h>
 #include <errno.h>
 #include "util.h"
-
-
 
 /* Global variables */
 int verbose = 0;            /* if true, print additional output */
@@ -77,7 +75,7 @@ int main(int argc, char **argv)
 	    break;
 	default:
             usage();
-	}
+        }
     }
 
 
@@ -118,33 +116,32 @@ int main(int argc, char **argv)
 */
 void eval(char *cmdline) 
 {
-    char * delimiter = " \n"; // separator between command and arguments
-    char * command = strtok(cmdline, delimiter);
-    //printf("%s\n", command);
-    //printf("%s\n",cmdline);
-    if (!builtin_cmd(&command)) {
-        pid_t child = fork();
-        if (child == 0) {
+    char * delimiter = " \n";  // separator between command and arguments
+    char * command = strtok(cmdline, delimiter);  // record the command
+    if (!builtin_cmd(&command)) {  // check for built-in command
+        pid_t child = fork();  // create child process
+        if (child == 0) {  // child process
             // Initialiization of execution information
             char * args[MAX_NUM_ARGS];
             // Set null to all element of args
-            int j;
+            int j;  // index variable 
             for (j = 0; j < MAX_NUM_ARGS; j ++) 
                 args[j] = NULL;
 
             // configure the arguments
-            int i = 0;
-            args[i++] = command;
+            int i = 0;  // index variable
+            args[i++] = command;  // recognition of the command
+            // recognition ofr the following arguments
             char * pch;
             while ((pch = strtok(NULL, delimiter)) != NULL) {
+                // check for the upper bound of argument number
                 if (!(i < MAX_NUM_ARGS)) {
                     fprintf(stderr, "Too many arguments..");
                     break;
                 }
-                args[i++] = pch;
-                // printf("%s\n", pch);
+                args[i++] = pch;  // assignment for args
             }
-            // execution
+            // execution, here we
             if (execvp(args[0], args) == -1) 
                 printf("Wrong usage of PSH.\n");
             exit(EXIT_SUCCESS);

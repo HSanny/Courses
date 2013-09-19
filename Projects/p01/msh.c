@@ -4,7 +4,7 @@
 ## SINCE: 2013-09-14
 ## AUTHOR: 
 ##     Jimmy Lin (xl5224, loginID: jimmylin) - JimmyLin@utexas.edu  
-##     Bochao Zhan (bz2892, loginID: )- bzhan927@gmail.com
+##     Bochao Zhan (bz2892, loginID: bzchao)- bzhan927@gmail.com
 ## DESCRIPTION: 
 ##     A mini shell program with more complex job control
 ## 

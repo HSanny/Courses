@@ -60,7 +60,8 @@ void sigquit_handler(int sig);
  */
 int main(int argc, char **argv) 
 {
-    printf("pid: %d, pgid:%d\n", getpid(), getpgid(getpid()));
+    // test code for pid and pgid detection
+    // printf("pid: %d, pgid:%d\n", getpid(), getpgid(getpid()));
     char c;
     char cmdline[MAXLINE];
     int emit_prompt = 1; /* emit prompt (default) */

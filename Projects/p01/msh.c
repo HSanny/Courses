@@ -208,11 +208,16 @@ void eval(char *cmdline)
                 simCommand = strcat(strcat(simCommand, temp), args[i++]);
             }
             // add a new job to job list
-            if(foreground) addjob(jobs, child, FG, simCommand);
-            else addjob(jobs, child, BG, simCommand);        
+            int add = 0;
+            simCommand = strcat(simCommand, " &");
+            add = addjob(jobs, child, foreground?FG:BG, simCommand);        
+            if (!add) { 
+                unix_error("Add job exception.\n");
+                exit(-1);
+            }
             sigprocmask(SIG_UNBLOCK, &sig_child, NULL);
-            // printf(" Job [%d] (%d) {%d} BG %s\n", pid2jid(jobs, child), 
-            //       child, getpgid(child), jobs[i].cmdline);
+            printf("[%d] (%d) %s\n", pid2jid(jobs, child), 
+                   child, simCommand);
             if(foreground){waitfg(child);}
         }
     }

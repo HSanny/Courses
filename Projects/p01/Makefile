@@ -115,6 +115,10 @@ rtest16:
 
 
 # clean up
+#
+gitclean:
+	git rm -rf $(FILES) *.o *~ *.bak *.BAK
+
 clean:
 	rm -f $(FILES) *.o *~ *.bak *.BAK
 

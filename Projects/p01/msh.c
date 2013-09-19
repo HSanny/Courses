@@ -4,7 +4,7 @@
 ## SINCE: 2013-09-14
 ## AUTHOR: 
 ##     Jimmy Lin (xl5224, loginID: jimmylin) - JimmyLin@utexas.edu  
-##     Bochao Zhan (bz2892, loginID: bzchao)- bzhan927@gmail.com
+##     Bochao Zhan (bz2892, loginID: bzchao) - bzhan927@gmail.com
 ## DESCRIPTION: 
 ##     A mini shell program with more complex job control
 ## 
@@ -209,16 +209,19 @@ void eval(char *cmdline)
             }
             // add a new job to job list
             int add = 0;
-            simCommand = strcat(simCommand, " &");
+            if (!foreground) simCommand = strcat(simCommand, " &");
             add = addjob(jobs, child, foreground?FG:BG, simCommand);        
-            if (!add) { 
+            if (!add) {  // exception handling
                 unix_error("Add job exception.\n");
                 exit(-1);
+            } else if (!foreground) {
+                // display the background job
+                printf("[%d] (%d) %s\n", pid2jid(jobs, child), 
+                        child, simCommand);
             }
+            // NOTE that no information needed to be displayed for fg job
             sigprocmask(SIG_UNBLOCK, &sig_child, NULL);
-            printf("[%d] (%d) %s\n", pid2jid(jobs, child), 
-                   child, simCommand);
-            if(foreground){waitfg(child);}
+            if (foreground) waitfg(child);
         }
     }
     return;
@@ -272,7 +275,6 @@ void do_bgfg(char **argv)
             return;
         }
         pid = job->pid;
-        printf("jid: %d \n",jid);
     } else { // this is pid input
         pid = atoi(job_argv);
         job = getjobpid(jobs, pid);
@@ -284,7 +286,9 @@ void do_bgfg(char **argv)
     }
 
     // Bochao's driving, modifies jimmy's work
-    kill(-1*(job->pid), SIGCONT); 
+    if (!kill(-1*(job->pid), SIGCONT)) 
+        unix_error("Signal Delivery error..\n");
+        
     // This bg command starts job in the background.
     if(strcmp(*argv, "fg") == 0) { // This fg command starts job in the foreground.
         // send signal to pid and continue the running
@@ -294,6 +298,7 @@ void do_bgfg(char **argv)
     else if (strcmp(*argv, "bg") == 0) {
         // send signal to pid and continue the running
         job->state = BG;        
+        printf("[%d] (%d) %s\n", jid, pid, getjobpid(pid).cmdline);
     } 
     return;
 }
@@ -410,14 +415,10 @@ void sigtstp_handler(int sig)
                 exit(-3);
             }
             // remove the job from jobs array
-            printf("\n Job [%d] (%d) stopped by signal %d \n", 
+            printf("Job [%d] (%d) stopped by signal %d \n", 
                     jobs[i].jid, jobs[i].pid, SIGTSTP);
         }
     }
-    // for friendly interface interaction
-    fflush(stdout);
-    printf("\n");
-    fflush(stdout);
     return;
 }
 

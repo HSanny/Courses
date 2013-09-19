@@ -1,0 +1,359 @@
+ 
+###################################################
+### For Trace Test 1:
+###################################################
+./sdriver.pl -t trace01.txt -s ./mshref -a "-p"
+#
+# trace01.txt - Properly terminate on EOF.
+#
+ 
+ 
+###################################################
+### For Trace Test 2:
+###################################################
+./sdriver.pl -t trace02.txt -s ./mshref -a "-p"
+#
+# trace02.txt - Process builtin quit command.
+#
+ 
+ 
+###################################################
+### For Trace Test 3:
+###################################################
+./sdriver.pl -t trace03.txt -s ./mshref -a "-p"
+#
+# trace03.txt - Run a foreground job.
+#
+msh> quit
+ 
+ 
+###################################################
+### For Trace Test 4:
+###################################################
+./sdriver.pl -t trace04.txt -s ./mshref -a "-p"
+#
+# trace04.txt - Run a background job.
+#
+msh> ./myspin 1 &
+[1] (5641) ./myspin 1 &
+ 
+ 
+###################################################
+### For Trace Test 5:
+###################################################
+./sdriver.pl -t trace05.txt -s ./mshref -a "-p"
+#
+# trace05.txt - Process jobs builtin command.
+#
+msh> ./myspin 2 &
+[1] (5648) ./myspin 2 &
+msh> ./myspin 3 &
+[2] (5650) ./myspin 3 &
+msh> jobs
+[1] (5648) Running ./myspin 2 &
+[2] (5650) Running ./myspin 3 &
+ 
+ 
+###################################################
+### For Trace Test 6:
+###################################################
+./sdriver.pl -t trace06.txt -s ./mshref -a "-p"
+#
+# trace06.txt - Forward SIGINT to foreground job.
+#
+msh> ./myspin 4
+Job [1] (5659) terminated by signal 2
+ 
+ 
+###################################################
+### For Trace Test 7:
+###################################################
+./sdriver.pl -t trace07.txt -s ./mshref -a "-p"
+#
+# trace07.txt - Forward SIGINT only to foreground job.
+#
+msh> ./myspin 4 &
+[1] (5665) ./myspin 4 &
+msh> ./myspin 5
+Job [2] (5667) terminated by signal 2
+msh> jobs
+[1] (5665) Running ./myspin 4 &
+ 
+ 
+###################################################
+### For Trace Test 8:
+###################################################
+./sdriver.pl -t trace08.txt -s ./mshref -a "-p"
+#
+# trace08.txt - Forward SIGTSTP only to foreground job.
+#
+msh> ./myspin 4 &
+[1] (5678) ./myspin 4 &
+msh> ./myspin 5
+Job [2] (5680) stopped by signal 20
+msh> jobs
+[1] (5678) Running ./myspin 4 &
+[2] (5680) Stopped ./myspin 5 
+ 
+ 
+###################################################
+### For Trace Test 9:
+###################################################
+./sdriver.pl -t trace09.txt -s ./mshref -a "-p"
+#
+# trace09.txt - Process bg builtin command
+#
+msh> ./myspin 4 &
+[1] (5688) ./myspin 4 &
+msh> ./myspin 5
+Job [2] (5690) stopped by signal 20
+msh> jobs
+[1] (5688) Running ./myspin 4 &
+[2] (5690) Stopped ./myspin 5 
+msh> bg %2
+[2] (5690) ./myspin 5 
+msh> jobs
+[1] (5688) Running ./myspin 4 &
+[2] (5690) Running ./myspin 5 
+ 
+ 
+###################################################
+### For Trace Test 10:
+###################################################
+./sdriver.pl -t trace10.txt -s ./mshref -a "-p"
+#
+# trace10.txt - Process fg builtin command. 
+#
+msh> ./myspin 4 &
+[1] (5718) ./myspin 4 &
+msh> fg %1
+Job [1] (5718) stopped by signal 20
+msh> jobs
+[1] (5718) Stopped ./myspin 4 &
+msh> fg %1
+msh> jobs
+ 
+ 
+###################################################
+### For Trace Test 11:
+###################################################
+./sdriver.pl -t trace11.txt -s ./mshref -a "-p"
+#
+# trace11.txt - Forward SIGINT to every process in foreground process group
+#
+msh> ./mysplit 4
+Job [1] (5739) terminated by signal 2
+msh> /bin/ps a
+  PID TTY      STAT   TIME COMMAND
+ 1136 tty4     Ss+    0:00 /sbin/getty -8 38400 tty4
+ 1141 tty5     Ss+    0:00 /sbin/getty -8 38400 tty5
+ 1150 tty2     Ss+    0:00 /sbin/getty -8 38400 tty2
+ 1151 tty3     Ss+    0:00 /sbin/getty -8 38400 tty3
+ 1153 tty6     Ss+    0:00 /sbin/getty -8 38400 tty6
+ 2316 tty1     Ss+    0:00 /sbin/getty -8 38400 tty1
+ 3402 pts/1    Ss     0:00 bash
+ 3798 pts/2    Ss     0:00 bash
+ 4295 pts/2    S      0:00 git-credential-cache--daemon /u/jimmylin/.git-credential-cache/socket
+ 4587 pts/1    T      0:00 /bin/bash ./runTraceTest.sh
+ 4620 pts/1    T      0:00 make rtest10
+ 4621 pts/1    T      0:00 /bin/sh -c ./sdriver.pl -t trace10.txt -s ./mshref -a "-p"
+ 4622 pts/1    T      0:00 /usr/bin/perl ./sdriver.pl -t trace10.txt -s ./mshref -a -p
+ 4623 pts/1    Z      0:00 [mshref] <defunct>
+ 5619 pts/2    S+     0:00 bash
+ 5670 pts/1    Sl+    0:00 vi runTraceTest.sh
+ 5734 pts/2    S+     0:00 make rtest11
+ 5735 pts/2    S+     0:00 /bin/sh -c ./sdriver.pl -t trace11.txt -s ./mshref -a "-p"
+ 5736 pts/2    S+     0:00 /usr/bin/perl ./sdriver.pl -t trace11.txt -s ./mshref -a -p
+ 5737 pts/2    S+     0:00 ./mshref -p
+ 5743 pts/2    R      0:00 /bin/ps a
+25465 tty7     Ss+    2:53 /usr/bin/X :0 vt7 -br -nolisten tcp -auth /var/run/xauth/A:0-y30j1a
+ 
+ 
+###################################################
+### For Trace Test 12:
+###################################################
+./sdriver.pl -t trace12.txt -s ./mshref -a "-p"
+#
+# trace12.txt - Forward SIGTSTP to every process in foreground process group
+#
+msh> ./mysplit 4
+Job [1] (5749) stopped by signal 20
+msh> jobs
+[1] (5749) Stopped ./mysplit 4 
+msh> /bin/ps a
+  PID TTY      STAT   TIME COMMAND
+ 1136 tty4     Ss+    0:00 /sbin/getty -8 38400 tty4
+ 1141 tty5     Ss+    0:00 /sbin/getty -8 38400 tty5
+ 1150 tty2     Ss+    0:00 /sbin/getty -8 38400 tty2
+ 1151 tty3     Ss+    0:00 /sbin/getty -8 38400 tty3
+ 1153 tty6     Ss+    0:00 /sbin/getty -8 38400 tty6
+ 2316 tty1     Ss+    0:00 /sbin/getty -8 38400 tty1
+ 3402 pts/1    Ss     0:00 bash
+ 3798 pts/2    Ss     0:00 bash
+ 4295 pts/2    S      0:00 git-credential-cache--daemon /u/jimmylin/.git-credential-cache/socket
+ 4587 pts/1    T      0:00 /bin/bash ./runTraceTest.sh
+ 4620 pts/1    T      0:00 make rtest10
+ 4621 pts/1    T      0:00 /bin/sh -c ./sdriver.pl -t trace10.txt -s ./mshref -a "-p"
+ 4622 pts/1    T      0:00 /usr/bin/perl ./sdriver.pl -t trace10.txt -s ./mshref -a -p
+ 4623 pts/1    Z      0:00 [mshref] <defunct>
+ 5619 pts/2    S+     0:00 bash
+ 5670 pts/1    Sl+    0:00 vi runTraceTest.sh
+ 5744 pts/2    S+     0:00 make rtest12
+ 5745 pts/2    S+     0:00 /bin/sh -c ./sdriver.pl -t trace12.txt -s ./mshref -a "-p"
+ 5746 pts/2    S+     0:00 /usr/bin/perl ./sdriver.pl -t trace12.txt -s ./mshref -a -p
+ 5747 pts/2    S+     0:00 ./mshref -p
+ 5749 pts/2    T      0:00 ./mysplit 4
+ 5750 pts/2    T      0:00 ./mysplit 4
+ 5759 pts/2    R      0:00 /bin/ps a
+25465 tty7     Ss+    2:53 /usr/bin/X :0 vt7 -br -nolisten tcp -auth /var/run/xauth/A:0-y30j1a
+ 
+ 
+###################################################
+### For Trace Test 13:
+###################################################
+./sdriver.pl -t trace13.txt -s ./mshref -a "-p"
+#
+# trace13.txt - Restart every stopped process in process group
+#
+msh> ./mysplit 4
+Job [1] (5765) stopped by signal 20
+msh> jobs
+[1] (5765) Stopped ./mysplit 4 
+msh> /bin/ps a
+  PID TTY      STAT   TIME COMMAND
+ 1136 tty4     Ss+    0:00 /sbin/getty -8 38400 tty4
+ 1141 tty5     Ss+    0:00 /sbin/getty -8 38400 tty5
+ 1150 tty2     Ss+    0:00 /sbin/getty -8 38400 tty2
+ 1151 tty3     Ss+    0:00 /sbin/getty -8 38400 tty3
+ 1153 tty6     Ss+    0:00 /sbin/getty -8 38400 tty6
+ 2316 tty1     Ss+    0:00 /sbin/getty -8 38400 tty1
+ 3402 pts/1    Ss     0:00 bash
+ 3798 pts/2    Ss     0:00 bash
+ 4295 pts/2    S      0:00 git-credential-cache--daemon /u/jimmylin/.git-credential-cache/socket
+ 4587 pts/1    T      0:00 /bin/bash ./runTraceTest.sh
+ 4620 pts/1    T      0:00 make rtest10
+ 4621 pts/1    T      0:00 /bin/sh -c ./sdriver.pl -t trace10.txt -s ./mshref -a "-p"
+ 4622 pts/1    T      0:00 /usr/bin/perl ./sdriver.pl -t trace10.txt -s ./mshref -a -p
+ 4623 pts/1    Z      0:00 [mshref] <defunct>
+ 5619 pts/2    S+     0:00 bash
+ 5670 pts/1    Sl+    0:00 vi runTraceTest.sh
+ 5760 pts/2    S+     0:00 make rtest13
+ 5761 pts/2    S+     0:00 /bin/sh -c ./sdriver.pl -t trace13.txt -s ./mshref -a "-p"
+ 5762 pts/2    S+     0:00 /usr/bin/perl ./sdriver.pl -t trace13.txt -s ./mshref -a -p
+ 5763 pts/2    S+     0:00 ./mshref -p
+ 5765 pts/2    T      0:00 ./mysplit 4
+ 5766 pts/2    T      0:00 ./mysplit 4
+ 5779 pts/2    R      0:00 /bin/ps a
+25465 tty7     Ss+    2:53 /usr/bin/X :0 vt7 -br -nolisten tcp -auth /var/run/xauth/A:0-y30j1a
+msh> fg %1
+msh> /bin/ps a
+  PID TTY      STAT   TIME COMMAND
+ 1136 tty4     Ss+    0:00 /sbin/getty -8 38400 tty4
+ 1141 tty5     Ss+    0:00 /sbin/getty -8 38400 tty5
+ 1150 tty2     Ss+    0:00 /sbin/getty -8 38400 tty2
+ 1151 tty3     Ss+    0:00 /sbin/getty -8 38400 tty3
+ 1153 tty6     Ss+    0:00 /sbin/getty -8 38400 tty6
+ 2316 tty1     Ss+    0:00 /sbin/getty -8 38400 tty1
+ 3402 pts/1    Ss     0:00 bash
+ 3798 pts/2    Ss     0:00 bash
+ 4295 pts/2    S      0:00 git-credential-cache--daemon /u/jimmylin/.git-credential-cache/socket
+ 4587 pts/1    T      0:00 /bin/bash ./runTraceTest.sh
+ 4620 pts/1    T      0:00 make rtest10
+ 4621 pts/1    T      0:00 /bin/sh -c ./sdriver.pl -t trace10.txt -s ./mshref -a "-p"
+ 4622 pts/1    T      0:00 /usr/bin/perl ./sdriver.pl -t trace10.txt -s ./mshref -a -p
+ 4623 pts/1    Z      0:00 [mshref] <defunct>
+ 5619 pts/2    S+     0:00 bash
+ 5670 pts/1    Sl+    0:00 vi runTraceTest.sh
+ 5760 pts/2    S+     0:00 make rtest13
+ 5761 pts/2    S+     0:00 /bin/sh -c ./sdriver.pl -t trace13.txt -s ./mshref -a "-p"
+ 5762 pts/2    S+     0:00 /usr/bin/perl ./sdriver.pl -t trace13.txt -s ./mshref -a -p
+ 5763 pts/2    S+     0:00 ./mshref -p
+ 5786 pts/2    R      0:00 /bin/ps a
+25465 tty7     Ss+    2:53 /usr/bin/X :0 vt7 -br -nolisten tcp -auth /var/run/xauth/A:0-y30j1a
+ 
+ 
+###################################################
+### For Trace Test 14:
+###################################################
+./sdriver.pl -t trace14.txt -s ./mshref -a "-p"
+#
+# trace14.txt - Simple error handling
+#
+msh> ./bogus
+./bogus: Command not found
+msh> ./myspin 4 &
+[1] (5794) ./myspin 4 &
+msh> fg
+fg command requires PID or %jobid argument
+msh> bg
+bg command requires PID or %jobid argument
+msh> fg a
+fg: argument must be a PID or %jobid
+msh> bg a
+bg: argument must be a PID or %jobid
+msh> fg 9999999
+(9999999): No such process
+msh> bg 9999999
+(9999999): No such process
+msh> fg %2
+%2: No such job
+msh> fg %1
+Job [1] (5794) stopped by signal 20
+msh> bg %2
+%2: No such job
+msh> bg %1
+[1] (5794) ./myspin 4 &
+msh> jobs
+[1] (5794) Running ./myspin 4 &
+ 
+ 
+###################################################
+### For Trace Test 15:
+###################################################
+./sdriver.pl -t trace15.txt -s ./mshref -a "-p"
+#
+# trace15.txt - Putting it all together
+#
+msh> ./bogus
+./bogus: Command not found
+msh> ./myspin 10
+Job [1] (5817) terminated by signal 2
+msh> ./myspin 3 &
+[1] (5820) ./myspin 3 &
+msh> ./myspin 4 &
+[2] (5822) ./myspin 4 &
+msh> jobs
+[1] (5820) Running ./myspin 3 &
+[2] (5822) Running ./myspin 4 &
+msh> fg %1
+Job [1] (5820) stopped by signal 20
+msh> jobs
+[1] (5820) Stopped ./myspin 3 &
+[2] (5822) Running ./myspin 4 &
+msh> bg %3
+%3: No such job
+msh> bg %1
+[1] (5820) ./myspin 3 &
+msh> jobs
+[1] (5820) Running ./myspin 3 &
+[2] (5822) Running ./myspin 4 &
+msh> fg %1
+msh> quit
+ 
+ 
+###################################################
+### For Trace Test 16:
+###################################################
+./sdriver.pl -t trace16.txt -s ./mshref -a "-p"
+#
+# trace16.txt - Tests whether the shell can handle SIGTSTP and SIGINT
+#     signals that come from other processes instead of the terminal.
+#
+msh> ./mystop 2
+Job [1] (5838) stopped by signal 20
+msh> jobs
+[1] (5838) Stopped ./mystop 2
+msh> ./myint 2
+Job [2] (5880) terminated by signal 2
+bin/echo: Command not found
+ 

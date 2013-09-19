@@ -250,12 +250,30 @@ int builtin_cmd(char **argv)
     }
 
     else if (strcmp(*argv, "fg") == 0 || strcmp(*argv, "bg") == 0) {
-        do_bgfg(argv);     
-        return 1;
+	//if(check(argv)){        
+	do_bgfg(argv);     
+        return 1;//}
     }
 
     return 0; // not a built-in command
 }
+
+/*
+//check every arg of "fg" or "bg" command, then return 0 if there is any illegal arg; otherwise return 1
+int check(char ** str){
+	int rt=0;
+	if((str+2)!=NULL)return rt;
+	else{
+		str=str+1;
+		if(**str=='%'){*str=*str+1;if(**str==NULL||**str=='0')return rt;}
+		while(**str!=NULL){
+			if(!(**str<='9'&&**str>='0')){break;}
+			*str=*str+1;
+		}
+		return **str==NULL? 1:0; 
+	}
+}
+*/
 
 /* 
  * do_bgfg - Execute the builtin bg and fg commands
@@ -286,7 +304,7 @@ void do_bgfg(char **argv)
     }
 
     // Bochao's driving, modifies jimmy's work
-    if (!kill(-1*(job->pid), SIGCONT)) 
+    if (kill(-1*(job->pid), SIGCONT)) 
         unix_error("Signal Delivery error..\n");
         
     // This bg command starts job in the background.
@@ -298,7 +316,7 @@ void do_bgfg(char **argv)
     else if (strcmp(*argv, "bg") == 0) {
         // send signal to pid and continue the running
         job->state = BG;        
-        printf("[%d] (%d) %s\n", jid, pid, getjobpid(pid).cmdline);
+        printf("[%d] (%d) %s\n", jid, pid, job->cmdline);
     } 
     return;
 }

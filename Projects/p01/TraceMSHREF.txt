@@ -24,6 +24,7 @@
 #
 # trace03.txt - Run a foreground job.
 #
+msh> quit
  
  
 ###################################################
@@ -33,11 +34,8 @@
 #
 # trace04.txt - Run a background job.
 #
-<<<<<<< HEAD
 msh> ./myspin 1 &
-[1] (1028) ./myspin 1 &
-=======
->>>>>>> 92203ad230d6a18e98a249cd0cb7c4f12c6386a1
+[1] (23708) ./myspin 1 &
  
  
 ###################################################
@@ -47,16 +45,13 @@ msh> ./myspin 1 &
 #
 # trace05.txt - Process jobs builtin command.
 #
-<<<<<<< HEAD
 msh> ./myspin 2 &
-[1] (1034) ./myspin 2 &
+[1] (23714) ./myspin 2 &
 msh> ./myspin 3 &
-[2] (1038) ./myspin 3 &
+[2] (23716) ./myspin 3 &
 msh> jobs
-[1] (1034) Running ./myspin 2 &
-[2] (1038) Running ./myspin 3 &
-=======
->>>>>>> 92203ad230d6a18e98a249cd0cb7c4f12c6386a1
+[1] (23714) Running ./myspin 2 &
+[2] (23716) Running ./myspin 3 &
  
  
 ###################################################
@@ -66,27 +61,23 @@ msh> jobs
 #
 # trace06.txt - Forward SIGINT to foreground job.
 #
-<<<<<<< HEAD
 msh> ./myspin 4
-Job [1] (1047) terminated by signal 2
-=======
->>>>>>> 92203ad230d6a18e98a249cd0cb7c4f12c6386a1
+Job [1] (23723) terminated by signal 2
  
  
 ###################################################
 ### For Trace Test 7:
 ###################################################
 ./sdriver.pl -t trace07.txt -s ./mshref -a "-p"
-<<<<<<< HEAD
 #
 # trace07.txt - Forward SIGINT only to foreground job.
 #
 msh> ./myspin 4 &
-[1] (1054) ./myspin 4 &
+[1] (23729) ./myspin 4 &
 msh> ./myspin 5
-Job [2] (1056) terminated by signal 2
+Job [2] (23731) terminated by signal 2
 msh> jobs
-[1] (1054) Running ./myspin 4 &
+[1] (23729) Running ./myspin 4 &
  
  
 ###################################################
@@ -97,12 +88,12 @@ msh> jobs
 # trace08.txt - Forward SIGTSTP only to foreground job.
 #
 msh> ./myspin 4 &
-[1] (1063) ./myspin 4 &
+[1] (23738) ./myspin 4 &
 msh> ./myspin 5
-Job [2] (1065) stopped by signal 20
+Job [2] (23740) stopped by signal 20
 msh> jobs
-[1] (1063) Running ./myspin 4 &
-[2] (1065) Stopped ./myspin 5 
+[1] (23738) Running ./myspin 4 &
+[2] (23740) Stopped ./myspin 5 
  
  
 ###################################################
@@ -113,17 +104,17 @@ msh> jobs
 # trace09.txt - Process bg builtin command
 #
 msh> ./myspin 4 &
-[1] (1073) ./myspin 4 &
+[1] (23748) ./myspin 4 &
 msh> ./myspin 5
-Job [2] (1075) stopped by signal 20
+Job [2] (23750) stopped by signal 20
 msh> jobs
-[1] (1073) Running ./myspin 4 &
-[2] (1075) Stopped ./myspin 5 
+[1] (23748) Running ./myspin 4 &
+[2] (23750) Stopped ./myspin 5 
 msh> bg %2
-[2] (1075) ./myspin 5 
+[2] (23750) ./myspin 5 
 msh> jobs
-[1] (1073) Running ./myspin 4 &
-[2] (1075) Running ./myspin 5 
+[1] (23748) Running ./myspin 4 &
+[2] (23750) Running ./myspin 5 
  
  
 ###################################################
@@ -134,11 +125,11 @@ msh> jobs
 # trace10.txt - Process fg builtin command. 
 #
 msh> ./myspin 4 &
-[1] (1084) ./myspin 4 &
+[1] (23759) ./myspin 4 &
 msh> fg %1
-Job [1] (1084) stopped by signal 20
+Job [1] (23759) stopped by signal 20
 msh> jobs
-[1] (1084) Stopped ./myspin 4 &
+[1] (23759) Stopped ./myspin 4 &
 msh> fg %1
 msh> jobs
  
@@ -151,28 +142,29 @@ msh> jobs
 # trace11.txt - Forward SIGINT to every process in foreground process group
 #
 msh> ./mysplit 4
-Job [1] (1096) terminated by signal 2
+Job [1] (23770) terminated by signal 2
 msh> /bin/ps a
   PID TTY      STAT   TIME COMMAND
-  357 pts/5    Ss+    0:00 -bash
-  591 pts/1    S      0:00 git-credential-cache--daemon /u/rsimm/.git-credential-cache/socket
-  855 pts/1    Sl+    0:00 vi msh.c
- 1001 pts/6    S+     0:00 -bash
- 1091 pts/6    S+     0:00 make rtest11
- 1092 pts/6    S+     0:00 /bin/sh -c ./sdriver.pl -t trace11.txt -s ./mshref -a "-p"
- 1093 pts/6    S+     0:00 /usr/bin/perl ./sdriver.pl -t trace11.txt -s ./mshref -a -p
- 1094 pts/6    S+     0:00 ./mshref -p
- 1099 pts/6    R      0:00 /bin/ps a
- 1337 tty4     Ss+    0:00 /sbin/getty -8 38400 tty4
- 1345 tty5     Ss+    0:00 /sbin/getty -8 38400 tty5
- 1353 tty2     Ss+    0:00 /sbin/getty -8 38400 tty2
- 1354 tty3     Ss+    0:00 /sbin/getty -8 38400 tty3
- 1357 tty6     Ss+    0:00 /sbin/getty -8 38400 tty6
- 2393 tty1     Ss+    0:00 /sbin/getty -8 38400 tty1
-30222 pts/6    Ss     0:00 -bash
-31284 tty7     Ss+    0:03 /usr/bin/X :0 vt7 -br -nolisten tcp -auth /var/run/xauth/A:0-QhYytb
-32264 pts/1    Ss     0:00 bash
-32573 pts/3    Ss+    0:00 -bash
+ 1322 tty4     Ss+    0:00 /sbin/getty -8 38400 tty4
+ 1327 tty5     Ss+    0:00 /sbin/getty -8 38400 tty5
+ 1334 tty2     Ss+    0:00 /sbin/getty -8 38400 tty2
+ 1335 tty3     Ss+    0:00 /sbin/getty -8 38400 tty3
+ 1338 tty6     Ss+    0:00 /sbin/getty -8 38400 tty6
+ 2444 tty1     Ss+    0:00 /sbin/getty -8 38400 tty1
+21906 tty7     Ss+    0:12 /usr/bin/X :0 vt7 -br -nolisten tcp -auth /var/run/xauth/A:0-RCvJFa
+22983 pts/0    Ss+    0:00 bash
+23243 pts/1    Ss     0:00 bash
+23425 pts/1    S      0:00 git-credential-cache--daemon /u/jimmylin/.git-credential-cache/socket
+23543 pts/2    Ss+    0:00 bash
+23548 pts/3    Ss     0:00 bash
+23557 pts/4    Ss+    0:00 bash
+23678 pts/1    Sl+    0:00 vi MSHOUT.txt
+23686 pts/3    S+     0:00 bash
+23765 pts/3    S+     0:00 make rtest11
+23766 pts/3    S+     0:00 /bin/sh -c ./sdriver.pl -t trace11.txt -s ./mshref -a "-p"
+23767 pts/3    S+     0:00 /usr/bin/perl ./sdriver.pl -t trace11.txt -s ./mshref -a -p
+23768 pts/3    S+     0:00 ./mshref -p
+23773 pts/3    R      0:00 /bin/ps a
  
  
 ###################################################
@@ -183,32 +175,33 @@ msh> /bin/ps a
 # trace12.txt - Forward SIGTSTP to every process in foreground process group
 #
 msh> ./mysplit 4
-Job [1] (1111) stopped by signal 20
+Job [1] (23779) stopped by signal 20
 msh> jobs
-[1] (1111) Stopped ./mysplit 4 
+[1] (23779) Stopped ./mysplit 4 
 msh> /bin/ps a
   PID TTY      STAT   TIME COMMAND
-  357 pts/5    Ss+    0:00 -bash
-  591 pts/1    S      0:00 git-credential-cache--daemon /u/rsimm/.git-credential-cache/socket
-  855 pts/1    Sl+    0:00 vi msh.c
- 1001 pts/6    S+     0:00 -bash
- 1100 pts/6    S+     0:00 make rtest12
- 1102 pts/6    S+     0:00 /bin/sh -c ./sdriver.pl -t trace12.txt -s ./mshref -a "-p"
- 1104 pts/6    S+     0:00 /usr/bin/perl ./sdriver.pl -t trace12.txt -s ./mshref -a -p
- 1108 pts/6    S+     0:00 ./mshref -p
- 1111 pts/6    T      0:00 ./mysplit 4
- 1112 pts/6    T      0:00 ./mysplit 4
- 1116 pts/6    R      0:00 /bin/ps a
- 1337 tty4     Ss+    0:00 /sbin/getty -8 38400 tty4
- 1345 tty5     Ss+    0:00 /sbin/getty -8 38400 tty5
- 1353 tty2     Ss+    0:00 /sbin/getty -8 38400 tty2
- 1354 tty3     Ss+    0:00 /sbin/getty -8 38400 tty3
- 1357 tty6     Ss+    0:00 /sbin/getty -8 38400 tty6
- 2393 tty1     Ss+    0:00 /sbin/getty -8 38400 tty1
-30222 pts/6    Ss     0:00 -bash
-31284 tty7     Ss+    0:03 /usr/bin/X :0 vt7 -br -nolisten tcp -auth /var/run/xauth/A:0-QhYytb
-32264 pts/1    Ss     0:00 bash
-32573 pts/3    Ss+    0:00 -bash
+ 1322 tty4     Ss+    0:00 /sbin/getty -8 38400 tty4
+ 1327 tty5     Ss+    0:00 /sbin/getty -8 38400 tty5
+ 1334 tty2     Ss+    0:00 /sbin/getty -8 38400 tty2
+ 1335 tty3     Ss+    0:00 /sbin/getty -8 38400 tty3
+ 1338 tty6     Ss+    0:00 /sbin/getty -8 38400 tty6
+ 2444 tty1     Ss+    0:00 /sbin/getty -8 38400 tty1
+21906 tty7     Ss+    0:12 /usr/bin/X :0 vt7 -br -nolisten tcp -auth /var/run/xauth/A:0-RCvJFa
+22983 pts/0    Ss+    0:00 bash
+23243 pts/1    Ss     0:00 bash
+23425 pts/1    S      0:00 git-credential-cache--daemon /u/jimmylin/.git-credential-cache/socket
+23543 pts/2    Ss+    0:00 bash
+23548 pts/3    Ss     0:00 bash
+23557 pts/4    Ss+    0:00 bash
+23678 pts/1    Sl+    0:00 vi MSHOUT.txt
+23686 pts/3    S+     0:00 bash
+23774 pts/3    S+     0:00 make rtest12
+23775 pts/3    S+     0:00 /bin/sh -c ./sdriver.pl -t trace12.txt -s ./mshref -a "-p"
+23776 pts/3    S+     0:00 /usr/bin/perl ./sdriver.pl -t trace12.txt -s ./mshref -a -p
+23777 pts/3    S+     0:00 ./mshref -p
+23779 pts/3    T      0:00 ./mysplit 4
+23780 pts/3    T      0:00 ./mysplit 4
+23784 pts/3    R      0:00 /bin/ps a
  
  
 ###################################################
@@ -219,54 +212,57 @@ msh> /bin/ps a
 # trace13.txt - Restart every stopped process in process group
 #
 msh> ./mysplit 4
-Job [1] (1126) stopped by signal 20
+Job [1] (23790) stopped by signal 20
 msh> jobs
-[1] (1126) Stopped ./mysplit 4 
+[1] (23790) Stopped ./mysplit 4 
 msh> /bin/ps a
   PID TTY      STAT   TIME COMMAND
-  357 pts/5    Ss+    0:00 -bash
-  591 pts/1    S      0:00 git-credential-cache--daemon /u/rsimm/.git-credential-cache/socket
-  855 pts/1    Sl+    0:00 vi msh.c
- 1001 pts/6    S+     0:00 -bash
- 1117 pts/6    S+     0:00 make rtest13
- 1118 pts/6    S+     0:00 /bin/sh -c ./sdriver.pl -t trace13.txt -s ./mshref -a "-p"
- 1119 pts/6    S+     0:00 /usr/bin/perl ./sdriver.pl -t trace13.txt -s ./mshref -a -p
- 1120 pts/6    S+     0:00 ./mshref -p
- 1126 pts/6    T      0:00 ./mysplit 4
- 1127 pts/6    T      0:00 ./mysplit 4
- 1130 pts/6    R      0:00 /bin/ps a
- 1337 tty4     Ss+    0:00 /sbin/getty -8 38400 tty4
- 1345 tty5     Ss+    0:00 /sbin/getty -8 38400 tty5
- 1353 tty2     Ss+    0:00 /sbin/getty -8 38400 tty2
- 1354 tty3     Ss+    0:00 /sbin/getty -8 38400 tty3
- 1357 tty6     Ss+    0:00 /sbin/getty -8 38400 tty6
- 2393 tty1     Ss+    0:00 /sbin/getty -8 38400 tty1
-30222 pts/6    Ss     0:00 -bash
-31284 tty7     Ss+    0:03 /usr/bin/X :0 vt7 -br -nolisten tcp -auth /var/run/xauth/A:0-QhYytb
-32264 pts/1    Ss     0:00 bash
-32573 pts/3    Ss+    0:00 -bash
+ 1322 tty4     Ss+    0:00 /sbin/getty -8 38400 tty4
+ 1327 tty5     Ss+    0:00 /sbin/getty -8 38400 tty5
+ 1334 tty2     Ss+    0:00 /sbin/getty -8 38400 tty2
+ 1335 tty3     Ss+    0:00 /sbin/getty -8 38400 tty3
+ 1338 tty6     Ss+    0:00 /sbin/getty -8 38400 tty6
+ 2444 tty1     Ss+    0:00 /sbin/getty -8 38400 tty1
+21906 tty7     Ss+    0:12 /usr/bin/X :0 vt7 -br -nolisten tcp -auth /var/run/xauth/A:0-RCvJFa
+22983 pts/0    Ss+    0:00 bash
+23243 pts/1    Ss     0:00 bash
+23425 pts/1    S      0:00 git-credential-cache--daemon /u/jimmylin/.git-credential-cache/socket
+23543 pts/2    Ss+    0:00 bash
+23548 pts/3    Ss     0:00 bash
+23557 pts/4    Ss+    0:00 bash
+23678 pts/1    Sl+    0:00 vi MSHOUT.txt
+23686 pts/3    S+     0:00 bash
+23785 pts/3    S+     0:00 make rtest13
+23786 pts/3    S+     0:00 /bin/sh -c ./sdriver.pl -t trace13.txt -s ./mshref -a "-p"
+23787 pts/3    S+     0:00 /usr/bin/perl ./sdriver.pl -t trace13.txt -s ./mshref -a -p
+23788 pts/3    S+     0:00 ./mshref -p
+23790 pts/3    T      0:00 ./mysplit 4
+23791 pts/3    T      0:00 ./mysplit 4
+23799 pts/3    R      0:00 /bin/ps a
 msh> fg %1
 msh> /bin/ps a
   PID TTY      STAT   TIME COMMAND
-  357 pts/5    Ss+    0:00 -bash
-  591 pts/1    S      0:00 git-credential-cache--daemon /u/rsimm/.git-credential-cache/socket
-  855 pts/1    Sl+    0:00 vi msh.c
- 1001 pts/6    S+     0:00 -bash
- 1117 pts/6    S+     0:00 make rtest13
- 1118 pts/6    S+     0:00 /bin/sh -c ./sdriver.pl -t trace13.txt -s ./mshref -a "-p"
- 1119 pts/6    S+     0:00 /usr/bin/perl ./sdriver.pl -t trace13.txt -s ./mshref -a -p
- 1120 pts/6    S+     0:00 ./mshref -p
- 1133 pts/6    R      0:00 /bin/ps a
- 1337 tty4     Ss+    0:00 /sbin/getty -8 38400 tty4
- 1345 tty5     Ss+    0:00 /sbin/getty -8 38400 tty5
- 1353 tty2     Ss+    0:00 /sbin/getty -8 38400 tty2
- 1354 tty3     Ss+    0:00 /sbin/getty -8 38400 tty3
- 1357 tty6     Ss+    0:00 /sbin/getty -8 38400 tty6
- 2393 tty1     Ss+    0:00 /sbin/getty -8 38400 tty1
-30222 pts/6    Ss     0:00 -bash
-31284 tty7     Ss+    0:03 /usr/bin/X :0 vt7 -br -nolisten tcp -auth /var/run/xauth/A:0-QhYytb
-32264 pts/1    Ss     0:00 bash
-32573 pts/3    Ss+    0:00 -bash
+ 1322 tty4     Ss+    0:00 /sbin/getty -8 38400 tty4
+ 1327 tty5     Ss+    0:00 /sbin/getty -8 38400 tty5
+ 1334 tty2     Ss+    0:00 /sbin/getty -8 38400 tty2
+ 1335 tty3     Ss+    0:00 /sbin/getty -8 38400 tty3
+ 1338 tty6     Ss+    0:00 /sbin/getty -8 38400 tty6
+ 2444 tty1     Ss+    0:00 /sbin/getty -8 38400 tty1
+21906 tty7     Ss+    0:12 /usr/bin/X :0 vt7 -br -nolisten tcp -auth /var/run/xauth/A:0-RCvJFa
+22983 pts/0    Ss+    0:00 bash
+23243 pts/1    Ss     0:00 bash
+23425 pts/1    S      0:00 git-credential-cache--daemon /u/jimmylin/.git-credential-cache/socket
+23543 pts/2    Ss     0:00 bash
+23548 pts/3    Ss     0:00 bash
+23557 pts/4    Ss+    0:00 bash
+23678 pts/1    Sl+    0:00 vi MSHOUT.txt
+23686 pts/3    S+     0:00 bash
+23785 pts/3    S+     0:00 make rtest13
+23786 pts/3    S+     0:00 /bin/sh -c ./sdriver.pl -t trace13.txt -s ./mshref -a "-p"
+23787 pts/3    S+     0:00 /usr/bin/perl ./sdriver.pl -t trace13.txt -s ./mshref -a -p
+23788 pts/3    S+     0:00 ./mshref -p
+23801 pts/2    Sl+    0:00 vi design_doc.txt
+23804 pts/3    R      0:00 /bin/ps a
  
  
 ###################################################
@@ -279,7 +275,7 @@ msh> /bin/ps a
 msh> ./bogus
 ./bogus: Command not found
 msh> ./myspin 4 &
-[1] (1141) ./myspin 4 &
+[1] (23812) ./myspin 4 &
 msh> fg
 fg command requires PID or %jobid argument
 msh> bg
@@ -295,13 +291,13 @@ msh> bg 9999999
 msh> fg %2
 %2: No such job
 msh> fg %1
-Job [1] (1141) stopped by signal 20
+Job [1] (23812) stopped by signal 20
 msh> bg %2
 %2: No such job
 msh> bg %1
-[1] (1141) ./myspin 4 &
+[1] (23812) ./myspin 4 &
 msh> jobs
-[1] (1141) Running ./myspin 4 &
+[1] (23812) Running ./myspin 4 &
  
  
 ###################################################
@@ -314,26 +310,26 @@ msh> jobs
 msh> ./bogus
 ./bogus: Command not found
 msh> ./myspin 10
-Job [1] (1160) terminated by signal 2
+Job [1] (23831) terminated by signal 2
 msh> ./myspin 3 &
-[1] (1162) ./myspin 3 &
+[1] (23833) ./myspin 3 &
 msh> ./myspin 4 &
-[2] (1164) ./myspin 4 &
+[2] (23835) ./myspin 4 &
 msh> jobs
-[1] (1162) Running ./myspin 3 &
-[2] (1164) Running ./myspin 4 &
+[1] (23833) Running ./myspin 3 &
+[2] (23835) Running ./myspin 4 &
 msh> fg %1
-Job [1] (1162) stopped by signal 20
+Job [1] (23833) stopped by signal 20
 msh> jobs
-[1] (1162) Stopped ./myspin 3 &
-[2] (1164) Running ./myspin 4 &
+[1] (23833) Stopped ./myspin 3 &
+[2] (23835) Running ./myspin 4 &
 msh> bg %3
 %3: No such job
 msh> bg %1
-[1] (1162) ./myspin 3 &
+[1] (23833) ./myspin 3 &
 msh> jobs
-[1] (1162) Running ./myspin 3 &
-[2] (1164) Running ./myspin 4 &
+[1] (23833) Running ./myspin 3 &
+[2] (23835) Running ./myspin 4 &
 msh> fg %1
 msh> quit
  
@@ -347,12 +343,10 @@ msh> quit
 #     signals that come from other processes instead of the terminal.
 #
 msh> ./mystop 2
-Job [1] (1178) stopped by signal 20
+Job [1] (23849) stopped by signal 20
 msh> jobs
-[1] (1178) Stopped ./mystop 2
+[1] (23849) Stopped ./mystop 2
 msh> ./myint 2
-Job [2] (1181) terminated by signal 2
+Job [2] (23852) terminated by signal 2
 bin/echo: Command not found
  
-=======
->>>>>>> 92203ad230d6a18e98a249cd0cb7c4f12c6386a1

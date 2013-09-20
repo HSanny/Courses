@@ -355,8 +355,10 @@ void sigchld_handler(int sig)
     int pid, status, i;
     while((pid = waitpid(-1, &status, WUNTRACED|WNOHANG)) > 0){
         if(WIFSTOPPED(status)) {
-            for(i = 0; i < MAXJOBS; i++){
+            for(i = 0; i < MAXJOBS; i++) {
                 if(jobs[i].pid == pid) {
+                    printf("Job [%d] (%d) stopped by signal %d \n", 
+                            jobs[i].jid, jobs[i].pid, SIGTSTP);
                     jobs[i].state=ST;
                     kill(-1*jobs[i].pid,SIGTSTP);
                     break;
@@ -366,8 +368,10 @@ void sigchld_handler(int sig)
         else if(WIFSIGNALED(status)){
             for( i = 0; i < MAXJOBS; i++){
                 if(jobs[i].pid == pid){
+                    printf("Job [%d] (%d) terminated by signal %d \n", 
+                            jobs[i].jid, jobs[i].pid, SIGINT);
                     deletejob(jobs, jobs[i].pid);
-                    kill(-1*jobs[i].pid,SIGINT);
+                    kill(jobs[i].pid,SIGINT);
                     break;
                 }
             }

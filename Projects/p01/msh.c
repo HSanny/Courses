@@ -49,6 +49,8 @@ void sigchld_handler(int sig);
 void sigtstp_handler(int sig);
 void sigint_handler(int sig);
 
+/* Here are functions implemented for high-level abstraction */
+
 /* Here are helper routines that we've provided for you */
 void usage(void);
 void sigquit_handler(int sig);
@@ -190,13 +192,13 @@ void eval(char *cmdline)
             sigprocmask(SIG_UNBLOCK, &sig_child, NULL);
             // execution with execvp() since it's convenient
             if (execvp(args[0], args) == -1) {
-                unix_error("Command not found.\n");
+                printf("%s: Command not found.\n", *args);
                 exit(-1);
             }
             // normal exit after execution
             exit(0);
         } else {
-            // noew it's Bochao driving
+            // now it's Bochao driving
             // reconstruct the command with unnecessary character removed
             int i = 0;  // index iterating through the args
             char * simCommand;  // the reconstructed command
@@ -219,8 +221,9 @@ void eval(char *cmdline)
                 printf("[%d] (%d) %s\n", pid2jid(jobs, child), 
                         child, simCommand);
             }
-            // NOTE that no information needed to be displayed for fg job
+            // NOTE that no information to be displayed for fg job
             sigprocmask(SIG_UNBLOCK, &sig_child, NULL);
+            // parent process waits for the termination of foreground job
             if (foreground) waitfg(child);
         }
     }
@@ -244,8 +247,9 @@ int builtin_cmd(char **argv)
 
     // The jobs command lists all background jobs.
     else if (strcmp(*argv, "jobs") == 0) {
+        // when command is invoked, there must be no foreground job,
+        // thus, all jobs in the "jobs" array are background job.
         listjobs(jobs);
-        printf("\n");
         return 1;
     }
 
@@ -263,45 +267,60 @@ int builtin_cmd(char **argv)
 void do_bgfg(char **argv) 
 {
     // Jimmy is driving now, Bochao redrive
-    char * job_argv = *(argv+1);
-    pid_t pid;
-    int jid;
+    pid_t pid; int jid;
     struct job_t *job;
+
+    if (*(argv+1) == NULL){  // no id input 
+        printf("%s command requires PID or %%jobid argument\n", *argv);
+        return ;
+    }
+
+    // manipulate the job argument
+    char * job_argv = *(argv+1);
+
     if (*job_argv == '%') { // this is jid input
-        jid = atoi(strtok(job_argv, "%"));
-        job = getjobjid(jobs, jid);
-        if (job == NULL) {
-            printf("%d: No Such Job.\n", jid);
-            return;
+        if (!isdigit(*(job_argv+1))){  // non-numeric input detection
+            printf("%s: argument must be PID or %%jobid\n", *argv);
+            return ;
         }
-        pid = job->pid;
+
+        jid = atoi(strtok(job_argv, "%\n"));  // the numeric id value
+        job = getjobjid(jobs, jid);
+        if (job != NULL)
+            pid = job->pid;
+        else {  // cannot find specified job
+            printf("%%%d: No such Job.\n", jid);   
+            return ;
+        }
     } else { // this is pid input
+        if (!isdigit(*job_argv)){  // non-numeric input detection
+            printf("%s: argument must be PID or %%jobid\n", *argv);
+            return ;
+        }
+
         pid = atoi(job_argv);
         job = getjobpid(jobs, pid);
-        if (job == NULL) {
-            printf("%d:No Such Job.\n", pid);
-            return;
+        if (job == NULL) {  // cannot find specified process
+            printf("(%d): No such process.\n", pid);   
+            return ;
         }
-        printf("pid: %d \n",pid);
     }
 
     // Bochao's driving, modifies jimmy's work
-    if (!kill(-1*(job->pid), SIGCONT)) 
+    if (kill(-1*(job->pid), SIGCONT)) 
         unix_error("Signal Delivery error..\n");
         
     // This bg command starts job in the background.
     if(strcmp(*argv, "fg") == 0) { // This fg command starts job in the foreground.
-        // send signal to pid and continue the running
         job->state = FG;
         waitfg(job->pid);
-    }
-    else if (strcmp(*argv, "bg") == 0) {
-        // send signal to pid and continue the running
+    } else if (strcmp(*argv, "bg") == 0) {
         job->state = BG;        
-        printf("[%d] (%d) %s\n", jid, pid, getjobpid(pid).cmdline);
+        printf("[%d] (%d) %s\n", jid, pid, job->cmdline);
     } 
     return;
 }
+
 
 /* 
  * waitfg - Block until process pid is no longer the foreground process
@@ -384,7 +403,7 @@ void sigint_handler(int sig)
                 exit(-3);
             }
             // feedback if signal delivery succeed
-            printf("\n Job [%d] (%d) terminated by signal %d \n", 
+            printf("Job [%d] (%d) terminated by signal %d \n", 
                     jobs[i].jid, jobs[i].pid, SIGINT);
             // remove the job from jobs array
             deletejob(jobs, jobs[i].pid);

@@ -29,9 +29,9 @@ do
     echo "" >> $mshOut
     if [ $i -lt 10 ]
     then
-        make test0$i >> $mshOut
+        ./sdriver.pl -t trace0$i.txt -s ./msh -a "-p" >> $mshOut
     else 
-        make test$i >> $mshOut
+        ./sdriver.pl -t trace$i.txt -s ./msh -a "-p" >> $mshOut
     fi
     echo "" >> $mshOut
 done 

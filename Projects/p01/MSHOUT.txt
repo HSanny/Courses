@@ -35,7 +35,7 @@ msh> quit
 # trace04.txt - Run a background job.
 #
 msh> ./myspin 1 &
-[1] (2374)  ./myspin 1 &
+[1] (31703)  ./myspin 1 &
 
 ###################################################
 ### For Trace Test 5:
@@ -46,13 +46,12 @@ msh> ./myspin 1 &
 # trace05.txt - Process jobs builtin command.
 #
 msh> ./myspin 2 &
-[1] (2390)  ./myspin 2 &
+[1] (31709)  ./myspin 2 &
 msh> ./myspin 3 &
-[2] (2392)  ./myspin 3 &
+[2] (31711)  ./myspin 3 &
 msh> jobs
-[1] (2390) Running  ./myspin 2 & 
-[2] (2392) Running  ./myspin 3 & 
-
+[1] (31709) Running  ./myspin 2 & 
+[2] (31711) Running  ./myspin 3 & 
 
 ###################################################
 ### For Trace Test 6:
@@ -63,8 +62,7 @@ msh> jobs
 # trace06.txt - Forward SIGINT to foreground job.
 #
 msh> ./myspin 4
-
- Job [1] (2413) terminated by signal 2 
+Job [1] (31718) terminated by signal 2 
 
 ###################################################
 ### For Trace Test 7:
@@ -75,13 +73,11 @@ msh> ./myspin 4
 # trace07.txt - Forward SIGINT only to foreground job.
 #
 msh> ./myspin 4 &
-[1] (2422)  ./myspin 4 &
+[1] (31724)  ./myspin 4 &
 msh> ./myspin 5
-
- Job [2] (2424) terminated by signal 2 
+Job [2] (31726) terminated by signal 2 
 msh> jobs
-[1] (2422) Running  ./myspin 4 & 
-
+[1] (31724) Running  ./myspin 4 & 
 
 ###################################################
 ### For Trace Test 8:
@@ -92,13 +88,12 @@ msh> jobs
 # trace08.txt - Forward SIGTSTP only to foreground job.
 #
 msh> ./myspin 4 &
-[1] (2434)  ./myspin 4 &
+[1] (31733)  ./myspin 4 &
 msh> ./myspin 5
-Job [2] (2436) stopped by signal 20 
+Job [2] (31735) stopped by signal 20 
 msh> jobs
-[1] (2434) Running  ./myspin 4 & 
-[2] (2436) Stopped  ./myspin 5 
-
+[1] (31733) Running  ./myspin 4 & 
+[2] (31735) Stopped  ./myspin 5 
 
 ###################################################
 ### For Trace Test 9:
@@ -109,20 +104,17 @@ msh> jobs
 # trace09.txt - Process bg builtin command
 #
 msh> ./myspin 4 &
-[1] (2448)  ./myspin 4 &
+[1] (31742)  ./myspin 4 &
 msh> ./myspin 5
-Job [2] (2450) stopped by signal 20 
+Job [2] (31744) stopped by signal 20 
 msh> jobs
-[1] (2448) Running  ./myspin 4 & 
-[2] (2450) Stopped  ./myspin 5 
-
+[1] (31742) Running  ./myspin 4 & 
+[2] (31744) Stopped  ./myspin 5 
 msh> bg %2
-Command not found.
-: No such file or directory
+[2] (31744)  ./myspin 5
 msh> jobs
-[1] (2448) Running  ./myspin 4 & 
-[2] (2450) Stopped  ./myspin 5 
-
+[1] (31742) Running  ./myspin 4 & 
+[2] (31744) Running  ./myspin 5 
 
 ###################################################
 ### For Trace Test 10:
@@ -133,19 +125,13 @@ msh> jobs
 # trace10.txt - Process fg builtin command. 
 #
 msh> ./myspin 4 &
-[1] (2467)  ./myspin 4 &
+[1] (31753)  ./myspin 4 &
 msh> fg %1
-Command not found.
-: Permission denied
+Job [1] (31753) stopped by signal 20 
 msh> jobs
-[1] (2467) Running  ./myspin 4 & 
-
+[1] (31753) Stopped  ./myspin 4 & 
 msh> fg %1
-Command not found.
-: Permission denied
 msh> jobs
-[1] (2467) Running  ./myspin 4 & 
-
 
 ###################################################
 ### For Trace Test 11:
@@ -156,32 +142,27 @@ msh> jobs
 # trace11.txt - Forward SIGINT to every process in foreground process group
 #
 msh> ./mysplit 4
-
- Job [1] (2484) terminated by signal 2 
+Job [1] (31763) terminated by signal 2 
 msh> /bin/ps a
   PID TTY      STAT   TIME COMMAND
-  702 pts/0    Ss     0:00 bash
- 1261 pts/0    Tl     0:00 vim mshRefOut.txt
- 1266 pts/0    Tl     0:00 vi mshRefOut.txt
- 1280 pts/1    Ss+    0:00 bash
- 1298 pts/0    Tl     0:00 vi mshref.out
- 1328 tty4     Ss+    0:00 /sbin/getty -8 38400 tty4
- 1334 tty5     Ss+    0:00 /sbin/getty -8 38400 tty5
- 1342 tty2     Ss+    0:00 /sbin/getty -8 38400 tty2
- 1343 tty3     Ss+    0:00 /sbin/getty -8 38400 tty3
- 1346 tty6     Ss+    0:00 /sbin/getty -8 38400 tty6
- 1418 pts/0    Tl     0:00 vi
- 1420 pts/0    Tl     0:00 vi MSHOUT.txt
- 1919 pts/0    Tl     0:00 vi MSHOUT.txt
- 1925 pts/0    Tl     0:00 vi MSHOUT.txt
- 2348 pts/0    S+     0:00 /bin/bash ./runTraceTest.sh
- 2460 tty1     Ss+    0:00 /sbin/getty -8 38400 tty1
- 2479 pts/0    S+     0:00 make test11
- 2480 pts/0    S+     0:00 /bin/sh -c ./sdriver.pl -t trace11.txt -s ./msh -a "-p"
- 2481 pts/0    S+     0:00 /usr/bin/perl ./sdriver.pl -t trace11.txt -s ./msh -a -p
- 2482 pts/0    R+     0:02 ./msh -p
- 2492 pts/0    R      0:00 /bin/ps a
-24352 tty7     Ss+    1:40 /usr/bin/X :0 vt7 -br -nolisten tcp -auth /var/run/xauth/A:0-T8Cebb
+ 1141 tty4     Ss+    0:00 /sbin/getty -8 38400 tty4
+ 1145 tty5     Ss+    0:00 /sbin/getty -8 38400 tty5
+ 1160 tty2     Ss+    0:00 /sbin/getty -8 38400 tty2
+ 1161 tty3     Ss+    0:00 /sbin/getty -8 38400 tty3
+ 1164 tty6     Ss+    0:00 /sbin/getty -8 38400 tty6
+ 2325 tty1     Ss+    0:00 /sbin/getty -8 38400 tty1
+28783 tty7     Ss+    1:56 /usr/bin/X :0 vt7 -br -nolisten tcp -auth /var/run/xauth/A:0-FRXAta
+29433 pts/0    Ss     0:00 bash
+29641 pts/1    Ss     0:00 bash
+29839 pts/2    Ss+    0:00 bash
+30120 pts/2    Tl     0:04 vi msh.c
+31463 pts/1    Sl+    0:00 vi TraceMSHREF.txt
+31681 pts/0    S+     0:00 /bin/bash ./runTraceTest.sh
+31758 pts/0    S+     0:00 make test11
+31759 pts/0    S+     0:00 /bin/sh -c ./sdriver.pl -t trace11.txt -s ./msh -a "-p"
+31760 pts/0    S+     0:00 /usr/bin/perl ./sdriver.pl -t trace11.txt -s ./msh -a -p
+31761 pts/0    R+     0:02 ./msh -p
+31766 pts/0    R      0:00 /bin/ps a
 
 ###################################################
 ### For Trace Test 12:
@@ -192,36 +173,31 @@ msh> /bin/ps a
 # trace12.txt - Forward SIGTSTP to every process in foreground process group
 #
 msh> ./mysplit 4
-Job [1] (2498) stopped by signal 20 
+Job [1] (31772) stopped by signal 20 
 msh> jobs
-[1] (2498) Stopped  ./mysplit 4 
-
+[1] (31772) Stopped  ./mysplit 4 
 msh> /bin/ps a
   PID TTY      STAT   TIME COMMAND
-  702 pts/0    Ss     0:00 bash
- 1261 pts/0    Tl     0:00 vim mshRefOut.txt
- 1266 pts/0    Tl     0:00 vi mshRefOut.txt
- 1280 pts/1    Ss+    0:00 bash
- 1298 pts/0    Tl     0:00 vi mshref.out
- 1328 tty4     Ss+    0:00 /sbin/getty -8 38400 tty4
- 1334 tty5     Ss+    0:00 /sbin/getty -8 38400 tty5
- 1342 tty2     Ss+    0:00 /sbin/getty -8 38400 tty2
- 1343 tty3     Ss+    0:00 /sbin/getty -8 38400 tty3
- 1346 tty6     Ss+    0:00 /sbin/getty -8 38400 tty6
- 1418 pts/0    Tl     0:00 vi
- 1420 pts/0    Tl     0:00 vi MSHOUT.txt
- 1919 pts/0    Tl     0:00 vi MSHOUT.txt
- 1925 pts/0    Tl     0:00 vi MSHOUT.txt
- 2348 pts/0    S+     0:00 /bin/bash ./runTraceTest.sh
- 2460 tty1     Ss+    0:00 /sbin/getty -8 38400 tty1
- 2493 pts/0    S+     0:00 make test12
- 2494 pts/0    S+     0:00 /bin/sh -c ./sdriver.pl -t trace12.txt -s ./msh -a "-p"
- 2495 pts/0    S+     0:00 /usr/bin/perl ./sdriver.pl -t trace12.txt -s ./msh -a -p
- 2496 pts/0    R+     0:02 ./msh -p
- 2498 pts/0    T      0:00 ./mysplit 4
- 2499 pts/0    T      0:00 ./mysplit 4
- 2505 pts/0    R      0:00 /bin/ps a
-24352 tty7     Ss+    1:40 /usr/bin/X :0 vt7 -br -nolisten tcp -auth /var/run/xauth/A:0-T8Cebb
+ 1141 tty4     Ss+    0:00 /sbin/getty -8 38400 tty4
+ 1145 tty5     Ss+    0:00 /sbin/getty -8 38400 tty5
+ 1160 tty2     Ss+    0:00 /sbin/getty -8 38400 tty2
+ 1161 tty3     Ss+    0:00 /sbin/getty -8 38400 tty3
+ 1164 tty6     Ss+    0:00 /sbin/getty -8 38400 tty6
+ 2325 tty1     Ss+    0:00 /sbin/getty -8 38400 tty1
+28783 tty7     Ss+    1:56 /usr/bin/X :0 vt7 -br -nolisten tcp -auth /var/run/xauth/A:0-FRXAta
+29433 pts/0    Ss     0:00 bash
+29641 pts/1    Ss     0:00 bash
+29839 pts/2    Ss+    0:00 bash
+30120 pts/2    Tl     0:04 vi msh.c
+31463 pts/1    Sl+    0:00 vi TraceMSHREF.txt
+31681 pts/0    S+     0:00 /bin/bash ./runTraceTest.sh
+31767 pts/0    S+     0:00 make test12
+31768 pts/0    S+     0:00 /bin/sh -c ./sdriver.pl -t trace12.txt -s ./msh -a "-p"
+31769 pts/0    S+     0:00 /usr/bin/perl ./sdriver.pl -t trace12.txt -s ./msh -a -p
+31770 pts/0    R+     0:02 ./msh -p
+31772 pts/0    T      0:00 ./mysplit 4
+31773 pts/0    T      0:00 ./mysplit 4
+31776 pts/0    R      0:00 /bin/ps a
 
 ###################################################
 ### For Trace Test 13:
@@ -232,65 +208,52 @@ msh> /bin/ps a
 # trace13.txt - Restart every stopped process in process group
 #
 msh> ./mysplit 4
-Job [1] (2511) stopped by signal 20 
+Job [1] (31782) stopped by signal 20 
 msh> jobs
-[1] (2511) Stopped  ./mysplit 4 
-
+[1] (31782) Stopped  ./mysplit 4 
 msh> /bin/ps a
   PID TTY      STAT   TIME COMMAND
-  702 pts/0    Ss     0:00 bash
- 1261 pts/0    Tl     0:00 vim mshRefOut.txt
- 1266 pts/0    Tl     0:00 vi mshRefOut.txt
- 1280 pts/1    Ss+    0:00 bash
- 1298 pts/0    Tl     0:00 vi mshref.out
- 1328 tty4     Ss+    0:00 /sbin/getty -8 38400 tty4
- 1334 tty5     Ss+    0:00 /sbin/getty -8 38400 tty5
- 1342 tty2     Ss+    0:00 /sbin/getty -8 38400 tty2
- 1343 tty3     Ss+    0:00 /sbin/getty -8 38400 tty3
- 1346 tty6     Ss+    0:00 /sbin/getty -8 38400 tty6
- 1418 pts/0    Tl     0:00 vi
- 1420 pts/0    Tl     0:00 vi MSHOUT.txt
- 1919 pts/0    Tl     0:00 vi MSHOUT.txt
- 1925 pts/0    Tl     0:00 vi MSHOUT.txt
- 2348 pts/0    S+     0:00 /bin/bash ./runTraceTest.sh
- 2460 tty1     Ss+    0:00 /sbin/getty -8 38400 tty1
- 2506 pts/0    S+     0:00 make test13
- 2507 pts/0    S+     0:00 /bin/sh -c ./sdriver.pl -t trace13.txt -s ./msh -a "-p"
- 2508 pts/0    S+     0:00 /usr/bin/perl ./sdriver.pl -t trace13.txt -s ./msh -a -p
- 2509 pts/0    R+     0:02 ./msh -p
- 2511 pts/0    T      0:00 ./mysplit 4
- 2512 pts/0    T      0:00 ./mysplit 4
- 2520 pts/0    R      0:00 /bin/ps a
-24352 tty7     Ss+    1:40 /usr/bin/X :0 vt7 -br -nolisten tcp -auth /var/run/xauth/A:0-T8Cebb
+ 1141 tty4     Ss+    0:00 /sbin/getty -8 38400 tty4
+ 1145 tty5     Ss+    0:00 /sbin/getty -8 38400 tty5
+ 1160 tty2     Ss+    0:00 /sbin/getty -8 38400 tty2
+ 1161 tty3     Ss+    0:00 /sbin/getty -8 38400 tty3
+ 1164 tty6     Ss+    0:00 /sbin/getty -8 38400 tty6
+ 2325 tty1     Ss+    0:00 /sbin/getty -8 38400 tty1
+28783 tty7     Ss+    1:56 /usr/bin/X :0 vt7 -br -nolisten tcp -auth /var/run/xauth/A:0-FRXAta
+29433 pts/0    Ss     0:00 bash
+29641 pts/1    Ss     0:00 bash
+29839 pts/2    Ss+    0:00 bash
+30120 pts/2    Tl     0:04 vi msh.c
+31463 pts/1    Sl+    0:00 vi TraceMSHREF.txt
+31681 pts/0    S+     0:00 /bin/bash ./runTraceTest.sh
+31777 pts/0    S+     0:00 make test13
+31778 pts/0    S+     0:00 /bin/sh -c ./sdriver.pl -t trace13.txt -s ./msh -a "-p"
+31779 pts/0    S+     0:00 /usr/bin/perl ./sdriver.pl -t trace13.txt -s ./msh -a -p
+31780 pts/0    R+     0:02 ./msh -p
+31782 pts/0    T      0:00 ./mysplit 4
+31783 pts/0    T      0:00 ./mysplit 4
+31786 pts/0    R      0:00 /bin/ps a
 msh> fg %1
-Command not found.
-: Permission denied
 msh> /bin/ps a
   PID TTY      STAT   TIME COMMAND
-  702 pts/0    Ss     0:00 bash
- 1261 pts/0    Tl     0:00 vim mshRefOut.txt
- 1266 pts/0    Tl     0:00 vi mshRefOut.txt
- 1280 pts/1    Ss+    0:00 bash
- 1298 pts/0    Tl     0:00 vi mshref.out
- 1328 tty4     Ss+    0:00 /sbin/getty -8 38400 tty4
- 1334 tty5     Ss+    0:00 /sbin/getty -8 38400 tty5
- 1342 tty2     Ss+    0:00 /sbin/getty -8 38400 tty2
- 1343 tty3     Ss+    0:00 /sbin/getty -8 38400 tty3
- 1346 tty6     Ss+    0:00 /sbin/getty -8 38400 tty6
- 1418 pts/0    Tl     0:00 vi
- 1420 pts/0    Tl     0:00 vi MSHOUT.txt
- 1919 pts/0    Tl     0:00 vi MSHOUT.txt
- 1925 pts/0    Tl     0:00 vi MSHOUT.txt
- 2348 pts/0    S+     0:00 /bin/bash ./runTraceTest.sh
- 2460 tty1     Ss+    0:00 /sbin/getty -8 38400 tty1
- 2506 pts/0    S+     0:00 make test13
- 2507 pts/0    S+     0:00 /bin/sh -c ./sdriver.pl -t trace13.txt -s ./msh -a "-p"
- 2508 pts/0    S+     0:00 /usr/bin/perl ./sdriver.pl -t trace13.txt -s ./msh -a -p
- 2509 pts/0    R+     0:02 ./msh -p
- 2511 pts/0    T      0:00 ./mysplit 4
- 2512 pts/0    T      0:00 ./mysplit 4
- 2524 pts/0    R      0:00 /bin/ps a
-24352 tty7     Ss+    1:40 /usr/bin/X :0 vt7 -br -nolisten tcp -auth /var/run/xauth/A:0-T8Cebb
+ 1141 tty4     Ss+    0:00 /sbin/getty -8 38400 tty4
+ 1145 tty5     Ss+    0:00 /sbin/getty -8 38400 tty5
+ 1160 tty2     Ss+    0:00 /sbin/getty -8 38400 tty2
+ 1161 tty3     Ss+    0:00 /sbin/getty -8 38400 tty3
+ 1164 tty6     Ss+    0:00 /sbin/getty -8 38400 tty6
+ 2325 tty1     Ss+    0:00 /sbin/getty -8 38400 tty1
+28783 tty7     Ss+    1:56 /usr/bin/X :0 vt7 -br -nolisten tcp -auth /var/run/xauth/A:0-FRXAta
+29433 pts/0    Ss     0:00 bash
+29641 pts/1    Ss     0:00 bash
+29839 pts/2    Ss+    0:00 bash
+30120 pts/2    Tl     0:04 vi msh.c
+31463 pts/1    Sl+    0:00 vi TraceMSHREF.txt
+31681 pts/0    S+     0:00 /bin/bash ./runTraceTest.sh
+31777 pts/0    S+     0:00 make test13
+31778 pts/0    S+     0:00 /bin/sh -c ./sdriver.pl -t trace13.txt -s ./msh -a "-p"
+31779 pts/0    S+     0:00 /usr/bin/perl ./sdriver.pl -t trace13.txt -s ./msh -a -p
+31780 pts/0    R+     0:04 ./msh -p
+31789 pts/0    R      0:00 /bin/ps a
 
 ###################################################
 ### For Trace Test 14:
@@ -301,43 +264,31 @@ msh> /bin/ps a
 # trace14.txt - Simple error handling
 #
 msh> ./bogus
-Command not found.
-: No such file or directory
+./bogus: Command not found.
 msh> ./myspin 4 &
-[1] (2532)  ./myspin 4 &
+[1] (31797)  ./myspin 4 &
 msh> fg
-Command not found.
-: Permission denied
+fg command requires PID or %jobid argument
 msh> bg
-Command not found.
-: No such file or directory
+bg command requires PID or %jobid argument
 msh> fg a
-Command not found.
-: Permission denied
+fg: argument must be PID or %jobid
 msh> bg a
-Command not found.
-: No such file or directory
+bg: argument must be PID or %jobid
 msh> fg 9999999
-Command not found.
-: Permission denied
+(9999999): No such process.
 msh> bg 9999999
-Command not found.
-: No such file or directory
+(9999999): No such process.
 msh> fg %2
-Command not found.
-: Permission denied
+%2: No such Job.
 msh> fg %1
-Command not found.
-: Permission denied
+Job [1] (31797) stopped by signal 20 
 msh> bg %2
-Command not found.
-: No such file or directory
+%2: No such Job.
 msh> bg %1
-Command not found.
-: No such file or directory
+[1] (31797)  ./myspin 4 &
 msh> jobs
-[1] (2532) Running  ./myspin 4 & 
-
+[1] (31797) Running  ./myspin 4 & 
 
 ###################################################
 ### For Trace Test 15:
@@ -348,39 +299,29 @@ msh> jobs
 # trace15.txt - Putting it all together
 #
 msh> ./bogus
-Command not found.
-: No such file or directory
+./bogus: Command not found.
 msh> ./myspin 10
-
- Job [1] (2566) terminated by signal 2 
+Job [1] (31816) terminated by signal 2 
 msh> ./myspin 3 &
-[1] (2573)  ./myspin 3 &
+[1] (31818)  ./myspin 3 &
 msh> ./myspin 4 &
-[2] (2575)  ./myspin 4 &
+[2] (31820)  ./myspin 4 &
 msh> jobs
-[1] (2573) Running  ./myspin 3 & 
-[2] (2575) Running  ./myspin 4 & 
-
+[1] (31818) Running  ./myspin 3 & 
+[2] (31820) Running  ./myspin 4 & 
 msh> fg %1
-Command not found.
-: Permission denied
+Job [1] (31818) stopped by signal 20 
 msh> jobs
-[1] (2573) Running  ./myspin 3 & 
-[2] (2575) Running  ./myspin 4 & 
-
+[1] (31818) Stopped  ./myspin 3 & 
+[2] (31820) Running  ./myspin 4 & 
 msh> bg %3
-Command not found.
-: No such file or directory
+%3: No such Job.
 msh> bg %1
-Command not found.
-: No such file or directory
+[1] (31818)  ./myspin 3 &
 msh> jobs
-[1] (2573) Running  ./myspin 3 & 
-[2] (2575) Running  ./myspin 4 & 
-
+[1] (31818) Running  ./myspin 3 & 
+[2] (31820) Running  ./myspin 4 & 
 msh> fg %1
-Command not found.
-: Permission denied
 msh> quit
 
 ###################################################

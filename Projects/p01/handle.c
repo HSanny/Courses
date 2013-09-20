@@ -70,8 +70,6 @@ int main(int argc, char **argv)
         // initialize the structure that specifies sleep information
         struct timespec req;
         req.tv_sec = 1;
-        req.tv_nsec = 0;
-        printf("Still here\n");
         // if interrupted, save the remained sleep time and 
         //     continue the remained sleep then.
         // else finish the specified 1-second sleep

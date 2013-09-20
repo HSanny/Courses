@@ -34,8 +34,8 @@ msh> quit
 #
 # trace04.txt - Run a background job.
 #
-msh> ./myspin 1 &
-[1] (31703)  ./myspin 1 &
+[2] (15450)  ./myspin 1 &
+-e msh> ./myspin 1 \046
 
 ###################################################
 ### For Trace Test 5:
@@ -45,13 +45,16 @@ msh> ./myspin 1 &
 #
 # trace05.txt - Process jobs builtin command.
 #
-msh> ./myspin 2 &
-[1] (31709)  ./myspin 2 &
-msh> ./myspin 3 &
-[2] (31711)  ./myspin 3 &
+[2] (15455)  ./myspin 2 &
+[4] (15457)  ./myspin 3 &
+[1] (15454) Foreground  /bin/echo -e msh> ./myspin 2 \046 
+[2] (15455) Running  ./myspin 2 & 
+[3] (15456) Foreground  /bin/echo -e msh> ./myspin 3 \046 
+[4] (15457) Running  ./myspin 3 & 
+[5] (15458) Foreground  /bin/echo msh> jobs 
+-e msh> ./myspin 3 \046
+-e msh> ./myspin 2 \046
 msh> jobs
-[1] (31709) Running  ./myspin 2 & 
-[2] (31711) Running  ./myspin 3 & 
 
 ###################################################
 ### For Trace Test 6:
@@ -61,8 +64,8 @@ msh> jobs
 #
 # trace06.txt - Forward SIGINT to foreground job.
 #
-msh> ./myspin 4
-Job [1] (31718) terminated by signal 2 
+-e msh> ./myspin 4
+Job [2] (15463) terminated by signal 2 
 
 ###################################################
 ### For Trace Test 7:
@@ -72,12 +75,13 @@ Job [1] (31718) terminated by signal 2
 #
 # trace07.txt - Forward SIGINT only to foreground job.
 #
-msh> ./myspin 4 &
-[1] (31724)  ./myspin 4 &
-msh> ./myspin 5
-Job [2] (31726) terminated by signal 2 
+[2] (15468)  ./myspin 4 &
+-e msh> ./myspin 4 \046
+-e msh> ./myspin 5
+Job [4] (15470) terminated by signal 2 
+[3] (15471) Foreground  /bin/echo msh> jobs 
+[2] (15468) Running  ./myspin 4 & 
 msh> jobs
-[1] (31724) Running  ./myspin 4 & 
 
 ###################################################
 ### For Trace Test 8:
@@ -87,13 +91,14 @@ msh> jobs
 #
 # trace08.txt - Forward SIGTSTP only to foreground job.
 #
-msh> ./myspin 4 &
-[1] (31733)  ./myspin 4 &
-msh> ./myspin 5
-Job [2] (31735) stopped by signal 20 
+[2] (15476)  ./myspin 4 &
+-e msh> ./myspin 5
+-e msh> ./myspin 4 \046
+Job [4] (15478) stopped by signal 18 
+[5] (15479) Foreground  /bin/echo msh> jobs 
+[2] (15476) Running  ./myspin 4 & 
+[4] (15478) Stopped  ./myspin 5 
 msh> jobs
-[1] (31733) Running  ./myspin 4 & 
-[2] (31735) Stopped  ./myspin 5 
 
 ###################################################
 ### For Trace Test 9:
@@ -103,18 +108,22 @@ msh> jobs
 #
 # trace09.txt - Process bg builtin command
 #
-msh> ./myspin 4 &
-[1] (31742)  ./myspin 4 &
-msh> ./myspin 5
-Job [2] (31744) stopped by signal 20 
-msh> jobs
-[1] (31742) Running  ./myspin 4 & 
-[2] (31744) Stopped  ./myspin 5 
+[2] (15484)  ./myspin 4 &
+-e msh> ./myspin 5
+-e msh> ./myspin 4 \046
+Job [4] (15486) stopped by signal 18 
+[5] (15488) Foreground  /bin/echo msh> jobs 
+[2] (15484) Running  ./myspin 4 & 
+[4] (15486) Stopped  ./myspin 5 
+[2] (15484)  ./myspin 4 &
+[5] (15488) Foreground  /bin/echo msh> jobs 
+[2] (15484) Running  ./myspin 4 & 
+[6] (15489) Foreground  /bin/echo msh> bg %2 
+[4] (15486) Stopped  ./myspin 5 
+[7] (15490) Foreground  /bin/echo msh> jobs 
 msh> bg %2
-[2] (31744)  ./myspin 5
 msh> jobs
-[1] (31742) Running  ./myspin 4 & 
-[2] (31744) Running  ./myspin 5 
+msh> jobs
 
 ###################################################
 ### For Trace Test 10:
@@ -124,13 +133,19 @@ msh> jobs
 #
 # trace10.txt - Process fg builtin command. 
 #
-msh> ./myspin 4 &
-[1] (31753)  ./myspin 4 &
+[2] (15495)  ./myspin 4 &
+-e msh> ./myspin 4 \046
+%1: No such Job.
 msh> fg %1
-Job [1] (31753) stopped by signal 20 
+[3] (15497) Foreground  /bin/echo msh> jobs 
+[2] (15495) Running  ./myspin 4 & 
+%1: No such Job.
+[3] (15497) Foreground  /bin/echo msh> jobs 
+[2] (15495) Running  ./myspin 4 & 
+[4] (15498) Foreground  /bin/echo msh> fg %1 
+[5] (15499) Foreground  /bin/echo msh> jobs 
+msh> fg %1
 msh> jobs
-[1] (31753) Stopped  ./myspin 4 & 
-msh> fg %1
 msh> jobs
 
 ###################################################
@@ -141,28 +156,34 @@ msh> jobs
 #
 # trace11.txt - Forward SIGINT to every process in foreground process group
 #
-msh> ./mysplit 4
-Job [1] (31763) terminated by signal 2 
+-e msh> ./mysplit 4
+Job [2] (15504) terminated by signal 2 
+dyld: DYLD_ environment variables being ignored because main executable (/bin/ps) is setuid or setgid
 msh> /bin/ps a
-  PID TTY      STAT   TIME COMMAND
- 1141 tty4     Ss+    0:00 /sbin/getty -8 38400 tty4
- 1145 tty5     Ss+    0:00 /sbin/getty -8 38400 tty5
- 1160 tty2     Ss+    0:00 /sbin/getty -8 38400 tty2
- 1161 tty3     Ss+    0:00 /sbin/getty -8 38400 tty3
- 1164 tty6     Ss+    0:00 /sbin/getty -8 38400 tty6
- 2325 tty1     Ss+    0:00 /sbin/getty -8 38400 tty1
-28783 tty7     Ss+    1:56 /usr/bin/X :0 vt7 -br -nolisten tcp -auth /var/run/xauth/A:0-FRXAta
-29433 pts/0    Ss     0:00 bash
-29641 pts/1    Ss     0:00 bash
-29839 pts/2    Ss+    0:00 bash
-30120 pts/2    Tl     0:04 vi msh.c
-31463 pts/1    Sl+    0:00 vi TraceMSHREF.txt
-31681 pts/0    S+     0:00 /bin/bash ./runTraceTest.sh
-31758 pts/0    S+     0:00 make test11
-31759 pts/0    S+     0:00 /bin/sh -c ./sdriver.pl -t trace11.txt -s ./msh -a "-p"
-31760 pts/0    S+     0:00 /usr/bin/perl ./sdriver.pl -t trace11.txt -s ./msh -a -p
-31761 pts/0    R+     0:02 ./msh -p
-31766 pts/0    R      0:00 /bin/ps a
+  PID   TT  STAT      TIME COMMAND
+ 9874 s000  Ss     0:00.05 login -pf JimmyLin
+ 9876 s000  S+     0:00.09 -bash
+14291 s001  Ss     0:00.04 login -pfl JimmyLin /bin/bash -c exec -la bash /bin/bash
+14292 s001  S      0:00.09 -bash
+15046 s001  T      0:00.01 -bash
+15068 s001  T      0:00.00 make rtest07
+15069 s001  T      0:00.03 /usr/bin/perl ./sdriver.pl -t trace07.txt -s ./mshref -a -p
+15070 s001  Z      0:00.00 (sh)
+15431 s001  S+     0:00.01 /bin/bash ./runTraceTest.sh
+15500 s001  S+     0:00.00 make test11
+15501 s001  S+     0:00.03 /usr/bin/perl ./sdriver.pl -t trace11.txt -s ./msh -a -p
+15502 s001  Z+     0:00.00 (msh)
+15507 s001  R      0:00.00 /bin/ps a
+12892 s002  Ss     0:00.03 login -pfl JimmyLin /bin/bash -c exec -la bash /bin/bash
+12893 s002  S      0:00.07 -bash
+14950 s002  T      0:00.01 -bash
+14972 s002  T      0:00.00 make rtest07
+14973 s002  T      0:00.03 /usr/bin/perl ./sdriver.pl -t trace07.txt -s ./mshref -a -p
+14974 s002  Z      0:00.00 (sh)
+14977 s002  S+     0:00.29 vim ./mshRefOut.txt
+14989 s003  Ss     0:00.02 login -pfl JimmyLin /bin/bash -c exec -la bash /bin/bash
+14990 s003  S      0:00.01 -bash
+15002 s003  S+     0:00.32 ssh jimmylin@pez.cs.utexas.edu
 
 ###################################################
 ### For Trace Test 12:
@@ -172,32 +193,37 @@ msh> /bin/ps a
 #
 # trace12.txt - Forward SIGTSTP to every process in foreground process group
 #
-msh> ./mysplit 4
-Job [1] (31772) stopped by signal 20 
-msh> jobs
-[1] (31772) Stopped  ./mysplit 4 
+-e msh> ./mysplit 4
+Job [2] (15512) stopped by signal 18 
+[3] (15514) Foreground  /bin/echo msh> jobs 
+[2] (15512) Stopped  ./mysplit 4 
+dyld: DYLD_ environment variables being ignored because main executable (/bin/ps) is setuid or setgid
 msh> /bin/ps a
-  PID TTY      STAT   TIME COMMAND
- 1141 tty4     Ss+    0:00 /sbin/getty -8 38400 tty4
- 1145 tty5     Ss+    0:00 /sbin/getty -8 38400 tty5
- 1160 tty2     Ss+    0:00 /sbin/getty -8 38400 tty2
- 1161 tty3     Ss+    0:00 /sbin/getty -8 38400 tty3
- 1164 tty6     Ss+    0:00 /sbin/getty -8 38400 tty6
- 2325 tty1     Ss+    0:00 /sbin/getty -8 38400 tty1
-28783 tty7     Ss+    1:56 /usr/bin/X :0 vt7 -br -nolisten tcp -auth /var/run/xauth/A:0-FRXAta
-29433 pts/0    Ss     0:00 bash
-29641 pts/1    Ss     0:00 bash
-29839 pts/2    Ss+    0:00 bash
-30120 pts/2    Tl     0:04 vi msh.c
-31463 pts/1    Sl+    0:00 vi TraceMSHREF.txt
-31681 pts/0    S+     0:00 /bin/bash ./runTraceTest.sh
-31767 pts/0    S+     0:00 make test12
-31768 pts/0    S+     0:00 /bin/sh -c ./sdriver.pl -t trace12.txt -s ./msh -a "-p"
-31769 pts/0    S+     0:00 /usr/bin/perl ./sdriver.pl -t trace12.txt -s ./msh -a -p
-31770 pts/0    R+     0:02 ./msh -p
-31772 pts/0    T      0:00 ./mysplit 4
-31773 pts/0    T      0:00 ./mysplit 4
-31776 pts/0    R      0:00 /bin/ps a
+msh> jobs
+  PID   TT  STAT      TIME COMMAND
+ 9874 s000  Ss     0:00.05 login -pf JimmyLin
+ 9876 s000  S+     0:00.09 -bash
+14291 s001  Ss     0:00.04 login -pfl JimmyLin /bin/bash -c exec -la bash /bin/bash
+14292 s001  S      0:00.09 -bash
+15046 s001  T      0:00.01 -bash
+15068 s001  T      0:00.00 make rtest07
+15069 s001  T      0:00.03 /usr/bin/perl ./sdriver.pl -t trace07.txt -s ./mshref -a -p
+15070 s001  Z      0:00.00 (sh)
+15431 s001  S+     0:00.01 /bin/bash ./runTraceTest.sh
+15508 s001  S+     0:00.00 make test12
+15509 s001  S+     0:00.03 /usr/bin/perl ./sdriver.pl -t trace12.txt -s ./msh -a -p
+15510 s001  Z+     0:00.00 (msh)
+15516 s001  R      0:00.00 /bin/ps a
+12892 s002  Ss     0:00.03 login -pfl JimmyLin /bin/bash -c exec -la bash /bin/bash
+12893 s002  S      0:00.07 -bash
+14950 s002  T      0:00.01 -bash
+14972 s002  T      0:00.00 make rtest07
+14973 s002  T      0:00.03 /usr/bin/perl ./sdriver.pl -t trace07.txt -s ./mshref -a -p
+14974 s002  Z      0:00.00 (sh)
+14977 s002  S+     0:00.29 vim ./mshRefOut.txt
+14989 s003  Ss     0:00.02 login -pfl JimmyLin /bin/bash -c exec -la bash /bin/bash
+14990 s003  S      0:00.01 -bash
+15002 s003  S+     0:00.32 ssh jimmylin@pez.cs.utexas.edu
 
 ###################################################
 ### For Trace Test 13:
@@ -207,53 +233,71 @@ msh> /bin/ps a
 #
 # trace13.txt - Restart every stopped process in process group
 #
-msh> ./mysplit 4
-Job [1] (31782) stopped by signal 20 
+-e msh> ./mysplit 4
+Job [2] (15521) stopped by signal 18 
+[3] (15523) Foreground  /bin/echo msh> jobs 
+[2] (15521) Stopped  ./mysplit 4 
+%1: No such Job.
+dyld: DYLD_ environment variables being ignored because main executable (/bin/ps) is setuid or setgid
+dyld: DYLD_ environment variables being ignored because main executable (/bin/ps) is setuid or setgid
 msh> jobs
-[1] (31782) Stopped  ./mysplit 4 
 msh> /bin/ps a
-  PID TTY      STAT   TIME COMMAND
- 1141 tty4     Ss+    0:00 /sbin/getty -8 38400 tty4
- 1145 tty5     Ss+    0:00 /sbin/getty -8 38400 tty5
- 1160 tty2     Ss+    0:00 /sbin/getty -8 38400 tty2
- 1161 tty3     Ss+    0:00 /sbin/getty -8 38400 tty3
- 1164 tty6     Ss+    0:00 /sbin/getty -8 38400 tty6
- 2325 tty1     Ss+    0:00 /sbin/getty -8 38400 tty1
-28783 tty7     Ss+    1:56 /usr/bin/X :0 vt7 -br -nolisten tcp -auth /var/run/xauth/A:0-FRXAta
-29433 pts/0    Ss     0:00 bash
-29641 pts/1    Ss     0:00 bash
-29839 pts/2    Ss+    0:00 bash
-30120 pts/2    Tl     0:04 vi msh.c
-31463 pts/1    Sl+    0:00 vi TraceMSHREF.txt
-31681 pts/0    S+     0:00 /bin/bash ./runTraceTest.sh
-31777 pts/0    S+     0:00 make test13
-31778 pts/0    S+     0:00 /bin/sh -c ./sdriver.pl -t trace13.txt -s ./msh -a "-p"
-31779 pts/0    S+     0:00 /usr/bin/perl ./sdriver.pl -t trace13.txt -s ./msh -a -p
-31780 pts/0    R+     0:02 ./msh -p
-31782 pts/0    T      0:00 ./mysplit 4
-31783 pts/0    T      0:00 ./mysplit 4
-31786 pts/0    R      0:00 /bin/ps a
 msh> fg %1
 msh> /bin/ps a
-  PID TTY      STAT   TIME COMMAND
- 1141 tty4     Ss+    0:00 /sbin/getty -8 38400 tty4
- 1145 tty5     Ss+    0:00 /sbin/getty -8 38400 tty5
- 1160 tty2     Ss+    0:00 /sbin/getty -8 38400 tty2
- 1161 tty3     Ss+    0:00 /sbin/getty -8 38400 tty3
- 1164 tty6     Ss+    0:00 /sbin/getty -8 38400 tty6
- 2325 tty1     Ss+    0:00 /sbin/getty -8 38400 tty1
-28783 tty7     Ss+    1:56 /usr/bin/X :0 vt7 -br -nolisten tcp -auth /var/run/xauth/A:0-FRXAta
-29433 pts/0    Ss     0:00 bash
-29641 pts/1    Ss     0:00 bash
-29839 pts/2    Ss+    0:00 bash
-30120 pts/2    Tl     0:04 vi msh.c
-31463 pts/1    Sl+    0:00 vi TraceMSHREF.txt
-31681 pts/0    S+     0:00 /bin/bash ./runTraceTest.sh
-31777 pts/0    S+     0:00 make test13
-31778 pts/0    S+     0:00 /bin/sh -c ./sdriver.pl -t trace13.txt -s ./msh -a "-p"
-31779 pts/0    S+     0:00 /usr/bin/perl ./sdriver.pl -t trace13.txt -s ./msh -a -p
-31780 pts/0    R+     0:04 ./msh -p
-31789 pts/0    R      0:00 /bin/ps a
+  PID   TT  STAT      TIME COMMAND
+ 9874 s000  Ss     0:00.05 login -pf JimmyLin
+ 9876 s000  S+     0:00.09 -bash
+14291 s001  Ss     0:00.04 login -pfl JimmyLin /bin/bash -c exec -la bash /bin/bash
+14292 s001  S      0:00.09 -bash
+15046 s001  T      0:00.01 -bash
+15068 s001  T      0:00.00 make rtest07
+15069 s001  T      0:00.03 /usr/bin/perl ./sdriver.pl -t trace07.txt -s ./mshref -a -p
+15070 s001  Z      0:00.00 (sh)
+15431 s001  S+     0:00.02 /bin/bash ./runTraceTest.sh
+15517 s001  S+     0:00.00 make test13
+15518 s001  S+     0:00.03 /usr/bin/perl ./sdriver.pl -t trace13.txt -s ./msh -a -p
+15519 s001  Z+     0:00.00 (msh)
+15525 s001  R      0:00.00 /bin/ps a
+15526 s001  S      0:00.00 (echo)
+15527 s001  S      0:00.00 (echo)
+15528 s001  R      0:00.00 /bin/ps a
+12892 s002  Ss     0:00.03 login -pfl JimmyLin /bin/bash -c exec -la bash /bin/bash
+12893 s002  S      0:00.07 -bash
+14950 s002  T      0:00.01 -bash
+14972 s002  T      0:00.00 make rtest07
+14973 s002  T      0:00.03 /usr/bin/perl ./sdriver.pl -t trace07.txt -s ./mshref -a -p
+14974 s002  Z      0:00.00 (sh)
+14977 s002  S+     0:00.29 vim ./mshRefOut.txt
+14989 s003  Ss     0:00.02 login -pfl JimmyLin /bin/bash -c exec -la bash /bin/bash
+14990 s003  S      0:00.01 -bash
+15002 s003  S+     0:00.32 ssh jimmylin@pez.cs.utexas.edu
+  PID   TT  STAT      TIME COMMAND
+ 9874 s000  Ss     0:00.05 login -pf JimmyLin
+ 9876 s000  S+     0:00.09 -bash
+14291 s001  Ss     0:00.04 login -pfl JimmyLin /bin/bash -c exec -la bash /bin/bash
+14292 s001  S      0:00.09 -bash
+15046 s001  T      0:00.01 -bash
+15068 s001  T      0:00.00 make rtest07
+15069 s001  T      0:00.03 /usr/bin/perl ./sdriver.pl -t trace07.txt -s ./mshref -a -p
+15070 s001  Z      0:00.00 (sh)
+15431 s001  S+     0:00.02 /bin/bash ./runTraceTest.sh
+15517 s001  S+     0:00.00 make test13
+15518 s001  S+     0:00.03 /usr/bin/perl ./sdriver.pl -t trace13.txt -s ./msh -a -p
+15519 s001  Z+     0:00.00 (msh)
+15525 s001  R      0:00.00 /bin/ps a
+15526 s001  S      0:00.00 (echo)
+15527 s001  S      0:00.00 (echo)
+15528 s001  R      0:00.00 /bin/ps a
+12892 s002  Ss     0:00.03 login -pfl JimmyLin /bin/bash -c exec -la bash /bin/bash
+12893 s002  S      0:00.07 -bash
+14950 s002  T      0:00.01 -bash
+14972 s002  T      0:00.00 make rtest07
+14973 s002  T      0:00.03 /usr/bin/perl ./sdriver.pl -t trace07.txt -s ./mshref -a -p
+14974 s002  Z      0:00.00 (sh)
+14977 s002  S+     0:00.29 vim ./mshRefOut.txt
+14989 s003  Ss     0:00.02 login -pfl JimmyLin /bin/bash -c exec -la bash /bin/bash
+14990 s003  S      0:00.01 -bash
+15002 s003  S+     0:00.32 ssh jimmylin@pez.cs.utexas.edu
 
 ###################################################
 ### For Trace Test 14:
@@ -263,32 +307,34 @@ msh> /bin/ps a
 #
 # trace14.txt - Simple error handling
 #
-msh> ./bogus
+[4] (15535)  ./myspin 4 &
 ./bogus: Command not found.
-msh> ./myspin 4 &
-[1] (31797)  ./myspin 4 &
-msh> fg
 fg command requires PID or %jobid argument
-msh> bg
 bg command requires PID or %jobid argument
-msh> fg a
 fg: argument must be PID or %jobid
-msh> bg a
 bg: argument must be PID or %jobid
+(9999999): No such process.
+(9999999): No such process.
+%2: No such Job.
+-e msh> ./myspin 4 \046
+msh> ./bogus
+msh> fg
+msh> bg
+msh> bg a
 msh> fg 9999999
-(9999999): No such process.
+msh> fg a
 msh> bg 9999999
-(9999999): No such process.
 msh> fg %2
-%2: No such Job.
 msh> fg %1
-Job [1] (31797) stopped by signal 20 
-msh> bg %2
 %2: No such Job.
+%1: No such Job.
+[5] (15544) Foreground  /bin/echo msh> bg %2 
+[6] (15545) Foreground  /bin/echo msh> bg %1 
+[7] (15546) Foreground  /bin/echo msh> jobs 
+[4] (15535) Running  ./myspin 4 & 
 msh> bg %1
-[1] (31797)  ./myspin 4 &
+msh> bg %2
 msh> jobs
-[1] (31797) Running  ./myspin 4 & 
 
 ###################################################
 ### For Trace Test 15:
@@ -298,29 +344,37 @@ msh> jobs
 #
 # trace15.txt - Putting it all together
 #
-msh> ./bogus
 ./bogus: Command not found.
+msh> ./bogus
 msh> ./myspin 10
-Job [1] (31816) terminated by signal 2 
-msh> ./myspin 3 &
-[1] (31818)  ./myspin 3 &
-msh> ./myspin 4 &
-[2] (31820)  ./myspin 4 &
+Job [4] (15553) terminated by signal 2 
+[2] (15555)  ./myspin 3 &
+[4] (15557)  ./myspin 4 &
+[1] (15554) Foreground  /bin/echo -e msh> ./myspin 3 \046 
+[2] (15555) Running  ./myspin 3 & 
+[3] (15556) Foreground  /bin/echo -e msh> ./myspin 4 \046 
+[4] (15557) Running  ./myspin 4 & 
+[5] (15558) Foreground  /bin/echo msh> jobs 
+-e msh> ./myspin 3 \046
 msh> jobs
-[1] (31818) Running  ./myspin 3 & 
-[2] (31820) Running  ./myspin 4 & 
+-e msh> ./myspin 4 \046
 msh> fg %1
-Job [1] (31818) stopped by signal 20 
-msh> jobs
-[1] (31818) Stopped  ./myspin 3 & 
-[2] (31820) Running  ./myspin 4 & 
-msh> bg %3
+[5] (15560) Foreground  /bin/echo msh> jobs 
+[2] (15555) Running  ./myspin 3 & 
+[4] (15557) Running  ./myspin 4 & 
 %3: No such Job.
-msh> bg %1
-[1] (31818)  ./myspin 3 &
+%1: No such Job.
+[5] (15560) Foreground  /bin/echo msh> jobs 
+[2] (15555) Running  ./myspin 3 & 
+[6] (15561) Foreground  /bin/echo msh> bg %3 
+[4] (15557) Running  ./myspin 4 & 
+[7] (15562) Foreground  /bin/echo msh> bg %1 
+[8] (15563) Foreground  /bin/echo msh> jobs 
+%1: No such Job.
 msh> jobs
-[1] (31818) Running  ./myspin 3 & 
-[2] (31820) Running  ./myspin 4 & 
+msh> bg %3
+msh> jobs
+msh> bg %1
 msh> fg %1
 msh> quit
 
@@ -329,3 +383,14 @@ msh> quit
 ###################################################
 
 ./sdriver.pl -t trace16.txt -s ./msh -a "-p"
+#
+# trace16.txt - Tests whether the shell can handle SIGTSTP and SIGINT
+#     signals that come from other processes instead of the terminal.
+#
+msh> ./mystop 2
+[3] (15571) Foreground  /bin/echo msh> jobs 
+[2] (15570) Stopped  ./mystop 2 
+msh> jobs
+msh> ./myint 2
+bin/echo: Command not found.
+

@@ -24,7 +24,6 @@
 #
 # trace03.txt - Run a foreground job.
 #
-msh> quit
  
  
 ###################################################
@@ -34,8 +33,11 @@ msh> quit
 #
 # trace04.txt - Run a background job.
 #
+<<<<<<< HEAD
 msh> ./myspin 1 &
 [1] (1028) ./myspin 1 &
+=======
+>>>>>>> 92203ad230d6a18e98a249cd0cb7c4f12c6386a1
  
  
 ###################################################
@@ -45,6 +47,7 @@ msh> ./myspin 1 &
 #
 # trace05.txt - Process jobs builtin command.
 #
+<<<<<<< HEAD
 msh> ./myspin 2 &
 [1] (1034) ./myspin 2 &
 msh> ./myspin 3 &
@@ -52,6 +55,8 @@ msh> ./myspin 3 &
 msh> jobs
 [1] (1034) Running ./myspin 2 &
 [2] (1038) Running ./myspin 3 &
+=======
+>>>>>>> 92203ad230d6a18e98a249cd0cb7c4f12c6386a1
  
  
 ###################################################
@@ -61,14 +66,18 @@ msh> jobs
 #
 # trace06.txt - Forward SIGINT to foreground job.
 #
+<<<<<<< HEAD
 msh> ./myspin 4
 Job [1] (1047) terminated by signal 2
+=======
+>>>>>>> 92203ad230d6a18e98a249cd0cb7c4f12c6386a1
  
  
 ###################################################
 ### For Trace Test 7:
 ###################################################
 ./sdriver.pl -t trace07.txt -s ./mshref -a "-p"
+<<<<<<< HEAD
 #
 # trace07.txt - Forward SIGINT only to foreground job.
 #
@@ -345,3 +354,5 @@ msh> ./myint 2
 Job [2] (1181) terminated by signal 2
 bin/echo: Command not found
  
+=======
+>>>>>>> 92203ad230d6a18e98a249cd0cb7c4f12c6386a1

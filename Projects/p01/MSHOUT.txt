@@ -30,8 +30,13 @@ msh> quit
 #
 # trace04.txt - Run a background job.
 #
+<<<<<<< HEAD
 msh> ./myspin 1 &
 [1] (3918)  ./myspin 1 &
+=======
+[2] (15450)  ./myspin 1 &
+-e msh> ./myspin 1 \046
+>>>>>>> 92203ad230d6a18e98a249cd0cb7c4f12c6386a1
 
 ###################################################
 ### For Trace Test 5:
@@ -40,6 +45,7 @@ msh> ./myspin 1 &
 #
 # trace05.txt - Process jobs builtin command.
 #
+<<<<<<< HEAD
 msh> ./myspin 2 &
 [1] (3923)  ./myspin 2 &
 msh> ./myspin 3 &
@@ -47,8 +53,357 @@ msh> ./myspin 3 &
 msh> jobs
 [1] (3923) Running  ./myspin 2 & 
 [2] (3925) Running  ./myspin 3 & 
+=======
+[2] (15455)  ./myspin 2 &
+[4] (15457)  ./myspin 3 &
+[1] (15454) Foreground  /bin/echo -e msh> ./myspin 2 \046 
+[2] (15455) Running  ./myspin 2 & 
+[3] (15456) Foreground  /bin/echo -e msh> ./myspin 3 \046 
+[4] (15457) Running  ./myspin 3 & 
+[5] (15458) Foreground  /bin/echo msh> jobs 
+-e msh> ./myspin 3 \046
+-e msh> ./myspin 2 \046
+msh> jobs
+>>>>>>> 92203ad230d6a18e98a249cd0cb7c4f12c6386a1
 
 ###################################################
 ### For Trace Test 6:
 ###################################################
 
+<<<<<<< HEAD
+=======
+./sdriver.pl -t trace06.txt -s ./msh -a "-p"
+#
+# trace06.txt - Forward SIGINT to foreground job.
+#
+-e msh> ./myspin 4
+Job [2] (15463) terminated by signal 2 
+
+###################################################
+### For Trace Test 7:
+###################################################
+
+./sdriver.pl -t trace07.txt -s ./msh -a "-p"
+#
+# trace07.txt - Forward SIGINT only to foreground job.
+#
+[2] (15468)  ./myspin 4 &
+-e msh> ./myspin 4 \046
+-e msh> ./myspin 5
+Job [4] (15470) terminated by signal 2 
+[3] (15471) Foreground  /bin/echo msh> jobs 
+[2] (15468) Running  ./myspin 4 & 
+msh> jobs
+
+###################################################
+### For Trace Test 8:
+###################################################
+
+./sdriver.pl -t trace08.txt -s ./msh -a "-p"
+#
+# trace08.txt - Forward SIGTSTP only to foreground job.
+#
+[2] (15476)  ./myspin 4 &
+-e msh> ./myspin 5
+-e msh> ./myspin 4 \046
+Job [4] (15478) stopped by signal 18 
+[5] (15479) Foreground  /bin/echo msh> jobs 
+[2] (15476) Running  ./myspin 4 & 
+[4] (15478) Stopped  ./myspin 5 
+msh> jobs
+
+###################################################
+### For Trace Test 9:
+###################################################
+
+./sdriver.pl -t trace09.txt -s ./msh -a "-p"
+#
+# trace09.txt - Process bg builtin command
+#
+[2] (15484)  ./myspin 4 &
+-e msh> ./myspin 5
+-e msh> ./myspin 4 \046
+Job [4] (15486) stopped by signal 18 
+[5] (15488) Foreground  /bin/echo msh> jobs 
+[2] (15484) Running  ./myspin 4 & 
+[4] (15486) Stopped  ./myspin 5 
+[2] (15484)  ./myspin 4 &
+[5] (15488) Foreground  /bin/echo msh> jobs 
+[2] (15484) Running  ./myspin 4 & 
+[6] (15489) Foreground  /bin/echo msh> bg %2 
+[4] (15486) Stopped  ./myspin 5 
+[7] (15490) Foreground  /bin/echo msh> jobs 
+msh> bg %2
+msh> jobs
+msh> jobs
+
+###################################################
+### For Trace Test 10:
+###################################################
+
+./sdriver.pl -t trace10.txt -s ./msh -a "-p"
+#
+# trace10.txt - Process fg builtin command. 
+#
+[2] (15495)  ./myspin 4 &
+-e msh> ./myspin 4 \046
+%1: No such Job.
+msh> fg %1
+[3] (15497) Foreground  /bin/echo msh> jobs 
+[2] (15495) Running  ./myspin 4 & 
+%1: No such Job.
+[3] (15497) Foreground  /bin/echo msh> jobs 
+[2] (15495) Running  ./myspin 4 & 
+[4] (15498) Foreground  /bin/echo msh> fg %1 
+[5] (15499) Foreground  /bin/echo msh> jobs 
+msh> fg %1
+msh> jobs
+msh> jobs
+
+###################################################
+### For Trace Test 11:
+###################################################
+
+./sdriver.pl -t trace11.txt -s ./msh -a "-p"
+#
+# trace11.txt - Forward SIGINT to every process in foreground process group
+#
+-e msh> ./mysplit 4
+Job [2] (15504) terminated by signal 2 
+dyld: DYLD_ environment variables being ignored because main executable (/bin/ps) is setuid or setgid
+msh> /bin/ps a
+  PID   TT  STAT      TIME COMMAND
+ 9874 s000  Ss     0:00.05 login -pf JimmyLin
+ 9876 s000  S+     0:00.09 -bash
+14291 s001  Ss     0:00.04 login -pfl JimmyLin /bin/bash -c exec -la bash /bin/bash
+14292 s001  S      0:00.09 -bash
+15046 s001  T      0:00.01 -bash
+15068 s001  T      0:00.00 make rtest07
+15069 s001  T      0:00.03 /usr/bin/perl ./sdriver.pl -t trace07.txt -s ./mshref -a -p
+15070 s001  Z      0:00.00 (sh)
+15431 s001  S+     0:00.01 /bin/bash ./runTraceTest.sh
+15500 s001  S+     0:00.00 make test11
+15501 s001  S+     0:00.03 /usr/bin/perl ./sdriver.pl -t trace11.txt -s ./msh -a -p
+15502 s001  Z+     0:00.00 (msh)
+15507 s001  R      0:00.00 /bin/ps a
+12892 s002  Ss     0:00.03 login -pfl JimmyLin /bin/bash -c exec -la bash /bin/bash
+12893 s002  S      0:00.07 -bash
+14950 s002  T      0:00.01 -bash
+14972 s002  T      0:00.00 make rtest07
+14973 s002  T      0:00.03 /usr/bin/perl ./sdriver.pl -t trace07.txt -s ./mshref -a -p
+14974 s002  Z      0:00.00 (sh)
+14977 s002  S+     0:00.29 vim ./mshRefOut.txt
+14989 s003  Ss     0:00.02 login -pfl JimmyLin /bin/bash -c exec -la bash /bin/bash
+14990 s003  S      0:00.01 -bash
+15002 s003  S+     0:00.32 ssh jimmylin@pez.cs.utexas.edu
+
+###################################################
+### For Trace Test 12:
+###################################################
+
+./sdriver.pl -t trace12.txt -s ./msh -a "-p"
+#
+# trace12.txt - Forward SIGTSTP to every process in foreground process group
+#
+-e msh> ./mysplit 4
+Job [2] (15512) stopped by signal 18 
+[3] (15514) Foreground  /bin/echo msh> jobs 
+[2] (15512) Stopped  ./mysplit 4 
+dyld: DYLD_ environment variables being ignored because main executable (/bin/ps) is setuid or setgid
+msh> /bin/ps a
+msh> jobs
+  PID   TT  STAT      TIME COMMAND
+ 9874 s000  Ss     0:00.05 login -pf JimmyLin
+ 9876 s000  S+     0:00.09 -bash
+14291 s001  Ss     0:00.04 login -pfl JimmyLin /bin/bash -c exec -la bash /bin/bash
+14292 s001  S      0:00.09 -bash
+15046 s001  T      0:00.01 -bash
+15068 s001  T      0:00.00 make rtest07
+15069 s001  T      0:00.03 /usr/bin/perl ./sdriver.pl -t trace07.txt -s ./mshref -a -p
+15070 s001  Z      0:00.00 (sh)
+15431 s001  S+     0:00.01 /bin/bash ./runTraceTest.sh
+15508 s001  S+     0:00.00 make test12
+15509 s001  S+     0:00.03 /usr/bin/perl ./sdriver.pl -t trace12.txt -s ./msh -a -p
+15510 s001  Z+     0:00.00 (msh)
+15516 s001  R      0:00.00 /bin/ps a
+12892 s002  Ss     0:00.03 login -pfl JimmyLin /bin/bash -c exec -la bash /bin/bash
+12893 s002  S      0:00.07 -bash
+14950 s002  T      0:00.01 -bash
+14972 s002  T      0:00.00 make rtest07
+14973 s002  T      0:00.03 /usr/bin/perl ./sdriver.pl -t trace07.txt -s ./mshref -a -p
+14974 s002  Z      0:00.00 (sh)
+14977 s002  S+     0:00.29 vim ./mshRefOut.txt
+14989 s003  Ss     0:00.02 login -pfl JimmyLin /bin/bash -c exec -la bash /bin/bash
+14990 s003  S      0:00.01 -bash
+15002 s003  S+     0:00.32 ssh jimmylin@pez.cs.utexas.edu
+
+###################################################
+### For Trace Test 13:
+###################################################
+
+./sdriver.pl -t trace13.txt -s ./msh -a "-p"
+#
+# trace13.txt - Restart every stopped process in process group
+#
+-e msh> ./mysplit 4
+Job [2] (15521) stopped by signal 18 
+[3] (15523) Foreground  /bin/echo msh> jobs 
+[2] (15521) Stopped  ./mysplit 4 
+%1: No such Job.
+dyld: DYLD_ environment variables being ignored because main executable (/bin/ps) is setuid or setgid
+dyld: DYLD_ environment variables being ignored because main executable (/bin/ps) is setuid or setgid
+msh> jobs
+msh> /bin/ps a
+msh> fg %1
+msh> /bin/ps a
+  PID   TT  STAT      TIME COMMAND
+ 9874 s000  Ss     0:00.05 login -pf JimmyLin
+ 9876 s000  S+     0:00.09 -bash
+14291 s001  Ss     0:00.04 login -pfl JimmyLin /bin/bash -c exec -la bash /bin/bash
+14292 s001  S      0:00.09 -bash
+15046 s001  T      0:00.01 -bash
+15068 s001  T      0:00.00 make rtest07
+15069 s001  T      0:00.03 /usr/bin/perl ./sdriver.pl -t trace07.txt -s ./mshref -a -p
+15070 s001  Z      0:00.00 (sh)
+15431 s001  S+     0:00.02 /bin/bash ./runTraceTest.sh
+15517 s001  S+     0:00.00 make test13
+15518 s001  S+     0:00.03 /usr/bin/perl ./sdriver.pl -t trace13.txt -s ./msh -a -p
+15519 s001  Z+     0:00.00 (msh)
+15525 s001  R      0:00.00 /bin/ps a
+15526 s001  S      0:00.00 (echo)
+15527 s001  S      0:00.00 (echo)
+15528 s001  R      0:00.00 /bin/ps a
+12892 s002  Ss     0:00.03 login -pfl JimmyLin /bin/bash -c exec -la bash /bin/bash
+12893 s002  S      0:00.07 -bash
+14950 s002  T      0:00.01 -bash
+14972 s002  T      0:00.00 make rtest07
+14973 s002  T      0:00.03 /usr/bin/perl ./sdriver.pl -t trace07.txt -s ./mshref -a -p
+14974 s002  Z      0:00.00 (sh)
+14977 s002  S+     0:00.29 vim ./mshRefOut.txt
+14989 s003  Ss     0:00.02 login -pfl JimmyLin /bin/bash -c exec -la bash /bin/bash
+14990 s003  S      0:00.01 -bash
+15002 s003  S+     0:00.32 ssh jimmylin@pez.cs.utexas.edu
+  PID   TT  STAT      TIME COMMAND
+ 9874 s000  Ss     0:00.05 login -pf JimmyLin
+ 9876 s000  S+     0:00.09 -bash
+14291 s001  Ss     0:00.04 login -pfl JimmyLin /bin/bash -c exec -la bash /bin/bash
+14292 s001  S      0:00.09 -bash
+15046 s001  T      0:00.01 -bash
+15068 s001  T      0:00.00 make rtest07
+15069 s001  T      0:00.03 /usr/bin/perl ./sdriver.pl -t trace07.txt -s ./mshref -a -p
+15070 s001  Z      0:00.00 (sh)
+15431 s001  S+     0:00.02 /bin/bash ./runTraceTest.sh
+15517 s001  S+     0:00.00 make test13
+15518 s001  S+     0:00.03 /usr/bin/perl ./sdriver.pl -t trace13.txt -s ./msh -a -p
+15519 s001  Z+     0:00.00 (msh)
+15525 s001  R      0:00.00 /bin/ps a
+15526 s001  S      0:00.00 (echo)
+15527 s001  S      0:00.00 (echo)
+15528 s001  R      0:00.00 /bin/ps a
+12892 s002  Ss     0:00.03 login -pfl JimmyLin /bin/bash -c exec -la bash /bin/bash
+12893 s002  S      0:00.07 -bash
+14950 s002  T      0:00.01 -bash
+14972 s002  T      0:00.00 make rtest07
+14973 s002  T      0:00.03 /usr/bin/perl ./sdriver.pl -t trace07.txt -s ./mshref -a -p
+14974 s002  Z      0:00.00 (sh)
+14977 s002  S+     0:00.29 vim ./mshRefOut.txt
+14989 s003  Ss     0:00.02 login -pfl JimmyLin /bin/bash -c exec -la bash /bin/bash
+14990 s003  S      0:00.01 -bash
+15002 s003  S+     0:00.32 ssh jimmylin@pez.cs.utexas.edu
+
+###################################################
+### For Trace Test 14:
+###################################################
+
+./sdriver.pl -t trace14.txt -s ./msh -a "-p"
+#
+# trace14.txt - Simple error handling
+#
+[4] (15535)  ./myspin 4 &
+./bogus: Command not found.
+fg command requires PID or %jobid argument
+bg command requires PID or %jobid argument
+fg: argument must be PID or %jobid
+bg: argument must be PID or %jobid
+(9999999): No such process.
+(9999999): No such process.
+%2: No such Job.
+-e msh> ./myspin 4 \046
+msh> ./bogus
+msh> fg
+msh> bg
+msh> bg a
+msh> fg 9999999
+msh> fg a
+msh> bg 9999999
+msh> fg %2
+msh> fg %1
+%2: No such Job.
+%1: No such Job.
+[5] (15544) Foreground  /bin/echo msh> bg %2 
+[6] (15545) Foreground  /bin/echo msh> bg %1 
+[7] (15546) Foreground  /bin/echo msh> jobs 
+[4] (15535) Running  ./myspin 4 & 
+msh> bg %1
+msh> bg %2
+msh> jobs
+
+###################################################
+### For Trace Test 15:
+###################################################
+
+./sdriver.pl -t trace15.txt -s ./msh -a "-p"
+#
+# trace15.txt - Putting it all together
+#
+./bogus: Command not found.
+msh> ./bogus
+msh> ./myspin 10
+Job [4] (15553) terminated by signal 2 
+[2] (15555)  ./myspin 3 &
+[4] (15557)  ./myspin 4 &
+[1] (15554) Foreground  /bin/echo -e msh> ./myspin 3 \046 
+[2] (15555) Running  ./myspin 3 & 
+[3] (15556) Foreground  /bin/echo -e msh> ./myspin 4 \046 
+[4] (15557) Running  ./myspin 4 & 
+[5] (15558) Foreground  /bin/echo msh> jobs 
+-e msh> ./myspin 3 \046
+msh> jobs
+-e msh> ./myspin 4 \046
+msh> fg %1
+[5] (15560) Foreground  /bin/echo msh> jobs 
+[2] (15555) Running  ./myspin 3 & 
+[4] (15557) Running  ./myspin 4 & 
+%3: No such Job.
+%1: No such Job.
+[5] (15560) Foreground  /bin/echo msh> jobs 
+[2] (15555) Running  ./myspin 3 & 
+[6] (15561) Foreground  /bin/echo msh> bg %3 
+[4] (15557) Running  ./myspin 4 & 
+[7] (15562) Foreground  /bin/echo msh> bg %1 
+[8] (15563) Foreground  /bin/echo msh> jobs 
+%1: No such Job.
+msh> jobs
+msh> bg %3
+msh> jobs
+msh> bg %1
+msh> fg %1
+msh> quit
+
+###################################################
+### For Trace Test 16:
+###################################################
+
+./sdriver.pl -t trace16.txt -s ./msh -a "-p"
+#
+# trace16.txt - Tests whether the shell can handle SIGTSTP and SIGINT
+#     signals that come from other processes instead of the terminal.
+#
+msh> ./mystop 2
+[3] (15571) Foreground  /bin/echo msh> jobs 
+[2] (15570) Stopped  ./mystop 2 
+msh> jobs
+msh> ./myint 2
+bin/echo: Command not found.
+
+>>>>>>> 92203ad230d6a18e98a249cd0cb7c4f12c6386a1

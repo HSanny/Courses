@@ -50,6 +50,13 @@ Preliminaries
 (1) If you have any preliminary comments on your submission, notes for
   the TAs, or extra credit, please give them here.
 
+  During the process of examing trace16.txt, we found that the command
+    ./myint 2
+will interrupt the "makefile"'s routine and directly exit the examining
+program. But such problem do not occur when we type the command in ./msh
+environment. We hope the the marking process could be based on behaviors
+under the ./msh environment.
+
 (2) Please cite any offline or online sources you consulted while
   preparing your submission, other than the Linux documentation,
   course text, and lecture notes.
@@ -108,22 +115,25 @@ Questions regarding Part 1
     signal handler.
 
     Reason that sigaction() is in preference: 
-    The sigaction function specifies more information than the signal
-    function, so the return value from signal cannot express the full
-    range of sigaction possibilities. Besides, sigaction() has more options
-    and is more reliable. If use the sigaction(), we need not reinstall
-    the handler, because it will never be reset. With SA_RESTART, you can
-    also get some system calls to automatically restart.
+    A successful invocation of sigaction() function specifies more arguments
+    than the signal() function, so the return value from signal cannot 
+    express the full range of sigaction possibilities. 
+    Besides, sigaction() has more options and is more reliable. If use the
+    sigaction(), we need not reinstall the handler, because it will never 
+    be reset. With SA_RESTART, we can also get some system calls to
+    automatically restart.
 
 (2) What is the last assembly language instruction executed by the
   signal handler function that you write?
    
-    dyld_stub___sigreturn () 
+    callq _exit
 
 (3) After the instruction identified in the previous question executes, 
   what is the next assembly language instruction executed?
 
-    __sigreturn () 
+   No assembly language instruction is to be executed, since the program has
+   been terminated after calling the "callq _exit" instruction.
+
 
 (4) When the signal handler finishes running, it must restore all of
   the registers from the interrupted thread to exactly their values
@@ -131,7 +141,9 @@ Questions regarding Part 1
 
 bit?
     Before the signal handler invocation, the value in the CPU registers
-    will be restored to the stack.
+    will be pushed to the stack (or some other data structure for storage).
+    And when the environment switch back, the stored value in stack will
+    be pop out to the registers.
     
 
 ################
@@ -143,3 +155,18 @@ Questions regarding Part 2
     
    
     
+    It's a trade-off between safety and efficiency of signal handling. 
+According to the principle of asynchronous execution of signal handling,
+once signal handler is installed, the system will allocate one thread
+to receive the signal.
+
+    Advantage of one signal handler: One signal handler only allows 
+reception of one signal at one time. That is, when one signal is being 
+processed, the others will be blocked (put into pending state).
+This would be inherently safe for multi-thread problem, like race condition,
+if there are common variables to be accessed by multiple signal handling
+routines. 
+
+    Advantage of three separate signal handlers: this is a efficient way of 
+handling signals, but sometimes dangerous. Signals are not to be pending for
+signals of other type. 

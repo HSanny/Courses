@@ -129,6 +129,7 @@ Questions regarding Part 1
   the registers from the interrupted thread to exactly their values
   before the signal occurred. How is this done?
 
+bit?
     Before the signal handler invocation, the value in the CPU registers
     will be restored to the stack.
     
@@ -140,5 +141,5 @@ Questions regarding Part 2
   You can also use a single signal handler to catch all three signals.  Is
   there a design advantage of one over the other?  Explain your answer.
     
-    
+   
     

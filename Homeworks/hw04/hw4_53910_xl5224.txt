@@ -1,0 +1,54 @@
+Homework #: 4
+Student Name: XIN LIN
+EID: xl5224
+CS login: jimmylin
+Email address: JimmyLin@utexas.edu
+Unique Number: 53910
+
+
+------------------------------------------------------------------------
+1. Consider a uniprocessor kernel that user programs can trap into using
+system calls. The kernel receive and handles interrupts from I/O devices.
+Would there be any need for critical sections within that kernel?
+
+
+------------------------------------------------------------------------
+2. Describe the priority inversion problem and give an example situation
+where it may occur.
+
+
+------------------------------------------------------------------------
+3. Compare and contrast monitors and semaphores. What is an appropriate
+use of each?
+
+
+------------------------------------------------------------------------
+4. Now consider the following program fragment:
+    s1->wait();
+    a++;
+    s2->wait();
+    v++;
+    s2->signal();
+    s1->signal();
+where s1 and s2 are semaphores. All variables are automatic. 
+Now, consider two threads running this fragment of code simultaneously. 
+Can there be a deadlock? Why or why not?
+
+
+------------------------------------------------------------------------
+5. Some number of neighbors are sharing a bike to train for various sporting
+events. Since each neighbor will train daily and also must rest for his or her
+big event, they are hoping for an easy way to share the bike that allows only
+one rider to be on the bike at a time and allows the riders to rest while
+waiting for the bike. You are a known expert at synchronization problems
+involving limited resources, and so they have turned to you to devise a
+solution.
+Write the following function:
+
+   void borrow_bike();
+   which may be executed by multiple neighbors (threads) at a time, using:
+   semaphores, and
+   monitors.
+   Keep in mind that when each neighbor will need the bike is unpredictable, and neighbors should be able to rest from the time they request the bike until they acquire it.
+
+

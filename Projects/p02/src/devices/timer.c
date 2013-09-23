@@ -103,8 +103,7 @@ timer_sleep (int64_t ticks)
     // -------------------------------------------------------
     
     /* Jimmy's driving */
-    //sleep(ticks);
-   // thread_block();  // put the current thread into sleep.
+    sleep(12);  // put the current thread into sleep.
     // zzZZZ sleeping zzZZZ...
 
     // waked up

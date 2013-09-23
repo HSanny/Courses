@@ -3,13 +3,13 @@
 #include <inttypes.h>
 #include <round.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "devices/pit.h"
 #include "threads/interrupt.h"
 #include "threads/synch.h"
 #include "threads/thread.h"
 
 // newly added library
-#include <unistd.h>
 
 /* See [8254] for hardware details of the 8254 timer chip. */
 
@@ -103,11 +103,14 @@ timer_sleep (int64_t ticks)
     // -------------------------------------------------------
     
     /* Jimmy's driving */
-    sleep(12);  // put the current thread into sleep.
+    // enable the interrupts for quitting the sleep.
+    enum intr_level old_level = intr_enable();  
+    // put the current thread into sleep.
+    thread_block();  
     // zzZZZ sleeping zzZZZ...
 
-    // waked up
-    thread_yield ();  // put back to ready queue
+    // TODO: waked-up mechanism
+    intr_disable();   // disable the interrupts
 
     
 

@@ -1,4 +1,3 @@
-//#include <unistd.h>
 #include "devices/timer.h"
 #include <debug.h>
 #include <inttypes.h>
@@ -10,7 +9,7 @@
 #include "threads/thread.h"
 
 // newly added library
-//#include <unistd.h>
+#include <unistd.h>
 
 /* See [8254] for hardware details of the 8254 timer chip. */
 
@@ -104,8 +103,7 @@ timer_sleep (int64_t ticks)
     // -------------------------------------------------------
     
     /* Jimmy's driving */
-    //sleep(ticks);
-   // thread_block();  // put the current thread into sleep.
+    sleep(12);  // put the current thread into sleep.
     // zzZZZ sleeping zzZZZ...
 
     // waked up

@@ -70,6 +70,29 @@ static void *alloc_frame (struct thread *, size_t size);
 static void schedule (void);
 void thread_schedule_tail (struct thread *prev);
 static tid_t allocate_tid (void);
+// new function signature
+void thread_awake(struct thread *thd, void *aux);
+
+/*
+ * Newly introduced function: thread_awake
+ *    awake the thread that finished up sleeping.
+ */
+void thread_awake(struct thread *thd, void *aux) {
+    // if the thread 
+    //    is in blocked status and
+    //    still has positive to-sleep  time
+    if (thd->remained_sleep > 0 && thd->status == THREAD_BLOCKED) {
+        // decrement the remained sleeping time
+        thd->remained_sleep --;
+        // if required sleeping time is reached
+        if (thd->remained_sleep == 0) {
+            // unblock the thread back to ready queue
+            thread_unblock(thd);
+        } 
+    }
+
+    return ;
+}
 
 /* Initializes the threading system by transforming the code
    that's currently running into a thread.  This can't work in

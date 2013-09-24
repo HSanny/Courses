@@ -103,17 +103,14 @@ timer_sleep (int64_t ticks)
     // -------------------------------------------------------
     
     /* Jimmy's driving */
-    // enable the interrupts for quitting the sleep.
-    enum intr_level old_level = intr_enable();  
+    // disable the interrupts as required by thread_block()
+    enum intr_level old_level = intr_disable();  
     // put the current thread into sleep.
     thread_block();  
-    // zzZZZ sleeping zzZZZ...
+    // enable the interrupts
+    intr_set_level(old_level);
 
-    // TODO: waked-up mechanism
-    intr_disable();   // disable the interrupts
-
-    
-
+    return ;
 }
 
 /* Sleeps for approximately MS milliseconds.  Interrupts must be
@@ -192,6 +189,10 @@ timer_interrupt (struct intr_frame *args UNUSED)
 {
     ticks++;
     thread_tick ();
+    // Jimmy's driving
+    // For each time the OS kernel get control right, 
+    // try to wake up all threads that end up sleeping.
+    thread_foreach(thread_awake , 0);
 }
 
 /* Returns true if LOOPS iterations waits for more than one timer

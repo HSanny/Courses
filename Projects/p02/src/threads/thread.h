@@ -102,7 +102,15 @@ struct thread
 
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
+    // ##################################################
+    // Bochao Zhan is driving: 
+    //     newly created member: remained_sleep
+    // ##################################################
+    int64_t remained_sleep;     // amount of time remained for sleeping
   };
+
+// new function signature
+void thread_awake(struct thread *, void*);
 
 /* If false (default), use round-robin scheduler.
    If true, use multi-level feedback queue scheduler.

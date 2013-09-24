@@ -77,6 +77,8 @@ Ranking (scale below):
 >> preparing your submission, other than the Pintos documentation, course
 >> text, lecture notes, and course staff.
 
+    1. To get the further understanding towards the overall architecture:
+        http://knowledgejunk.net/tag/timer_sleep/
 
 
 			     ALARM CLOCK
@@ -88,31 +90,54 @@ Ranking (scale below):
 >> `struct' member, global or static variable, `typedef', or
 >> enumeration.  Identify the purpose of each in 25 words or less.
 
+    We add the member remained_sleep to the struct thread in thread.h file.
+    
+    struct thread {
+        ...
+        int64_t remained_sleep; 
+        ...
+    }
+
+    The purpose of introducing remained_sleep is to
+    record the remaining time to stay in "blocked" status for that thread.
+    (value is 0 if that thread is not blocked.) Here, we choose the variable
+    type to be int64_t in order to keep consistent with the OS kernel clock. 
+
 
 ---- ALGORITHMS ----
 
 >> A2: Briefly describe what happens in a call to timer_sleep(),
 >> including the effects of the timer interrupt handler.
+    
+    First disable the interrupt so as to let thread_block() go. 
+    Secondly, block the calling thread, after which the timer interrupt
+    handler starts to attempt to awake that thread at each CPU time cycle.
+    (Put that thread back to ready queue when the expected amount 
+    of sleeping time elapsed.) 
+    Finally, reset the interrupt level to the status entering timer_sleep().
 
 
 >> A3: What steps are taken to minimize the amount of time spent in
 >> the timer interrupt handler?
 
+    
+    
 
 ---- SYNCHRONIZATION ----
 
 >> A4: How are race conditions avoided when multiple threads call
 >> timer_sleep() simultaneously?
 
-Jimmy's Answer: Each thread that invokes the timer_sleep(), has its own local
-variables recording the ticks to be slept through, such that there will exist
-the race condition.
+    No shared variable for each thread, thus no possible race condition.
+    When invoking the timer_sleep simultaneously, each thread modify
+    its own remained_sleep value, which is independent to each other. 
+    (Different threads access different part of the global variable.)
 
+>> A5: How are race conditions avoided when a timer interrupt occurs
+>> during a call to timer_sleep()?
 
->> A5: How are race conditions avoided when a timer interrupt occurs during a
->> call to timer_sleep()?
-
-
+    When timer interrupt occurs, the interrupt handler sequentially update
+    the value of remained_sleep of each blocked thread.
 
 ---- RATIONALE ----
 

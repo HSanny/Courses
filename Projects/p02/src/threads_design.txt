@@ -8,16 +8,14 @@
 
 ---- Name ----
 
->> Fill your name, UT EID, CS login, email address, and unique number:
-
-Name:
-EID:
-CS login:
-Email:
-Unique Number:
+Name: XIN LIN (JIMMY)
+EID: xl5224
+CS login: jimmylin
+Email: JimmyLin@utexas.edu
+Unique Number: 53910
 
 
-Slip days used on this project:
+Slip days used on this project: 0 day
 
 ---- GROUP ----
 
@@ -25,12 +23,12 @@ Slip days used on this project:
 >> of your group members.  Also fill in each person's ranking on the 
 >> partner evaluation scale, as determined by you.
 
-Name1:
-EID1:
-CS login:
-Email:
-Unique Number:
-Ranking (scale below):
+Name1: Bochao Zhan
+EID1: BZ2892
+CS login: bzhan
+Email: bzhan927@gmail.com
+Unique Number: 53900
+Ranking (scale below): Excellent
 
 Name2:
 EID2:
@@ -74,9 +72,12 @@ Ranking (scale below):
 >> If you have any preliminary comments on your submission, notes for the
 >> TAs, or extra credit, please give them here.
 
+
 >> Please cite any offline or online sources you consulted while
 >> preparing your submission, other than the Pintos documentation, course
 >> text, lecture notes, and course staff.
+
+
 
 			     ALARM CLOCK
 			     ===========
@@ -87,26 +88,37 @@ Ranking (scale below):
 >> `struct' member, global or static variable, `typedef', or
 >> enumeration.  Identify the purpose of each in 25 words or less.
 
+
 ---- ALGORITHMS ----
 
 >> A2: Briefly describe what happens in a call to timer_sleep(),
 >> including the effects of the timer interrupt handler.
 
+
 >> A3: What steps are taken to minimize the amount of time spent in
 >> the timer interrupt handler?
+
 
 ---- SYNCHRONIZATION ----
 
 >> A4: How are race conditions avoided when multiple threads call
 >> timer_sleep() simultaneously?
 
->> A5: How are race conditions avoided when a timer interrupt occurs
->> during a call to timer_sleep()?
+Jimmy's Answer: Each thread that invokes the timer_sleep(), has its own local
+variables recording the ticks to be slept through, such that there will exist
+the race condition.
+
+
+>> A5: How are race conditions avoided when a timer interrupt occurs during a
+>> call to timer_sleep()?
+
+
 
 ---- RATIONALE ----
 
 >> A6: Why did you choose this design?  In what ways is it superior to
 >> another design you considered?
+
 
 			 PRIORITY SCHEDULING
 			 ===================

@@ -11,15 +11,47 @@ Unique Number: 53910
 system calls. The kernel receive and handles interrupts from I/O devices.
 Would there be any need for critical sections within that kernel?
 
+Yes. Consider that a user program enters the kernel through a trap. While running the
+operating system code, the machine receives an interrupt. Now, the interrupt
+handler may modify global data structure that the kernel code was trying to
+modify. That is, the modification of global data structure in kernel is 
+the critical section, to which we should provide protection.
+
+The way to avoid possible conflict is to only allow one thread running inside
+the kernel. 
+
 
 ------------------------------------------------------------------------
 2. Describe the priority inversion problem and give an example situation
 where it may occur.
 
+Priority inversion is a problematic scenario when the high priority thread
+waits for a lock held by the thread with low priority, such that the low
+priority thread is unable to release the lock since midium priority thread is
+using the CPU.
+
+It occurs when the thread with high priority requires the return value or
+modification of the shared data structure from low priority thread.
 
 ------------------------------------------------------------------------
 3. Compare and contrast monitors and semaphores. What is an appropriate
 use of each?
+
+Monitor is a object designed to be accessed by multiple threads. The methods
+encapsulated in monitor will cause mutual exclusion when invoked. (Only one
+thread is allowed to execute the section, not like semaphore, the maximum
+number of access threads at one time can be specified by programmer.)
+Monitor is usually used in the object-oriented programming, where the data and
+operation are encapsulated together, like keyword synchronized in java. 
+
+Semaphore essentially is a integer counter, binary or counting counter. 
+When its value is positive, the acquisition of one semaphore is allowed. 
+Or if the value is zero, the thread that wants to acquire that semaphore have
+to wait for the release of that semaphore. (It may allow multiple threads to
+access the critical section, may not be mutual exclusive.)
+Binary semaphore is functionally equiavalent to mutual exclusion lock.
+General counting semaphore is also used in the bounded buffer,
+readers/writers and barrier synchronization pattern. 
 
 
 ------------------------------------------------------------------------
@@ -34,6 +66,9 @@ where s1 and s2 are semaphores. All variables are automatic.
 Now, consider two threads running this fragment of code simultaneously. 
 Can there be a deadlock? Why or why not?
 
+The deadlock will not occur since the semaphores are acquired in the same
+order by both threads.(No mutual waiting would possibly occur.)
+
 
 ------------------------------------------------------------------------
 5. Some number of neighbors are sharing a bike to train for various sporting
@@ -46,9 +81,19 @@ solution.
 Write the following function:
 
    void borrow_bike();
-   which may be executed by multiple neighbors (threads) at a time, using:
-   semaphores, and
-   monitors.
-   Keep in mind that when each neighbor will need the bike is unpredictable, and neighbors should be able to rest from the time they request the bike until they acquire it.
+
+which may be executed by multiple neighbors (threads) at a time, using:
+semaphores, and monitors.
+    Keep in mind that when each neighbor will need the bike is unpredictable,
+and neighbors should be able to rest from the time they request the bike
+until they acquire it.
+
+
+void borrow_bike() {
+    semaphore -> wait();
+    ride_start();
+    ride_end();
+    semaphore -> signal();
+}
 
 

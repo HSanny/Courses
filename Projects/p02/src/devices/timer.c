@@ -33,6 +33,30 @@ static void busy_wait (int64_t loops);
 static void real_time_sleep (int64_t num, int32_t denom);
 static void real_time_delay (int64_t num, int32_t denom);
 
+// new function signature
+void thread_awake(struct thread *thd, void *aux);
+
+/*
+ * Newly introduced function: thread_awake
+ *    awake the thread that finished up sleeping.
+ */
+void thread_awake(struct thread *thd, void *aux) {
+    // if the thread 
+    //    is in blocked status and
+    //    still has positive to-sleep  time
+    if (thd->remained_sleep > 0 && thd->status == THREAD_BLOCKED) {
+        // decrement the remained sleeping time
+        thd->remained_sleep --;
+        // if required sleeping time is reached
+        if (thd->remained_sleep == 0) {
+            // unblock the thread back to ready queue
+            thread_unblock(thd);
+        } 
+    }
+
+    return ;
+}
+
 /* Sets up the timer to interrupt TIMER_FREQ times per second,
    and registers the corresponding interrupt. */
     void
@@ -92,17 +116,19 @@ timer_elapsed (int64_t then)
     void
 timer_sleep (int64_t ticks) 
 {
-    int64_t start = timer_ticks ();
-
     ASSERT (intr_get_level () == INTR_ON);
+
     // TODO: remove the busy waiting, replaced by the ready queue mechanism
     // -------------------------------------------------------
     // Original implementation
+    // int64_t start = timer_ticks ();
     // while (timer_elapsed (start) < ticks) 
     //    thread_yield ();
     // -------------------------------------------------------
     
-    /* Jimmy's driving */
+    /* Our implementation; Jimmy's driving */
+    // assign the ticks value to struct thread
+    thread_current()->remained_sleep = ticks;
     // disable the interrupts as required by thread_block()
     enum intr_level old_level = intr_disable();  
     // put the current thread into sleep.
@@ -187,12 +213,16 @@ timer_print_stats (void)
     static void
 timer_interrupt (struct intr_frame *args UNUSED)
 {
+    // disable the interrupt for thread_foreach function
+    enum intr_level old_level = intr_disable(); 
     ticks++;
-    thread_tick ();
     // Jimmy's driving
     // For each time the OS kernel get control right, 
     // try to wake up all threads that end up sleeping.
     thread_foreach(thread_awake , 0);
+    // reset the interrupt
+    intr_set_level(old_level);
+    thread_tick();
 }
 
 /* Returns true if LOOPS iterations waits for more than one timer

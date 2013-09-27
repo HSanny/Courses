@@ -109,16 +109,23 @@ Ranking (scale below):
 >> A2: Briefly describe what happens in a call to timer_sleep(),
 >> including the effects of the timer interrupt handler.
     
-    First disable the interrupt so as to let thread_block() go. 
-    Secondly, block the calling thread, after which the timer interrupt
-    handler starts to attempt to awake that thread at each CPU time cycle.
-    (Put that thread back to ready queue when the expected amount 
-    of sleeping time elapsed.) 
-    Finally, reset the interrupt level to the status entering timer_sleep().
+    First disable the interrupt to satisfy the requirement of thread_block().  
+
+    Secondly, assign the amount of sleeping time to current thread structure
+    member, that is, remained_sleep in our implementation. 
+    
+    Then block the calling thread, after which the timer interrupt handler
+    starts to attempt to awake that thread at each CPU time cycle.  (Put that
+    thread back to ready queue when the expected amount of sleeping time
+    elapsed.) 
+
+    Finally, reset the interrupt level to the original.
 
 
->> A3: What steps are taken to minimize the amount of time spent in
->> the timer interrupt handler?
+>> A3: What steps are taken to minimize the amount of time spent in the timer
+>> interrupt handler?
+
+    
 
     
     

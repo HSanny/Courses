@@ -265,13 +265,16 @@ thread_unblock (struct thread *t)
     t->status = THREAD_READY;
     // insert into ready list and sort it
     list_insert_ordered(&ready_list, &(t->elem), thread_sort_less, 0);
-     if (t->priority < thread_current()->priority) {
-         //printf("##########################\n");
-        //printf("curr_pri: %d, new_pri: %d\n", t->priority, thread_current()->priority);
-        // newly inserted thread is prior to current thread
-        thread_yield();
-     }
-    // --------------------------------
+
+    // get current thread
+    struct thread * curr = thread_current();
+    // newly inserted thread is prior to current thread
+    if (t->priority > curr->priority)
+        // Bochao's modification: rule out the idle_thread
+        if (curr != idle_thread)
+            thread_yield();  // yield CPU to next ready thread
+
+    // reset the interrupt level
     intr_set_level (old_level);
 }
 
@@ -371,28 +374,25 @@ thread_foreach (thread_action_func *func, void *aux)
     void
 thread_set_priority (int new_priority) 
 {
-    /* Original implementation */
-    // thread_current()->priority = new_priority;
+    /* our implementation: Jimmy is driving */
+    // ignore the illegitimate priority value
+    if (new_priority < PRI_MIN || new_priority > PRI_MAX) return;
 
     // disable interrupt to avoid race condition
     enum intr_level old_level = intr_disable();
 
-    /* our implementation: Jimmy is driving */
     // acquire the thread that is currently executed
     struct thread * curr = thread_current();
+    // store privious priority
+    int old_priority = curr->priority;
 
-    // essentially lower priority, otherwise ignore this branch
-    if (curr->priority < new_priority) {
-        printf("curr_pri: %d, new_pri: %d\n", curr->priority, new_priority);
-        // settle priority to specified one
-        curr->priority = new_priority;
-
-        // push back to ready list
-        curr->status = THREAD_READY;
+    // update the priority
+    curr->priority = new_priority;
+    // reschedule the current thread only when its priority is lowered
+    if (old_priority > new_priority) {
         // reschedule the CPU
-        schedule();
+        thread_yield();
     }
-
     // reset the interrupt level
     intr_set_level(old_level);
     return ;

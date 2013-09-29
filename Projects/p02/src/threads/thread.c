@@ -71,8 +71,21 @@ static void schedule (void);
 void thread_schedule_tail (struct thread *prev);
 static tid_t allocate_tid (void);
 
+/* Our implementation: Jimmy's driving */
+static bool
+thread_sort_less (const struct list_elem *lhs, const struct list_elem *rhs,
+        void *aux UNUSED) { 
+    struct thread *a, *b;
+
+    ASSERT (lhs != NULL && rhs != NULL);
+
+    a = list_entry (lhs, struct thread, elem);
+    b = list_entry (rhs, struct thread, elem);
+
+    return (a->priority > b->priority); }
+
 /* Initializes the threading system by transforming the code
-   that's currently running into a thread.  This can't work in
+       that's currently running into a thread.  This can't work in
    general and it is possible in this case only because loader.S
    was careful to put the bottom of the stack at a page boundary.
 
@@ -246,8 +259,19 @@ thread_unblock (struct thread *t)
 
     old_level = intr_disable ();
     ASSERT (t->status == THREAD_BLOCKED);
-    list_push_back (&ready_list, &t->elem);
+    /* Our implementation: Jimmy's driving */
+    
+    // change the status of given thread
     t->status = THREAD_READY;
+    // insert into ready list and sort it
+    list_insert_ordered(&ready_list, &(t->elem), thread_sort_less, 0);
+     if (t->priority < thread_current()->priority) {
+         //printf("##########################\n");
+        //printf("curr_pri: %d, new_pri: %d\n", t->priority, thread_current()->priority);
+        // newly inserted thread is prior to current thread
+        thread_yield();
+     }
+    // --------------------------------
     intr_set_level (old_level);
 }
 
@@ -316,9 +340,12 @@ thread_yield (void)
     ASSERT (!intr_context ());
 
     old_level = intr_disable ();
-    if (cur != idle_thread) 
-        list_push_back (&ready_list, &cur->elem);
+    /* Our implementation: Jimmy's driving */
+    if (cur != idle_thread) { 
+        list_insert_ordered(&ready_list, &(cur->elem), thread_sort_less, 0);
+    }
     cur->status = THREAD_READY;
+
     schedule ();
     intr_set_level (old_level);
 }
@@ -344,7 +371,31 @@ thread_foreach (thread_action_func *func, void *aux)
     void
 thread_set_priority (int new_priority) 
 {
-    thread_current ()->priority = new_priority;
+    /* Original implementation */
+    // thread_current()->priority = new_priority;
+
+    // disable interrupt to avoid race condition
+    enum intr_level old_level = intr_disable();
+
+    /* our implementation: Jimmy is driving */
+    // acquire the thread that is currently executed
+    struct thread * curr = thread_current();
+
+    // essentially lower priority, otherwise ignore this branch
+    if (curr->priority < new_priority) {
+        printf("curr_pri: %d, new_pri: %d\n", curr->priority, new_priority);
+        // settle priority to specified one
+        curr->priority = new_priority;
+
+        // push back to ready list
+        curr->status = THREAD_READY;
+        // reschedule the CPU
+        schedule();
+    }
+
+    // reset the interrupt level
+    intr_set_level(old_level);
+    return ;
 }
 
 /* Returns the current thread's priority. */
@@ -566,6 +617,7 @@ schedule (void)
 
     if (cur != next)
         prev = switch_threads (cur, next);
+    // next->priority = THREAD_RUNNING;
     thread_schedule_tail (prev);
 }
 

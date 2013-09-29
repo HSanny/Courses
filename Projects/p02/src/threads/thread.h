@@ -109,8 +109,6 @@ struct thread
     unsigned magic;                     /* Detects stack overflow. */
   };
 
-// new function signature
-//void thread_awake(struct thread *, void*);
 
 /* If false (default), use round-robin scheduler.
    If true, use multi-level feedback queue scheduler.
@@ -147,5 +145,6 @@ int thread_get_nice (void);
 void thread_set_nice (int);
 int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
+
 
 #endif /* threads/thread.h */

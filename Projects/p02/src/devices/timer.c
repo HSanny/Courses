@@ -126,6 +126,8 @@ timer_sleep (int64_t ticks)
     // -------------------------------------------------------
     
     /* Our implementation; Jimmy's driving */
+    // ignore illegitimate value
+    if (ticks <= 0) return ;
     // assign the ticks value to struct thread
     thread_current()->remained_sleep = ticks;
     // disable the interrupts as required by thread_block()

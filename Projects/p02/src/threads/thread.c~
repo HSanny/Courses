@@ -286,7 +286,7 @@ thread_unblock (struct thread *t)
     if (t->priority > curr->priority)
         // Bochao's modification: rule out the idle_thread
         if (curr != idle_thread){
-            thread_yield();  }// yield CPU to next ready thread
+            thread_yield();  printf("entered!\n");}// yield CPU to next ready thread
 
     // reset the interrupt level
     intr_set_level (old_level);

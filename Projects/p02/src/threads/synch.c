@@ -108,33 +108,36 @@ sema_try_down (struct semaphore *sema)
 void
 sema_up (struct semaphore *sema) 
 {
-  enum intr_level old_level;
-  struct thread * t,* head,* highest;
-  ASSERT (sema != NULL);
-  old_level = intr_disable ();
-  bool isfirst=true;
-  if (!list_empty (&sema->waiters)){
-     t=list_entry (list_pop_front (&sema->waiters),struct thread, elem);
-     head=t;
-     highest=t;
-      while(!list_empty (&sema->waiters)&& (isfirst||t!=head)){
-         isfirst=false;
-         t=list_entry (list_pop_front (&sema->waiters),struct thread, elem);
-         if(highest->priority<t->priority){
-            list_push_back (&(sema->waiters), &highest->elem);
-            highest=t;}
-	 else list_push_back (&(sema->waiters), &t->elem);      
-      }
-       //printf("Gonna unblock %s with priority: %d\n",highest->name,highest->priority);
-       thread_unblock(highest);
+    ASSERT (sema !=  NULL);
+
+    // disable the interrupt to secure the atomicity
+    enum intr_level old_level = intr_disable ();
+    // TODO: explain variable isfirst, highest, head
+    struct thread * t,* head,* highest;
+    bool isfirst = true;
+    // TODO: add more comments
+    if (!list_empty(&sema->waiters)){
+        t = list_entry(list_pop_front(&sema->waiters), struct thread, elem);
+        head = t;
+        highest = t;
+        while(!list_empty (&sema->waiters) && (isfirst || t != head)){
+            isfirst = false;
+            t = list_entry (list_pop_front(&sema->waiters), struct thread, elem);
+            if(highest->priority < t->priority){
+                list_push_back(&sema->waiters, &highest->elem);
+                highest = t;
+            }
+            else list_push_back(&sema->waiters, &t->elem);      
+        }
+        //printf("Gonna unblock %s with priority: %d\n",highest->name,highest->priority);
+        thread_unblock(highest);
     }
+    // increment the semaphore counter
     sema->value++;
-  intr_set_level (old_level);
+
+    // reset the interrupt
+    intr_set_level (old_level);
 }
-
-
-
-
 
 static void sema_test_helper (void *sema_);
 
@@ -195,7 +198,7 @@ lock_init (struct lock *lock)
 
     lock->holder = NULL;
     sema_init (&lock->semaphore, 1);
-    lock->original_priority=0;
+    lock->original_priority = -1;
 }
 
 /* Acquires LOCK, sleeping until it becomes available if
@@ -209,18 +212,29 @@ lock_init (struct lock *lock)
     void
 lock_acquire (struct lock *lock)
 {
-
+    // blackbox precondition
     ASSERT (lock != NULL);
     ASSERT (!intr_context ());
     ASSERT (!lock_held_by_current_thread (lock));
 
+    // variable abstraction
     struct thread * holder = lock->holder;
+    struct thread * curr = thread_current();
+    int curr_priority = thread_get_priority();
+    int holder_priority = holder->priority;
 
-    if(holder!=NULL && holder->priority < thread_get_priority()){
-      holder->priority = thread_get_priority();} 
-    sema_down (&lock->semaphore);
-    lock->holder = thread_current ();
-    lock->original_priority=thread_current ()->priority;
+    // priority donation to lower priority thread that holds the lock
+    if(holder != NULL && holder_priority < curr_priority) {
+        // FIXME: set original priority
+        holder->priority = curr_priority;
+    } 
+    // decrement the semaphore counter
+    sema_down(&lock->semaphore);
+    // renew the lock data structure
+    lock->holder = curr;
+    // assign original priority if that does not previously exist
+    if (lock->original_priority < 0) // check for illegal value
+        lock->original_priority = curr_priority;
 }
 
 /* Tries to acquires LOCK and returns true if successful or false
@@ -253,34 +267,35 @@ lock_release (struct lock *lock)
 {
     ASSERT (lock != NULL);
     ASSERT (lock_held_by_current_thread (lock));
-    int nothing=lock->original_priority;
-   //printf("Gonna release %s and reset its priority to %d\n",thread_current()->name,thread_current()->priority);
-    lock->holder=NULL;
-    lock->original_priority=0;
-    sema_up (&lock->semaphore);
-    thread_set_priority(nothing);
-    
+
+    int old_priority = lock->original_priority;
+    //printf("Gonna release %s and reset its priority to %d\n",thread_current()->name,thread_current()->priority);
+    lock->holder = NULL;
+    lock->original_priority = -1;  // illegal value as non-existent
+    sema_up (&lock->semaphore);  //
+    thread_set_priority (old_priority);
+
 }
 
 
 
 
 /*void sortwaiterlist(struct lock * lock, tid_t tid){
-	struct thread *t, *head;
-	if (!list_empty (&(lock->semaphore.waiters))){ 
-	head=list_entry (list_pop_front (&(lock->semaphore.waiters)),struct thread, elem);
-	t=head;
-	if(t->tid==tid){list_push_front(&(lock->semaphore.waiters), &t->elem);return;}
-	list_push_back (&(lock->semaphore.waiters), &t->elem);
-	t=list_entry (list_pop_front (&(lock->semaphore.waiters)),struct thread, elem);
-	while(t!=head){
-	if(t->tid==tid){list_push_front(&(lock->semaphore.waiters), &t->elem);return;}
-	list_push_back (&(lock->semaphore.waiters), &t->elem);
-	t=list_entry (list_pop_front (&(lock->semaphore.waiters)),struct thread, elem);
-		}     
-	}
-	list_push_back (&(lock->semaphore.waiters), &t->elem);
-}
+  struct thread *t, *head;
+  if (!list_empty (&(lock->semaphore.waiters))){ 
+  head=list_entry (list_pop_front (&(lock->semaphore.waiters)),struct thread, elem);
+  t=head;
+  if(t->tid==tid){list_push_front(&(lock->semaphore.waiters), &t->elem);return;}
+  list_push_back (&(lock->semaphore.waiters), &t->elem);
+  t=list_entry (list_pop_front (&(lock->semaphore.waiters)),struct thread, elem);
+  while(t!=head){
+  if(t->tid==tid){list_push_front(&(lock->semaphore.waiters), &t->elem);return;}
+  list_push_back (&(lock->semaphore.waiters), &t->elem);
+  t=list_entry (list_pop_front (&(lock->semaphore.waiters)),struct thread, elem);
+  }     
+  }
+  list_push_back (&(lock->semaphore.waiters), &t->elem);
+  }
 
 */
 

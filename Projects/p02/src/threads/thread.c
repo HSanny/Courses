@@ -73,14 +73,15 @@ static tid_t allocate_tid (void);
 
 
 struct thread * thread_searchby_tid(tid_t tid){
-	struct thread * t;
-	struct list_elem *e;
-	if(list_empty(&all_list))return NULL;
-	for(e= list_begin(&all_list);e!=list_end(&all_list);e=list_next(e))
-	{	
-		t=list_entry(e,struct thread,allelem);
-		if(t->tid==tid){return t;}}
-	return NULL;
+    struct thread *t;
+    struct list_elem *e;
+    if (list_empty(&all_list)) return NULL;
+    for(e = list_begin(&all_list); e != list_end(&all_list); e = list_next(e))
+    {	
+        t = list_entry(e, struct thread, allelem);
+        if(t->tid == tid) return t;
+    }
+    return NULL;
 }
 
 
@@ -96,7 +97,8 @@ thread_sort_less (const struct list_elem *lhs, const struct list_elem *rhs,
     a = list_entry (lhs, struct thread, elem);
     b = list_entry (rhs, struct thread, elem);
 
-    return (a->priority > b->priority); }
+    return (a->priority > b->priority); 
+}
 
 /* Initializes the threading system by transforming the code
        that's currently running into a thread.  This can't work in
@@ -286,7 +288,8 @@ thread_unblock (struct thread *t)
     if (t->priority > curr->priority)
         // Bochao's modification: rule out the idle_thread
         if (curr != idle_thread){
-            thread_yield();  }// yield CPU to next ready thread
+            thread_yield();  
+        } // yield CPU to next ready thread
 
     // reset the interrupt level
     intr_set_level (old_level);

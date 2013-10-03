@@ -12,6 +12,11 @@ struct semaphore
     struct list waiters;        /* List of waiting threads. */
   };
 
+//########################################################
+bool sema_compare(const struct list_elem *a, 
+        const struct list_elem *b, void *aux );
+//########################################################
+
 /* Lock. */
 struct lock 
   {
@@ -37,6 +42,11 @@ struct condition
   {
     struct list waiters;        /* List of waiting threads. */
   };
+
+//########################################################
+bool convar_compare(const struct list_elem *a, 
+        const struct list_elem *b, void *aux );
+//########################################################
 
 void cond_init (struct condition *);
 void cond_wait (struct condition *, struct lock *);

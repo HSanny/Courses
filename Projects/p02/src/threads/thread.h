@@ -113,6 +113,8 @@ struct thread
 
 
 struct thread* thread_searchby_tid(tid_t tid);
+static bool thread_sort_less(const struct list_elem *lhs,
+        const struct list_elem *rhs, void *aux UNUSED);
 
 
 /* If false (default), use round-robin scheduler.

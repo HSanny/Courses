@@ -44,7 +44,7 @@ struct condition
   };
 
 //########################################################
-bool convar_compare(const struct list_elem *a, 
+bool sema_elem_compare(const struct list_elem *a, 
         const struct list_elem *b, void *aux );
 //########################################################
 

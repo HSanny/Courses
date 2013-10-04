@@ -98,17 +98,20 @@ bool alllist_checkempty(){     // check if all list is empty
    return list_empty(&all_list);
 }
 
-int get_highest(struct lock * lock){  //used get the highest priority of the waiting thread on another lock when current thread released lock A. 
-               struct thread * t;
-              int priority=0;
-              struct list_elem* e;
-              for (e = list_begin (&all_list); e != list_end (&all_list);e = list_next (e))
-                  {
-                    t = list_entry (e, struct thread, allelem);
-                   if(t->status==THREAD_BLOCKED&&t->Lock!=lock&&t->waitfor==thread_current()
-                     &&t->priority>priority)
-                      priority=t->priority;}
-               return priority;
+/* used get the highest priority of the waiting thread on another lock when
+ * current thread released lock A.  */
+int get_highest(struct lock * lock){  
+    struct thread * t;
+    int priority = -1;  // illegal for initialization
+    struct list_elem * e;
+    for (e = list_begin (&all_list); e != list_end (&all_list); e = list_next (e))
+    {
+        t = list_entry (e, struct thread, allelem);
+        if (t->status == THREAD_BLOCKED && t->Lock != lock && t->waitfor == thread_current()
+                && t->priority > priority)
+            priority = t->priority;
+    }
+    return priority;
 }
 
 

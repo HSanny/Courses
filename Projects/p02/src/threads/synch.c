@@ -230,8 +230,7 @@ lock_init (struct lock *lock)
    thread.
 
    This function may sleep, so it must not be called within an
-   interrupt handler.  This function may be called with
-   interrupts disabled, but interrupts will be turned back on if
+   interrupt handler.  This function may be called with interrupts disabled, but interrupts will be turned back on if
    we need to sleep. */
     void
 lock_acquire (struct lock *lock)
@@ -245,30 +244,35 @@ lock_acquire (struct lock *lock)
     // variable abstraction
     struct thread * holder = lock->holder;
     struct thread * hholder;
-     if(holder!=NULL){
-           thread_current()->Lock=lock;
-       thread_current()->waitfor=holder;
-    // priority donation to lower priority thread that holds the lock
-         if(holder->priority < thread_current()->priority) {
-        holder->priority = thread_current()->priority;
-        lock->high_priority=thread_current()->priority;
-        hholder=holder->waitfor;
-        
-          /* while(hholder&&hholder->haveReleased==false&&hholder->priority<thread_current()->priority){
-        hholder->priority=thread_current()->priority;
-        hholder=hholder->waitfor;
-            }*/
+    if (holder != NULL) {
+        thread_current()->Lock = lock;
+        thread_current()->waitfor = holder;
+        // priority donation to lower priority thread that holds the lock
+        if(holder->priority < thread_current()->priority) {
+            holder->priority = thread_current()->priority;
+            lock->high_priority = thread_current()->priority;
 
-         }
-       }
-     
+            // use while loop to capture the (possibely infinite) nest donation
+            while ((hholder = holder->waitfor) != NULL // holder also waits for a lock
+                    && hholder->priority < thread_current()->priority // priority gradient
+                    ) {
+                // priority donated to hholder
+                hholder->priority = thread_current()->priority;
+                // change the priority of holder's waiting lock
+                holder->Lock->high_priority = thread_current()->priority;
+                // step to further holder
+                holder = hholder;
+                hholder = hholder->waitfor;
+               }
+        }
+    }
+
     // decrement the semaphore counter
     sema_down(&lock->semaphore);
     // renew the lock data structure
     lock->holder = thread_current();
     // assign original priority if that does not previously exist
-        //thread_current()->haveReleased=false;
-        lock->original_priority = thread_current()->priority;
+    lock->original_priority = thread_current()->priority;
 }
 
 /* Tries to acquires LOCK and returns true if successful or false
@@ -299,34 +303,29 @@ lock_try_acquire (struct lock *lock)
     void
 lock_release (struct lock *lock) 
 {
-    
+
     ASSERT (lock != NULL);
     ASSERT (lock_held_by_current_thread (lock));
-    int highest_priority=0;
+    int highest_priority;
     // Jimmy's driving, Bochao Zhan is modifying it
-    
-    
-     if(thread_current()->priority==lock->high_priority){
-         if(alllist_checkempty()){
-          thread_current()->priority=thread_current()->original_priority;
-          /* if(thread_current()->lower_priority!=0){thread_current()->priority=thread_current()->lower_priority;thread_current()->lower_priority=0;}*/
-           }
-         else{
-                highest_priority=get_highest(lock);
-                 
-                if(highest_priority==0){thread_current()->priority=thread_current()->original_priority;}
-                 else{thread_current()->priority=highest_priority;
-                      }
-                   if(thread_current()->lower_priority!=0)thread_current()->priority=thread_current()->lower_priority;thread_current()->lower_priority=0;
-             }
-      }
-    //if(thread_current()->waitfor){thread_current()->waitfor->priority=thread_current()->priority;}
-    thread_current()->haveReleased==true;
-    lock->holder = NULL;
-    lock->original_priority = -1;  // illegal value as non-existent
-    sema_up (&lock->semaphore);  //
-   
+    if (thread_current()->priority == lock->high_priority) {
+        // -1 if no other lock further donates to it
+        highest_priority = get_highest(lock);
 
+        if (highest_priority < 0) {   // no other lock donation
+            thread_current()->priority = thread_current()->original_priority;
+        } else {  // set donation by other lock
+            thread_current()->priority = highest_priority;
+        }
+        
+        if (thread_current()->lower_priority != 0) 
+             thread_current()->priority = thread_current()->lower_priority;
+        thread_current()->lower_priority = 0;
+    }
+    thread_current()->haveReleased == true;
+    lock->holder = NULL;
+    // lock->original_priority = -1;  // illegal value as non-existent
+    sema_up (&lock->semaphore);  
 }
 
 
@@ -414,13 +413,18 @@ cond_signal (struct condition *cond, struct lock *lock UNUSED)
     // for non-empty waiters list, let the one with highest priority
     // to proceed its execution
     if (!list_empty (&cond->waiters))  {
+        //############################################################ 
         // Jimmy's driving
-	lock_release(lock);        
-	list_sort(&cond->waiters, sema_elem_compare, 0);
+        // release the lock such that no priority donation would occur
+        lock_release(lock); 
+        // sort the waiters to let the one with highest priority go
+        list_sort(&cond->waiters, sema_elem_compare, 0);
         sema_up (&list_entry (list_pop_back (&cond->waiters),
                     struct semaphore_elem, elem)->semaphore);
-	lock_acquire(lock);    
-	}
+        // reacquire the lock to maintain consistency
+        lock_acquire(lock);    
+        //############################################################ 
+    }
 }
 
 /* Wakes up all threads, if any, waiting on COND (protected by

@@ -434,15 +434,13 @@ thread_set_priority (int new_priority)
     // store privious priority
      int old_priority = curr->priority;
 
-    if(thread_current()==idle){
+    if(thread_current() == idle){
            curr->priority = new_priority;
         if(old_priority > new_priority){thread_yield();}
          intr_set_level(old_level);
          return;
       }
 
-   
-    
     // reschedule the current thread only when its priority is lowered
     else if (old_priority > new_priority) {
         // reschedule the CPU
@@ -451,9 +449,13 @@ thread_set_priority (int new_priority)
            thread_yield();
         // update the priority
       }
-        else thread_current()->lower_priority=new_priority;
+        else thread_current()->lower_priority = new_priority;
     }
-    else { curr->priority = new_priority;}
+    else { 
+        curr->priority = new_priority; 
+    }
+    thread_current()->original_priority = new_priority;
+
     // reset the interrupt level
     intr_set_level(old_level);
     return ;

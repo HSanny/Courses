@@ -114,10 +114,8 @@ struct thread
 //additional variable:
     tid_t donate_to_tid;// tid of priority donator
     int original_priority;
-    int lower_priority;
      struct lock * Lock;
-    struct thread * waitfor;
-     bool haveReleased;
+     struct thread * waiter;
   };
 
 //struct thread* thread_searchby_tid(tid_t tid);

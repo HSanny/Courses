@@ -107,7 +107,7 @@ int get_highest(struct lock * lock){
     for (e = list_begin (&all_list); e != list_end (&all_list); e = list_next (e))
     {
         t = list_entry (e, struct thread, allelem);
-        if (t->status == THREAD_BLOCKED && t->Lock != lock && t->waitfor == thread_current()
+        if (t->status == THREAD_BLOCKED && t->Lock != lock && t->waiter == thread_current()
                 && t->priority > priority)
             priority = t->priority;
     }
@@ -123,7 +123,7 @@ bool test_lower(int test_priority){
               for (e = list_begin (&all_list); e != list_end (&all_list);e = list_next (e))
                   {
                     t = list_entry (e, struct thread, allelem);
-                   if(t->status==THREAD_BLOCKED&&t->waitfor==thread_current()
+                   if(t->status==THREAD_BLOCKED&&t->waiter==thread_current()
                      &&t->priority>priority)
                       priority=t->priority;}
                if(priority>test_priority)rt=true;
@@ -434,27 +434,19 @@ thread_set_priority (int new_priority)
     // store privious priority
      int old_priority = curr->priority;
 
-    if(thread_current() == idle){
-           curr->priority = new_priority;
-        if(old_priority > new_priority){thread_yield();}
-         intr_set_level(old_level);
-         return;
-      }
-
     // reschedule the current thread only when its priority is lowered
-    else if (old_priority > new_priority) {
+    if (old_priority > new_priority) {
         // reschedule the CPU
-        if(!test_lower(new_priority)){
-             curr->priority = new_priority;
+        if(!test_lower(new_priority)){ // check if there is any donator thread is waiting on current thread; if no, change the priority immediately, otherwise hold the new_priority value via original_priority and change the priority after current thread released the lock 
+           curr->priority = new_priority;
            thread_yield();
         // update the priority
       }
-        else thread_current()->lower_priority = new_priority;
+        thread_current()->original_priority = new_priority;
     }
     else { 
         curr->priority = new_priority; 
     }
-    thread_current()->original_priority = new_priority;
 
     // reset the interrupt level
     intr_set_level(old_level);
@@ -578,14 +570,12 @@ init_thread (struct thread *t, const char *name, int priority)
     ASSERT (PRI_MIN <= priority && priority <= PRI_MAX);
     ASSERT (name != NULL);
     t->Lock=NULL;
-    t->waitfor=NULL;
-    t->lower_priority=0;
-    t->haveReleased=false;
     memset (t, 0, sizeof *t);
     t->status = THREAD_BLOCKED;
     strlcpy (t->name, name, sizeof t->name);
     t->stack = (uint8_t *) t + PGSIZE;
     t->priority = priority;
+    t->waiter=NULL;
     t->magic = THREAD_MAGIC;
     t->donate_to_tid=0;
     t->original_priority=priority;

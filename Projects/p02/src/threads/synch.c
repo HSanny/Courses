@@ -221,7 +221,6 @@ lock_init (struct lock *lock)
 
     lock->holder = NULL;
     sema_init (&lock->semaphore, 1);
-    lock->original_priority = -1;
     lock->high_priority=-1;
 }
 
@@ -246,14 +245,14 @@ lock_acquire (struct lock *lock)
     struct thread * hholder;
     if (holder != NULL) {
         thread_current()->Lock = lock;
-        thread_current()->waitfor = holder;
+        thread_current()->waiter=lock->holder;
         // priority donation to lower priority thread that holds the lock
         if(holder->priority < thread_current()->priority) {
             holder->priority = thread_current()->priority;
             lock->high_priority = thread_current()->priority;
 
             // use while loop to capture the (possibely infinite) nest donation
-            while ((hholder = holder->waitfor) != NULL // holder also waits for a lock
+            while ((hholder = holder->waiter) != NULL // holder also waits for a lock
                     && hholder->priority < thread_current()->priority // priority gradient
                     ) {
                 // priority donated to hholder
@@ -262,7 +261,7 @@ lock_acquire (struct lock *lock)
                 holder->Lock->high_priority = thread_current()->priority;
                 // step to further holder
                 holder = hholder;
-                hholder = hholder->waitfor;
+                hholder = hholder->waiter;
                }
         }
     }
@@ -272,7 +271,6 @@ lock_acquire (struct lock *lock)
     // renew the lock data structure
     lock->holder = thread_current();
     // assign original priority if that does not previously exist
-    lock->original_priority = thread_current()->priority;
 }
 
 /* Tries to acquires LOCK and returns true if successful or false
@@ -317,12 +315,7 @@ lock_release (struct lock *lock)
         } else {  // set donation by other lock
             thread_current()->priority = highest_priority;
         }
-        
-        if (thread_current()->lower_priority != 0) 
-             thread_current()->priority = thread_current()->lower_priority;
-        thread_current()->lower_priority = 0;
     }
-    thread_current()->haveReleased == true;
     lock->holder = NULL;
     // lock->original_priority = -1;  // illegal value as non-existent
     sema_up (&lock->semaphore);  

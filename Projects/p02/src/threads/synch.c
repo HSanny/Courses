@@ -32,15 +32,18 @@
 #include "threads/malloc.h"
 #include "threads/interrupt.h"
 #include "threads/thread.h"
+
+// ***************ADDTIONALLY INTRODUCED FUNCTIONS BEGINS************************ 
+
 /* waiter element on the "waiters" of semaphore */
 struct semaphore_elem 
 {
     struct list_elem elem;              /* List element. */
     struct semaphore semaphore;         /* This semaphore. */
-    // record the thread invoking condvar_wait, such that
-    // we can sort the semaphore_elem list based on the priority
-    // of waiting threads.
-    struct thread *wait_thread;
+    /* wait_thread: Record the thread invoking condvar_wait, such that
+     we can sort the semaphore_elem list based on the priority
+     of waiting threads. */
+    struct thread * wait_thread;
 };
 
 /* function for comparing the priority of waiting threads in a semaphore */
@@ -65,6 +68,8 @@ bool sema_elem_compare(const struct list_elem *a,
 
     return sema_a->wait_thread->priority < sema_b->wait_thread->priority;
 }
+
+// ***************ADDTIONALLY INTRODUCED FUNCTIONS ENDS************************ 
 
 /* Initializes semaphore SEMA to VALUE.  A semaphore is a
    nonnegative integer along with two atomic operators for
@@ -243,25 +248,26 @@ lock_acquire (struct lock *lock)
     // variable abstraction
     struct thread * holder = lock->holder;
     struct thread * hholder;
+    struct thread * current = thread_current();
     if (holder != NULL) {
-        thread_current()->Lock = lock;
-        thread_current()->waiter=lock->holder;
+        current->Lock = lock;
+        current->waitfor = lock->holder;
         // priority donation to lower priority thread that holds the lock
-        if(holder->priority < thread_current()->priority) {
-            holder->priority = thread_current()->priority;
-            lock->high_priority = thread_current()->priority;
+        if(holder->priority < current->priority) {
+            holder->priority = current->priority;
+            lock->high_priority = current->priority;
 
             // use while loop to capture the (possibely infinite) nest donation
-            while ((hholder = holder->waiter) != NULL // holder also waits for a lock
-                    && hholder->priority < thread_current()->priority // priority gradient
+            while ((hholder = holder->waitfor) != NULL  // holder also waits for a lock
+                    && hholder->priority < current->priority // priority gradient
                     ) {
                 // priority donated to hholder
-                hholder->priority = thread_current()->priority;
+                hholder->priority = current->priority;
                 // change the priority of holder's waiting lock
-                holder->Lock->high_priority = thread_current()->priority;
-                // step to further holder
+                holder->Lock->high_priority = current->priority;
+                // step to further priority passing
                 holder = hholder;
-                hholder = hholder->waiter;
+                hholder = hholder->waitfor;
                }
         }
     }
@@ -304,20 +310,20 @@ lock_release (struct lock *lock)
 
     ASSERT (lock != NULL);
     ASSERT (lock_held_by_current_thread (lock));
-    int highest_priority;
     // Jimmy's driving, Bochao Zhan is modifying it
-    if (thread_current()->priority == lock->high_priority) {
+    int highest_priority;
+    struct thread * current = thread_current();
+    if (current->priority == lock->high_priority) {
         // -1 if no other lock further donates to it
         highest_priority = get_highest(lock);
 
         if (highest_priority < 0) {   // no other lock donation
-            thread_current()->priority = thread_current()->original_priority;
+            current->priority = current->original_priority;
         } else {  // set donation by other lock
-            thread_current()->priority = highest_priority;
+            current->priority = highest_priority;
         }
     }
     lock->holder = NULL;
-    // lock->original_priority = -1;  // illegal value as non-existent
     sema_up (&lock->semaphore);  
 }
 
@@ -378,7 +384,7 @@ cond_wait (struct condition *cond, struct lock *lock)
 
     sema_init (&waiter.semaphore, 0);
     //############################################################ 
-    // Jimmy's driving
+    // JIMMY'S DRIVING
     // set the current thread as wait_thread of the sema_elem
     waiter.wait_thread = thread_current();
     //############################################################
@@ -407,7 +413,7 @@ cond_signal (struct condition *cond, struct lock *lock UNUSED)
     // to proceed its execution
     if (!list_empty (&cond->waiters))  {
         //############################################################ 
-        // Jimmy's driving
+        // JIMMY'S DRIVING
         // release the lock such that no priority donation would occur
         lock_release(lock); 
         // sort the waiters to let the one with highest priority go

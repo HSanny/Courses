@@ -85,8 +85,6 @@ typedef int tid_t;
    ready state is on the run queue, whereas only a thread in the
    blocked state is on a semaphore wait list. */
 
-
-
 struct thread
   {
     /* Owned by thread.c. */
@@ -99,11 +97,7 @@ struct thread
    
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
-    // ##################################################
-    // Bochao Zhan is driving: 
-    //     newly created member: remained_sleep
-    // ##################################################
-    int64_t remained_sleep;     // amount of time remained for sleeping
+
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
     uint32_t *pagedir;                  /* Page directory. */
@@ -111,20 +105,19 @@ struct thread
 
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
-//additional variable:
-    tid_t donate_to_tid;// tid of priority donator
-    int original_priority;
-     struct lock * Lock;
-     struct thread * waiter;
+
+    // ##################################################
+    // NEW MEMBER FOR TIMER_SLEEP(): 
+    // ##################################################
+    int64_t remained_sleep;     // amount of time remained for sleeping
+
+    // ##################################################
+    // NEW MEMBER FOR PRIORITY SCHEDULING: 
+    // ##################################################
+    int original_priority;  // inherent priority before donation
+    struct lock * Lock;  // the lock this thread wants to acquire
+    struct thread * waitfor;  // the thread this thread is waiting for
   };
-
-//struct thread* thread_searchby_tid(tid_t tid);
-
-//static bool thread_sort_less(const struct list_elem *lhs,
- //       const struct list_elem *rhs, void *aux UNUSED);
-
-
-
 
 /* If false (default), use round-robin scheduler.
    If true, use multi-level feedback queue scheduler.

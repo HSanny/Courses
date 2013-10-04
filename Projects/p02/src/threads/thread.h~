@@ -4,8 +4,10 @@
 #include <debug.h>
 #include <list.h>
 #include <stdint.h>
-
+#include "threads/malloc.h"
+#include "threads/synch.h"
 /* States in a thread's life cycle. */
+
 enum thread_status
   {
     THREAD_RUNNING,     /* Running thread. */
@@ -82,6 +84,9 @@ typedef int tid_t;
    only because they are mutually exclusive: only a thread in the
    ready state is on the run queue, whereas only a thread in the
    blocked state is on a semaphore wait list. */
+
+
+
 struct thread
   {
     /* Owned by thread.c. */
@@ -91,7 +96,7 @@ struct thread
     uint8_t *stack;                     /* Saved stack pointer. */
     int priority;                       /* Priority. */
     struct list_elem allelem;           /* List element for all threads list. */
-
+   
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
     // ##################################################
@@ -99,7 +104,6 @@ struct thread
     //     newly created member: remained_sleep
     // ##################################################
     int64_t remained_sleep;     // amount of time remained for sleeping
-
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
     uint32_t *pagedir;                  /* Page directory. */
@@ -107,9 +111,21 @@ struct thread
 
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
-
-    tid_t donator_tid;// tid of priority donator
+//additional variable:
+    tid_t donate_to_tid;// tid of priority donator
+    int original_priority;
+    int lower_priority;
+     struct lock * Lock;
+    struct thread * waitfor;
+     int haveReleased;
   };
+
+//struct thread* thread_searchby_tid(tid_t tid);
+
+//static bool thread_sort_less(const struct list_elem *lhs,
+ //       const struct list_elem *rhs, void *aux UNUSED);
+
+
 
 
 /* If false (default), use round-robin scheduler.
@@ -117,6 +133,14 @@ struct thread
    Controlled by kernel command-line option "-o mlfqs". */
 extern bool thread_mlfqs;
 
+//Bochao's implementation
+bool alllist_checkempty(void);
+int get_highest(struct lock *);
+bool test_lower(int);
+
+//
+
+void insert_to_priority_list(struct thread *,int);
 void thread_init (void);
 void thread_start (void);
 

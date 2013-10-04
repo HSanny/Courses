@@ -4,6 +4,7 @@
 #include <random.h>
 #include <stdio.h>
 #include <string.h>
+#include "threads/malloc.h"
 #include "threads/flags.h"
 #include "threads/interrupt.h"
 #include "threads/intr-stubs.h"
@@ -28,6 +29,9 @@ static struct list ready_list;
    when they are first scheduled and removed when they exit. */
 static struct list all_list;
 
+
+
+static struct list lock_list;
 /* Idle thread. */
 static struct thread *idle_thread;
 
@@ -72,16 +76,17 @@ void thread_schedule_tail (struct thread *prev);
 static tid_t allocate_tid (void);
 
 
-struct thread * thread_searchby_tid(tid_t tid){
-	struct thread * t;
-	struct list_elem *e;
-	if(list_empty(&all_list))return NULL;
-	for(e= list_begin(&all_list);e!=list_end(&all_list);e=list_next(e))
-	{	
-		t=list_entry(e,struct thread,allelem);
-		if(t->tid==tid){return t;}}
-	return NULL;
-}
+/*struct thread * thread_searchby_tid(tid_t tid){
+    struct thread *t;
+    struct list_elem *e;
+    if (list_empty(&all_list)) return NULL;
+    for(e = list_begin(&all_list); e != list_end(&all_list); e = list_next(e))
+    {	
+        t = list_entry(e, struct thread, allelem);
+        if(t->tid == tid) return t;
+    }
+    return NULL;
+}*/
 
 
 
@@ -96,7 +101,45 @@ thread_sort_less (const struct list_elem *lhs, const struct list_elem *rhs,
     a = list_entry (lhs, struct thread, elem);
     b = list_entry (rhs, struct thread, elem);
 
-    return (a->priority > b->priority); }
+    return (a->priority > b->priority); 
+}
+
+//Bochao's Driving
+
+bool alllist_checkempty(){     // check if all list is empty
+   return list_empty(&all_list);
+}
+
+int get_highest(struct lock * lock){  //used get the highest priority of the waiting thread on another lock when current thread released lock A. 
+               struct thread * t;
+              int priority=0;
+              struct list_elem* e;
+              for (e = list_begin (&all_list); e != list_end (&all_list);e = list_next (e))
+                  {
+                    t = list_entry (e, struct thread, allelem);
+                   if(t->status==THREAD_BLOCKED&&t->Lock!=lock&&t->waitfor==thread_current()
+                     &&t->priority>priority)
+                      priority=t->priority;}
+               return priority;
+}
+
+
+bool test_lower(int test_priority){
+              struct thread * t;
+              bool rt=false;
+              int priority=0;
+              struct list_elem* e;
+              for (e = list_begin (&all_list); e != list_end (&all_list);e = list_next (e))
+                  {
+                    t = list_entry (e, struct thread, allelem);
+                   if(t->status==THREAD_BLOCKED&&t->waitfor==thread_current()
+                     &&t->priority>priority)
+                      priority=t->priority;}
+               if(priority>test_priority)rt=true;
+            return rt;
+}
+//Bochao's Driving End
+
 
 /* Initializes the threading system by transforming the code
        that's currently running into a thread.  This can't work in
@@ -119,12 +162,13 @@ thread_init (void)
     lock_init (&tid_lock);
     list_init (&ready_list);
     list_init (&all_list);
-
+    list_init (&lock_list);
     /* Set up a thread structure for the running thread. */
     initial_thread = running_thread ();
     init_thread (initial_thread, "main", PRI_DEFAULT);
     initial_thread->status = THREAD_RUNNING;
     initial_thread->tid = allocate_tid ();
+    
 }
 
 /* Starts preemptive thread scheduling by enabling interrupts.
@@ -283,10 +327,11 @@ thread_unblock (struct thread *t)
     // get current thread
     struct thread * curr = thread_current();
     // newly inserted thread is prior to current thread
-    if (t->priority > curr->priority)
+    if (t->priority >curr->priority)
         // Bochao's modification: rule out the idle_thread
         if (curr != idle_thread){
-            thread_yield();  printf("entered!\n");}// yield CPU to next ready thread
+            thread_yield();  
+        } // yield CPU to next ready thread
 
     // reset the interrupt level
     intr_set_level (old_level);
@@ -354,8 +399,8 @@ thread_yield (void)
     struct thread *cur = thread_current ();
     enum intr_level old_level;
 
-    ASSERT (!intr_context ());
-
+   ASSERT (!intr_context ());
+    
     old_level = intr_disable ();
     /* Our implementation: Jimmy's driving */
     if (cur != idle_thread) { 
@@ -390,23 +435,34 @@ thread_set_priority (int new_priority)
 {
     /* our implementation: Jimmy is driving */
     // ignore the illegitimate priority value
-    if (new_priority < PRI_MIN || new_priority > PRI_MAX) return;
-
-    // disable interrupt to avoid race condition
-    enum intr_level old_level = intr_disable();
-
-    // acquire the thread that is currently executed
+      if (new_priority < PRI_MIN || new_priority > PRI_MAX) return;
+       // disable interrupt to avoid race condition
+    enum intr_level old_level = intr_disable(); 
+     // acquire the thread that is currently executed
     struct thread * curr = thread_current();
     // store privious priority
-    int old_priority = curr->priority;
+     int old_priority = curr->priority;
 
-    // update the priority
-    curr->priority = new_priority;
+    if(thread_current()==idle){
+           curr->priority = new_priority;
+        if(old_priority > new_priority){thread_yield();}
+         intr_set_level(old_level);
+         return;
+      }
+
+   
+    
     // reschedule the current thread only when its priority is lowered
-    if (old_priority > new_priority) {
+    else if (old_priority > new_priority) {
         // reschedule the CPU
-        thread_yield();
+        if(!test_lower(new_priority)){
+             curr->priority = new_priority;
+           thread_yield();
+        // update the priority
+      }
+        else thread_current()->lower_priority=new_priority;
     }
+    else { curr->priority = new_priority;}
     // reset the interrupt level
     intr_set_level(old_level);
     return ;
@@ -528,14 +584,18 @@ init_thread (struct thread *t, const char *name, int priority)
     ASSERT (t != NULL);
     ASSERT (PRI_MIN <= priority && priority <= PRI_MAX);
     ASSERT (name != NULL);
-
+    t->Lock=NULL;
+    t->waitfor=NULL;
+    t->lower_priority=0;
+    t->haveReleased=false;
     memset (t, 0, sizeof *t);
     t->status = THREAD_BLOCKED;
     strlcpy (t->name, name, sizeof t->name);
     t->stack = (uint8_t *) t + PGSIZE;
     t->priority = priority;
     t->magic = THREAD_MAGIC;
-    t->donator_tid=0;
+    t->donate_to_tid=0;
+    t->original_priority=priority;
     list_push_back (&all_list, &t->allelem);
 }
 

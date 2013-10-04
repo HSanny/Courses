@@ -29,9 +29,9 @@
 #include "threads/synch.h"
 #include <stdio.h>
 #include <string.h>
+#include "threads/malloc.h"
 #include "threads/interrupt.h"
 #include "threads/thread.h"
-
 /* waiter element on the "waiters" of semaphore */
 struct semaphore_elem 
 {
@@ -95,7 +95,6 @@ sema_init (struct semaphore *sema, unsigned value)
 sema_down (struct semaphore *sema) 
 {
     enum intr_level old_level;
-
     ASSERT (sema != NULL);
     ASSERT (!intr_context ());
 
@@ -223,6 +222,7 @@ lock_init (struct lock *lock)
     lock->holder = NULL;
     sema_init (&lock->semaphore, 1);
     lock->original_priority = -1;
+    lock->high_priority=-1;
 }
 
 /* Acquires LOCK, sleeping until it becomes available if
@@ -240,25 +240,35 @@ lock_acquire (struct lock *lock)
     ASSERT (lock != NULL);
     ASSERT (!intr_context ());
     ASSERT (!lock_held_by_current_thread (lock));
-
+   
     // Bochao Zhan's driving, Jimmy Lin's modifying it
     // variable abstraction
     struct thread * holder = lock->holder;
-    struct thread * curr = thread_current();
-    int curr_priority = thread_get_priority();
-    int holder_priority = holder->priority;
-
+    struct thread * hholder;
+     if(holder!=NULL){
+           thread_current()->Lock=lock;
+       thread_current()->waitfor=holder;
     // priority donation to lower priority thread that holds the lock
-    if(holder != NULL && holder_priority < curr_priority) {
-        holder->priority = curr_priority;
-    } 
+         if(holder->priority < thread_current()->priority) {
+        holder->priority = thread_current()->priority;
+        lock->high_priority=thread_current()->priority;
+        hholder=holder->waitfor;
+        
+          /* while(hholder&&hholder->haveReleased==false&&hholder->priority<thread_current()->priority){
+        hholder->priority=thread_current()->priority;
+        hholder=hholder->waitfor;
+            }*/
+
+         }
+       }
+     
     // decrement the semaphore counter
     sema_down(&lock->semaphore);
     // renew the lock data structure
-    lock->holder = curr;
+    lock->holder = thread_current();
     // assign original priority if that does not previously exist
-    if (lock->original_priority < 0) // check for illegal value
-        lock->original_priority = curr_priority;
+        //thread_current()->haveReleased=false;
+        lock->original_priority = thread_current()->priority;
 }
 
 /* Tries to acquires LOCK and returns true if successful or false
@@ -289,15 +299,33 @@ lock_try_acquire (struct lock *lock)
     void
 lock_release (struct lock *lock) 
 {
+    
     ASSERT (lock != NULL);
     ASSERT (lock_held_by_current_thread (lock));
-
+    int highest_priority=0;
     // Jimmy's driving, Bochao Zhan is modifying it
-    int old_priority = lock->original_priority;
+    
+    
+     if(thread_current()->priority==lock->high_priority){
+         if(alllist_checkempty()){
+          thread_current()->priority=thread_current()->original_priority;
+          /* if(thread_current()->lower_priority!=0){thread_current()->priority=thread_current()->lower_priority;thread_current()->lower_priority=0;}*/
+           }
+         else{
+                highest_priority=get_highest(lock);
+                 
+                if(highest_priority==0){thread_current()->priority=thread_current()->original_priority;}
+                 else{thread_current()->priority=highest_priority;
+                      }
+                   if(thread_current()->lower_priority!=0)thread_current()->priority=thread_current()->lower_priority;thread_current()->lower_priority=0;
+             }
+      }
+    //if(thread_current()->waitfor){thread_current()->waitfor->priority=thread_current()->priority;}
+    thread_current()->haveReleased==true;
     lock->holder = NULL;
     lock->original_priority = -1;  // illegal value as non-existent
     sema_up (&lock->semaphore);  //
-    thread_set_priority (old_priority);
+   
 
 }
 
@@ -387,10 +415,12 @@ cond_signal (struct condition *cond, struct lock *lock UNUSED)
     // to proceed its execution
     if (!list_empty (&cond->waiters))  {
         // Jimmy's driving
-        list_sort(&cond->waiters, sema_elem_compare, 0);
+	lock_release(lock);        
+	list_sort(&cond->waiters, sema_elem_compare, 0);
         sema_up (&list_entry (list_pop_back (&cond->waiters),
                     struct semaphore_elem, elem)->semaphore);
-    }
+	lock_acquire(lock);    
+	}
 }
 
 /* Wakes up all threads, if any, waiting on COND (protected by

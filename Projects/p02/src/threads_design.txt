@@ -77,6 +77,8 @@ Ranking (scale below):
 >> preparing your submission, other than the Pintos documentation, course
 >> text, lecture notes, and course staff.
 
+    1. To get the further understanding towards the overall architecture:
+        http://knowledgejunk.net/tag/timer_sleep/
 
 
 			     ALARM CLOCK
@@ -161,7 +163,7 @@ Ranking (scale below):
 >> `struct' member, global or static variable, `typedef', or
 >> enumeration.  Identify the purpose of each in 25 words or less.
 
-    
+
 
 
 >> B2: Explain the data structure used to track priority donation.
@@ -176,26 +178,13 @@ Ranking (scale below):
 >> B3: How do you ensure that the highest priority thread waiting for
 >> a lock, semaphore, or condition variable wakes up first?
 
-    We use list_max() function to find the highest-priority
-    thread and remove it from the list then. 
-    Another technique is to use list_sort() function to place the
-    highest-priority waiting thread on the front of the list. 
-    Finally, we use thread_unblock() to wake up the highest-priority thread
-    derived by above techniques.
 
 >> B4: Describe the sequence of events when a call to lock_acquire()
 >> causes a priority donation.  How is nested donation handled?
 
 
-
 >> B5: Describe the sequence of events when lock_release() is called
 >> on a lock that a higher-priority thread is waiting for.
-
-    After lock_release() is invoked, sets null to "holder" field of the given
-    lock and in the meanwhile increments the semaphore counter of that lock.
-    Then find the highest-priority thread in the "waiters" list of that lock.
-    And unblock the highest-priority thread. Once the thread acquires the
-    lock, decrements the semaphore counter of that lock. 
 
 
 ---- SYNCHRONIZATION ----
@@ -203,8 +192,6 @@ Ranking (scale below):
 >> B6: Describe a potential race in thread_set_priority() and explain
 >> how your implementation avoids it.  Can you use a lock to avoid
 >> this race?
-
-    
 
 ---- RATIONALE ----
 

@@ -226,7 +226,7 @@ lock_init (struct lock *lock)
 
     lock->holder = NULL;
     sema_init (&lock->semaphore, 1);
-    lock->high_priority=-1;
+    lock->high_priority = -1;  // initialize to a illegal value
 }
 
 /* Acquires LOCK, sleeping until it becomes available if
@@ -268,7 +268,7 @@ lock_acquire (struct lock *lock)
                 // step to further priority passing
                 holder = hholder;
                 hholder = hholder->waitfor;
-               }
+            }
         }
     }
 
@@ -307,9 +307,9 @@ lock_try_acquire (struct lock *lock)
     void
 lock_release (struct lock *lock) 
 {
-
     ASSERT (lock != NULL);
     ASSERT (lock_held_by_current_thread (lock));
+
     // Jimmy's driving, Bochao Zhan is modifying it
     int highest_priority;
     struct thread * current = thread_current();

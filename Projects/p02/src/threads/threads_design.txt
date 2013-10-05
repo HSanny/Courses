@@ -79,7 +79,8 @@ Ranking (scale below): Excellent
     
     struct thread {
         ...
-        int64_t remained_sleep; 
+        int64_t remained_sleep;  /* record the remaining time to stay in
+        "blocked" status for that thread*/ 
         ...
     }
 
@@ -109,9 +110,21 @@ Ranking (scale below): Excellent
 >> A3: What steps are taken to minimize the amount of time spent in the timer
 >> interrupt handler?
     
-    
-    
+    In timer interrupt handler, we use thread_foreach() to decrement the
+    remained sleeping time of all sleeping threads. 
 
+    Our implementation may not be the optimal. The better solution we thought
+    of would be creating a dynamic list to restore all sleeping threads. In
+    this way, at each execution of timer interrupt handler, the kernel only
+    needs to traverse those sleeping threads, rather than all existing
+    threads.  (In some scenarios, there could be thousands of threads and loop
+    through them at each tick will be fairly expensive. )
+
+    Another practical solution is to reduce the frequency of timer interrupt
+    handler. In this way, we lose the precision of thread's sleeping control.
+    Thus, that is actually a trade-off problem between the consumption of timer
+    interrupt handler and the precision of waking-up mechanism.
+    
 ---- SYNCHRONIZATION ----
 
 >> A4: How are race conditions avoided when multiple threads call
@@ -137,6 +150,20 @@ Ranking (scale below): Excellent
 >> A6: Why did you choose this design?  In what ways is it superior to
 >> another design you considered?
 
+    In essence, we make use of timer interrupt to implement the sleeping
+    management system of threads.
+
+    1. No busy waiting, comparing to given implementation. Busy waiting will
+    waste the CPU usage, since the sleeping thread will always be scheduled to
+    CPU. Such frequent context switching will cause expensive overhead.
+    2. No race condition. Repetitive  usages of interrupt mask guarantee that no
+    race condition would occur. (keep the atomicity of basic operation, such
+    as thread_set_priority and thread_unblock.)
+    3. Lay down a good foundation for the implementation of priority
+    scheduling. Say, if we use busy-waiting implementation, it is impossible
+    to achieve priority scheduling. Due to the existence of priority, the CPU
+    will always yield to the thread without high priority and will not update
+    the remained sleeping time of low-priority thread.
     
 
 			 PRIORITY SCHEDULING
@@ -273,16 +300,38 @@ another lock). If so, achieve possible chain-like priority donation.
 >> how your implementation avoids it.  Can you use a lock to avoid
 >> this race?
 
-    Potential Race:
+    Potential Race: Before the update of priority completes, the thread
+    invoking thread_set_priority() may be interrupted by timer handler. In
+    this way, another thread that just wakes up with higher priority will be
+    scheduled to run. Then priority donation may occur to increase the priority
+    of the thread calling threads_set_priority(); This will mess up the
+    normal priority scheduling ordering.
+       
+    The way we avoid it is to disable the interruption before getting into the
+    priority update routine. And reset the interrupt mask bit to the original
+    interupt level.
 
     Theoretically, we can use a thread to avoid the race condition by lock,
     since lock is essentially produced for mutual exclusion, from which the
-    race condition is produced.
+    race condition is produced. Practically, we can use lock bit to replace
+    the interrupt bit. The routine of timer interrupt can only be executed
+    when it acquires the lock.
 
 ---- RATIONALE ----
 
 >> B7: Why did you choose this design?  In what ways is it superior to
 >> another design you considered?
+
+    One advantage of this design is avoiding the introduction of complex data
+    structure (such as list). We only introduce a few structure variable and
+    make use of existing list to manipulate the priority scheduling and
+    donation.  
+
+    Another implementation we also consider is to restore lock list owned by a
+    thread. Thus, one thread could trace all threads that are waiting for it.
+    This is also a good method, but introduce complex data structure, the
+    list. 
+
 
 		  ADVANCED SCHEDULER (Extra Credit)
 		  =================================

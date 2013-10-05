@@ -581,10 +581,13 @@ init_thread (struct thread *t, const char *name, int priority)
     t->magic = THREAD_MAGIC;
     list_push_back (&all_list, &t->allelem);
     // ****************************************
-    // JIMMY: INITIALIZATION FOR THOSE NEW MEMBERS
+    // JIMMY: INITIALIZATION FOR NEW MEMBERS IN PRIORITY SCHEDULING
     t->Lock = NULL;
     t->waitfor = NULL;
     t->original_priority = priority;
+    // ****************************************
+    // JIMMY: INITIALIZATION FOR NEW MEMBERS IN PROCESS TERMINATION
+    t->file_name = name;  // store the file name
     // ****************************************
 }
 

@@ -117,6 +117,11 @@ struct thread
     int original_priority;  // inherent priority before donation
     struct lock * Lock;  // the lock this thread wants to acquire
     struct thread * waitfor;  // the thread this thread is waiting for
+
+    // ##################################################
+    // NEW MEMBER FOR PROCESS TERMINATION MESSAGE: 
+    // ##################################################
+    char * file_name;
   };
 
 /* If false (default), use round-robin scheduler.

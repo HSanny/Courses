@@ -1,0 +1,100 @@
+Homework #: 6
+Student Name: XIN LIN
+EID: xl5224
+CS login: jimmylin
+Email address: JimmyLin@utexas.edu
+Unique Number: 53910
+
+------------------------------------------------------------------------
+1. Pages have (at least) the following three bits associated with them: the
+resident bit, the clock/reference bit, and the dirty bit. Describe each bit
+and its use.
+
+Resident bit: also called valid bit, true if the corresponding virtual page is
+in physical memory. 
+
+Reference bit: set by hardware on read/write. If set, the corresponding page
+frame is used. It forms the bedrock of least recently used algorithm. 
+
+Dirty bit: set by hardware if the corresponding page frame is modified. If
+set, the page frame has to be written back to the hard disk.
+
+------------------------------------------------------------------------
+2. In class, we discussed that paging may increase internal fragmentation. What
+is internal fragmentation? What steps could you take to reduce it?
+
+Internal fragmentation: the memory can only be allocated as exponential of 2.
+This will result in memory waste within one page if one process request
+23-byte memory space (or generally not exactly exponential of 2). OS has
+to assign the integer number of pages to the process.
+
+The way to reduce internal fragmentation is to decrease the size of each page.
+That would increase bits used in the page number but reduce the bits in page
+offset in both virtual address and physical address. To illustrate this,
+imagine a process request 23-byte memory space. If page size is of 32-byte, 9
+bytes of memory has to be wasted. But if one OS has 8-byte page size, it only
+wastes 1 byte with 3 pages used.
+
+
+------------------------------------------------------------------------
+3. Sam P. Hacker is a Head Guru in a software company known for operating systems
+with very sorry quality. Hacker suggested a trick to reduce the pressure on
+the swap space. Instead of swapping out pages that belong to code texts into
+the swap area, the operating system could just take away the memory frames. If
+the code page is needed later, it could be paged directly from its binary
+file. Hacker's argument is that the operating system will save time by not
+storing the code page into the swap space, and will save space in the swap
+area. The code text exists on disk anyway, and could be fetched from there.
+Would you approve of this design? Why or why not?
+
+
+
+
+------------------------------------------------------------------------
+4. In a 32-bit machine we subdivide the virtual address into 4 segments as
+follows: 
+    10-bit   8-bit   6-bit   8 bit
+We use a 3-level page table, such that the first 10-bits are for the first
+level and so on.
+a. What is the page size in such a system?
+
+    The page size depends on the bits used for representing page offset. 
+    The former three sections of address identifies a particular page.
+    Assume it is a byte-addressible system, that is 
+        2^8 = 256 bytes
+
+b. What is the size of a page table for a process that has 256KB of memory
+    starting at address 0?
+
+    256 KB / 256 bytes = 1000 pages
+
+    Page table only searches for the page number. Thus, only page number is
+    restored in page table entries. In addition to that, some more bits with
+    particular functionalities are also essentials in each page table entry.
+
+    Postulate this system uses three additional bits as functional indicators.
+    Therefore, the size of that page table is 
+        (10 + 8 + 6 + 3) * 1000 = 27,000 bits
+
+------------------------------------------------------------------------
+5. Belady's anomaly: Intuitively, it seems that the more frames the memory
+has, the fewer page faults a program will get. Surprisingly enough, this is
+not always true. Belady (1969) discovered an example in which FIFO page
+replacement causes more faults with four page frames than with three. This
+strange situation has become known as Belady's anomaly. To illustrate, a
+program with five virtual pages numbered from 0 to 4 references its pages in
+the order: 
+     0 1 2 3 0 1 4 0 1 2 3 4
+
+a. Using FIFO replacement and assuming demand paging, compute the number of
+page faults with 3 frames. Repeat for 4 frames.
+
+
+
+b. Compute the number of page faults under LRU, the clock algorithm, and the
+optimal algorithm. What do you notice?. Consider a uniprocessor kernel that
+user programs can trap into using system calls. The kernel receive and handles
+interrupts from I/O devices.  Would there be any need for critical sections
+within that kernel?
+
+

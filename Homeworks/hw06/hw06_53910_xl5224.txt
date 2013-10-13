@@ -10,8 +10,8 @@ Unique Number: 53910
 resident bit, the clock/reference bit, and the dirty bit. Describe each bit
 and its use.
 
-Resident bit: also called valid bit, true if the corresponding virtual page is
-in physical memory. 
+Resident bit: also called valid bit and present bit, true if the corresponding
+virtual page is in physical (main) memory. 
 
 Reference bit: set by hardware on read/write. If set, the corresponding page
 frame is used. It forms the bedrock of least recently used algorithm. 
@@ -46,6 +46,7 @@ file. Hacker's argument is that the operating system will save time by not
 storing the code page into the swap space, and will save space in the swap
 area. The code text exists on disk anyway, and could be fetched from there.
 Would you approve of this design? Why or why not?
+
 
 
 

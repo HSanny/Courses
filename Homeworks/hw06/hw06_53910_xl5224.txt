@@ -14,7 +14,8 @@ Resident bit: also called valid bit and present bit, true if the corresponding
 virtual page is in physical (main) memory. 
 
 Reference bit: set by hardware on read/write. If set, the corresponding page
-frame is used. It forms the bedrock of least recently used algorithm. 
+frame is used. It forms the bedrock of least recently used (LRU) replacement
+algorithm and clock page replacement algorithm.
 
 Dirty bit: set by hardware if the corresponding page frame is modified. If
 set, the page frame has to be written back to the hard disk.
@@ -90,12 +91,60 @@ the order:
 a. Using FIFO replacement and assuming demand paging, compute the number of
 page faults with 3 frames. Repeat for 4 frames.
 
+For the case of 3 frames:
+  PF\P   0 1 2 3 0 1 4 0 1 2 3 4
+   a     0 0 0 3 3 3 4 4 4 4 4 4
+   b     - 1 1 1 0 0 0 0 0 2 2 2
+   c     - - 2 2 2 1 1 1 1 1 3 3
+  Fault  Y Y Y Y Y Y Y N N Y Y N
+# of page faults = 9
 
+For the case of 4 frames:
+  PF\P   0 1 2 3 0 1 4 0 1 2 3 4
+   a     0 0 0 0 0 0 4 4 4 4 3 3
+   b     - 1 1 1 1 1 1 0 0 0 0 4
+   c     - - 2 2 2 2 2 2 1 1 1 1
+   d     - - - 3 3 3 3 3 3 2 2 2
+ Fault   Y Y Y Y N N Y Y Y Y Y Y
+# of page faults = 10
 
 b. Compute the number of page faults under LRU, the clock algorithm, and the
-optimal algorithm. What do you notice?. Consider a uniprocessor kernel that
-user programs can trap into using system calls. The kernel receive and handles
-interrupts from I/O devices.  Would there be any need for critical sections
-within that kernel?
+optimal algorithm. What do you notice? 
 
+For the least recently used (LRU) algorithm:
+  PF\P   0 1 2 3 0 1 4 0 1 2 3 4
+   a     0 0 0 3 3 3 4 4 4 2 4 4
+   b     - 1 1 1 0 0 0 0 0 0 3 3
+   c     - - 2 2 2 1 1 1 1 1 1 1
+ Fault   Y Y Y Y Y Y Y N N Y Y N
+# of page faults = 9
+
+  PF\P   0 1 2 3 0 1 4 0 1 2 3 4
+   a     0 0 0 0 0 0 0 0 0 0 0 4
+   b     - 1 1 1 1 1 1 1 1 1 1 1
+   c     - - 2 2 2 2 4 4 4 4 3 3
+   d     - - - 3 3 3 3 3 3 2 2 2
+ Fault   Y Y Y Y N N Y N N Y Y Y
+# of page faults = 8 
+
+             ------------------------------------
+   
+For the clock algorithm:
+  PF\P   0   1   2   3   0   1   4   0   1   2   3   4
+   a    1,0 0,0 0,0 1,3 0,3 0,3 1,4 1,4 1,4 1,2 0,2 0,2
+   b    0,- 1,1 0,1 0,1 1,0 0,0 0,0 1,0 1,0 0,0 1,3 0,3
+   c    0,- 0,- 1,2 0,2 0,2 1,1 0,1 0,1 1,1 0,1 0,1 1,4
+ Fault   Y   Y   Y   Y   Y   Y   Y   N   N   Y   Y   Y
+# of page faults = 10
+ NOTE: the entry format is: ref bit, loaded page.
+   
+             ------------------------------------
+
+For the optimal algorithm:
+  PF\P   0 1 2 3 0 1 4 0 1 2 3 4
+   a     0 0 0 0 0 0 0 0 0 2 3 3
+   b     - 1 1 1 1 1 1 1 1 1 1 1
+   c     - - 2 3 3 3 4 4 4 4 4 4
+ Fault   Y Y Y Y N N Y N N Y Y N
+# of page faults = 7
 

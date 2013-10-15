@@ -83,7 +83,9 @@ main (void)
 
   /* Break command line into arguments and parse options. */
   argv = read_command_line ();
+  printf("argv[]: %s\n", *(argv  ));
   argv = parse_options (argv);
+  printf("argv[]: %s\n", *(argv  ));
 
   /* Initialize ourselves as a thread so we can use locks,
      then enable console locking. */
@@ -210,6 +212,12 @@ read_command_line (void)
       p += strnlen (p, end - p) + 1;
     }
   argv[argc] = NULL;
+  //________________________________________________________________________ 
+  printf("argc: %d \n", argc);
+  for (i = 0; i < argc; i++)
+      printf("argv[%d]: %s \n", i, argv[i]);
+
+  //________________________________________________________________________ 
 
   /* Print kernel command line. */
   printf ("Kernel command line:");

@@ -109,8 +109,6 @@ struct thread
     tid_t parent;  // record the tid of its parent
   };
 
-struct thread * search_thread_by_tid (tid_t tid);
-
 /* If false (default), use round-robin scheduler.
    If true, use multi-level feedback queue scheduler.
    Controlled by kernel command-line option "-o mlfqs". */

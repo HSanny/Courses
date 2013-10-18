@@ -35,8 +35,6 @@ void get_arg (struct intr_frame *f, int *arg, int n);
 void check_valid_ptr (const void *vaddr);
 void check_valid_buffer (void* buffer, unsigned size);
 
-bool create (const char *file, unsigned initial_size);
-
     void
 syscall_init (void) 
 {

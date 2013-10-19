@@ -240,7 +240,6 @@ process_wait (tid_t child_tid)
     if (t == NULL  // no found, given tid is invalid
           || t->parent != thread_current()->tid  // not child of calling process
        ){
-        printf("nothing?\n");
         return -1;}
     // busy waiting for the termination
     while (t != NULL && t->status != THREAD_DYING && t->magic == THREAD_MAGIC) { 

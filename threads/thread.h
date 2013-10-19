@@ -107,6 +107,10 @@ struct thread
     // ##################################################
     char * file_name; // program name, argument not included
     tid_t parent;  // record the tid of its parent
+    int fd;
+    struct list file_list;
+    struct list child_list;
+    struct child_process *cp;
   };
 
 struct thread * search_thread_by_tid (tid_t tid);

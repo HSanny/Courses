@@ -10,14 +10,14 @@
 
 >> Fill your name, UT EID, CS login, email address, and unique number:
 
-Name:
-EID:
-CS login:
-Email:
-Unique Number:
+Name: XIN LIN
+EID: xl5224
+CS login: jimmylin
+Email: jimmylin@utexas.edu
+Unique Number: 53910
 
 
-Slip days used on this project:
+Slip days used on this project: 0 day
 
 ---- GROUP ----
 
@@ -87,19 +87,49 @@ Ranking (scale below):
 >> `struct' member, global or static variable, `typedef', or
 >> enumeration.  Identify the purpose of each in 25 words or less.
 
+#define MAX_ARGS 100  /* macro specifying the maximum number of arguments */
+
+
 ---- ALGORITHMS ----
 
 >> A2: Briefly describe how you implemented argument parsing.  How do
 >> you arrange for the elements of argv[] to be in the right order?
 >> How do you avoid overflowing the stack page?
 
+Initially point stack pointer to bottom of the stack (PHYS_BASE). Then place
+the string content in decreasing order (higher index placed first) and in the
+meanwhile record the address of those strings within stack using an array
+named stack_addr. After that, fill the stack to align to the multiple of 4.
+And then copy the recorded address to the next section of main memory in
+reverse order. Lastly, the address of the first recorded address, the number
+of argument and the return address was pushed to the stack.
+
+Note that the esp will be decremented at each step but with different amount.
+One integer occupies 4 bytes, one char with one byte and one pointer, in our
+lab machine, occupies 4 bytes as well.
+
 ---- RATIONALE ----
 
 >> A3: Why does Pintos implement strtok_r() but not strtok()?
 
+strtok() is a function call in C standard library.
+strtok_r() is a function defined in Pintos kernel library .
+
+Reason of doing so is to avoid conflict in namespace. Some test files may use both implementations.
+Thus, there is a need to avoid reference confusion.
+
+
 >> A4: In Pintos, the kernel separates commands into a executable name
 >> and arguments.  In Unix-like systems, the shell does this
 >> separation.  Identify at least two advantages of the Unix approach.
+
+a. easier to arrange the program stack. 
+
+b. higher-level abstraction. We could assign particular semantics to each
+ command section, such as excutable name in args[0]. In this way, we find the
+ locate the code segment by only using the executable name, rather than the
+ whole piece of command.
+
 
 			     SYSTEM CALLS
 			     ============
@@ -110,14 +140,63 @@ Ranking (scale below):
 >> `struct' member, global or static variable, `typedef', or
 >> enumeration.  Identify the purpose of each in 25 words or less.
 
+char * file_name;
+    program name, argument not included, used for termination message.
+
+tid_t parent;  
+    store the tid of its parent process, used for tracking its parent, say,
+    for the purpose of inter-process communication.
+
+int fd;  
+    file descriptor to characterize the most recently used file.
+
+struct list file_list;  
+    store all files opened by a process.
+
+struct child_process * cp;  
+    store the current manipulated child process.
+
+int exit_value;  
+    store the exit value of the most-recently-exit child process.
+
+int isLoaded;  
+    indicate whether the requested file is loaded into memory or not.
+
+struct semaphore sema; 
+    Synchronization tool to control the execution of created processes.
+
+struct file * file_deny_execute;
+    store the executable file run by current process. Any writing operation
+    should be denied.
+
+struct lock filesys_lock;
+    global variable to achieve mutual exclusion on the file system.
+
+struct process_file {
+    struct file *file;
+    int fd; 
+    struct list_elem elem;
+};
+    data structure to associate file descriptor and file structure (opened
+    file).
+
 >> B2: Describe how file descriptors are associated with open files.
 >> Are file descriptors unique within the entire OS or just within a
 >> single process?
+
+The way we associate file descriptors and open files is to introduce a new
+data structure, named process_file (see above). Once a file is opened by
+certain process, this process restores such relationship between file
+descriptor and file structure in its file_list list.
+
+In our implementation, the file descriptors are *unique within the entire OS*.
 
 ---- ALGORITHMS ----
 
 >> B3: Describe your code for reading and writing user data from the
 >> kernel.
+
+Through read and write system calls.
 
 >> B4: Suppose a system call causes a full page (4,096 bytes) of data
 >> to be copied from user space into the kernel.  What is the least
@@ -126,8 +205,17 @@ Ranking (scale below):
 >> for a system call that only copies 2 bytes of data?  Is there room
 >> for improvement in these numbers, and how much?
 
+
+
 >> B5: Briefly describe your implementation of the "wait" system call
 >> and how it interacts with process termination.
+
+In our implementation, when "wait" system call is invoked in main process, the
+current process will figure out the thread structure of the child process to
+wait for. After that, increment the semaphore owned by that thread and allow
+it to be executed. Once the thread terminated, the main process will receive
+the return value of child process as the final return value of "wait" system
+call.
 
 >> B6: Any access to user program memory at a user-specified address
 >> can fail due to a bad pointer value.  Such accesses must cause the
@@ -150,6 +238,8 @@ Ranking (scale below):
 >> loading.  How does your code ensure this?  How is the load
 >> success/failure status passed back to the thread that calls "exec"?
 
+
+
 >> B8: Consider parent process P with child process C.  How do you
 >> ensure proper synchronization and avoid race conditions when P
 >> calls wait(C) before C exits?  After C exits?  How do you ensure
@@ -168,8 +258,9 @@ Ranking (scale below):
 >> B11: The default tid_t to pid_t mapping is the identity mapping.
 >> If you changed it, what advantages are there to your approach?
 
-			   SURVEY QUESTIONS
-			   ================
+
+SURVEY QUESTIONS
+================
 
 Answering these questions is optional, but it will help us improve the
 course in future semesters.  Feel free to tell us anything you

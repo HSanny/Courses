@@ -19,11 +19,16 @@ enum thread_status
 typedef int tid_t;
 #define TID_ERROR ((tid_t) -1)          /* Error value for tid_t. */
 
+
+
 /* Thread priorities. */
 #define PRI_MIN 0                       /* Lowest priority. */
 #define PRI_DEFAULT 31                  /* Default priority. */
 #define PRI_MAX 63                      /* Highest priority. */
-
+#define NOT_LOADED 0
+#define LOADED 1
+#define LOADING_FAIL -1
+#define NOT_EXIT -10000
 /* A kernel thread or user process.
 
    Each thread structure is stored in its own 4 kB page.  The
@@ -94,14 +99,6 @@ struct thread
 
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
-
-#ifdef USERPROG
-    /* Owned by userprog/process.c. */
-    uint32_t *pagedir;                  /* Page directory. */
-#endif
-
-    /* Owned by thread.c. */
-    unsigned magic;                     /* Detects stack overflow. */
     // ##################################################
     // NEW MEMBER FOR PROCESS TERMINATION MESSAGE: 
     // ##################################################
@@ -110,13 +107,22 @@ struct thread
     tid_t parent;  // record the tid of its parent
     int fd;  // file descriptor, to record current I/O status
     struct list file_list;  // all files opened by a process
-    struct list child_list;  // all child processes of this process
-    struct child_process *cp;  // 
+    struct child_process *cp;  //
+     int exit_value;
+     int isLoaded; 
     // ##################################################
+
+#ifdef USERPROG
+    /* Owned by userprog/process.c. */
+    uint32_t *pagedir;                  /* Page directory. */
+#endif
+    /* Owned by thread.c. */
+    unsigned magic;                     /* Detects stack overflow. */
+    
   };
 
 struct thread * search_thread_by_tid (tid_t tid);
-
+struct CP * search_child(tid_t, struct thread * );
 /* If false (default), use round-robin scheduler.
    If true, use multi-level feedback queue scheduler.
    Controlled by kernel command-line option "-o mlfqs". */

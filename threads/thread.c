@@ -11,6 +11,7 @@
 #include "threads/switch.h"
 #include "threads/synch.h"
 #include "threads/vaddr.h"
+#include "threads/malloc.h"
 #ifdef USERPROG
 #include "userprog/process.h"
 #endif
@@ -84,6 +85,19 @@ struct thread * search_thread_by_tid (tid_t tid) {
     // desired thread not found
     return NULL;
 }
+
+/*struct CP * search_child (tid_t tid, struct thread * parent) {
+    struct CP * t;
+    struct list_elem *e;
+    for (e = list_begin(&parent->child_list); e != list_end(&parent->child_list); 
+            e = list_next(e)) {
+        t=list_entry(e,struct CP, elem);
+        printf("%d %d\n",t->tid,t->exit_value);
+        if (t->tid == tid && t->tid != parent->tid) {return t;}
+    }
+    // desired thread not found
+    return NULL;
+}*/
 // ***************P2: ADDTIONALLY INTRODUCED FUNCTIONS ENDS************************
 
 /* Initializes the threading system by transforming the code
@@ -200,8 +214,9 @@ thread_create (const char *name, int priority,
   //****************************************************
   // FOR THE CHANGE IN PROJECT 2
   t->parent = thread_current()->tid;
+  t->isLoaded = NOT_LOADED;
   list_init(&t->file_list);
-  list_init(&t->child_list);
+  t->exit_value = NOT_EXIT;
   //****************************************************
 
   /* Prepare thread for first run by initializing its stack.

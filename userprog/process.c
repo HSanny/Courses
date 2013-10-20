@@ -18,6 +18,7 @@
 #include "threads/thread.h"
 #include "threads/vaddr.h"
 
+#define ERROR -1
 #define THREAD_MAGIC 0xcd6abf4b
 
 static thread_func start_process NO_RETURN;
@@ -100,7 +101,8 @@ start_process (void *file_name_)
     success = load (fname, &if_.eip, &if_.esp);
 
     if (success) {
-
+     
+        thread_current()->isLoaded = LOADED;
         // ***************************************************
         /* successful page allocation */
         // establish a pointer array to restore arguments
@@ -207,6 +209,7 @@ start_process (void *file_name_)
     /* If load failed, quit. */
     palloc_free_page (file_name);
     if (!success) {
+         thread_current()->isLoaded = LOADING_FAIL;
         thread_exit ();
     }
     /* Start the user process by simulating a return from an
@@ -234,20 +237,28 @@ process_wait (tid_t child_tid)
     // The original implementaiton directly return -1
     // ********************************************************
     // Jimmy's driving
-    
+    struct thread * cur = thread_current();
     struct thread * t = search_thread_by_tid (child_tid);
-   
+    int exit_status;
     if (t == NULL  // no found, given tid is invalid
-          || t->parent != thread_current()->tid  // not child of calling process
+          || t->parent != cur->tid // not child of calling process
        ){
-        return -1;}
+        if(cur->exit_value != NOT_EXIT){
+           exit_status = cur->exit_value;
+            cur->exit_value = NOT_EXIT;
+            return exit_status;}
+        return ERROR;}
     // busy waiting for the termination
     while (t != NULL && t->status != THREAD_DYING && t->magic == THREAD_MAGIC) { 
          //printf("nothing??\n");    
          thread_yield(); 
+
     }
     // ********************************************************
-    return -1;
+    if(cur->exit_value != NOT_EXIT) exit_status = cur->exit_value;
+    else {exit_status = ERROR;}
+     cur->exit_value = NOT_EXIT;
+    return exit_status;
 }
 
 /* Free the current process's resources. */
@@ -386,6 +397,7 @@ load (const char *file_name, void (**eip) (void), void **esp)
     if (file == NULL) 
     {
         printf ("load: %s: open failed\n", file_name);
+        thread_current()->isLoaded = LOADING_FAIL;
         goto done; 
     }
 
@@ -399,6 +411,7 @@ load (const char *file_name, void (**eip) (void), void **esp)
             || ehdr.e_phnum > 1024) 
 
     {
+        thread_current()->isLoaded = LOADING_FAIL;
         printf ("load: %s: error loading executable\n", file_name);
         /*
            printf ("ehdr.e_type:%d\n", ehdr.e_type);

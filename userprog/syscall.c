@@ -37,11 +37,15 @@ int user_to_kernel_ptr(const void *vaddr);
 void get_arg (struct intr_frame *f, int *arg, int n);
 void check_valid_ptr (const void *vaddr);
 void check_valid_buffer (void* buffer, unsigned size);
-
+void process_close_file (int);
 // SYSTEM CALL IMPLEMENTATION
 int open (const char *);
 bool create (const char *file, unsigned initial_size);
 int read (int fd, void *buffer, unsigned size);
+void close(int);
+bool remove (const char *);
+tid_t exec(const char *);
+int wait (tid_t pid);
 
     void
 syscall_init (void) 
@@ -63,21 +67,24 @@ syscall_handler (struct intr_frame *f UNUSED)
                 break;
             }
         case SYS_EXIT:
-            {
+            {   
                 get_arg (f, &arg[0], 1);
                 exit (arg[0]);
                 break;
             }
         case SYS_EXEC:
-            {
-
-                break;
+            {  
+            get_arg(f, &arg[0], 1);
+	    arg[0] = user_to_kernel_ptr((const void *) arg[0]);
+	    f->eax = exec((const char *) arg[0]); 
+	    break;
             }
-        case SYS_WAIT:
+         case SYS_WAIT:
             {
-
-                break;
-            }
+	    get_arg(f, &arg[0], 1);
+	    f->eax = wait(arg[0]);
+	     break;
+             }
         case SYS_CREATE:
             {
                 get_arg(f, &arg[0], 2);
@@ -87,8 +94,10 @@ syscall_handler (struct intr_frame *f UNUSED)
             }
         case SYS_REMOVE:
             {
-
-                break;
+                 get_arg(f, &arg[0], 1);
+	         arg[0] = user_to_kernel_ptr((const void *) arg[0]);
+	         f->eax = remove((const char *) arg[0]);
+	         break;
             }
         case SYS_OPEN:
             {
@@ -123,20 +132,20 @@ syscall_handler (struct intr_frame *f UNUSED)
             }
         case SYS_SEEK:
             {
-
                 break;
             } 
         case SYS_TELL:
             { 
-
                 break;
             }
         case SYS_CLOSE:
-            { 
-
-                break;
+            {
+              get_arg(f, &arg[0], 1);
+	      close(arg[0]);
+	      break;
             }
     }
+
 }
 
 void halt (void)
@@ -147,6 +156,8 @@ void halt (void)
 void exit (int status)
 {
     struct thread *cur = thread_current();
+    struct thread *parent = search_thread_by_tid(cur->parent);
+    if(parent != NULL) parent->exit_value = status;
     printf ("%s: exit(%d)\n", cur->name, status);
     thread_exit();
 }
@@ -158,7 +169,7 @@ struct file* get_file_by_fd (int fd)
 
     // get the file_list occupied by current thread(process)
     struct list file_list = thread_current()->file_list;
-    if (list_empty(&file_list) || fd < 0 || fd > thread_current()->fd) {
+    if (list_empty(&file_list) || fd < 0 || fd >= thread_current()->fd) {
         return NULL; 
     }
     for (e = list_begin(&file_list); e != list_end(&file_list); 
@@ -170,6 +181,7 @@ struct file* get_file_by_fd (int fd)
     // not found, return NULL
     return NULL;
 }
+
 
 /* 
  * Return the size of file, opened as fd.
@@ -214,9 +226,10 @@ int read (int fd, void *buffer, unsigned size)
     else {
         // get file structure
         struct file * f = get_file_by_fd (fd);
+
         // file not found
         if (f == NULL) return -1; 
-
+#include "userprog/process.h"
         // get the size of requested file
         unsigned fsize = filesize (fd);
         if (TEST) printf("fsize: %d,  size: %d\n", fsize, size);
@@ -244,8 +257,21 @@ int write (int fd, const void *buffer, unsigned size)
         putbuf(buffer, size);
         return size;
     }
-    // need to handle write file problem
-    return -1;
+    else if(fd == 0){
+       exit(-1);
+    }
+    else{
+    
+    struct file *f = get_file_by_fd(fd);
+    if (!f)
+     {
+      return ERROR;
+     }
+     lock_acquire(&filesys_lock);
+      int numOfbyte = file_write(f, buffer, size);
+     lock_release(&filesys_lock);
+     return numOfbyte; 
+     }
 }
 
 
@@ -271,12 +297,14 @@ void get_arg (struct intr_frame *f, int *arg, int n)
         check_valid_ptr ((const void *) ptr);
         arg[i] = *ptr;
     }
+
 }
 
 void check_valid_ptr (const void *vaddr)
 {
     if (!is_user_vaddr(vaddr) || vaddr < USER_VADDR_BOTTOM)
     {
+        if(TEST) printf("%s\n",thread_current()->name);
         exit(ERROR);
     }
 }
@@ -301,6 +329,7 @@ bool create (const char *file, unsigned initial_size)
 }
 
 int open (const char *file)
+
 {
     lock_acquire(&filesys_lock);
     struct file *f = filesys_open(file);
@@ -323,3 +352,56 @@ int process_add_file (struct file *f)
     list_push_back(&thread_current()->file_list, &pf->elem);
     return pf->fd;
 }
+
+void close (int fd)
+{
+  lock_acquire(&filesys_lock);
+  process_close_file(fd);
+  lock_release(&filesys_lock);
+}
+
+void process_close_file (int fd)
+{
+  struct thread *t = thread_current();
+  struct list_elem *next, *e = list_begin(&t->file_list);
+
+  while (e != list_end (&t->file_list))
+    {
+      next = list_next(e);
+      struct process_file *pf = list_entry (e, struct process_file, elem);
+      if (fd == pf->fd || fd == -1)
+	{
+	  file_close(pf->file);
+	  list_remove(&pf->elem);
+	  free(pf);
+	  if (fd != -1)
+	    {
+	      return;
+	    }
+	}
+      e = next;
+    }
+}
+
+bool remove (const char *file)
+{
+  lock_acquire(&filesys_lock);
+  bool success = filesys_remove(file);
+  lock_release(&filesys_lock);
+  return success;
+}
+
+tid_t exec(const char *cmdline){
+  tid_t pid = process_execute(cmdline);
+  struct thread *cp = search_thread_by_tid(pid);
+  if(!cp)return ERROR;
+  while(cp->isLoaded == NOT_LOADED) thread_yield();
+  if(cp->isLoaded == LOADED) return pid;
+  else return ERROR;
+}
+
+int wait (tid_t pid)
+{
+  return process_wait(pid);
+}
+

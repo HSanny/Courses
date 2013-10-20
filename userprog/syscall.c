@@ -16,27 +16,32 @@
 #define ERROR -1
 #define MAX_ARGS 3
 #define USER_VADDR_BOTTOM ((void *) 0x08048000)
+#define TEST 0
 
+// ORIGINALLY PROVIDED FUNCITON
+static void syscall_handler (struct intr_frame *);
 
+// GLOBAL VARIABLE
 struct lock filesys_lock;
-
+// NEW DATA STRUCTURE
 struct process_file {
     struct file *file;
     int fd;
     struct list_elem elem;
 };
 
+// AUXILIARY FUNCTIONS
 int process_add_file (struct file *);
-int open(const char *);
-
-static void syscall_handler (struct intr_frame *);
+struct file* get_file_by_fd (int fd);
 int user_to_kernel_ptr(const void *vaddr);
 void get_arg (struct intr_frame *f, int *arg, int n);
 void check_valid_ptr (const void *vaddr);
 void check_valid_buffer (void* buffer, unsigned size);
 
-
+// SYSTEM CALL IMPLEMENTATION
+int open (const char *);
 bool create (const char *file, unsigned initial_size);
+int read (int fd, void *buffer, unsigned size);
 
     void
 syscall_init (void) 
@@ -75,9 +80,9 @@ syscall_handler (struct intr_frame *f UNUSED)
             }
         case SYS_CREATE:
             {
-               get_arg(f, &arg[0], 2);
-	       arg[0] = user_to_kernel_ptr((const void *) arg[0]);
-	       f->eax = create((const char *)arg[0], (unsigned) arg[1]);
+                get_arg(f, &arg[0], 2);
+                arg[0] = user_to_kernel_ptr((const void *) arg[0]);
+                f->eax = create((const char *)arg[0], (unsigned) arg[1]);
                 break;
             }
         case SYS_REMOVE:
@@ -87,24 +92,29 @@ syscall_handler (struct intr_frame *f UNUSED)
             }
         case SYS_OPEN:
             {
-               get_arg(f, &arg[0], 1);
-	       arg[0] = user_to_kernel_ptr((const void *) arg[0]);
-	       f->eax = open((const char *) arg[0]);
-	break; 				
+                get_arg(f, &arg[0], 1);
+                arg[0] = user_to_kernel_ptr((const void *) arg[0]);
+                f->eax = open((const char *) arg[0]);
+                break; 				
             }
         case SYS_FILESIZE:
             {
-
+                get_arg(f, &arg[0], 1);
+                f->eax = filesize(arg[0]);
                 break;
             }
         case SYS_READ:
             {
-
+                get_arg(f, &arg[0], 3);
+                check_valid_buffer((void *) arg[1], (unsigned) arg[2]);
+                arg[1] = user_to_kernel_ptr((void *) arg[1]);
+                f->eax = read(arg[0], (void *) arg[1],
+                        (unsigned) arg[2]);
                 break;
             }
         case SYS_WRITE:
             { 
-                get_arg(f, &arg[0],3);
+                get_arg(f, &arg[0], 3);
                 check_valid_buffer((void *) arg[1], (unsigned) arg[2]);
                 arg[1] = user_to_kernel_ptr((const void *) arg[1]);
                 f->eax = write(arg[0], (const void *) arg[1],
@@ -141,7 +151,92 @@ void exit (int status)
     thread_exit();
 }
 
+struct file* get_file_by_fd (int fd) 
+{
+    struct process_file *pf;
+    struct list_elem *e; 
 
+    // get the file_list occupied by current thread(process)
+    struct list file_list = thread_current()->file_list;
+    if (list_empty(&file_list) || fd < 0 || fd > thread_current()->fd) {
+        return NULL; 
+    }
+    for (e = list_begin(&file_list); e != list_end(&file_list); 
+            e = list_next(e)) {
+        pf = list_entry (e, struct process_file, elem);
+        if (TEST) printf("fd: %d \n", pf->fd);
+        if (pf->fd == fd) return pf->file;
+    } 
+    // not found, return NULL
+    return NULL;
+}
+
+/* 
+ * Return the size of file, opened as fd.
+ * */
+int filesize (int fd) 
+{
+    int fsize = 0;
+    // acquire the lock to avoid race condition
+    lock_acquire(&filesys_lock);
+    // search the file structure having the file decriptor
+    struct file * f = get_file_by_fd (fd);
+    // compute the length of file
+    fsize = file_length (f);
+    // free the lock
+    lock_release(&filesys_lock);
+
+    if (TEST) printf("filsize: %d\n", fsize);
+    // return the size of file
+    return fsize;
+}
+
+/*
+ * Read system call
+ * */
+int read (int fd, void *buffer, unsigned size) 
+{
+    // READ FROM THE EXTERNAL KEYBOARD
+    unsigned read_byte = 0;
+    if (fd == STDIN_FILENO) {
+        uint8_t key;
+        char * tb = (char *) buffer;
+        // read byte-by-byte
+        while (read_byte < size && (key=input_getc()) != '\0') {
+            *tb = (char) key;
+            tb ++;
+            read_byte ++;
+        }
+    } 
+    else if (fd == STDOUT_FILENO) {
+        return -1;
+    } 
+    else {
+        // get file structure
+        struct file * f = get_file_by_fd (fd);
+        // file not found
+        if (f == NULL) return -1; 
+
+        // get the size of requested file
+        unsigned fsize = filesize (fd);
+        if (TEST) printf("fsize: %d,  size: %d\n", fsize, size);
+        if (TEST) printf("sbuffer: %d \n", sizeof buffer);
+        // invalid if requested size is beyond the file size
+        if (size > fsize)  return -1; 
+
+        // read bytes from specified file
+        lock_acquire(&filesys_lock);
+        read_byte = file_read (f, buffer, size);
+        lock_release(&filesys_lock);
+    }
+    if (TEST) printf("read_byte : %d\n", read_byte);
+    return read_byte;
+}
+
+
+/*
+ * Write system call
+ * */
 int write (int fd, const void *buffer, unsigned size)
 {
     if (fd == STDOUT_FILENO)
@@ -154,10 +249,10 @@ int write (int fd, const void *buffer, unsigned size)
 }
 
 
-int user_to_kernel_ptr(const void *vaddr)
+int user_to_kernel_ptr (const void *vaddr)
 {
-    check_valid_ptr(vaddr);
-    void *ptr = pagedir_get_page(thread_current()->pagedir, vaddr);
+    check_valid_ptr (vaddr);
+    void *ptr = pagedir_get_page (thread_current()->pagedir, vaddr);
     if (!ptr)
     {
         exit(ERROR);
@@ -169,11 +264,11 @@ int user_to_kernel_ptr(const void *vaddr)
 void get_arg (struct intr_frame *f, int *arg, int n)
 {
     int i;
-    int *ptr;
+    int * ptr;
     for (i = 0; i < n; i++)
     {
         ptr = (int *) f->esp + i + 1;
-        check_valid_ptr((const void *) ptr);
+        check_valid_ptr ((const void *) ptr);
         arg[i] = *ptr;
     }
 }
@@ -199,32 +294,32 @@ void check_valid_buffer (void* buffer, unsigned size)
 
 bool create (const char *file, unsigned initial_size)
 {
-  lock_acquire(&filesys_lock);
-  bool success = filesys_create (file, initial_size);
-  lock_release(&filesys_lock);
-  return success;
+    lock_acquire(&filesys_lock);
+    bool success = filesys_create (file, initial_size);
+    lock_release(&filesys_lock);
+    return success;
 }
 
 int open (const char *file)
 {
-  lock_acquire(&filesys_lock);
-  struct file *f = filesys_open(file);
-  if (!f)
+    lock_acquire(&filesys_lock);
+    struct file *f = filesys_open(file);
+    if (!f)
     {
-      lock_release(&filesys_lock);
-      return ERROR;
+        lock_release(&filesys_lock);
+        return ERROR;
     }
-  int fd = process_add_file(f);
-  lock_release(&filesys_lock);
-  return fd;
+    int fd = process_add_file(f);
+    lock_release(&filesys_lock);
+    return fd;
 }
 
 int process_add_file (struct file *f)
 {
-  struct process_file *pf=(struct process_file *)malloc(sizeof(struct process_file));
-  pf->file = f;
-  pf->fd = thread_current()->fd;
-  thread_current()->fd++;
-  list_push_back(&thread_current()->file_list, &pf->elem);
-  return pf->fd;
+    struct process_file *pf=(struct process_file *)malloc(sizeof(struct process_file));
+    pf->file = f;
+    pf->fd = thread_current()->fd;
+    thread_current()->fd++;
+    list_push_back(&thread_current()->file_list, &pf->elem);
+    return pf->fd;
 }

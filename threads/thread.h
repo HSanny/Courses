@@ -106,7 +106,13 @@ struct thread
     // NEW MEMBER FOR PROCESS TERMINATION MESSAGE: 
     // ##################################################
     char * file_name; // program name, argument not included
+
     tid_t parent;  // record the tid of its parent
+    int fd;  // file descriptor, to record current I/O status
+    struct list file_list;  // all files opened by a process
+    struct list child_list;  // all child processes of this process
+    struct child_process *cp;  // 
+    // ##################################################
   };
 
 struct thread * search_thread_by_tid (tid_t tid);

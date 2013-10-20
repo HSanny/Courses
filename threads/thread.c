@@ -107,7 +107,6 @@ thread_init (void)
   lock_init (&tid_lock);
   list_init (&ready_list);
   list_init (&all_list);
-
   /* Set up a thread structure for the running thread. */
   initial_thread = running_thread ();
   init_thread (initial_thread, "main", PRI_DEFAULT);
@@ -189,7 +188,7 @@ thread_create (const char *name, int priority,
   enum intr_level old_level;
 
   ASSERT (function != NULL);
-
+  
   /* Allocate thread. */
   t = palloc_get_page (PAL_ZERO);
   if (t == NULL)
@@ -199,7 +198,10 @@ thread_create (const char *name, int priority,
   init_thread (t, name, priority);
   tid = t->tid = allocate_tid ();
   //****************************************************
+  // FOR THE CHANGE IN PROJECT 2
   t->parent = thread_current()->tid;
+  list_init(&t->file_list);
+  list_init(&t->child_list);
   //****************************************************
 
   /* Prepare thread for first run by initializing its stack.
@@ -488,6 +490,7 @@ init_thread (struct thread *t, const char *name, int priority)
   t->stack = (uint8_t *) t + PGSIZE;
   t->priority = priority;
   t->magic = THREAD_MAGIC;
+  t->fd = 3;
   list_push_back (&all_list, &t->allelem);
 }
 

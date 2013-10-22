@@ -493,7 +493,7 @@ bool remove (const char *file)
 tid_t exec(const char *cmdline){
     tid_t pid = process_execute(cmdline);
     struct thread *cp = search_thread_by_tid(pid);
-    if (!cp) {
+    if (cp == NULL) {
          return ERROR;
     }
 
@@ -504,9 +504,11 @@ tid_t exec(const char *cmdline){
     if (cp->isLoaded == LOADED) {
         return pid;
     }
-    else {
+    /*else {
+        printf("3\n");
         return ERROR;
     }
+    */
 }
 
 /* 

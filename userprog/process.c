@@ -245,22 +245,22 @@ process_wait (tid_t child_tid)
     int exit_status;
     if (t == NULL  // no found, given tid is invalid
           || t->parent != cur->tid // not child of calling process
-       ){
-        if(cur->exit_value != NOT_EXIT){
-           exit_status = cur->exit_value;
+       ) {
+        if (cur->exit_value != NOT_EXIT) {
+            exit_status = cur->exit_value;
             cur->exit_value = NOT_EXIT;
-            return exit_status;}
-        return ERROR;}
+            return exit_status; 
+        }
+        return ERROR;
+    }
     // busy waiting for the termination
     while (t != NULL && t->status != THREAD_DYING && t->magic == THREAD_MAGIC) { 
-         //printf("nothing??\n");    
-         thread_yield(); 
-
+        thread_yield(); 
     }
     // ********************************************************
-    if(cur->exit_value != NOT_EXIT) exit_status = cur->exit_value;
-    else {exit_status = ERROR;}
-     cur->exit_value = NOT_EXIT;
+    if (cur->exit_value != NOT_EXIT) exit_status = cur->exit_value;
+    else exit_status = ERROR;
+    cur->exit_value = NOT_EXIT;
     return exit_status;
 }
 
@@ -289,6 +289,8 @@ process_exit (void)
         pagedir_activate (NULL);
         pagedir_destroy (pd);
     }
+    //if (cur->file_deny_execute != NULL)
+     //   file_allow_write (cur->file_deny_execute);
 }
 
 /* Sets up the CPU for running user code in the current

@@ -109,8 +109,8 @@ struct thread
     int fd;  // file descriptor, to record current I/O status
     struct list file_list;  // all files opened by a process
     struct child_process *cp;  //
-     int exit_value;
-     int isLoaded; 
+    int exit_value;
+    int isLoaded; 
     // ##################################################
 
 #ifdef USERPROG
@@ -119,7 +119,7 @@ struct thread
 #endif
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
-    
+
   };
 
 struct thread * search_thread_by_tid (tid_t tid);

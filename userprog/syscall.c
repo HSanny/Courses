@@ -133,10 +133,14 @@ syscall_handler (struct intr_frame *f UNUSED)
             }
         case SYS_SEEK:
             {
+                get_arg(f, &arg[0], 2);
+                seek((int)arg[0], (unsigned)arg[1]);
                 break;
             } 
         case SYS_TELL:
             { 
+                get_arg(f, &arg[0], 1);
+                f->eax = tell((int)arg[0]);
                 break;
             }
         case SYS_CLOSE:
@@ -157,6 +161,23 @@ void halt (void)
     shutdown_power_off();
 }
 
+/* 
+ * Seek System Call
+ * */
+void seek (int fd, unsigned position)
+{
+    struct file *hold = get_file_by_fd(fd); 
+    file_seek(hold, position);
+}
+
+/* 
+ * Tell System Call
+ * */
+unsigned tell (int fd)
+{
+    struct file *hold = get_file_by_fd(fd); 
+    return file_tell(hold);
+}
 /*
  * Exit System Call
  * */
@@ -168,6 +189,24 @@ void exit (int status)
     if(parent != NULL) parent->exit_value = status;
     // print out the exit message
     printf ("%s: exit(%d)\n", cur->name, status);
+
+/*
+    struct process_file *pf;
+    struct list_elem *e; 
+
+    // get the file_list occupied by current thread(process)
+    struct list *file_list = cur->file_list;
+    if (file_list != NULL && !list_empty(file_list)) {
+        for (e = list_begin(file_list); e != list_end(file_list); 
+                e = list_next(e)) {
+            pf = list_entry (e, struct process_file, elem);
+            file_close(pf->file);
+        } 
+    }
+
+        */
+    if (thread_current()->file_deny_execute != NULL)
+        file_allow_write(thread_current()->file_deny_execute);
     // other operations about relevant deallocation
     thread_exit();
 }
@@ -272,12 +311,18 @@ int write (int fd, const void *buffer, unsigned size)
         putbuf(buffer, size);
         return size;
     }
-    else if(fd == 0){
+    else if(fd == STDIN_FILENO){
         exit(-1);
     }
     else{
         struct file *f = get_file_by_fd(fd);
         if (!f) return ERROR;
+        /*
+        if (get_write_permission(f) == 1)
+        {
+            return 0;
+        }
+        */
         // write file with mutual exclusion
         // FIXME:  it is not necessary to use the file-sys-level lock
         // Maybe use the file-exclusive lock is enough
@@ -448,10 +493,20 @@ bool remove (const char *file)
 tid_t exec(const char *cmdline){
     tid_t pid = process_execute(cmdline);
     struct thread *cp = search_thread_by_tid(pid);
-    if (!cp) return ERROR;
-    while (cp->isLoaded == NOT_LOADED) thread_yield();
-    if (cp->isLoaded == LOADED) return pid;
-    else return ERROR;
+    if (!cp) {
+         return ERROR;
+    }
+
+    while (cp->isLoaded == NOT_LOADED){ 
+        thread_yield();
+    }
+
+    if (cp->isLoaded == LOADED) {
+        return pid;
+    }
+    else {
+        return ERROR;
+    }
 }
 
 /* 

@@ -103,6 +103,9 @@ start_process (void *file_name_)
     if (success) {
      
         thread_current()->isLoaded = LOADED;
+        struct file *holder = filesys_open (fname);
+        thread_current()->file_deny_execute = holder;
+        file_deny_write(holder);
         // ***************************************************
         /* successful page allocation */
         // establish a pointer array to restore arguments
@@ -268,6 +271,8 @@ process_exit (void)
     struct thread *cur = thread_current ();
     uint32_t *pd;
 
+    //file_close(cur->file_deny_execute);
+
     /* Destroy the current process's page directory and switch back
        to the kernel-only page directory. */
     pd = cur->pagedir;
@@ -385,6 +390,7 @@ load (const char *file_name, void (**eip) (void), void **esp)
     bool success = false;
     int i;
 
+    thread_current()->file_deny_execute = NULL;
     /* Allocate and activate page directory. */
     t->pagedir = pagedir_create ();
     if (t->pagedir == NULL) 

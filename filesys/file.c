@@ -11,6 +11,14 @@ struct file
     bool deny_write;            /* Has file_deny_write() been called? */
   };
 
+int get_write_permission (struct file * f)
+{
+    if (f->deny_write)
+        return 1;
+
+    return 0;
+}
+
 /* Opens a file for the given INODE, of which it takes ownership,
    and returns the new file.  Returns a null pointer if an
    allocation fails or if INODE is null. */
@@ -50,6 +58,7 @@ file_close (struct file *file)
       file_allow_write (file);
       inode_close (file->inode);
       free (file); 
+//      printf("Closed\n");
     }
 }
 
@@ -121,7 +130,7 @@ file_deny_write (struct file *file)
   ASSERT (file != NULL);
   if (!file->deny_write) 
     {
-      file->deny_write = true;
+      file->deny_write = 1;
       inode_deny_write (file->inode);
     }
 }

@@ -30,21 +30,21 @@ EID1:
 CS login:
 Email:
 Unique Number:
-Ranking (scale below):
+Ranking (scale below): excellent
 
 Name2:
 EID2:
 CS login:
 Email:
 Unique Number:
-Ranking (scale below):
+Ranking (scale below): excellent
 
 Name3:
 EID2:
 CS login:
 Email:
 Unique Number:
-Ranking (scale below):
+Ranking (scale below): excellent
 
 
 ---- PARTNER EVALUATION SCALE ----
@@ -140,45 +140,48 @@ b. higher-level abstraction. We could assign particular semantics to each
 >> `struct' member, global or static variable, `typedef', or
 >> enumeration.  Identify the purpose of each in 25 words or less.
 
-char * file_name;
-    program name, argument not included, used for termination message.
+struct thread {
+    /* ... */
+    char * file_name;
+        program name, argument not included, used for termination message.
 
-tid_t parent;  
-    store the tid of its parent process, used for tracking its parent, say,
-    for the purpose of inter-process communication.
+    tid_t parent;  
+        store the tid of its parent process, used for tracking its parent, say,
+        for the purpose of inter-process communication.
 
-int fd;  
-    file descriptor to characterize the most recently used file.
+    int fd;  
+        file descriptor to characterize the most recently used file.
 
-struct list file_list;  
-    store all files opened by a process.
+    struct list file_list;  
+        store all files opened by a process.
 
-struct child_process * cp;  
-    store the current manipulated child process.
+    struct child_process * cp;  
+        store the current manipulated child process.
 
-int exit_value;  
-    store the exit value of the most-recently-exit child process.
+    int exit_value;  
+        store the exit value of the most-recently-exit child process.
 
-int isLoaded;  
-    indicate whether the requested file is loaded into memory or not.
+    int isLoaded;  
+        indicate whether the requested file is loaded into memory or not.
 
-struct semaphore sema; 
-    Synchronization tool to control the execution of created processes.
+    struct semaphore sema; 
+        Synchronization tool to control the execution of created processes.
 
-struct file * file_deny_execute;
-    store the executable file run by current process. Any writing operation
-    should be denied.
-
-struct lock filesys_lock;
-    global variable to achieve mutual exclusion on the file system.
+    struct file * file_deny_execute;
+        store the executable file run by current process. Any writing operation
+        should be denied.
+    /* ... */
+}
 
 struct process_file {
     struct file *file;
     int fd; 
     struct list_elem elem;
 };
-    data structure to associate file descriptor and file structure (opened
-    file).
+    data structure to associate file descriptor and file structure (opened file).
+
+struct lock filesys_lock;
+    global lock to achieve mutual exclusion on the file system in process.c
 
 >> B2: Describe how file descriptors are associated with open files.
 >> Are file descriptors unique within the entire OS or just within a
@@ -196,7 +199,20 @@ In our implementation, the file descriptors are *unique within the entire OS*.
 >> B3: Describe your code for reading and writing user data from the
 >> kernel.
 
-Through read and write system calls.
+*Reading and Writing user data* is achieved through read and write system calls.
+
+To read and write user data, first we need three argument:
+    fd, a file descriptor specifying the particualr file
+    buffer, an allocated space to contain the data
+    count, the number of bytes to read or write
+First, we check the validity of file descriptor. For read(), if the fd is
+STDIN_FILENO, we invoke input_getc() to read from keyboard input. And for
+write(), we use putbuf() when STDIN_FILENO is given as fd.
+
+All file system relevant system call are protected by using a global lock,
+called "filesys_lock", in order to avoid race condition.
+Then we check the validity of the given address, the base of buffer and
+offset.
 
 >> B4: Suppose a system call causes a full page (4,096 bytes) of data
 >> to be copied from user space into the kernel.  What is the least
@@ -205,8 +221,15 @@ Through read and write system calls.
 >> for a system call that only copies 2 bytes of data?  Is there room
 >> for improvement in these numbers, and how much?
 
-
-
+To copy a full page of data, 
+    1. The largest possible number of inspections is 4096. In this case, each
+    requested byte reside in a distinct page.
+    2. The least number of inspections is 1. In this case, the data only
+    distributes within one page.
+To copy only 2 bytes of data, the same situation is similar. 
+    1. The largest possible number of inspections is 2.
+    2. Whereas the least number of inspections is 1. 
+    
 >> B5: Briefly describe your implementation of the "wait" system call
 >> and how it interacts with process termination.
 
@@ -214,8 +237,8 @@ In our implementation, when "wait" system call is invoked in main process, the
 current process will figure out the thread structure of the child process to
 wait for. After that, increment the semaphore owned by that thread and allow
 it to be executed. Once the thread terminated, the main process will receive
-the return value of child process as the final return value of "wait" system
-call.
+the exit value of child process and treat it as the final return value of
+"wait" system call.
 
 >> B6: Any access to user program memory at a user-specified address
 >> can fail due to a bad pointer value.  Such accesses must cause the
@@ -238,6 +261,12 @@ call.
 >> loading.  How does your code ensure this?  How is the load
 >> success/failure status passed back to the thread that calls "exec"?
 
+The way we ensure this is to add an while loop within the "exec" system call
+handler. The "exec" system call handler will busy wait until the executable is
+successfully loaded.
+We add a boolean variable in the thread structure, named isLoaded, as an
+indicator of whether the executable loading is successful. Once the child
+process succeed in loading the executable, it will set the "isloaded" to 1.
 
 
 >> B8: Consider parent process P with child process C.  How do you
@@ -247,13 +276,35 @@ call.
 >> terminates without waiting, before C exits?  After C exits?  Are
 >> there any special cases?
 
+The way we manipulate the synchronization problem is to add one semaphore
+exlusively owned by each process. And pintos initialize that semaphore to
+zero. Once the process loads its executable but before its execution, that
+process will decrement its own semaphore. Thus, the child process has to wait
+for it parent process to call "wait" system call for it. Otherwise, the child
+process will not be executed.
+
+There are several different cases we need to consider respectively:
+a. P calls wait on C before C exits. This is the simplest case. When P calls
+wait on C before it exits, the execution of process C (with pre-loaded stack)
+will be started.  Actually, only when P calls wait on C, can C be executed in
+pintos.  
+b. P calls wait on C. In our implementation, this case would never occur. This
+is because C only runs in response to the "wait" system call on it from his
+parent process. We refer to this design as demand-execution, say, start
+execution only when in demand.
+
+
 ---- RATIONALE ----
 
 >> B9: Why did you choose to implement access to user memory from the
 >> kernel in the way that you did?
 
+
+
 >> B10: What advantages or disadvantages can you see to your design
 >> for file descriptors?
+
+
 
 >> B11: The default tid_t to pid_t mapping is the identity mapping.
 >> If you changed it, what advantages are there to your approach?

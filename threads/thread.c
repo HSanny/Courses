@@ -217,6 +217,7 @@ thread_create (const char *name, int priority,
   t->isLoaded = NOT_LOADED;
   list_init(&t->file_list);
   t->exit_value = NOT_EXIT;
+  sema_init(&t->sema, 0);
   //****************************************************
 
   /* Prepare thread for first run by initializing its stack.

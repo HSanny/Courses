@@ -4,6 +4,7 @@
 #include <debug.h>
 #include <list.h>
 #include <stdint.h>
+#include "synch.h"
 
 /* States in a thread's life cycle. */
 enum thread_status
@@ -111,6 +112,7 @@ struct thread
     struct child_process *cp;  // record the current manipulated child process
     int exit_value;  // record exit value of the child process
     int isLoaded;  //  successfully loaded into memory or not
+    struct semaphore sema; // control the execution
     // ##################################################
 
 #ifdef USERPROG

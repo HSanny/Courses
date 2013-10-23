@@ -58,8 +58,9 @@ process_execute (const char *file_name)
 
     /* Create a new thread to execute FILE_NAME. */
     tid = thread_create (first_arg, PRI_DEFAULT, start_process, fn_copy);
-    if (tid == TID_ERROR)
+    if (tid == TID_ERROR) {
         palloc_free_page (fn_copy);  
+    }
 
     return tid;
 }
@@ -108,7 +109,7 @@ start_process (void *file_name_)
         cur->file_deny_execute = holder;
         file_deny_write(holder);
         // yield back to parent process
-        thread_yield();
+        sema_down(&cur->sema);
         /* successful page allocation */
         // establish a pointer array to restore arguments
         char * argtok;
@@ -247,8 +248,8 @@ process_wait (tid_t child_tid)
     struct thread * t = search_thread_by_tid (child_tid);
     int exit_status;
     if (t == NULL  // no found, given tid is invalid
-          || t->parent != cur->tid // not child of calling process
-       ) {
+          || t->parent != cur->tid)  // not child of calling process
+        {
         if (cur->exit_value != NOT_EXIT) {
             exit_status = cur->exit_value;
             cur->exit_value = NOT_EXIT;
@@ -256,6 +257,10 @@ process_wait (tid_t child_tid)
         }
         return ERROR;
     }
+    // If the child_thread is waiting 
+    struct semaphore *sema = &t->sema;
+    if (sema != NULL)
+        sema_up (sema);
     // busy waiting for the termination
     while (t != NULL && t->status != THREAD_DYING && t->magic == THREAD_MAGIC) { 
         thread_yield(); 

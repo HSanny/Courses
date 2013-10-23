@@ -117,9 +117,6 @@ start_process (void *file_name_)
             if (cur->depth > 30)
                 thread_exit();
         }
-        // yield back to parent process
-        // FIXME: choose one optimal place to settle the sema_down
-        sema_down(&cur->sema);
         /* successful page allocation */
         // establish a pointer array to restore arguments
         char * argtok;
@@ -219,14 +216,17 @@ start_process (void *file_name_)
         // dump for manual checking of the established stack
         if (TEST)
             hex_dump ((unsigned int)if_.esp, if_.esp, PHYS_BASE-(unsigned int)if_.esp, 1);
+
+        // Synchornization: yield back to parent process by default
+        sema_down(&cur->sema);
     }
     // ***************************************************
 
     /* If load failed, quit. */
     palloc_free_page (file_name);
     if (!success) {
-         thread_current()->isLoaded = LOADING_FAIL;
-          thread_yield();
+        thread_current()->isLoaded = LOADING_FAIL;
+        thread_yield();
         thread_exit ();
     }
     /* Start the user process by simulating a return from an
@@ -251,31 +251,31 @@ start_process (void *file_name_)
     int
 process_wait (tid_t child_tid) 
 {
-    // The original implementaiton directly return -1
-    // ********************************************************
     // Jimmy's driving
     struct thread * cur = thread_current();
     struct thread * t = search_thread_by_tid (child_tid);
     int exit_status;
     if (t == NULL  // no found, given tid is invalid
           || t->parent != cur->tid)  // not child of calling process
-        {
+        { 
+        // perhaps the child process exit already
         if (cur->exit_value != NOT_EXIT) {
             exit_status = cur->exit_value;
             cur->exit_value = NOT_EXIT;
             return exit_status; 
         }
+        // no child process has exited before
         return ERROR;
     }
-    // If the child_thread is waiting 
+    // If the child process is waiting for execution, let it go!
     struct semaphore *sema = &t->sema;
     if (sema != NULL)
         sema_up (sema);
-    // busy waiting for the termination
+    // busy waiting for the termination of child process
     while (t != NULL && t->status != THREAD_DYING && t->magic == THREAD_MAGIC) { 
         thread_yield(); 
     }
-    // ********************************************************
+    // process the exit value of given child process
     if (cur->exit_value != NOT_EXIT) exit_status = cur->exit_value;
     else exit_status = ERROR;
     cur->exit_value = NOT_EXIT;
@@ -287,10 +287,7 @@ process_wait (tid_t child_tid)
 process_exit (void)
 {
     struct thread *cur = thread_current ();
-//    printf("Exit %d\n", cur->tid);
     uint32_t *pd;
-
-   // file_close(cur->file_deny_execute);
 
     /* Destroy the current process's page directory and switch back
        to the kernel-only page directory. */
@@ -308,8 +305,6 @@ process_exit (void)
         pagedir_activate (NULL);
         pagedir_destroy (pd);
     }
-    //if (cur->file_deny_execute != NULL)
-     //   file_allow_write (cur->file_deny_execute);
 }
 
 /* Sets up the CPU for running user code in the current
@@ -440,14 +435,6 @@ load (const char *file_name, void (**eip) (void), void **esp)
     {
         thread_current()->isLoaded = LOADING_FAIL;
         printf ("load: %s: error loading executable\n", file_name);
-        /*
-           printf ("ehdr.e_type:%d\n", ehdr.e_type);
-           printf ("ehdr.e_machine:%d\n", ehdr.e_machine);
-           printf ("ehdr.e_version:%d\n", ehdr.e_version);
-           printf ("ehdr.e_phentsize:%d\n", ehdr.e_phentsize);
-           printf ("ehdr.e_phnum:%d\n", ehdr.e_phnum);
-           printf("sizeof struct: %d\n", sizeof(struct Elf32_Phdr) );
-           */
         goto done; 
     }
 

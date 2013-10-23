@@ -317,12 +317,6 @@ int write (int fd, const void *buffer, unsigned size)
     else{
         struct file *f = get_file_by_fd(fd);
         if (!f) return ERROR;
-        /*
-        if (get_write_permission(f) == 1)
-        {
-            return 0;
-        }
-        */
         // write file with mutual exclusion
         // FIXME:  it is not necessary to use the file-sys-level lock
         // Maybe use the file-exclusive lock is enough
@@ -499,8 +493,8 @@ tid_t exec(const char *cmdline){
          return ERROR;
     }
 
+    // yield to the newly created process, if not loaded yet 
     while (cp->isLoaded == NOT_LOADED){ 
-        // yield to the newly created process, if not loaded yet 
         thread_yield();
     }
 

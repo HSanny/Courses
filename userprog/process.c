@@ -109,6 +109,7 @@ start_process (void *file_name_)
         cur->file_deny_execute = holder;
         file_deny_write(holder);
         // yield back to parent process
+        // FIXME: choose one optimal place to settle the sema_down
         sema_down(&cur->sema);
         /* successful page allocation */
         // establish a pointer array to restore arguments

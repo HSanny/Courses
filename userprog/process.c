@@ -47,6 +47,8 @@ process_execute (const char *file_name)
     // initialize the first argument
     char * first_arg;
     first_arg = palloc_get_page (0);
+    if (first_arg == NULL)
+        return TID_ERROR;
     strlcpy (first_arg, file_name, PGSIZE);
     // fn_copy is actually treated as an array containing arguments
     char * delimiters = " \n";  // delimiter
@@ -60,6 +62,7 @@ process_execute (const char *file_name)
     tid = thread_create (first_arg, PRI_DEFAULT, start_process, fn_copy);
     if (tid == TID_ERROR) {
         palloc_free_page (fn_copy);  
+        palloc_free_page (first_arg);  
     }
 
     return tid;
@@ -108,6 +111,12 @@ start_process (void *file_name_)
         struct file *holder = filesys_open (fname);
         cur->file_deny_execute = holder;
         file_deny_write(holder);
+        if (cur->parent != cur->tid)
+        {
+            cur->depth = search_thread_by_tid(cur->parent)->depth +1;
+            if (cur->depth > 30)
+                thread_exit();
+        }
         // yield back to parent process
         sema_down(&cur->sema);
         /* successful page allocation */
@@ -277,9 +286,10 @@ process_wait (tid_t child_tid)
 process_exit (void)
 {
     struct thread *cur = thread_current ();
+//    printf("Exit %d\n", cur->tid);
     uint32_t *pd;
 
-    //file_close(cur->file_deny_execute);
+   // file_close(cur->file_deny_execute);
 
     /* Destroy the current process's page directory and switch back
        to the kernel-only page directory. */

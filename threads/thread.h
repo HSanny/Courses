@@ -101,6 +101,7 @@ struct thread
     struct file * file_deny_execute;
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
+    int depth;
     // ##################################################
     // NEW MEMBER FOR PROCESS TERMINATION MESSAGE: 
     // ##################################################

@@ -211,12 +211,14 @@ thread_create (const char *name, int priority,
   /* Initialize thread. */
   init_thread (t, name, priority);
   tid = t->tid = allocate_tid ();
+//  printf ("create %d\n", t->tid);
   //****************************************************
   // FOR THE CHANGE IN PROJECT 2
   t->parent = thread_current()->tid;
   t->isLoaded = NOT_LOADED;
   list_init(&t->file_list);
   t->exit_value = NOT_EXIT;
+  t->depth = 0;
   sema_init(&t->sema, 0);
   //****************************************************
 

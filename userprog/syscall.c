@@ -491,24 +491,25 @@ bool remove (const char *file)
  * Exec System Call
  * */
 tid_t exec(const char *cmdline){
+    // create new process to execute the given command line
     tid_t pid = process_execute(cmdline);
+    // acquire the corresponding thread structure
     struct thread *cp = search_thread_by_tid(pid);
     if (cp == NULL) {
          return ERROR;
     }
 
     while (cp->isLoaded == NOT_LOADED){ 
+        // yield to the newly created process, if not loaded yet 
         thread_yield();
     }
 
-    if (cp->isLoaded == LOADED) {
+    // return pid until loading succeed
+    if ( cp->isLoaded == LOADED) {
         return pid;
     }
-    /*else {
-        printf("3\n");
-        return ERROR;
-    }
-    */
+
+    return ERROR;
 }
 
 /* 

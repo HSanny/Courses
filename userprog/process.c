@@ -101,12 +101,14 @@ start_process (void *file_name_)
     success = load (fname, &if_.eip, &if_.esp);
 
     if (success) {
-     
-        thread_current()->isLoaded = LOADED;
+        struct thread * cur = thread_current();
+        // change the loading status
+        cur->isLoaded = LOADED;
         struct file *holder = filesys_open (fname);
-        thread_current()->file_deny_execute = holder;
+        cur->file_deny_execute = holder;
         file_deny_write(holder);
-        // ***************************************************
+        // yield back to parent process
+        thread_yield();
         /* successful page allocation */
         // establish a pointer array to restore arguments
         char * argtok;
@@ -213,6 +215,7 @@ start_process (void *file_name_)
     palloc_free_page (file_name);
     if (!success) {
          thread_current()->isLoaded = LOADING_FAIL;
+          thread_yield();
         thread_exit ();
     }
     /* Start the user process by simulating a return from an

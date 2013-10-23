@@ -108,9 +108,9 @@ struct thread
     tid_t parent;  // record the tid of its parent
     int fd;  // file descriptor, to record current I/O status
     struct list file_list;  // all files opened by a process
-    struct child_process *cp;  //
-    int exit_value;
-    int isLoaded; 
+    struct child_process *cp;  // record the current manipulated child process
+    int exit_value;  // record exit value of the child process
+    int isLoaded;  //  successfully loaded into memory or not
     // ##################################################
 
 #ifdef USERPROG

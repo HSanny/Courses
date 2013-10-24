@@ -41,8 +41,9 @@ translate it into a physical address, and pass that address and the length
 
 This won't quite work. In no more than two sentences, what did Ben forget?
 
-Ben forgets to lock the file he wish to load into physical memory and release
-the lock after I/O, so as to keep the code consistency.
+The data may be in different pages and mapped into different location (page
+frames) in physical memory. But here Ben assume continuous allocation of page
+frames.
 
 ------------------------------------------------------------------------
 4. Disk requests come into the disk driver for tracks 10, 22, 20, 2, 40, 6, and

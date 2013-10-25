@@ -194,17 +194,18 @@ void exit (int status)
     struct process_file *pf;
     struct list_elem *e; 
 
-    // get the file_list occupied by current thread(process)
+    // get the file_list occupied by current thread (process)
     struct list *file_list = &cur->file_list;
+    // close all files recorded in the file_list
     if (file_list != NULL && !list_empty(file_list)) {
         for (e = list_begin(file_list); e != list_end(file_list); 
                 e = list_next(e)) {
             pf = list_entry (e, struct process_file, elem);
             file_close(pf->file);
         }
-         
     }
-    if(file_list!=NULL)
+
+    if(file_list != NULL)
     {
         e = list_begin(file_list);
         while(!list_empty(file_list))
@@ -212,15 +213,14 @@ void exit (int status)
                 list_remove(e);
                 e = list_next(e);
         }
-
-           
         if (thread_current()->file_deny_execute != NULL)
         {
+            // free the writing limitation
             file_allow_write(thread_current()->file_deny_execute);
             file_close(thread_current()->file_deny_execute);
         }
     }
-    // other operations about relevant deallocation
+    // invoke other operations about relevant deallocation
     thread_exit();
 }
 
@@ -237,6 +237,7 @@ struct file* get_file_by_fd (int fd)
     if (list_empty(&file_list) || fd < 0 || fd >= thread_current()->fd) {
         return NULL; 
     }
+    // iterate through the whole list
     for (e = list_begin(&file_list); e != list_end(&file_list); 
             e = list_next(e)) {
         pf = list_entry (e, struct process_file, elem);
@@ -328,11 +329,11 @@ int write (int fd, const void *buffer, unsigned size)
         exit(-1);
     }
     else{
+        // get the corresponding file structure
         struct file *f = get_file_by_fd(fd);
+        // return error if required file is not found
         if (!f) return ERROR;
         // write file with mutual exclusion
-        // FIXME:  it is not necessary to use the file-sys-level lock
-        // Maybe use the file-exclusive lock is enough
         lock_acquire(&filesys_lock);
         int numOfbyte = file_write(f, buffer, size);
         lock_release(&filesys_lock);
@@ -340,7 +341,6 @@ int write (int fd, const void *buffer, unsigned size)
         return numOfbyte; 
     }
 }
-
 
 /*
  * Translate the virtual address to physical address which resides in main
@@ -351,9 +351,7 @@ int user_to_kernel_ptr (const void *vaddr)
     check_valid_ptr (vaddr);
     void *ptr = pagedir_get_page (thread_current()->pagedir, vaddr);
     if (!ptr)
-    {
         exit(ERROR);
-    }
     return (int) ptr;
 }
 
@@ -372,7 +370,6 @@ void get_arg (struct intr_frame *f, int *arg, int n)
         check_valid_ptr ((const void *) ptr);
         arg[i] = *ptr;
     }
-
 }
 
 
@@ -419,16 +416,16 @@ bool create (const char *file, unsigned initial_size)
  * Open System Call
  * */
 int open (const char *file)
-
 {
     lock_acquire(&filesys_lock);
     struct file *f = filesys_open(file);
-    if (!f)
-    {
+    if (!f) {
+        // release because of file-not-found error
         lock_release(&filesys_lock);
         return ERROR;
     }
     int fd = process_add_file(f);
+    // release lock because of successful open
     lock_release(&filesys_lock);
     return fd;
 }

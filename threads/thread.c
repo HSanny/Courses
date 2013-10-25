@@ -74,30 +74,25 @@ void thread_schedule_tail (struct thread *prev);
 static tid_t allocate_tid (void);
 
 // ***************P2: ADDTIONALLY INTRODUCED FUNCTIONS BEGINS************************
+/*
+ * Auxiliary function, as its name suggested, return the corresponding thread
+ * structure with tid
+ * */
 struct thread * search_thread_by_tid (tid_t tid) {
     struct thread * t;
     struct list_elem *e;
+    // search through all elements
     for (e = list_begin(&all_list); e != list_end(&all_list); 
             e = list_next(e)) {
-        t=list_entry(e,struct thread,allelem);
+        // element translation
+        t = list_entry (e,struct thread,allelem);
+        // found the specified structure
         if (t->tid == tid) return t;
     }
     // desired thread not found
     return NULL;
 }
 
-/*struct CP * search_child (tid_t tid, struct thread * parent) {
-    struct CP * t;
-    struct list_elem *e;
-    for (e = list_begin(&parent->child_list); e != list_end(&parent->child_list); 
-            e = list_next(e)) {
-        t=list_entry(e,struct CP, elem);
-        printf("%d %d\n",t->tid,t->exit_value);
-        if (t->tid == tid && t->tid != parent->tid) {return t;}
-    }
-    // desired thread not found
-    return NULL;
-}*/
 // ***************P2: ADDTIONALLY INTRODUCED FUNCTIONS ENDS************************
 
 /* Initializes the threading system by transforming the code
@@ -211,12 +206,12 @@ thread_create (const char *name, int priority,
   /* Initialize thread. */
   init_thread (t, name, priority);
   tid = t->tid = allocate_tid ();
-//  printf ("create %d\n", t->tid);
+
   //****************************************************
   // FOR THE CHANGE IN PROJECT 2
   t->parent = thread_current()->tid;
   t->isLoaded = NOT_LOADED;
-  list_init(&t->file_list);
+  list_init (&t->file_list);
   t->exit_value = NOT_EXIT;
   t->file_name = name;
   t->depth = 0;

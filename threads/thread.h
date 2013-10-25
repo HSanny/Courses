@@ -98,7 +98,6 @@ struct thread
     int priority;                       /* Priority. */
     struct list_elem allelem;           /* List element for all threads list. */
 
-    struct file * file_deny_execute;
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
     int depth;
@@ -106,6 +105,7 @@ struct thread
     // NEW MEMBER FOR PROCESS TERMINATION MESSAGE: 
     // ##################################################
     const char * file_name; // program name, argument not included
+    struct file * file_deny_execute;
 
     tid_t parent;  // record the tid of its parent
     int fd;  // file descriptor, to record current I/O status
@@ -126,7 +126,6 @@ struct thread
   };
 
 struct thread * search_thread_by_tid (tid_t tid);
-struct CP * search_child(tid_t, struct thread * );
 /* If false (default), use round-robin scheduler.
    If true, use multi-level feedback queue scheduler.
    Controlled by kernel command-line option "-o mlfqs". */

@@ -114,7 +114,8 @@ start_process (void *file_name_)
         if (cur->parent != cur->tid)
         {
             cur->depth = search_thread_by_tid(cur->parent)->depth +1;
-            if (cur->depth > 30)
+            if (cur->depth > 31)
+
                 thread_exit();
         }
         /* successful page allocation */
@@ -292,6 +293,7 @@ process_exit (void)
     /* Destroy the current process's page directory and switch back
        to the kernel-only page directory. */
     pd = cur->pagedir;
+    palloc_free_page(cur->file_name);
     if (pd != NULL) 
     {
         /* Correct ordering here is crucial.  We must set

@@ -218,6 +218,7 @@ thread_create (const char *name, int priority,
   t->isLoaded = NOT_LOADED;
   list_init(&t->file_list);
   t->exit_value = NOT_EXIT;
+  t->file_name = name;
   t->depth = 0;
   sema_init(&t->sema, 0);
   //****************************************************

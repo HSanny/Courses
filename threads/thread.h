@@ -105,7 +105,7 @@ struct thread
     // ##################################################
     // NEW MEMBER FOR PROCESS TERMINATION MESSAGE: 
     // ##################################################
-    char * file_name; // program name, argument not included
+    const char * file_name; // program name, argument not included
 
     tid_t parent;  // record the tid of its parent
     int fd;  // file descriptor, to record current I/O status

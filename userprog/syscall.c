@@ -190,23 +190,36 @@ void exit (int status)
     // print out the exit message
     printf ("%s: exit(%d)\n", cur->name, status);
 
-/*
+
     struct process_file *pf;
     struct list_elem *e; 
 
     // get the file_list occupied by current thread(process)
-    struct list *file_list = cur->file_list;
+    struct list *file_list = &cur->file_list;
     if (file_list != NULL && !list_empty(file_list)) {
         for (e = list_begin(file_list); e != list_end(file_list); 
                 e = list_next(e)) {
             pf = list_entry (e, struct process_file, elem);
             file_close(pf->file);
-        } 
+        }
+         
     }
+    if(file_list!=NULL)
+    {
+        e = list_begin(file_list);
+        while(!list_empty(file_list))
+        {
+                list_remove(e);
+                e = list_next(e);
+        }
 
-        */
-    if (thread_current()->file_deny_execute != NULL)
-        file_allow_write(thread_current()->file_deny_execute);
+           
+        if (thread_current()->file_deny_execute != NULL)
+        {
+            file_allow_write(thread_current()->file_deny_execute);
+            file_close(thread_current()->file_deny_execute);
+        }
+    }
     // other operations about relevant deallocation
     thread_exit();
 }

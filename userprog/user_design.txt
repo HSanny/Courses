@@ -25,27 +25,25 @@ Slip days used on this project: 0 day
 >> of your group members.  Also fill in each person's ranking on the 
 >> partner evaluation scale, as determined by you.
 
-Name1:
-EID1:
-CS login:
-Email:
-Unique Number:
-Ranking (scale below): excellent
+Name1: Sharon Hom
+EID1: smh3556
+CS login: sharon
+Email: hom.sharon@gmail.com
+Unique Number: 53915
+Ranking (scale below): Excellent
 
-Name2:
-EID2:
-CS login:
-Email:
-Unique Number:
-Ranking (scale below): excellent
+Name2: Meng Yan
+EID2: my4574
+CS login: veronica
+Email: yanmeng911@gmail.com
+Unique Number: 53920
 
-Name3:
-EID2:
-CS login:
-Email:
-Unique Number:
-Ranking (scale below): excellent
-
+Name3: Bochao Zhan
+EID2: bz2892
+CS login: bzhan
+Email: bzhan927@gmail.com
+Unique Number:53900
+Ranking (scale below): Excellent
 
 ---- PARTNER EVALUATION SCALE ----
 
@@ -109,28 +107,29 @@ Note that the esp will be decremented at each step but with different amount.
 One integer occupies 4 bytes, one char with one byte and one pointer, in our
 lab machine, occupies 4 bytes as well.
 
+The way we avoid overflowing the stack page is to check whether esp is smaller
+than eip once we move the esp. The data segment (esp) should not overlap with
+the code segment (eip).
+
 ---- RATIONALE ----
 
 >> A3: Why does Pintos implement strtok_r() but not strtok()?
 
-================UNSURE===================
-
 strtok() is a function call in C standard library.
-strtok_r() is a function defined in Pintos kernel library .
-
-Reason of doing so is to avoid conflict in namespace. Some test files may use both implementations.
-Thus, there is a need to avoid reference confusion.
-
+strtok_r() is a function defined in Pintos kernel library. It is a
+thread-safe version of strtok(), that is, re-entrant. Since the Pintos is
+multi-threaded operating system, this helps to prevent the race conditions.
 
 >> A4: In Pintos, the kernel separates commands into a executable name
 >> and arguments.  In Unix-like systems, the shell does this
 >> separation.  Identify at least two advantages of the Unix approach.
 
-================UNSURE===================
+a. provide higher level of encapsulation and prevents the pintos kernel from
+getting crashed easily. 
 
-a. easier to arrange the program stack. 
+b. easier to arrange the program stack if cmdline is separated. 
 
-b. higher-level abstraction. We could assign particular semantics to each
+c. higher-level abstraction. We could assign particular semantics to each
  command section, such as excutable name in args[0]. In this way, we find the
  locate the code segment by only using the executable name, rather than the
  whole piece of command.
@@ -144,6 +143,12 @@ b. higher-level abstraction. We could assign particular semantics to each
 >> B1: Copy here the declaration of each new or changed `struct' or
 >> `struct' member, global or static variable, `typedef', or
 >> enumeration.  Identify the purpose of each in 25 words or less.
+
+/* Macros defining the loading status when create new process */
+#define NOT_LOADED 0
+#define LOADED 1
+#define LOADING_FAIL -1
+#define NOT_EXIT -10000
 
 struct thread {
     /* ... */
@@ -159,9 +164,6 @@ struct thread {
 
     struct list file_list;  
         store all files opened by a process.
-
-    struct child_process * cp;  
-        store the current manipulated child process.
 
     int exit_value;  
         store the exit value of the most-recently-exit child process.
@@ -197,7 +199,7 @@ data structure, named process_file (see above). Once a file is opened by
 certain process, this process restores such relationship between file
 descriptor and file structure in its file_list list.
 
-In our implementation, the file descriptors are *unique within the entire OS*.
+In our implementation, the file descriptors are *unique within each process*. 
 
 ---- ALGORITHMS ----
 
@@ -227,8 +229,10 @@ offset.
 >> for improvement in these numbers, and how much?
 
 To copy a full page of data, 
-    1. The largest possible number of inspections is 4096. In this case, each
-    requested byte reside in a distinct page.
+    1. Assume the requested data continuously resides in the user space, the
+    largest possible number of inspections is 2. But if we assume that the
+    requested data does not continuously resides in the user space, the
+    largest possible number of inspections is 4096.
     2. The least number of inspections is 1. In this case, the data only
     distributes within one page.
 To copy only 2 bytes of data, the same situation is similar. 
@@ -259,8 +263,18 @@ the exit value of child process and treat it as the final return value of
 >> paragraphs, describe the strategy or strategies you adopted for
 >> managing these issues.  Give an example.
 
+We will check the validity of those used virtual addresses. On top of that, we
+also have a page fault handler to address the exception (print out the
+error message).
 
+If the error was detected, exit() system call will be invoked immediately. And
+the resources deallocation (e.g. structs, semaphore) is contained in the
+exit() system call. For other resources, we free them once it is out of use.
+In this way, all resources will be freed once the system exit.
 
+For example, to start up a new process, if it has too many arguments, the
+stack establishment may fail. In this case, we need to free all the resources
+(e.g. page directory, thread struct) that have been allocated to that process.
 
 ---- SYNCHRONIZATION ----
 
@@ -275,7 +289,6 @@ successfully loaded.
 We add a boolean variable in the thread structure, named isLoaded, as an
 indicator of whether the executable loading is successful. Once the child
 process succeed in loading the executable, it will set the "isloaded" to 1.
-
 
 >> B8: Consider parent process P with child process C.  How do you
 >> ensure proper synchronization and avoid race conditions when P
@@ -301,6 +314,15 @@ never occur. This is because C only runs in response to the "wait" system call
 on it from his parent process. We refer to this design as demand-execution,
 say, start execution only when in demand.
 
+Besides, 
+c. P terminates without waiting, before C exits. This is a user programming
+error. Such error will trigger memory overflow since pintos will not free the
+memory resource owned by the child process C. But the execution of C is
+blocked by the parent process. Thus, the resource owned by the process C will
+always be there (We may need to refine the garbage collection mechanism.)
+d. P terminates without waiting, after C exits. In this case, child process C
+will free the resources owned by itself. But, the parent process P will not
+capture the exit status because P does not use "wait" syscall to capture it. 
 
 ---- RATIONALE ----
 
@@ -317,14 +339,14 @@ panics).
 >> B10: What advantages or disadvantages can you see to your design
 >> for file descriptors?
 
-==============unsure===========================
-
 We associate file structure and file descriptor of opened file in a new
 structure, named process_file (see above). And we store a list of opened files
 in the form of process_file in each thread structure. 
 The advantages lies in the fact that a process has an easy way to iterate
 through all files which it currently owns.
 
+Disadvantage lies in the fact that the introducing the new data structure
+requires more memory consumption.
 
 >> B11: The default tid_t to pid_t mapping is the identity mapping.
 >> If you changed it, what advantages are there to your approach?

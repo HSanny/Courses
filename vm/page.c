@@ -13,7 +13,7 @@ unsigned sp_hash_less (const struct hash_elem *a, const struct hash_elem *b,
 {
     struct SP * spa = hash_entry (a, struct SP, SP_helem);
     struct SP * spb = hash_entry (b, struct SP, SP_helem);
-    return spa->uaddr < spb->uaddr;
+    return spa->vaddr < spb->vaddr;
 }
 
 bool sp_table_init (struct hash * page_table) 
@@ -25,15 +25,26 @@ bool sp_table_init (struct hash * page_table)
 
 struct SP * sp_table_put (struct hash * page_table, void * vaddr)
 {
-     struct SP * new = (struct *) malloc (sizeof (struct SP));
+    struct SP * new = (struct *) malloc (sizeof (struct SP));
+    new->vaddr = vaddr;
+    // TODO: assignment for more elements
 
-     return new;
+    // insert into page table 
+    struct hash_elem * helem = hash_insert (page_table, &new->SP_helem);
+    if (helem != NULL)
+        return new;
 }
 
-struct SP * sp_table_lookup(struct hash * page_table, void * vaddr)
+struct SP * sp_table_find (struct hash * page_table, void * vaddr)
 {
     struct SP * finding = NULL;
     if (hash_empty(page_table)) return NULL;   
+
+    struct SP temp;
+    temp.vaddr = vaddr;
+
+    struct hash_elem * helem = hash_find (page_table, &temp.SP_helem);
+    finding = hash_entry (helem, struct SP, SP_helem);
 
     return finding;
 }
@@ -41,6 +52,15 @@ struct SP * sp_table_lookup(struct hash * page_table, void * vaddr)
 struct SP * sp_table_remove(struct hash * page_table, void * vaddr)
 {
     struct SP * removed;
+    if (hash_empty(page_table)) return NULL;   
 
-    return removed;
+    // define the target
+    struct SP temp;
+    temp.vaddr = vaddr;
+
+    // remove the element in sp table
+    struct hash_elem * helem = hash_remove (page_table, &temp.SP_helem);
+
+    if (helem != NULL)
+        return removed;
 }

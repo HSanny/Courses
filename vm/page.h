@@ -8,7 +8,7 @@
 
 /* Defining data structure representing page in VAS */
 struct SP {
-    void * uaddr;  
+    void * vaddr;  
 
     bool evicted;
     bool writable;
@@ -25,8 +25,8 @@ bool sp_table_init (struct hash * spt);
 
 struct SP * sp_table_put (struct hash * page_table, void * vaddr);
 
-struct SP * sp_table_lookup(struct hash * page_table, void * vaddr);
+struct SP * sp_table_find (struct hash * page_table, void * vaddr);
 
-struct SP * sp_table_remove(struct hash * page_table, void * vaddr);
+struct SP * sp_table_remove (struct hash * page_table, void * vaddr);
 
 #endif /* vm/page.h */

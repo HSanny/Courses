@@ -26,21 +26,26 @@ struct hash frame_table;
 /* initialize the frame table */
 bool frame_table_init (void);
 
-/* lookup the frame table entry */
-struct FTE * frame_table_lookup (void* paddr);
+/* find the frame table entry */
+struct FTE * frame_table_find (void *paddr);
+
+/* add new entry to the frame table */
+struct FTE * frame_table_put (void *paddr, void *uaddr, struct SP *page);
 
 /* remove the specified frame table entry */
 struct FTE * frame_table_remove (void* paddr);
 
 /* get page from frame table */
 void * fget_page (void * uaddr);
-void * fget_locked_page (void * uaddr);
+
+/* get page from frame table and lock acquired entry hereafter */
+void * fget_page_lock (void * uaddr);
 
 /* free page from frame table */
-void ffree_page (void uaddr);
+void ffree_page (void * uaddr);
 
 /* evict one table */
-struct FTE * frame_get_evict (void);
+struct FTE * fget_evict (void);
 
 /* clean up all frames */
 void fcleanup (void);

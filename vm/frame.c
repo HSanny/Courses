@@ -85,44 +85,82 @@ void * fget_page (enum palloc_flags flags, void * uaddr)
     // acquire the lock
     lock_acquire (&frame_table_lock);
 
-    // make sure the resource in user pool is allocated, rather than kernel's
-    ASSERT ((flags & PAL_USER) != 0);
+    struct FTE * fte = fget_page_aux (flags, uaddr);
 
+    // release the lock
+    lock_release (&frame_table_lock);
+    return fte->paddr;
+}
+
+/* Get physical address of a page and lock it */
+void * fget_page_lock (enum palloc_flags flags, void * uaddr) 
+{
+    // lock the whole frame table
+    lock_acquire (&frame_table_lock);
+
+    // acquire the page as usual
+    struct FTE * f = fget_page_aux (flags, uaddr);
+    // after that, we lock frame entry
+    f->locked = true;
+ 
+    // release thee frame table lock
+    lock_release (&frame_table_lock);
+    return f->paddr;
+}
+
+/* Rountine abstraction for getting a page */
+void* fget_page_aux (enum palloc_flags flags, void * uaddr) 
+{
+    // make sure the resource in user pool is allocated, rather than kernel's
+    assert ((flags & pal_user) != 0);
+
+    // physically apply for a memory location
     void * page = palloc_get_page (flags);
-    if (page == NULL) {
+    if (page == null) {
         // TODO: add mechanism for page fault, swapping out is required
     }
 
     // TODO: update it in its supplementary table
 
     // update it in the global frame table
-    struct FTE * fte = frame_table_put (page, uaddr, NULL);
+    struct fte * fte = frame_table_put (page, uaddr, null);
 
-    // release the lock
-    lock_release (&frame_table_lock);
-    return fte;
-}
-
-void * fget_locked_page (void * uaddr) 
-{
-    return NULL;
+    return paddr;
 }
 
 /* free page from frame table */
-void ffree_page (void uaddr)
+void ffree_page (void *page)
 {
-    
+    lock_acquire (&frame_table_lock);
+    palloc_free_page (page);
+
+    struct FTE * f = frame_table_remove (page);
+
+    if (f != NULL) {
+        free (f);
+        // TODO: remove the corresponding supplementary page
+
+    }
+
+    lock_release (&frame_table_lock);
     return ;
 }
 
-/* evict one table */
+/* evict the frame to be evicted */
 struct FTE * frame_get_evict (void) 
 {
+
     return NULL;
 }
 
-/* clean up all frames */
-void fcleanup (void);
+/* clean up all frames and free all relevant resource */
+void fcleanup (void) 
+{
+    lock_acquire (&frame_table_lock);
+    // TODO: implement the core
+
+    lock_release (&frame_table_lock);
+}
 
 /* set page  */
 void fset_page_lock (void) 

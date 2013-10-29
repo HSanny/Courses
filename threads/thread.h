@@ -5,6 +5,7 @@
 #include <list.h>
 #include <stdint.h>
 #include "synch.h"
+#include "vm/page.h"
 
 /* States in a thread's life cycle. */
 enum thread_status
@@ -116,6 +117,11 @@ struct thread
     struct semaphore sema; // control the execution
     // ##################################################
 
+    // ##################################################
+    // NEW MEMBER FOR PROJECT 3: PAGING SYSTEM
+    // ##################################################
+    struct hash * spt;  // supplementary page table
+    // ##################################################
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
     uint32_t *pagedir;                  /* Page directory. */

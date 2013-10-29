@@ -631,17 +631,13 @@ setup_stack (void **esp)
     uint8_t *kpage;
     bool success = false;
 
+    
     kpage = palloc_get_page (PAL_USER | PAL_ZERO);
     if (kpage != NULL) 
     {
         success = install_page (((uint8_t *) PHYS_BASE) - PGSIZE, kpage, true);
         if (success)
             *esp = PHYS_BASE;
-        //*********************************************
-        // changed by veronica
-        // *esp = PHYS_BASE - 12;
-
-        //*********************************************
         else
             palloc_free_page (kpage);
     }

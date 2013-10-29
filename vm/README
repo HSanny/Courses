@@ -30,5 +30,5 @@ Slip days used: 0 days
 ################
 
 We create a series of new files to meet the requirement of project 3:
-    frame.c frame.h page.c page.h swap.c swap.h
+    frame.c frame.h page.c page.h swap.c swap.h mmap.h mmap.c
 

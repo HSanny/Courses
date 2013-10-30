@@ -1,10 +1,8 @@
 
 #include "vm/page.h"
+#include "vm/frame.h"
 #include "threads/malloc.h"
-
-unsigned sp_hash (const struct hash_elem * elem, void * aux UNUSED);
-unsigned sp_hash_less (const struct hash_elem *a, const struct hash_elem *b,
-        void * aux UNUSED);
+#include "threads/thread.h"
 
 /* Define hash function */
 unsigned sp_hash (const struct hash_elem * elem, void * aux UNUSED) 
@@ -14,7 +12,7 @@ unsigned sp_hash (const struct hash_elem * elem, void * aux UNUSED)
 }
 
 /* Define the comparison function */
-unsigned sp_hash_less (const struct hash_elem *a, const struct hash_elem *b,
+bool sp_hash_less (const struct hash_elem *a, const struct hash_elem *b,
         void * aux UNUSED) 
 {
     struct SP * spa = hash_entry (a, struct SP, SP_helem);
@@ -31,15 +29,27 @@ bool sp_table_init (struct hash * page_table)
 
 struct SP * sp_table_put (struct hash * page_table, void * vaddr)
 {
+    ASSERT ((int) vaddr % PGSIZE == 0);
+
+    struct thread * cur = thread_current ();
+    
+    lock_acquire (&cur->spt_lock);
+
+    // TODO: assignment for more elements
     struct SP * new = (struct SP*) malloc (sizeof (struct SP));
     new->vaddr = vaddr;
-    // TODO: assignment for more elements
 
-    // insert into page table 
+    // insert into the page table 
     struct hash_elem * helem = hash_insert (page_table, &new->SP_helem);
-    if (helem != NULL) return new;
-    else return NULL;
-        
+    
+    lock_release (&cur->spt_lock);
+
+    if (helem != NULL)  { 
+        // equal element exist, thus return that pre-existing element
+        return hash_entry (helem, struct SP, SP_helem);
+    } else {
+        return new;  // sucessful insertion
+    }
 }
 
 struct SP * sp_table_find (struct hash * page_table, void * vaddr)

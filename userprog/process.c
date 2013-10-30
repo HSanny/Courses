@@ -17,9 +17,10 @@
 #include "threads/palloc.h"
 #include "threads/thread.h"
 #include "threads/vaddr.h"
-
+#ifdef VM
 #include "vm/frame.h"
 #include "vm/page.h"
+#endif
 
 #define ERROR -1
 #define THREAD_MAGIC 0xcd6abf4b
@@ -58,7 +59,7 @@ process_execute (const char *file_name)
     char * save_ptr;  // allocate memory for that
     // string separation for file_name
     first_arg = strtok_r (first_arg, delimiters, &save_ptr);  
- 
+
     // ************************************************************
 
     /* Create a new thread to execute FILE_NAME. */
@@ -153,14 +154,14 @@ start_process (void *file_name_)
                 stack_addr[i] = if_.esp;  // record the address of arg in stack
                 if (TEST) {
                     printf("addr: %X, Name: args[%d][...], Data: %s, Type: char[%d]\n",
-                          (unsigned int) if_.esp, i, (char *) if_.esp, len_arg);
+                            (unsigned int) if_.esp, i, (char *) if_.esp, len_arg);
                 }
             }
         }
         // apply word alignment
         int alignment = 4 - (len_all_args % 4);
         if_.esp -= alignment;  
-        
+
         if (TEST) {
             printf("eip: %X  esp: %X  \n", (unsigned int) if_.eip, 
                     (unsigned int) if_.esp); 
@@ -260,8 +261,8 @@ process_wait (tid_t child_tid)
     struct thread * t = search_thread_by_tid (child_tid);
     int exit_status;
     if (t == NULL  // no found, given tid is invalid
-          || t->parent != cur->tid)  // not child of calling process
-        { 
+            || t->parent != cur->tid)  // not child of calling process
+    { 
         // perhaps the child process exit already
         if (cur->exit_value != NOT_EXIT) {
             exit_status = cur->exit_value;
@@ -646,8 +647,9 @@ setup_stack (void **esp)
     if (kpage != NULL) 
     {
         success = install_page (vaddr, kpage, true);
-        if (success)
+        if (success) {
             *esp = PHYS_BASE;
+        }
         else {
 #ifndef VM
             palloc_free_page (kpage);

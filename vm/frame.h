@@ -7,6 +7,8 @@
 #include "threads/synch.h"     /* for lock mechanism */
 #include "vm/page.h"
 
+#define PGSIZE 4096
+
 /* data structure for the frame table entry */
 struct FTE {
     int locked;        /* evictable bit */

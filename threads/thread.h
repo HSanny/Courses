@@ -128,6 +128,7 @@ struct thread
     // NEW MEMBER FOR PROJECT 3: PAGING SYSTEM
     // ##################################################
     struct hash * spt;  // supplementary page table
+    struct lock spt_lock;  // lock of that spt
     // ##################################################
 #endif
 

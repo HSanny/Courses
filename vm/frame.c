@@ -12,9 +12,8 @@
 #include "vm/page.h"
 #include "vm/swap.h"
 
-#define PGSIZE 4096
 
-void* fget_page_aux (enum palloc_flags flags, void * vaddr);
+struct FTE * fget_page_aux (enum palloc_flags flags, void * vaddr);
 
 /* Define the instantiated hasing function */
 static unsigned fte_hash_func (const struct hash_elem *e, void * aux UNUSED) 
@@ -78,9 +77,9 @@ struct FTE * frame_table_put (void *paddr, void *vaddr, struct SP * page)
     // insert that new_fte entry to the global frame table
     struct hash_elem *helem = hash_insert (&frame_table, &new_fte->FTE_helem);
 
-    // return the new_ftely created structure if succeed
-    if (helem != NULL) return new_fte;
-    else return NULL;
+    // return the new_ftely created structure if succeed, null return expected
+    if (helem == NULL) return new_fte;
+    else return NULL;  // skip if pre-exist
 }
 
 /* remove the specified frame table entry */
@@ -92,12 +91,12 @@ struct FTE * frame_table_remove (void* paddr)
     // define the target stucture
     // FIXME: may be problematic
     struct FTE temp;
+    // TODO: explain why use ROUND_DOWN
     temp.paddr = (void *) ROUND_DOWN ((int) paddr, PGSIZE);
 
     // delete the targeted hash table entry
     struct hash_elem * delem = hash_delete (&frame_table, &temp.FTE_helem);
 
-    
     // return the removed structure
     if (delem != NULL) {
         removed = hash_entry (delem, struct FTE, FTE_helem);
@@ -112,6 +111,7 @@ void * fget_page (enum palloc_flags flags, void * vaddr)
     // acquire the lock
     lock_acquire (&frame_table_lock);
 
+    // acquire the correponding physical address
     struct FTE * fte = fget_page_aux (flags, vaddr);
 
     // release the lock
@@ -127,17 +127,18 @@ void * fget_page_lock (enum palloc_flags flags, void * vaddr)
     lock_acquire (&frame_table_lock);
 
     // acquire the page as usual
-    struct FTE * f = fget_page_aux (flags, vaddr);
+    struct FTE * fte = fget_page_aux (flags, vaddr);
     // after that, we lock frame entry
-    f->locked = true;
+    fte->locked = true;
  
     // release thee frame table lock
     lock_release (&frame_table_lock);
-    return f->paddr;
+
+    return fte->paddr;
 }
 
 /* Rountine abstraction for getting a page */
-void* fget_page_aux (enum palloc_flags flags, void * vaddr) 
+struct FTE * fget_page_aux (enum palloc_flags flags, void * vaddr) 
 {
     // make sure the resource in user pool is allocated, rather than kernel's
     ASSERT ((flags & PAL_USER) != 0);
@@ -157,7 +158,7 @@ void* fget_page_aux (enum palloc_flags flags, void * vaddr)
     // update it in the global frame table
     struct FTE * fte = frame_table_put (paddr, vaddr, page);
 
-    return fte==NULL?NULL:paddr;
+    return fte;
 }
 
 /* free page from frame table */

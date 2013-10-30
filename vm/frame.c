@@ -161,22 +161,31 @@ struct FTE * fget_page_aux (enum palloc_flags flags, void * vaddr)
     return fte;
 }
 
-/* free page from frame table */
-void ffree_page (void *page)
+/* deallocate one frame */
+void ffree_page (void *paddr)
 {
+    ASSERT ((int) paddr % PGSIZE == 0);
+
+    struct thread * cur = thread_current();
+
     lock_acquire (&frame_table_lock);
-    palloc_free_page (page);
 
-    struct FTE * f = frame_table_remove (page);
-
-    if (f != NULL) 
-    {
-        free (f);
-        // TODO: remove the corresponding supplementary page
-
+    // remove the entry in the global frame table
+    struct FTE * fte = frame_table_remove (paddr);
+    if (fte != NULL) {
+        // remove the entry in the supplementary page table
+        lock_acquire (&cur->spt_lock);
+        struct SP * page = sp_table_remove (cur->spt, fte->vaddr);
+        lock_release (&cur->spt_lock);
+        // free those memory allocation of entries in two hash tables
+        if (page != NULL) free (page);
+        free (fte);
     }
+    // free the phsical memory
+    palloc_free_page (paddr);
 
     lock_release (&frame_table_lock);
+
     return ;
 }
 

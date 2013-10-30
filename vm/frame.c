@@ -1,26 +1,30 @@
 /* Library Inclusion */
-#include "frame.h"
+#include "vm/frame.h"
+
+#include <debug.h>
 #include "lib/round.h"   
 #include "threads/thread.h"    
 #include "threads/malloc.h"    
 #include "threads/palloc.h"    
 #include "userprog/process.h"
 #include "userprog/pagedir.h"
+
 #include "vm/page.h"
 #include "vm/swap.h"
 
 #define PGSIZE 4096
 
+void* fget_page_aux (enum palloc_flags flags, void * vaddr);
 
 /* Define the instantiated hasing function */
-static unsigned hash_func (const struct hash_elem *e, void * aux UNUSED) 
+static unsigned fte_hash_func (const struct hash_elem *e, void * aux UNUSED) 
 {
-    struct FTE * fe = hash_entry (e, struct FTE, FTE_helem); 
+    struct FTE * f = hash_entry (e, struct FTE, FTE_helem); 
     return hash_bytes (&f->paddr, sizeof(f->paddr));
 }
 
 /* Define the instantiated hashing comparison function */
-static bool hash_less (const struct hash_elem *a, const struct hash_elem *b
+static bool fte_hash_less (const struct hash_elem *a, const struct hash_elem *b,
         void * aux UNUSED) 
 {
     struct FTE * fa = hash_entry (a, struct FTE, FTE_helem);
@@ -32,7 +36,8 @@ static bool hash_less (const struct hash_elem *a, const struct hash_elem *b
 bool frame_table_init (void) 
 {
     lock_init (&frame_table_lock);
-    bool success = hash_init (&frame_table, hash_func, hash_less, NULL);
+    bool success = hash_init (&frame_table, fte_hash_func, fte_hash_less,
+            NULL);
     return success;
 }
 
@@ -44,7 +49,7 @@ struct FTE * frame_table_find (void* paddr)
 
     // define the target
     struct FTE temp;
-    temp.paddr = (void *) ROUND_DOWN (paddr, PGSIZE);
+    temp.paddr = (void *) ROUND_DOWN ( (int) paddr,  PGSIZE);
 
     // use lock to protect critical section
     lock_acquire (&frame_table_lock);
@@ -61,20 +66,21 @@ struct FTE * frame_table_find (void* paddr)
 }
 
 /* add one new entry to the frame table */
-struct FTE * frame_table_put (void *paddr, void *vaddr, struct * page)
+struct FTE * frame_table_put (void *paddr, void *vaddr, struct SP * page)
 {
-    // create a new frame table entry structure
-    struct FTE * new = (struct FTE *) malloc (sizeof (struct FTE));
-    new->paddr = paddr;
-    new->vaddr = vaddr;
-    new->supplementary_page = page;
-    new->locked = false;
+    // create a new_fte frame table entry structure
+    struct FTE * new_fte = (struct FTE *) malloc (sizeof (struct FTE));
+    new_fte->paddr = paddr;
+    new_fte->vaddr = vaddr;
+    new_fte->supplementary_page = page;
+    new_fte->locked = false;
 
-    // insert that new entry to the global frame table
-    struct hash_elem *helem = hash_insert (&frame_table, &new->FTE_helem);
+    // insert that new_fte entry to the global frame table
+    struct hash_elem *helem = hash_insert (&frame_table, &new_fte->FTE_helem);
 
-    // return the newly created structure if succeed
-    if (helem != NULL) return new;
+    // return the new_ftely created structure if succeed
+    if (helem != NULL) return new_fte;
+    else return NULL;
 }
 
 /* remove the specified frame table entry */
@@ -86,13 +92,18 @@ struct FTE * frame_table_remove (void* paddr)
     // define the target stucture
     // FIXME: may be problematic
     struct FTE temp;
-    temp.paddr = (void *) ROUND_DOWN (paddr, PGSIZE);
+    temp.paddr = (void *) ROUND_DOWN ((int) paddr, PGSIZE);
 
     // delete the targeted hash table entry
     struct hash_elem * delem = hash_delete (&frame_table, &temp.FTE_helem);
+
     
     // return the removed structure
-    if (delem != NULL) return removed;
+    if (delem != NULL) {
+        removed = hash_entry (delem, struct FTE, FTE_helem);
+        return removed;
+    }
+    else return NULL;
 }
 
 /* allocate a frame and update the frame table */
@@ -105,6 +116,7 @@ void * fget_page (enum palloc_flags flags, void * vaddr)
 
     // release the lock
     lock_release (&frame_table_lock);
+
     return fte->paddr;
 }
 
@@ -128,7 +140,7 @@ void * fget_page_lock (enum palloc_flags flags, void * vaddr)
 void* fget_page_aux (enum palloc_flags flags, void * vaddr) 
 {
     // make sure the resource in user pool is allocated, rather than kernel's
-    assert ((flags & pal_user) != 0);
+    ASSERT ((flags & PAL_USER) != 0);
 
     // physically apply for a memory location
     void * paddr = palloc_get_page (flags);
@@ -140,12 +152,12 @@ void* fget_page_aux (enum palloc_flags flags, void * vaddr)
     // get the page table owned by this process
     struct hash * spt = thread_current()->spt;
     // add new page into that page table
-    struct SP * page = SP_table_put (spt, vaddr);
+    struct SP * page = sp_table_put (spt, vaddr);
 
     // update it in the global frame table
     struct FTE * fte = frame_table_put (paddr, vaddr, page);
 
-    return paddr;
+    return fte==NULL?NULL:paddr;
 }
 
 /* free page from frame table */
@@ -168,7 +180,7 @@ void ffree_page (void *page)
 }
 
 /* evict the frame to be evicted */
-struct FTE * frame_get_evict (void) 
+struct FTE * fget_evict (void) 
 {
 
     return NULL;
@@ -186,5 +198,5 @@ void fcleanup (void)
 /* set page  */
 void fset_page_lock (void) 
 {
-    return NULL;
+    return ;
 } 

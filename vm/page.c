@@ -1,15 +1,21 @@
 
+#include "vm/page.h"
+#include "threads/malloc.h"
+
+unsigned sp_hash (const struct hash_elem * elem, void * aux UNUSED);
+unsigned sp_hash_less (const struct hash_elem *a, const struct hash_elem *b,
+        void * aux UNUSED);
 
 /* Define hash function */
-unsigned sp_hash (const struct hash_elem * elem, void * aux) 
+unsigned sp_hash (const struct hash_elem * elem, void * aux UNUSED) 
 {
     struct SP * page = hash_entry (elem, struct SP, SP_helem);
-    return hash_byte (&(page->vaddr), sizeof (page->vaddr));
+    return hash_bytes (&(page->vaddr), sizeof (page->vaddr));
 }
 
 /* Define the comparison function */
 unsigned sp_hash_less (const struct hash_elem *a, const struct hash_elem *b,
-        void * aux) 
+        void * aux UNUSED) 
 {
     struct SP * spa = hash_entry (a, struct SP, SP_helem);
     struct SP * spb = hash_entry (b, struct SP, SP_helem);
@@ -25,14 +31,15 @@ bool sp_table_init (struct hash * page_table)
 
 struct SP * sp_table_put (struct hash * page_table, void * vaddr)
 {
-    struct SP * new = (struct *) malloc (sizeof (struct SP));
+    struct SP * new = (struct SP*) malloc (sizeof (struct SP));
     new->vaddr = vaddr;
     // TODO: assignment for more elements
 
     // insert into page table 
     struct hash_elem * helem = hash_insert (page_table, &new->SP_helem);
-    if (helem != NULL)
-        return new;
+    if (helem != NULL) return new;
+    else return NULL;
+        
 }
 
 struct SP * sp_table_find (struct hash * page_table, void * vaddr)
@@ -49,9 +56,9 @@ struct SP * sp_table_find (struct hash * page_table, void * vaddr)
     return finding;
 }
 
-struct SP * sp_table_remove(struct hash * page_table, void * vaddr)
+struct SP * sp_table_remove (struct hash * page_table, void * vaddr)
 {
-    struct SP * removed;
+    struct SP * removed = NULL;
     if (hash_empty(page_table)) return NULL;   
 
     // define the target
@@ -59,8 +66,11 @@ struct SP * sp_table_remove(struct hash * page_table, void * vaddr)
     temp.vaddr = vaddr;
 
     // remove the element in sp table
-    struct hash_elem * helem = hash_remove (page_table, &temp.SP_helem);
+    struct hash_elem * helem = hash_delete (page_table, &temp.SP_helem);
 
-    if (helem != NULL)
+    if (helem != NULL) {
+        removed = hash_entry (helem, struct SP, SP_helem);
         return removed;
+    }
+    else return NULL;
 }

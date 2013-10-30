@@ -120,8 +120,11 @@ struct thread
     // ##################################################
     // NEW MEMBER FOR PROJECT 3: PAGING SYSTEM
     // ##################################################
+#ifdef VM
     struct hash * spt;  // supplementary page table
+#endif
     // ##################################################
+    
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
     uint32_t *pagedir;                  /* Page directory. */

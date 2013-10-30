@@ -16,10 +16,10 @@ struct SP {
     struct hash_elem SP_helem;
 };
 
-unsigned sp_hash (const struct hash_elem * elem, void * aux);
+//unsigned sp_hash (const struct hash_elem * elem, void * aux);
 
-bool sp_hash_less (const struct hash_elem * a, const struct hash_elem * b,
-        void * aux);
+//bool sp_hash_less (const struct hash_elem * a, const struct hash_elem * b,
+ //       void * aux);
 
 bool sp_table_init (struct hash * spt);
 

@@ -190,7 +190,6 @@ void exit (int status)
     // print out the exit message
     printf ("%s: exit(%d)\n", cur->name, status);
 
-
     struct process_file *pf;
     struct list_elem *e; 
 
@@ -205,7 +204,7 @@ void exit (int status)
         }
     }
 
-    if(file_list != NULL)
+    if (file_list != NULL)
     {
         e = list_begin(file_list);
         while(!list_empty(file_list))

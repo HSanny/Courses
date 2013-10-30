@@ -5,15 +5,16 @@
 #include "lib/kernel/hash.h"   /* for hash table */
 #include "threads/palloc.h"    /* for memory allocation */
 #include "threads/synch.h"     /* for lock mechanism */
+#include "vm/page.h"
 
 /* data structure for the frame table entry */
 struct FTE {
     int locked;        /* evictable bit */
 
     void * paddr;      /* physical address */
-    void * uaddr;      /* virtual address */
+    void * vaddr;      /* virtual address */
 
-    struct page * supplementary_page;  /* corresponding page */
+    struct SP * supplementary_page;  /* corresponding page */
     struct hash_elem FTE_helem;   /* identify the hash element */
 };
 
@@ -30,19 +31,19 @@ bool frame_table_init (void);
 struct FTE * frame_table_find (void *paddr);
 
 /* add new entry to the frame table */
-struct FTE * frame_table_put (void *paddr, void *uaddr, struct SP *page);
+struct FTE * frame_table_put (void *paddr, void *vaddr, struct SP *page);
 
 /* remove the specified frame table entry */
-struct FTE * frame_table_remove (void* paddr);
+struct FTE * frame_table_remove (void * paddr);
 
 /* get page from frame table */
-void * fget_page (void * uaddr);
+void * fget_page (enum palloc_flags flags, void * vaddr);
 
 /* get page from frame table and lock acquired entry hereafter */
-void * fget_page_lock (void * uaddr);
+void * fget_page_lock (enum palloc_flags flags, void * vaddr);
 
 /* free page from frame table */
-void ffree_page (void * uaddr);
+void ffree_page (void * vaddr);
 
 /* evict one table */
 struct FTE * fget_evict (void);

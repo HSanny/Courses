@@ -18,6 +18,9 @@
 #include "threads/thread.h"
 #include "threads/vaddr.h"
 
+#include "vm/frame.h"
+#include "vm/page.h"
+
 #define ERROR -1
 #define THREAD_MAGIC 0xcd6abf4b
 
@@ -631,15 +634,27 @@ setup_stack (void **esp)
     uint8_t *kpage;
     bool success = false;
 
-    
+    void * vaddr = ((uint8_t *) PHYS_BASE) - PGSIZE;
+#ifndef VM
+    // routine for user program project
     kpage = palloc_get_page (PAL_USER | PAL_ZERO);
+#else 
+    // routine for virtual memory project
+    kpage = fget_page (PAL_USER | PAL_ZERO, vaddr);
+#endif
+
     if (kpage != NULL) 
     {
-        success = install_page (((uint8_t *) PHYS_BASE) - PGSIZE, kpage, true);
+        success = install_page (vaddr, kpage, true);
         if (success)
             *esp = PHYS_BASE;
-        else
+        else {
+#ifndef VM
             palloc_free_page (kpage);
+#else
+            ffree_page (kpage);
+#endif
+        }
     }
     return success;
 }

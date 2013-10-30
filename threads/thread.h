@@ -101,7 +101,11 @@ struct thread
 
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
-    int depth;
+    
+#ifdef USERPROG
+    /* Owned by userprog/process.c. */
+    uint32_t *pagedir;                  /* Page directory. */
+
     // ##################################################
     // NEW MEMBER FOR PROCESS TERMINATION MESSAGE: 
     // ##################################################
@@ -115,20 +119,18 @@ struct thread
     int exit_value;  // record exit value of the child process
     int isLoaded;  //  successfully loaded into memory or not
     struct semaphore sema; // control the execution
+    int depth;
     // ##################################################
+#endif
 
+#ifdef VM
     // ##################################################
     // NEW MEMBER FOR PROJECT 3: PAGING SYSTEM
     // ##################################################
-#ifdef VM
     struct hash * spt;  // supplementary page table
-#endif
     // ##################################################
-    
-#ifdef USERPROG
-    /* Owned by userprog/process.c. */
-    uint32_t *pagedir;                  /* Page directory. */
 #endif
+
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
 

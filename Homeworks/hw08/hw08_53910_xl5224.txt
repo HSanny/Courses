@@ -1,0 +1,64 @@
+Homework #: 8
+Student Name: XIN LIN
+EID: xl5224
+CS login: jimmylin
+Email address: JimmyLin@utexas.edu
+Unique Number: 53910
+
+
+-------------------------------------------------------------------
+1. Some file allocation schemes limit the size of the file whether or not there
+is enough space for a larger file. Which ones and why?
+
+    Linked
+    Direct
+    Contiguous
+    Multi-Level index
+    Extents
+
+2. Is it fundamentally necessary to store on disk the
+information about the unallocated disk sectors? Explain
+why.
+
+3. John would like to append data to the file
+/usr/john/classes/cs372/final\_study\_notes.txt. Assuming he has the correct
+permissions, describe the steps the operating system would need to take to
+append the data.
+
+4. Pooh Software Ltd. is selling a file system that uses a UNIX-like file
+system with multi-level indexing. For more reliability, the inode array is
+actually replicated on the disk in two different places. The intent is that if
+one or a group of sectors that are storing either replica of the array become
+bad, the system can always recover from the replica. Discuss the effect of
+having this replicated data structure on performance.
+
+5. In Unix, the pipe(fd[0]) function call creates an I/O mechanism called a
+pipe and returns two file descriptors, fd[0] and fd[1]. The files associated
+with fd[0] and fd[1] are streams of data and are both opened for reading and
+writing. Suppose pipe always returns the two lowest-numbered file descriptors
+in the process's file descriptor table that are unused. Assume that initially
+fdt[], the file descriptor table, has three open entries: fdt[0] is the
+default input device, fdt[1] is the default output device and fdt[2] is the
+default error output device; all other entries of the fdt are NULL. What does
+the fdt look like after each of the five following commands is executed in
+sequence by the process?
+
+    1: pipe (&fd[0]);
+    2: close(fd[0]);
+    3: close(1);
+    4: dup(fd[1]);
+    5: close(fd[1]);
+
+When might such a sequence of commands be useful?
+
+You'll need to use the man pages for pipe, close, and dup
+to answer this question. 
+
+
+
+
+
+
+
+
+

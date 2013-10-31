@@ -5,8 +5,7 @@ CS login: jimmylin
 Email address: JimmyLin@utexas.edu
 Unique Number: 53910
 
-
--------------------------------------------------------------------
+---------------------------------------------------------------------------
 1. Some file allocation schemes limit the size of the file whether or not there
 is enough space for a larger file. Which ones and why?
 
@@ -16,15 +15,44 @@ is enough space for a larger file. Which ones and why?
     Multi-Level index
     Extents
 
-2. Is it fundamentally necessary to store on disk the
-information about the unallocated disk sectors? Explain
-why.
+Direct allocation has the limitation of the size of the file. 
+Since the inode has to restore pointers to all data block and the size of
+inode is limited, the file size has its maximum value.
 
+---------------------------------------------------------------------------
+2. Is it fundamentally necessary to store on disk the information about the
+unallocated disk sectors? Explain why.
+
+Yes, it is necessary. This is because when creating new files, only if the
+knowledge of available sector is known, can the disk assign the currently
+unallocated sector to new file.
+
+---------------------------------------------------------------------------
 3. John would like to append data to the file
 /usr/john/classes/cs372/final\_study\_notes.txt. Assuming he has the correct
 permissions, describe the steps the operating system would need to take to
 append the data.
 
+    1) get the inode of root "/"
+    2) read the first data block of root
+    3) get the inode of "usr"
+    4) read the first data block of "usr"
+    5) get the inode of "john"
+    6) read the first data block of "john"
+    7) get the inode of "classes"
+    8) read the first data block of "classes"
+    9) get the inode of "cs372"
+    10) read the first data block of "cs372"
+    11) get the inode of "final"
+    12) read the first data block of "final"
+    13) get the inode of "_study"
+    14) read the first data block of "_study"
+    15) get the inode of "_notes.txt"
+    16) open: load the file "_notes.txt" into main memory
+    17) write: append data to memory location
+    18) close: write back to external disk
+
+---------------------------------------------------------------------------
 4. Pooh Software Ltd. is selling a file system that uses a UNIX-like file
 system with multi-level indexing. For more reliability, the inode array is
 actually replicated on the disk in two different places. The intent is that if
@@ -32,6 +60,10 @@ one or a group of sectors that are storing either replica of the array become
 bad, the system can always recover from the replica. Discuss the effect of
 having this replicated data structure on performance.
 
+Such replication will reduce the performance of that file system. 
+Since for each successful inode is changed, we have to update two inodes in total. 
+
+---------------------------------------------------------------------------
 5. In Unix, the pipe(fd[0]) function call creates an I/O mechanism called a
 pipe and returns two file descriptors, fd[0] and fd[1]. The files associated
 with fd[0] and fd[1] are streams of data and are both opened for reading and
@@ -50,15 +82,27 @@ sequence by the process?
     5: close(fd[1]);
 
 When might such a sequence of commands be useful?
+You'll need to use the man pages for pipe, close, and dup to answer this
+question. 
 
-You'll need to use the man pages for pipe, close, and dup
-to answer this question. 
+After 1: pipe(&fd[0]);
+Create the descriptor pair for pipelining.
 
+After 2: close(fd[0]);
+Close the file descriptor indexed by 0 within fd.
 
+After 3: close(1);
+Delete the original standard output descriptor.
 
+After 4: dup(fd[1]);
+Duplicate the file descriptor indexed by 1.
+    
+After 5: close(fd[1]);
+Close the file descriptor indexed by 1 within fd.
 
-
-
-
-
-
+Useful Sequence:
+    3: close(1);
+    4: dup(fd[1]);
+    1: pipe (&fd[0]);
+    2: close(fd[0]);
+    5: close(fd[1]);

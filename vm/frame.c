@@ -69,6 +69,8 @@ struct FTE * frame_table_put (void *paddr, void *vaddr, struct SP * page)
 {
     // create a new_fte frame table entry structure
     struct FTE * new_fte = (struct FTE *) malloc (sizeof (struct FTE));
+    if (new_fte == NULL) return NULL;
+    new_fte->owner = thread_current ()->tid;
     new_fte->paddr = paddr;
     new_fte->vaddr = vaddr;
     new_fte->supplementary_page = page;
@@ -116,6 +118,7 @@ void * fget_page (enum palloc_flags flags, void * vaddr)
 
     // release the lock
     lock_release (&frame_table_lock);
+    // printf("paddr: %x\n", fte->paddr);
 
     return fte->paddr;
 }
@@ -148,6 +151,7 @@ struct FTE * fget_page_aux (enum palloc_flags flags, void * vaddr)
     if (paddr == NULL) {
         // TODO: add mechanism for page fault, swapping out is required
 
+        // printf ("paddr == null\n");
     }
 
     // get the page table owned by this process
@@ -157,6 +161,9 @@ struct FTE * fget_page_aux (enum palloc_flags flags, void * vaddr)
 
     // update it in the global frame table
     struct FTE * fte = frame_table_put (paddr, vaddr, page);
+
+    // if (fte == NULL) { printf("fte null\n");}
+    // printf ("paddr: %x \n", (int) paddr);
 
     return fte;
 }
@@ -199,9 +206,34 @@ struct FTE * fget_evict (void)
 /* clean up all frames and free all relevant resource */
 void fcleanup (void) 
 {
+    struct thread * cur = thread_current();
     lock_acquire (&frame_table_lock);
-    // TODO: implement the core
+    
+    struct hash_elem * delete_record [100];
+    int s;
+    for (s = 0; s < 100; s ++) {
+        delete_record[s] = NULL;
+    }
 
+    // iterate through all frame table entry
+    struct hash_iterator i;
+    hash_first (&i, &frame_table);
+    s = 0;
+    while (hash_next (&i)) {
+        struct FTE * fte = hash_entry (hash_cur (&i), struct FTE, FTE_helem);
+        if (fte->owner == cur->tid) {
+            delete_record[s] = &fte->FTE_helem;
+            s ++;
+        }
+    }
+    // remove recorded hash element
+    for (s = 0; s < 100; s ++) {
+        if (delete_record[s] == NULL) break;
+        else {
+            hash_delete(&frame_table, delete_record[s]);
+        }
+    }
+   
     lock_release (&frame_table_lock);
 }
 

@@ -5,6 +5,7 @@
 #include "lib/kernel/hash.h"   /* for hash table */
 #include "threads/palloc.h"    /* for memory allocation */
 #include "threads/synch.h"     /* for lock mechanism */
+#include "threads/thread.h"
 #include "vm/page.h"
 
 #define PGSIZE 4096
@@ -12,6 +13,8 @@
 /* data structure for the frame table entry */
 struct FTE {
     int locked;        /* evictable bit */
+
+    tid_t owner;
 
     void * paddr;      /* physical address */
     void * vaddr;      /* virtual address */

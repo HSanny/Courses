@@ -13,6 +13,11 @@
 #include "threads/vaddr.h"
 #include "userprog/pagedir.h"
 #include "userprog/process.h"
+
+#ifdef VM
+#include "vm/frame.h"
+#endif
+
 #define ERROR -1
 #define MAX_ARGS 3
 #define USER_VADDR_BOTTOM ((void *) 0x08048000)
@@ -204,6 +209,9 @@ void exit (int status)
         }
     }
 
+    //-----------------------------------------------------
+    fcleanup();
+    //-----------------------------------------------------
     if (file_list != NULL)
     {
         e = list_begin(file_list);
@@ -275,6 +283,11 @@ int filesize (int fd)
  * */
 int read (int fd, void *buffer, unsigned size) 
 {
+    // check the validity of buffer
+    
+    //if (buffer < thread_current()->_eip || buffer > PHYS_BASE) 
+     //   exit(-1);   
+
     unsigned read_byte = 0;
     // READ FROM THE EXTERNAL KEYBOARD
     if (fd == STDIN_FILENO) {
@@ -297,6 +310,7 @@ int read (int fd, void *buffer, unsigned size)
 
         // file not found
         if (f == NULL) return -1; 
+
         // get the size of requested file
         unsigned fsize = filesize (fd);
         if (TEST) printf("fsize: %d,  size: %d\n", fsize, size);
@@ -383,7 +397,7 @@ void validate_ptr (const void *vaddr)
 {
     if (!is_user_vaddr(vaddr) || vaddr < USER_VADDR_BOTTOM)
     {
-        if(TEST) printf("%s\n",thread_current()->name);
+        if (TEST) printf("%s\n",thread_current()->name);
         exit(ERROR);
     }
 }

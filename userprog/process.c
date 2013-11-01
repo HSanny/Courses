@@ -119,7 +119,6 @@ start_process (void *file_name_)
         {
             cur->depth = search_thread_by_tid(cur->parent)->depth +1;
             if (cur->depth > 31)
-
                 thread_exit();
         }
         /* successful page allocation */
@@ -405,6 +404,7 @@ static bool load_segment (struct file *file, off_t ofs, uint8_t *upage,
     bool
 load (const char *file_name, void (**eip) (void), void **esp) 
 {
+    // printf("loading starts..\n");
     struct thread *t = thread_current ();
     struct Elf32_Ehdr ehdr;
     struct file *file = NULL;
@@ -503,10 +503,13 @@ load (const char *file_name, void (**eip) (void), void **esp)
         }
     }
 
+    //printf("start to setup_stack ..\n");
     /* Set up stack. */
     if (!setup_stack (esp))
+    {
         goto done;
-
+    }
+    //printf("setup_stack done ..\n");
 
     /* Start address. */
     *eip = (void (*) (void)) ehdr.e_entry;
@@ -635,13 +638,13 @@ setup_stack (void **esp)
     uint8_t *kpage;
     bool success = false;
 
-    void * vaddr = ((uint8_t *) PHYS_BASE) - PGSIZE;
+    uint8_t * vaddr = ((uint8_t *) PHYS_BASE) - PGSIZE;
 #ifndef VM
     // routine for user program project
     kpage = palloc_get_page (PAL_USER | PAL_ZERO);
 #else 
     // routine for virtual memory project
-    kpage = fget_page (PAL_USER | PAL_ZERO, vaddr);
+    kpage = fget_page (PAL_USER | PAL_ZERO, (void *) vaddr);
 #endif
 
     if (kpage != NULL) 

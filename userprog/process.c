@@ -652,6 +652,12 @@ setup_stack (void **esp)
         success = install_page (vaddr, kpage, true);
         if (success) {
             *esp = PHYS_BASE;
+            // ---------------------------------------------------
+            // notify the sp data structure saying that it is writable
+            struct hash * spt = thread_current()->spt;
+            struct SP * sp = sp_table_find (spt, vaddr);
+            sp->writable = true;
+            // ---------------------------------------------------
         }
         else {
 #ifndef VM

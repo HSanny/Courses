@@ -1,4 +1,3 @@
-
 #include "vm/page.h"
 #include "vm/frame.h"
 #include "threads/malloc.h"
@@ -38,6 +37,7 @@ struct SP * sp_table_put (struct hash * page_table, void * vaddr)
     // TODO: assignment for more elements
     struct SP * new = (struct SP*) malloc (sizeof (struct SP));
     new->vaddr = vaddr;
+    new->process = thread_current ();
 
     // insert into the page table 
     struct hash_elem * helem = hash_insert (page_table, &new->SP_helem);

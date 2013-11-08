@@ -5,10 +5,12 @@
 #include <debug.h>
 #include "lib/kernel/hash.h"
 #include "filesys/filesys.h"
+#include "threads/thread.h"
 
 /* Defining data structure representing page in VAS */
 struct SP {
     void * vaddr;   /* virtual address as identification */
+    tid_t process; 
 
     bool evicted;   /* residency in main memory */
     bool writable;  /* modify the bits that we could produce */

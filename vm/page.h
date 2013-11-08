@@ -5,9 +5,11 @@
 #include <debug.h>
 #include "lib/kernel/hash.h"
 #include "filesys/filesys.h"
+#include "threads/thread.h"
 
 /* Defining data structure representing page in VAS */
 struct SP {
+    tid_t process; 
     void * vaddr;  
 
     bool evicted;

@@ -8,4 +8,6 @@ int process_wait (tid_t);
 void process_exit (void);
 void process_activate (void);
 
+struct frame * pg_load_segment (struct file *file, struct page *fault_page);
+
 #endif /* userprog/process.h */

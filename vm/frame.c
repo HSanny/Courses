@@ -156,14 +156,11 @@ struct FTE * fget_page_aux (enum palloc_flags flags, void * vaddr)
 
     // get the page table owned by this process
     struct hash * spt = thread_current()->spt;
-    // add new page into that page table
-    struct SP * page = sp_table_put (spt, vaddr);
+    // add new supplementary page into that page table
+    struct SP * sp = sp_table_put (spt, vaddr);
 
     // update it in the global frame table
-    struct FTE * fte = frame_table_put (paddr, vaddr, page);
-
-    // if (fte == NULL) { printf("fte null\n");}
-    // printf ("paddr: %x \n", (int) paddr);
+    struct FTE * fte = frame_table_put (paddr, vaddr, sp);
 
     return fte;
 }

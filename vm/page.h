@@ -10,7 +10,8 @@
 /* Defining data structure representing page in VAS */
 struct SP {
     void * vaddr;   /* virtual address as identification */
-    tid_t process; 
+    
+    int process; 
 
     bool evicted;   /* residency in main memory */
     bool writable;  /* modify the bits that we could produce */

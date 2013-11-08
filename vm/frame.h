@@ -8,7 +8,9 @@
 #include "threads/thread.h"
 #include "vm/page.h"
 
+#ifndef PGSIZE
 #define PGSIZE 4096
+#endif
 
 /* data structure for the frame table entry */
 struct FTE {

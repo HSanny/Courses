@@ -8,12 +8,12 @@
 
 /* Defining data structure representing page in VAS */
 struct SP {
-    void * vaddr;  
+    void * vaddr;   /* virtual address as identification */
 
-    bool evicted;
-    bool writable;
+    bool evicted;   /* residency in main memory */
+    bool writable;  /* modify the bits that we could produce */
 
-    struct hash_elem SP_helem;
+    struct hash_elem SP_helem;  
 };
 
 unsigned sp_hash (const struct hash_elem * elem, void * aux UNUSED);

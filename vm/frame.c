@@ -150,7 +150,7 @@ struct FTE * fget_page_aux (enum palloc_flags flags, void * vaddr)
     void * paddr = palloc_get_page (flags);
     if (paddr == NULL) {
         // TODO: add mechanism for page fault, swapping out is required
-
+        ;
         // printf ("paddr == null\n");
     }
 

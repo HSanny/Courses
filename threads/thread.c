@@ -353,7 +353,6 @@ thread_exit (void)
     struct thread * cur = thread_current();
     list_remove (&thread_current()->allelem);
     cur->status = THREAD_DYING;
-    free(cur->spt);  // free the supplementary page table
 
     schedule ();
     NOT_REACHED ();

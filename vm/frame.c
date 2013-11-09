@@ -8,6 +8,7 @@
 #include "threads/palloc.h"    
 #include "userprog/process.h"
 #include "userprog/pagedir.h"
+#include "userprog/exception.h"
 
 #include "vm/page.h"
 #include "vm/swap.h"
@@ -34,6 +35,7 @@ static bool fte_hash_less (const struct hash_elem *a, const struct hash_elem *b,
 /* initialize both global frame table and its lock */
 bool frame_table_init (void) 
 {
+//    printf("init\n");
     lock_init (&frame_table_lock);
     bool success = hash_init (&frame_table, fte_hash_func, fte_hash_less,
             NULL);
@@ -43,6 +45,7 @@ bool frame_table_init (void)
 /* find the frame table entry */
 struct FTE * frame_table_find (void* paddr) 
 {
+//    printf("find\n");
     // presume nothing found
     struct FTE * finding = NULL;
 
@@ -67,6 +70,7 @@ struct FTE * frame_table_find (void* paddr)
 /* add one new entry to the frame table */
 struct FTE * frame_table_put (void *paddr, void *vaddr, struct SP * page)
 {
+//    printf("put\n");
     // create a new_fte frame table entry structure
     struct FTE * new_fte = (struct FTE *) malloc (sizeof (struct FTE));
     if (new_fte == NULL) return NULL;
@@ -87,6 +91,7 @@ struct FTE * frame_table_put (void *paddr, void *vaddr, struct SP * page)
 /* remove the specified frame table entry */
 struct FTE * frame_table_remove (void* paddr) 
 {
+//    printf("remove\n");
     // presume nothing removed
     struct FTE * removed = NULL;
 
@@ -110,6 +115,7 @@ struct FTE * frame_table_remove (void* paddr)
 /* allocate a frame and update the frame table */
 void * fget_page (enum palloc_flags flags, void * vaddr) 
 {
+//    printf("get\n");
     // acquire the lock
     lock_acquire (&frame_table_lock);
 
@@ -126,6 +132,7 @@ void * fget_page (enum palloc_flags flags, void * vaddr)
 /* Get physical address of a page and lock it */
 void * fget_page_lock (enum palloc_flags flags, void * vaddr) 
 {
+//    printf("lock\n");
     // lock the whole frame table
     lock_acquire (&frame_table_lock);
 
@@ -143,14 +150,17 @@ void * fget_page_lock (enum palloc_flags flags, void * vaddr)
 /* Rountine abstraction for getting a page */
 struct FTE * fget_page_aux (enum palloc_flags flags, void * vaddr) 
 {
+//    printf("aux\n");
     // make sure the resource in user pool is allocated, rather than kernel's
     ASSERT ((flags & PAL_USER) != 0);
 
     // physically apply for a memory location
     void * paddr = palloc_get_page (flags);
     if (paddr == NULL) {
+//        page_fault(thread_current()->interrupt);
+//        printf("Got here");
+//        exit(-1);
         // TODO: add mechanism for page fault, swapping out is required
-        ;
         // printf ("paddr == null\n");
     }
 
@@ -161,6 +171,8 @@ struct FTE * fget_page_aux (enum palloc_flags flags, void * vaddr)
 
     // update it in the global frame table
     struct FTE * fte = frame_table_put (paddr, vaddr, sp);
+    
+//    printf("finished aux\n");
 
     return fte;
 }
@@ -168,6 +180,7 @@ struct FTE * fget_page_aux (enum palloc_flags flags, void * vaddr)
 /* deallocate one frame */
 void ffree_page (void *paddr)
 {
+//    printf("free\n");
     ASSERT ((int) paddr % PGSIZE == 0);
 
     struct thread * cur = thread_current();
@@ -196,6 +209,7 @@ void ffree_page (void *paddr)
 /* evict the frame to be evicted */
 struct FTE * fget_evict (void) 
 {
+//    printf("evict\n");
 
     return NULL;
 }

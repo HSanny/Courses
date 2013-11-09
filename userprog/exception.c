@@ -4,6 +4,7 @@
 #include "userprog/gdt.h"
 #include "threads/interrupt.h"
 #include "threads/thread.h"
+#include "threads/vaddr.h"
 #include "syscall.h"
 
 /* Number of page faults processed. */
@@ -125,6 +126,7 @@ kill (struct intr_frame *f)
     static void
 page_fault (struct intr_frame *f) 
 {
+    //printf("page faulting here");
     bool not_present;  /* True: not-present page, false: writing r/o page. */
     bool write;        /* True: access was write, false: access was read. */
     bool user;         /* True: access by user, false: access by kernel. */
@@ -158,6 +160,23 @@ page_fault (struct intr_frame *f)
     // add implementation for responding to page fault
     struct thread * cur = thread_current();
     struct hash * spt = cur->spt;
+
+    //FIXME: buggy - wait-killed test case
+    if (PHYS_BASE - *(cur->stack_track) > (PGSIZE * MAX_STACK_PAGES))
+//    if ((PHYS_BASE - ((unsigned int)(cur->stack_track))) > (PGSIZE * MAX_STACK_PAGES))
+    {
+//        printf("%0X\n", ((unsigned int)(cur->stack_track)));
+//        printf("%0Xesp\n", (f->esp));
+//        printf("%0X\n", PHYS_BASE);
+        kill (f);
+    }
+    if (PHYS_BASE - (f->esp) >= PGSIZE * cur->num_stack_pages)
+    {
+        if (cur->num_stack_pages < MAX_STACK_PAGES)
+        {
+            cur->num_stack_pages++;
+        }
+    }
     struct SP * fault_page = sp_table_find (spt, fault_addr);
 
     // TODO: implement stack growth
@@ -177,6 +196,7 @@ page_fault (struct intr_frame *f)
 
         printf("There is no crying in Pintos!\n");
     }
+    printf("done");
 
 
 }

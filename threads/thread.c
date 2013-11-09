@@ -226,6 +226,7 @@ thread_create (const char *name, int priority,
     //****************************************************
     // FOR THE CHANGE IN PROJECT 3
 #ifdef VM
+    t->num_stack_pages = 1;
     lock_init (&t->spt_lock);
     t->spt = (struct hash *) malloc (sizeof (struct hash));
     bool hash_init_suc = hash_init (t->spt, sp_hash, sp_hash_less, NULL);

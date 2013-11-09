@@ -111,6 +111,7 @@ start_process (void *file_name_)
     if (success) {
         struct thread * cur = thread_current();
         // change the loading status
+        cur->interrupt = &if_;
         cur->isLoaded = LOADED;
         struct file *holder = filesys_open (fname);
         cur->file_deny_execute = holder;
@@ -217,6 +218,11 @@ start_process (void *file_name_)
             printf("After return address pushed: eip: %X  esp: %X  \n",
                     (unsigned int)if_.eip, (unsigned int) if_.esp); 
         } 
+
+        //FIXME: buggy - wait-killed test case
+        cur->stack_track = if_.esp;
+//        printf("%0Xloading", if_.esp);
+        
         // dump for manual checking of the established stack
         if (TEST)
             hex_dump ((unsigned int)if_.esp, if_.esp, PHYS_BASE-(unsigned int)if_.esp, 1);
@@ -242,6 +248,14 @@ start_process (void *file_name_)
     asm volatile ("movl %0, %%esp; jmp intr_exit" : : "g" (&if_) : "memory");
     NOT_REACHED ();
 }
+
+/*
+int
+check_esp (unsigned esp) 
+{
+
+}
+*/
 
 /* Waits for thread TID to die and returns its exit status.  If
    it was terminated by the kernel (i.e. killed due to an
@@ -645,6 +659,7 @@ setup_stack (void **esp)
 #else 
     // routine for virtual memory project
     kpage = fget_page (PAL_USER | PAL_ZERO, (void *) vaddr);
+//    printf("finished allocation\n");
 #endif
 
     if (kpage != NULL) 

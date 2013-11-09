@@ -28,6 +28,7 @@ bool sp_table_init (struct hash * page_table)
 
 struct SP * sp_table_put (struct hash * page_table, void * vaddr)
 {
+//    printf("sp_put");
     ASSERT ((int) vaddr % PGSIZE == 0);
 
     struct thread * cur = thread_current ();

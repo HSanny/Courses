@@ -17,6 +17,7 @@
 #include "threads/palloc.h"
 #include "threads/thread.h"
 #include "threads/vaddr.h"
+#include "lib/kernel/hash.h"
 #ifdef VM
 #include "vm/frame.h"
 #include "vm/page.h"
@@ -24,6 +25,34 @@
 
 #define ERROR -1
 #define THREAD_MAGIC 0xcd6abf4b
+
+#define MAX_STACK_PAGES 2048
+
+
+static bool install_page (void *upage, void *kpage, bool writable);
+// ----------------------------------------------------------------
+void grow_stack (struct thread * t, struct intr_frame * f, void * fault_addr) 
+{
+    // compute the bottom address of the existing stack segment
+    void * stack_bottom = (void *) (PHYS_BASE - t->num_stack_pages);   
+    // round up to PGSIZE (4096)
+    int addr_dist = ROUND_UP ((uint64_t) stack_bottom - (uint64_t)fault_addr, PGSIZE);
+    // compute the number of page need to grow
+    int num_new_page = addr_dist / PGSIZE;
+    // check for page overflow
+    if (t->num_stack_pages + num_new_page > MAX_STACK_PAGES) {
+        PANIC ("Stack size too big, beyond 8MB. \n");
+    }
+    // allocate new page one by one
+    int i = 0;
+    for (;i < num_new_page; i++) {
+        void * new_upage = (void*) ((int) stack_bottom - ((i+1) *PGSIZE));
+        void * new_ppage = fget_page (PAL_USER, new_upage);
+        install_page (new_upage, new_ppage, true);
+        t->num_stack_pages ++;
+    }
+}
+// ----------------------------------------------------------------
 
 static thread_func start_process NO_RETURN;
 static bool load (const char *cmdline, void (**eip) (void), void **esp);
@@ -324,6 +353,17 @@ process_exit (void)
         pagedir_activate (NULL);
         pagedir_destroy (pd);
     }
+    // ------------------------------------------------------
+    // reclaim all supplemental page 
+    struct hash_iterator i;
+    hash_first (&i, cur->spt);
+    while (hash_next (&i)) {
+        struct SP * sp = hash_entry (hash_cur(&i), struct SP, SP_helem);
+         hash_delete (cur->spt, &sp->SP_helem);
+        // free (sp);
+    }
+    free (cur->spt);
+    // ------------------------------------------------------
 }
 
 /* Sets up the CPU for running user code in the current
@@ -517,13 +557,11 @@ load (const char *file_name, void (**eip) (void), void **esp)
         }
     }
 
-    //printf("start to setup_stack ..\n");
     /* Set up stack. */
     if (!setup_stack (esp))
     {
         goto done;
     }
-    //printf("setup_stack done ..\n");
 
     /* Start address. */
     *eip = (void (*) (void)) ehdr.e_entry;
@@ -538,7 +576,6 @@ done:
 
 /* load() helpers. */
 
-static bool install_page (void *upage, void *kpage, bool writable);
 
 /* Checks whether PHDR describes a valid, loadable segment in
    FILE and returns true if so, false otherwise. */
@@ -659,7 +696,6 @@ setup_stack (void **esp)
 #else 
     // routine for virtual memory project
     kpage = fget_page (PAL_USER | PAL_ZERO, (void *) vaddr);
-//    printf("finished allocation\n");
 #endif
 
     if (kpage != NULL) 

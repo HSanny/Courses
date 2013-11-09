@@ -163,11 +163,7 @@ page_fault (struct intr_frame *f)
 
     //FIXME: buggy - wait-killed test case
     if (PHYS_BASE - *(cur->stack_track) > (PGSIZE * MAX_STACK_PAGES))
-//    if ((PHYS_BASE - ((unsigned int)(cur->stack_track))) > (PGSIZE * MAX_STACK_PAGES))
     {
-//        printf("%0X\n", ((unsigned int)(cur->stack_track)));
-//        printf("%0Xesp\n", (f->esp));
-//        printf("%0X\n", PHYS_BASE);
         kill (f);
     }
     if (PHYS_BASE - (f->esp) >= PGSIZE * cur->num_stack_pages)
@@ -179,7 +175,17 @@ page_fault (struct intr_frame *f)
     }
     struct SP * fault_page = sp_table_find (spt, fault_addr);
 
-    // TODO: implement stack growth
+    void * stack_bottom = (void*) (PHYS_BASE - cur->num_stack_pages * PGSIZE);
+    // stack growth: if fault address is below the current esp
+    if (fault_addr < stack_bottom) {
+        if (fault_addr > f->esp || 
+            (int) fault_addr == (int) f->esp - 4 || 
+            (int) fault_addr == (int) f->esp - 32) 
+        {
+            grow_stack (thread_current(), f, fault_addr);
+            return ;
+        }
+    }
 
     if (fault_page != NULL) {
         // TODO: load in the faulted page
@@ -197,7 +203,5 @@ page_fault (struct intr_frame *f)
         printf("There is no crying in Pintos!\n");
     }
     printf("done");
-
-
 }
 

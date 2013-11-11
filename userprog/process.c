@@ -714,12 +714,12 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
         // Our implementation
         struct thread * cur = thread_current ();
         struct hash * spt = cur->spt;
-        struct SP * page = sp_table_put(spt, upage);
+        struct SP * page = sp_table_put (spt, upage);
         page->executable = true;
         page->writable = writable;
         page->page_read_bytes = page_read_bytes;
+        page->ppage = 0;
         page->offset = file_tell (file);
-
         file_seek (file, file_tell(file) + page_read_bytes);
         // -----------------------------------------------------------------
         /* Advance. */

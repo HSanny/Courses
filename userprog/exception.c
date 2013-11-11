@@ -188,7 +188,8 @@ page_fault (struct intr_frame *f)
     }
 
     // demand paging system 
-    if (fault_page != NULL && (!write && fault_page->writable)) {
+    if (fault_page != NULL && (fault_page->executable && !fault_page->modified)
+            && (!write && fault_page->writable)) {
         struct FTE * frame = NULL;
         if (fault_page->executable && !fault_page->modified) {
             frame = load_segment_on_demand (fault_page, 

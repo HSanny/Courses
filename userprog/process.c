@@ -1,3 +1,4 @@
+// libraries
 #include "userprog/process.h"
 #include <debug.h>
 #include <inttypes.h>
@@ -23,20 +24,63 @@
 #include "vm/page.h"
 #endif
 
+// macros
 #define ERROR -1
 #define THREAD_MAGIC 0xcd6abf4b
-
 #define MAX_STACK_PAGES 2048
 
+// global variable
+static bool TEST = 0;
 
+// signature
 static bool install_page (void *upage, void *kpage, bool writable);
-// ----------------------------------------------------------------
+bool install_fault_page (struct SP * fp);
+static thread_func start_process NO_RETURN;
+static bool load (const char *cmdline, void (**eip) (void), void **esp);
+struct FTE * load_segment_on_demand (struct SP * fault_page, struct file * file);
+
+// ------------------------------------------------------------------------
+// Project 4: new functions
+/* install the faulted page into page directory */
+bool install_fault_page (struct SP * fp) 
+{
+    return (pagedir_get_page (fp->pagedir, fp->vaddr) == NULL
+            && pagedir_set_page (fp->pagedir, fp->vaddr, fp->ppage, fp->writable));
+}
+
+/* load segment for swapping in the page on demand */
+struct FTE * load_segment_on_demand (struct SP * fault_page, struct file * file) 
+{
+    // allocate a new frame entry
+    fault_page->ppage = fget_page_lock (PAL_USER, fault_page->vaddr);
+    // install that faulted page
+    install_fault_page (fault_page);
+    // allocate physical memory from PINTOS 
+    uint8_t *kpage = palloc_get_page (PAL_USER);
+    // exception handling
+    if (kpage == NULL) return NULL;
+
+    /* Load this page. */
+    // set to previous file position
+    file_seek (file, fault_page->offset);
+    // execute further read operation
+    int page_read_bytes = fault_page->page_read_bytes;
+    int page_zero_bytes = PGSIZE - page_read_bytes;
+    if (page_read_bytes > 0)
+        file_read (file, kpage, page_read_bytes);
+    // set zero to remaining byte
+    memset (fault_page->ppage + page_read_bytes, 0, page_zero_bytes);
+
+    struct FTE * loaded_frame = frame_table_find (fault_page->ppage);
+    return loaded_frame;
+}
+
 void grow_stack (struct thread * t, struct intr_frame * f, void * fault_addr) 
 {
     // compute the bottom address of the existing stack segment
     void * stack_bottom = (void *) (PHYS_BASE - t->num_stack_pages);   
     // round up to PGSIZE (4096)
-    int addr_dist = ROUND_UP ((uint64_t) stack_bottom - (uint64_t)fault_addr, PGSIZE);
+    int addr_dist = ROUND_UP ((uint32_t) stack_bottom - (uint32_t)fault_addr, PGSIZE);
     // compute the number of page need to grow
     int num_new_page = addr_dist / PGSIZE;
     // check for page overflow
@@ -52,12 +96,7 @@ void grow_stack (struct thread * t, struct intr_frame * f, void * fault_addr)
         t->num_stack_pages ++;
     }
 }
-// ----------------------------------------------------------------
-
-static thread_func start_process NO_RETURN;
-static bool load (const char *cmdline, void (**eip) (void), void **esp);
-
-static bool TEST = 0;
+// ---------------------------------------------------------------------------
 
 /* Starts a new thread running a user program loaded from
    FILENAME.  The new thread may be scheduled (and may even exit)
@@ -250,7 +289,6 @@ start_process (void *file_name_)
 
         //FIXME: buggy - wait-killed test case
         cur->stack_track = if_.esp;
-//        printf("%0Xloading", if_.esp);
         
         // dump for manual checking of the established stack
         if (TEST)
@@ -278,13 +316,6 @@ start_process (void *file_name_)
     NOT_REACHED ();
 }
 
-/*
-int
-check_esp (unsigned esp) 
-{
-
-}
-*/
 
 /* Waits for thread TID to die and returns its exit status.  If
    it was terminated by the kernel (i.e. killed due to an
@@ -653,26 +684,44 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
         size_t page_read_bytes = read_bytes < PGSIZE ? read_bytes : PGSIZE;
         size_t page_zero_bytes = PGSIZE - page_read_bytes;
 
+        // -----------------------------------------------------------------
+        // Original implementation
         /* Get a page of memory. */
-        uint8_t *kpage = palloc_get_page (PAL_USER);
+        /*uint8_t *kpage = palloc_get_page (PAL_USER);
         if (kpage == NULL)
             return false;
+            */
 
         /* Load this page. */
+        /*
         if (file_read (file, kpage, page_read_bytes) != (int) page_read_bytes)
         {
             palloc_free_page (kpage);
             return false; 
         }
         memset (kpage + page_read_bytes, 0, page_zero_bytes);
+        */
 
         /* Add the page to the process's address space. */
+        /*
         if (!install_page (upage, kpage, writable)) 
         {
             palloc_free_page (kpage);
-            return false; 
+            return false;
         }
+        */
+        // -----------------------------------------------------------------
+        // Our implementation
+        struct thread * cur = thread_current ();
+        struct hash * spt = cur->spt;
+        struct SP * page = sp_table_put(spt, upage);
+        page->executable = true;
+        page->writable = writable;
+        page->page_read_bytes = page_read_bytes;
+        page->offset = file_tell (file);
 
+        file_seek (file, file_tell(file) + page_read_bytes);
+        // -----------------------------------------------------------------
         /* Advance. */
         read_bytes -= page_read_bytes;
         zero_bytes -= page_zero_bytes;
@@ -680,6 +729,7 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
     }
     return true;
 }
+
 
 /* Create a minimal stack by mapping a zeroed page at the top of
    user virtual memory. */

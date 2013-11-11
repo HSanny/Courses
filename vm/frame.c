@@ -132,7 +132,6 @@ void * fget_page (enum palloc_flags flags, void * vaddr)
 /* Get physical address of a page and lock it */
 void * fget_page_lock (enum palloc_flags flags, void * vaddr) 
 {
-//    printf("lock\n");
     // lock the whole frame table
     lock_acquire (&frame_table_lock);
 

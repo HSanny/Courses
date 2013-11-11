@@ -28,24 +28,31 @@ bool sp_table_init (struct hash * page_table)
 
 struct SP * sp_table_put (struct hash * page_table, void * vaddr)
 {
-//    printf("sp_put");
+    // must secure given addr is multiple of PGSIZE
+    // perhaps round down first
     ASSERT ((int) vaddr % PGSIZE == 0);
 
     struct thread * cur = thread_current ();
-    
     lock_acquire (&cur->spt_lock);
 
-    // TODO: assignment for more elements
     struct SP * new = (struct SP*) malloc (sizeof (struct SP));
+    // assignment basic identification
+    new->owner = cur;
     new->vaddr = vaddr;
-    new->process = thread_current ();
+    new->pagedir = cur->pagedir;
+
+    // assignment for control bits
+    new->executable = false;
+    new->writable = true;
+    new->evicted = false;
+    new->modified = false;
 
     // insert into the page table 
     struct hash_elem * helem = hash_insert (page_table, &new->SP_helem);
     
     lock_release (&cur->spt_lock);
 
-    if (helem != NULL)  { 
+    if (helem != NULL) { 
         // equal element exist, thus return that pre-existing element
         return hash_entry (helem, struct SP, SP_helem);
     } else {

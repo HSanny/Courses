@@ -14,7 +14,7 @@
 
 /* data structure for the frame table entry */
 struct FTE {
-    int locked;        /* evictable bit */
+    bool locked;        /* evictable bit */
 
     tid_t owner;
 

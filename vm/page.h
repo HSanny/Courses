@@ -9,14 +9,22 @@
 
 /* Defining data structure representing page in VAS */
 struct SP {
+    /* Basic identification */
+    struct thread * owner;  
+    struct hash_elem SP_helem;  /* element for hashing */
     void * vaddr;   /* virtual address as identification */
-    
-    int process; 
 
+    /* Loading Information */
+    uint32_t * pagedir;  /* page directory */
+    uint8_t * ppage;     /* physical address */
+    off_t offset;        /* offset of a file */
+    int page_read_bytes; /* # of bytes to read */
+
+    /* Control Bits */
     bool evicted;   /* residency in main memory */
+    bool modified;  /* dirty bit */
+    bool executable; /* code segment page or not */
     bool writable;  /* modify the bits that we could produce */
-
-    struct hash_elem SP_helem;  
 };
 
 unsigned sp_hash (const struct hash_elem * elem, void * aux UNUSED);

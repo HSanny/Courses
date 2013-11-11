@@ -161,9 +161,11 @@ page_fault (struct intr_frame *f)
     struct thread * cur = thread_current();
     struct hash * spt = cur->spt;
 
+    /*
     //FIXME: buggy - wait-killed test case
     if (PHYS_BASE - *(cur->stack_track) > (PGSIZE * MAX_STACK_PAGES))
     {
+        printf ("kill befoe \n");
         kill (f);
     }
     if (PHYS_BASE - (f->esp) >= PGSIZE * cur->num_stack_pages)
@@ -173,8 +175,10 @@ page_fault (struct intr_frame *f)
             cur->num_stack_pages++;
         }
     }
+    */
     struct SP * fault_page = sp_table_find (spt, fault_addr);
 
+    /*
     void * pbottom = (void*) (PHYS_BASE - cur->num_stack_pages * PGSIZE);
     // stack growth: if fault address is below the current esp
     if (fault_addr < pbottom) { // outside the stack
@@ -186,12 +190,15 @@ page_fault (struct intr_frame *f)
             return ;
         }
     }
+    */
 
     // demand paging system 
-    if (fault_page != NULL && (fault_page->executable && !fault_page->modified)
-            && (!write && fault_page->writable)) {
+    printf ("i am here 4\n");
+    if (fault_page != NULL && (fault_page->executable || fault_page->evicted)
+            && (!write || fault_page->writable)) {
         struct FTE * frame = NULL;
         if (fault_page->executable && !fault_page->modified) {
+            printf ("i am here 5\n");
             frame = load_segment_on_demand (fault_page, 
                     fault_page->owner->file_deny_execute);
         } else if (fault_page->evicted) {

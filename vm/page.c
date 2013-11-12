@@ -1,3 +1,4 @@
+#include "lib/round.h"
 #include "vm/page.h"
 #include "vm/frame.h"
 #include "threads/malloc.h"
@@ -63,19 +64,28 @@ struct SP * sp_table_put (struct hash * page_table, void * vaddr)
 struct SP * sp_table_find (struct hash * page_table, void * vaddr)
 {
     struct SP * finding = NULL;
+    lock_acquire (&thread_current()->spt_lock);
+    printf ("vaddr: %x\n", vaddr);
+    void * page = (void *) ROUND_DOWN ((uint64_t) vaddr, (uint64_t) PGSIZE);
+    printf ("page: %x\n", page);
     if (hash_empty(page_table)) return NULL;   
 
     struct SP temp;
-    temp.vaddr = vaddr;
+    temp.vaddr = page;
 
     struct hash_elem * helem = hash_find (page_table, &temp.SP_helem);
-    finding = hash_entry (helem, struct SP, SP_helem);
+    if (helem != NULL) {
+        finding = hash_entry (helem, struct SP, SP_helem);
+        printf ("find_addr: %x\n", finding->vaddr);
+    }
 
+    lock_release (&thread_current()->spt_lock);
     return finding;
 }
 
 struct SP * sp_table_remove (struct hash * page_table, void * vaddr)
 {
+    lock_acquire (&thread_current()->spt_lock);
     struct SP * removed = NULL;
     if (hash_empty(page_table)) return NULL;   
 
@@ -85,6 +95,7 @@ struct SP * sp_table_remove (struct hash * page_table, void * vaddr)
 
     // remove the element in sp table
     struct hash_elem * helem = hash_delete (page_table, &temp.SP_helem);
+    lock_release (&thread_current()->spt_lock);
 
     if (helem != NULL) {
         removed = hash_entry (helem, struct SP, SP_helem);

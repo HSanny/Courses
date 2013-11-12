@@ -65,9 +65,9 @@ struct SP * sp_table_find (struct hash * page_table, void * vaddr)
 {
     struct SP * finding = NULL;
     lock_acquire (&thread_current()->spt_lock);
-    printf ("vaddr: %x\n", vaddr);
+    // printf ("vaddr: %x\n", vaddr);
     void * page = (void *) ROUND_DOWN ((uint64_t) vaddr, (uint64_t) PGSIZE);
-    printf ("page: %x\n", page);
+    // printf ("page: %x\n", page);
     if (hash_empty(page_table)) return NULL;   
 
     struct SP temp;
@@ -76,7 +76,7 @@ struct SP * sp_table_find (struct hash * page_table, void * vaddr)
     struct hash_elem * helem = hash_find (page_table, &temp.SP_helem);
     if (helem != NULL) {
         finding = hash_entry (helem, struct SP, SP_helem);
-        printf ("find_addr: %x\n", finding->vaddr);
+       // printf ("find_addr: %x\n", finding->vaddr);
     }
 
     lock_release (&thread_current()->spt_lock);
@@ -99,7 +99,6 @@ struct SP * sp_table_remove (struct hash * page_table, void * vaddr)
 
     if (helem != NULL) {
         removed = hash_entry (helem, struct SP, SP_helem);
-        return removed;
     }
-    else return NULL;
+    return removed;
 }

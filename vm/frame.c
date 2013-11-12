@@ -121,6 +121,7 @@ void * fget_page (enum palloc_flags flags, void * vaddr)
 
     // acquire the correponding physical address
     struct FTE * fte = fget_page_aux (flags, vaddr);
+    fte->locked = false;
 
     // release the lock
     lock_release (&frame_table_lock);
@@ -156,11 +157,8 @@ struct FTE * fget_page_aux (enum palloc_flags flags, void * vaddr)
     // physically apply for a memory location
     void * paddr = palloc_get_page (flags);
     if (paddr == NULL) {
-//        page_fault(thread_current()->interrupt);
-//        printf("Got here");
-//        exit(-1);
+        // page_fault(thread_current()->interrupt);
         // TODO: add mechanism for page fault, swapping out is required
-        // printf ("paddr == null\n");
     }
 
     // get the page table owned by this process

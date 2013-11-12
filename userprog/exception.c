@@ -6,12 +6,14 @@
 #include "threads/thread.h"
 #include "threads/vaddr.h"
 #include "syscall.h"
+#include "process.h"
 
 /* Number of page faults processed. */
 static long long page_fault_cnt;
 
 static void kill (struct intr_frame *);
 static void page_fault (struct intr_frame *);
+struct FTE* supplementary_page_load (struct SP* fault_page, bool locked);
 
 /* Registers handlers for interrupts that can be caused by user
    programs.
@@ -161,9 +163,10 @@ page_fault (struct intr_frame *f)
     struct thread * cur = thread_current();
     struct hash * spt = cur->spt;
 
-    printf ("fault_addr: %x\n", fault_addr);
+    // printf ("fault_addr: %x\n", fault_addr);
     struct SP * fault_page = sp_table_find (spt, fault_addr);
 
+    /*
     void * pbottom = (void*) (PHYS_BASE - cur->num_stack_pages * PGSIZE);
     // stack growth: if fault address is below the current esp
     if (fault_addr < pbottom) { // outside the stack
@@ -175,18 +178,19 @@ page_fault (struct intr_frame *f)
             return ;
         }
     }
+    */
 
     // demand paging system 
     if (fault_page == NULL) printf ("fault_page: %x\n", fault_page);
     if (fault_page != NULL && (fault_page->executable || fault_page->evicted)
-           // && (!write || fault_page->writable)
+            && (!write || fault_page->writable)
             ) {
         struct FTE * frame = NULL;
         if (fault_page->executable && !fault_page->modified) {
-            frame = load_segment_on_demand (fault_page, 
-                    fault_page->owner->file_deny_execute);
+            supplementary_page_load (fault_page, false);
         } else if (fault_page->evicted) {
             // TODO: stuff about swap
+            printf ("swap\n");
             ;
         }
         // if (frame != NULL) frame->locked = false;
@@ -203,4 +207,26 @@ page_fault (struct intr_frame *f)
         printf("There is no crying in Pintos!\n");
         kill (f);
     }
+}
+
+struct FTE* supplementary_page_load (struct SP* fault_page, bool locked)
+{
+    struct FTE* frame = NULL;
+    /*if (fault_page->mmentry != NULL) 
+    {
+        frame = lazy_load_segment(fault_page, fault_page->mmentry->backup_file);
+    } 
+    else*/ 
+    if(fault_page->executable && !fault_page->modified)
+    {
+        frame = load_segment_on_demand(fault_page, fault_page->owner->file_deny_execute);
+    } 
+    else if (fault_page->evicted)
+    {
+        if(fault_page->executable && !fault_page->modified) PANIC("EVICT EXEC\n");
+        // frame = read_from_swap(fault_page);
+    }
+
+    // frame->locked = locked;
+    return frame;
 }

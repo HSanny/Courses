@@ -37,7 +37,6 @@ static bool install_page (void *upage, void *kpage, bool writable);
 bool install_fault_page (struct SP * fp);
 static thread_func start_process NO_RETURN;
 static bool load (const char *cmdline, void (**eip) (void), void **esp);
-struct FTE * load_segment_on_demand (struct SP * fault_page, struct file * file);
 
 // ------------------------------------------------------------------------
 // Project 4: new functions
@@ -55,10 +54,6 @@ struct FTE * load_segment_on_demand (struct SP * fault_page, struct file * file)
     fault_page->ppage = fget_page_lock (PAL_USER, fault_page->vaddr);
     // install that faulted page
     install_fault_page (fault_page);
-    // allocate physical memory from PINTOS 
-    uint8_t *kpage = palloc_get_page (PAL_USER);
-    // exception handling
-    if (kpage == NULL) return NULL;
 
     /* Load this page. */
     // set to previous file position
@@ -67,7 +62,7 @@ struct FTE * load_segment_on_demand (struct SP * fault_page, struct file * file)
     int page_read_bytes = fault_page->page_read_bytes;
     int page_zero_bytes = PGSIZE - page_read_bytes;
     if (page_read_bytes > 0)
-        file_read (file, kpage, page_read_bytes);
+        file_read (file, fault_page->ppage, page_read_bytes);
     // set zero to remaining byte
     memset (fault_page->ppage + page_read_bytes, 0, page_zero_bytes);
 
@@ -721,6 +716,7 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
         page->ppage = 0;
         page->offset = file_tell (file);
         file_seek (file, file_tell(file) + page_read_bytes);
+        // printf ("%x %d read:%d\n", upage, page->offset, page_read_bytes);
         // -----------------------------------------------------------------
         /* Advance. */
         read_bytes -= page_read_bytes;

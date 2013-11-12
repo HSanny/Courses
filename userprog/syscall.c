@@ -44,6 +44,8 @@ void validate_ptr (const void *vaddr);
 void check_buffer (void* buffer, unsigned size);
 void close_file (int);
 
+void check_filename (const char * filename);
+
 // SYSTEM CALL IMPLEMENTATION
 int open (const char *);
 bool create (const char *file, unsigned initial_size);
@@ -283,7 +285,6 @@ int filesize (int fd)
  * */
 int read (int fd, void *buffer, unsigned size) 
 {
-    // check the validity of buffer
     
     //if (buffer < thread_current()->_eip || buffer > PHYS_BASE) 
      //   exit(-1);   
@@ -413,7 +414,7 @@ void check_buffer (void* buffer, unsigned size)
     // basic principle is to check the validity of all address in that buffer
     for (i = 0; i < size; i++)
     {
-        validate_ptr((const void*) temp);
+        validate_ptr ((const void*) temp);
         temp++;
     }
 }
@@ -429,11 +430,39 @@ bool create (const char *file, unsigned initial_size)
     return success;
 }
 
+void check_filename (const char * filename) 
+{
+    if (filename == NULL) { 
+        printf ("exceptional exit\n");
+        exit (-1);
+    }
+    // refer to the whole file name string 
+    // demand page if filename distributed in separate pages
+    char * pos = filename;
+    struct thread * cur = thread_current();
+    uint32_t *pd = thread_current()->pagedir;
+    struct hash * spt = cur->spt;
+    struct SP *supp_page; 
+    void * phy_page;
+    while (*pos != '\0' && pos != NULL) {
+        supp_page = sp_table_find (spt, pos);
+        phy_page = pagedir_get_page (pd, pos);
+        if (phy_page == NULL) 
+            supplementary_page_load (supp_page, false);
+        printf ("%c\n", *pos);
+        pos++;
+    }
+}
+
 /* 
  * Open System Call
  * */
 int open (const char *file)
 {
+    printf ("open start ..\n");
+    check_filename (file);
+    printf ("check end ..\n");
+
     lock_acquire(&filesys_lock);
     struct file *f = filesys_open(file);
     if (!f) {
@@ -444,6 +473,7 @@ int open (const char *file)
     int fd = add_file(f);
     // release lock because of successful open
     lock_release(&filesys_lock);
+    printf ("fd: %d\n", fd);
     return fd;
 }
 

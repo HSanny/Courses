@@ -166,7 +166,6 @@ page_fault (struct intr_frame *f)
     // printf ("fault_addr: %x\n", fault_addr);
     struct SP * fault_page = sp_table_find (spt, fault_addr);
 
-    /*
     void * pbottom = (void*) (PHYS_BASE - cur->num_stack_pages * PGSIZE);
     // stack growth: if fault address is below the current esp
     if (fault_addr < pbottom) { // outside the stack
@@ -178,10 +177,8 @@ page_fault (struct intr_frame *f)
             return ;
         }
     }
-    */
 
     // demand paging system 
-    if (fault_page == NULL) printf ("fault_page: %x\n", fault_page);
     if (fault_page != NULL && (fault_page->executable || fault_page->evicted)
             && (!write || fault_page->writable)
             ) {
@@ -190,7 +187,7 @@ page_fault (struct intr_frame *f)
             supplementary_page_load (fault_page, false);
         } else if (fault_page->evicted) {
             // TODO: stuff about swap
-            printf ("swap\n");
+            // printf ("swap\n");
             ;
         }
         // if (frame != NULL) frame->locked = false;
@@ -198,13 +195,13 @@ page_fault (struct intr_frame *f)
     // ---------------------------------------------------------
     else {
         // TODO: cleanup the process resource before killing it
-
+        /*
         printf ("Page fault at %p: %s error %s page in %s context.\n",
                 fault_addr,
                 not_present ? "not present" : "rights violation",
                 write ? "writing" : "reading",
                 user ? "user" : "kernel");
-        printf("There is no crying in Pintos!\n");
+        printf("There is no crying in Pintos!\n"); */
         kill (f);
     }
 }

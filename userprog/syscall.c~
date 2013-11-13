@@ -431,13 +431,43 @@ bool create (const char *file, unsigned initial_size)
     return success;
 }
 
+void check_filename (const char * filename) 
+{
+    if (filename == NULL) { 
+        printf ("exceptional exit\n");
+        exit (-1);
+    }
+    // refer to the whole file name string 
+    // demand page if filename distributed in separate pages
+    char * pos = filename;
+    struct thread * cur = thread_current();
+    struct hash * spt = cur->spt;
+    struct SP *supp_page; 
+    struct FTE * phy_page;
+    bool first_char = true;
+    while (*pos != '\0' && ((uint64_t) pos % (uint64_t) PGSIZE != 0 || first_char)) {
+       printf ("char: %c\n", *pos);
+       // printf ("char: %c, phy_page: %x\n", *pos, phy_page->vaddr);
 
+        first_char = false;
+        pos++;
+    }
+    if ((uint64_t) pos % (uint64_t) PGSIZE == 0) {
+        phy_page = frame_table_find (pos - 1);
+        printf ("phy_vddr: %x \n", phy_page->vaddr);
+        supp_page = phy_page->supplementary_page;
+        struct SP * next_sp = sp_table_find(spt, supp_page->vaddr+PGSIZE);
+        supplementary_page_load (next_sp, false);
+    }
+
+}
 
 /* 
  * Open System Call
  * */
 int open (const char *file)
 {
+    check_filename (file);
 
     lock_acquire(&filesys_lock);
     struct file *f = filesys_open(file);

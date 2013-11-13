@@ -51,7 +51,7 @@ struct FTE * frame_table_find (void* paddr)
 
     // define the target
     struct FTE temp;
-    temp.paddr = (void *) ROUND_DOWN ( (int) paddr,  PGSIZE);
+    temp.paddr = (void *) ROUND_DOWN ( (uint64_t) paddr, (uint64_t) PGSIZE);
 
     // use lock to protect critical section
     lock_acquire (&frame_table_lock);

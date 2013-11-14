@@ -23,6 +23,8 @@
 #define MAX_ARGS 3
 #define USER_VADDR_BOTTOM ((void *) 0x08048000)
 #define TEST 0
+static bool check_string (const char* file);
+const void* check_valid_uaddr(const void * uaddr, int size);
 
 // ORIGINALLY PROVIDED FUNCITON
 static void syscall_handler (struct intr_frame *);
@@ -55,6 +57,7 @@ void close(int);
 bool remove (const char *);
 tid_t exec(const char *);
 int wait (tid_t pid);
+
 
     void
 syscall_init (void) 
@@ -112,7 +115,7 @@ syscall_handler (struct intr_frame *f UNUSED)
             {
                 get_ptr(f, &arg[0], 1);
                 arg[0] = find_kernel_ptr((const void *) arg[0]);
-                f->eax = open((const char *) arg[0]);
+                f->eax = open((char *) arg[0]);
                 break; 				
             }
         case SYS_FILESIZE:
@@ -431,10 +434,10 @@ bool create (const char *file, unsigned initial_size)
     return success;
 }
 
-void check_filename (const char * filename) 
+void check_filename ( char * filename) 
 {
     if (filename == NULL) { 
-        printf ("exceptional exit\n");
+       //  printf ("exceptional exit\n");
         exit (-1);
     }
     // refer to the whole file name string 
@@ -455,19 +458,21 @@ void check_filename (const char * filename)
     if ((uint64_t) pos % (uint64_t) PGSIZE == 0) {
         phy_page = frame_table_find (pos - 1);
         printf ("phy_vddr: %x \n", phy_page->vaddr);
-        supp_page = phy_page->supplementary_page;
-        struct SP * next_sp = sp_table_find(spt, supp_page->vaddr+PGSIZE);
+        struct SP * next_sp = sp_table_find(spt, phy_page->vaddr+PGSIZE);
         supplementary_page_load (next_sp, false);
     }
-
 }
 
 /* 
  * Open System Call
  * */
-int open (const char *file)
+int open (char *file)
 {
-    check_filename (file);
+    if (!check_string(file))
+    {
+        check_string(file);
+    }
+    // check_filename (file);
 
     lock_acquire(&filesys_lock);
     struct file *f = filesys_open(file);
@@ -479,7 +484,7 @@ int open (const char *file)
     int fd = add_file(f);
     // release lock because of successful open
     lock_release(&filesys_lock);
-    printf ("fd: %d\n", fd);
+    // printf ("fd: %d\n", fd);
     return fd;
 }
 
@@ -572,3 +577,63 @@ int wait (tid_t pid)
     return process_wait(pid);
 }
 
+
+
+const void* check_valid_uaddr(const void * uaddr, int size) 
+{
+    if (uaddr == NULL) 
+    {
+        return NULL;
+    }
+
+    struct hash* spt = thread_current()->spt;
+    const void *usaddr = uaddr; //user start addr 
+    void *ueaddr = (void*)((char*)uaddr + size - 1); //user end addr
+
+    uint32_t *pd = thread_current()->pagedir; //WHAT THREAD IS THIS?!
+
+    //validate both the start and end addresses
+    //TODO NEED TO VALIDATE ALL PAGES IN BETWEEN
+    const void* cur;
+    for (cur=usaddr; cur<ueaddr; cur+=4096) {
+        struct SP* supp_page = sp_table_find(spt, cur);
+        if (!is_user_vaddr(cur) || supp_page == NULL)        return NULL;
+
+        void* page = pagedir_get_page (pd, cur);
+        if (page == NULL) supplementary_page_load(supp_page, false);
+    }
+
+    struct SP* supp_page = sp_table_find(spt, ueaddr);
+    if(!is_user_vaddr(ueaddr) || supp_page == NULL) return NULL;
+
+    void *keaddr = pagedir_get_page (pd, ueaddr);
+
+    // one of these is out of the bounds 
+    if (keaddr==NULL) 
+    {        
+        supplementary_page_load(supp_page, false);
+    }
+
+    return uaddr;
+}
+
+
+static bool check_string (const char* file)
+{
+    if (file == NULL) 
+    {
+        return false;
+    }
+
+    const char* cur = file;
+
+    if(check_valid_uaddr(cur,sizeof(char)) == NULL) return false;
+    while(*cur != '\0')
+    {
+        cur = cur + 1;
+        if(check_valid_uaddr(cur,sizeof(char)) == NULL) return false;
+    }
+    if(check_valid_uaddr(cur,sizeof(char)) == NULL) return false;
+
+    return true;
+}

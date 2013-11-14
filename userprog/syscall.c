@@ -23,6 +23,8 @@
 #define MAX_ARGS 3
 #define USER_VADDR_BOTTOM ((void *) 0x08048000)
 #define TEST 0
+static bool check_string (const char* file);
+const void* check_valid_uaddr(const void * uaddr, int size);
 
 // ORIGINALLY PROVIDED FUNCITON
 static void syscall_handler (struct intr_frame *);
@@ -55,6 +57,7 @@ void close(int);
 bool remove (const char *);
 tid_t exec(const char *);
 int wait (tid_t pid);
+
 
     void
 syscall_init (void) 
@@ -97,22 +100,22 @@ syscall_handler (struct intr_frame *f UNUSED)
         case SYS_CREATE:
             {
                 get_ptr(f, &arg[0], 2);
-                arg[0] = find_kernel_ptr((const void *) arg[0]);
+                // arg[0] = find_kernel_ptr((const void *) arg[0]);
                 f->eax = create((const char *)arg[0], (unsigned) arg[1]);
                 break;
             }
         case SYS_REMOVE:
             {
                 get_ptr(f, &arg[0], 1);
-                arg[0] = find_kernel_ptr((const void *) arg[0]);
+                // arg[0] = find_kernel_ptr((const void *) arg[0]);
                 f->eax = remove((const char *) arg[0]);
                 break;
             }
         case SYS_OPEN:
             {
                 get_ptr(f, &arg[0], 1);
-                arg[0] = find_kernel_ptr((const void *) arg[0]);
-                f->eax = open((const char *) arg[0]);
+                // arg[0] = find_kernel_ptr((const void *) arg[0]);
+                f->eax = open((char *) arg[0]);
                 break; 				
             }
         case SYS_FILESIZE:
@@ -125,7 +128,7 @@ syscall_handler (struct intr_frame *f UNUSED)
             {
                 get_ptr(f, &arg[0], 3);
                 check_buffer((void *) arg[1], (unsigned) arg[2]);
-                arg[1] = find_kernel_ptr((void *) arg[1]);
+               // arg[1] = find_kernel_ptr((void *) arg[1]);
                 f->eax = read(arg[0], (void *) arg[1],
                         (unsigned) arg[2]);
                 break;
@@ -134,7 +137,7 @@ syscall_handler (struct intr_frame *f UNUSED)
             { 
                 get_ptr(f, &arg[0], 3);
                 check_buffer((void *) arg[1], (unsigned) arg[2]);
-                arg[1] = find_kernel_ptr((const void *) arg[1]);
+                // arg[1] = find_kernel_ptr((const void *) arg[1]);
                 f->eax = write(arg[0], (const void *) arg[1],
                         (unsigned) arg[2]);
                 break;
@@ -335,6 +338,7 @@ int read (int fd, void *buffer, unsigned size)
  * */
 int write (int fd, const void *buffer, unsigned size)
 {
+    validate_ptr (buffer);
     if (fd == STDOUT_FILENO)
     {
         putbuf(buffer, size);
@@ -367,7 +371,7 @@ int find_kernel_ptr (const void *vaddr)
     void *ptr = pagedir_get_page (thread_current()->pagedir, vaddr);
     if (ptr == NULL)
         exit(ERROR);
-    return (int) ptr;
+    return (uint32_t) ptr;
 }
 
 
@@ -397,7 +401,7 @@ void get_ptr (struct intr_frame *f, int *arg, int n)
  * */
 void validate_ptr (const void *vaddr)
 {
-    if (!is_user_vaddr(vaddr) || vaddr < USER_VADDR_BOTTOM)
+    if (!is_user_vaddr(vaddr) || vaddr < USER_VADDR_BOTTOM || vaddr > PHYS_BASE)
     {
         if (TEST) printf("%s\n",thread_current()->name);
         exit(ERROR);
@@ -425,6 +429,8 @@ void check_buffer (void* buffer, unsigned size)
  * */
 bool create (const char *file, unsigned initial_size)
 {
+    if (file == NULL) exit (-1);
+    validate_ptr (file);
     lock_acquire(&filesys_lock);
     bool success = filesys_create (file, initial_size);
     lock_release(&filesys_lock);
@@ -432,14 +438,25 @@ bool create (const char *file, unsigned initial_size)
 }
 
 
-
 /* 
  * Open System Call
  * */
-int open (const char *file)
+int open ( const char *file)
 {
+    /*
+    if (!check_string(file))
+    {
+        check_string(file);
+    } */
+    if (file == NULL) exit (ERROR);
+    validate_ptr (file);
+    
+    char * pos = file;
+    // printf ("file_addr: %x\n", file);
 
-    lock_acquire(&filesys_lock);
+    
+    lock_acquire (&filesys_lock);
+    // printf ("string: %s \n", file);
     struct file *f = filesys_open(file);
     if (!f) {
         // release because of file-not-found error
@@ -449,7 +466,7 @@ int open (const char *file)
     int fd = add_file(f);
     // release lock because of successful open
     lock_release(&filesys_lock);
-    printf ("fd: %d\n", fd);
+    // printf ("fd: %d\n", fd);
     return fd;
 }
 
@@ -503,6 +520,7 @@ void close_file (int fd)
  * */
 bool remove (const char *file)
 {
+    validate_ptr (file);
     lock_acquire(&filesys_lock);
     bool success = filesys_remove(file);
     lock_release(&filesys_lock);
@@ -530,7 +548,6 @@ tid_t exec(const char *cmdline){
     if ( cp->isLoaded == LOADED) {
         return pid;
     }
-
     return ERROR;
 }
 
@@ -542,3 +559,63 @@ int wait (tid_t pid)
     return process_wait(pid);
 }
 
+
+
+const void* check_valid_uaddr(const void * uaddr, int size) 
+{
+    if (uaddr == NULL) 
+    {
+        return NULL;
+    }
+
+    struct hash* spt = thread_current()->spt;
+    const void *usaddr = uaddr; //user start addr 
+    void *ueaddr = (void*)((char*)uaddr + size - 1); //user end addr
+
+    uint32_t *pd = thread_current()->pagedir; //WHAT THREAD IS THIS?!
+
+    //validate both the start and end addresses
+    //TODO NEED TO VALIDATE ALL PAGES IN BETWEEN
+    const void* cur;
+    for (cur=usaddr; cur<ueaddr; cur+=4096) {
+        struct SP* supp_page = sp_table_find(spt, cur);
+        if (!is_user_vaddr(cur) || supp_page == NULL)        return NULL;
+
+        void* page = pagedir_get_page (pd, cur);
+        if (page == NULL) supplementary_page_load(supp_page, false);
+    }
+
+    struct SP* supp_page = sp_table_find(spt, ueaddr);
+    if (!is_user_vaddr(ueaddr) || supp_page == NULL) return NULL;
+
+    void *keaddr = pagedir_get_page (pd, ueaddr);
+
+    // one of these is out of the bounds 
+    if (keaddr==NULL) 
+    {        
+        supplementary_page_load(supp_page, false);
+    }
+
+    return uaddr;
+}
+
+
+static bool check_string (const char* file)
+{
+    if (file == NULL) 
+    {
+        return false;
+    }
+
+    const char* cur = file;
+
+    if(check_valid_uaddr(cur,sizeof(char)) == NULL) return false;
+    while(*cur != '\0')
+    {
+        cur = cur + 1;
+        if(check_valid_uaddr(cur,sizeof(char)) == NULL) return false;
+    }
+    if(check_valid_uaddr(cur,sizeof(char)) == NULL) return false;
+
+    return true;
+}

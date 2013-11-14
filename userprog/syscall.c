@@ -115,6 +115,7 @@ syscall_handler (struct intr_frame *f UNUSED)
             {
                 get_ptr(f, &arg[0], 1);
                 // arg[0] = find_kernel_ptr((const void *) arg[0]);
+                if (sp_table_find (thread_current()->spt, (char *)arg[0]) == NULL) exit (ERROR);
                 f->eax = open((char *) arg[0]);
                 break; 				
             }
@@ -129,6 +130,7 @@ syscall_handler (struct intr_frame *f UNUSED)
                 get_ptr(f, &arg[0], 3);
                 check_buffer((void *) arg[1], (unsigned) arg[2]);
                // arg[1] = find_kernel_ptr((void *) arg[1]);
+                if (sp_table_find (thread_current()->spt, (char *)arg[0]) == NULL) exit (ERROR);
                 f->eax = read(arg[0], (void *) arg[1],
                         (unsigned) arg[2]);
                 break;
@@ -451,9 +453,7 @@ int open ( const char *file)
     if (file == NULL) exit (ERROR);
     validate_ptr (file);
     
-    char * pos = file;
     // printf ("file_addr: %x\n", file);
-
     
     lock_acquire (&filesys_lock);
     // printf ("string: %s \n", file);

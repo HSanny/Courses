@@ -110,3 +110,25 @@ struct SP * sp_table_remove (struct hash * page_table, void * vaddr)
     }
     return removed;
 }
+
+struct FTE* supplementary_page_load (struct SP* fault_page, bool locked)
+{
+    struct FTE* frame = NULL;
+    /*if (fault_page->mmentry != NULL) 
+    {
+        frame = lazy_load_segment(fault_page, fault_page->mmentry->backup_file);
+    } 
+    else*/ 
+    if(fault_page->executable && !fault_page->modified)
+    {
+        frame = load_segment_on_demand(fault_page, fault_page->owner->file_deny_execute);
+    } 
+    else if (fault_page->evicted)
+    {
+        if(fault_page->executable && !fault_page->modified) PANIC("EVICT EXEC\n");
+        // frame = read_from_swap(fault_page);
+    }
+
+    // frame->locked = locked;
+    return frame;
+}

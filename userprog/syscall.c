@@ -70,7 +70,11 @@ syscall_init (void)
 syscall_handler (struct intr_frame *f UNUSED) 
 {
     int arg[MAX_ARGS];
+ //    printf ("esp: %x \n", f ->esp);
+  //   printf ("syscall_handler invoked ..\n");
+   //  printf ("%d\n", * (int *) f->esp);
     validate_ptr((const void*) f->esp);
+// check_valid_uaddr((const void*) f->esp, 4);
     switch (* (int *) f->esp)
     {
         case SYS_HALT:
@@ -403,6 +407,7 @@ void get_ptr (struct intr_frame *f, int *arg, int n)
  * */
 void validate_ptr (const void *vaddr)
 {
+    check_valid_uaddr(vaddr, sizeof  (void *));
     if (!is_user_vaddr(vaddr) || vaddr < USER_VADDR_BOTTOM || vaddr > PHYS_BASE)
     {
         if (TEST) printf("%s\n",thread_current()->name);
@@ -433,6 +438,7 @@ bool create (const char *file, unsigned initial_size)
 {
     if (file == NULL) exit (-1);
     validate_ptr (file);
+    // check_valid_uaddr(file, 1);
     lock_acquire(&filesys_lock);
     bool success = filesys_create (file, initial_size);
     lock_release(&filesys_lock);

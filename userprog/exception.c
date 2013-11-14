@@ -133,7 +133,6 @@ page_fault (struct intr_frame *f)
     bool user;         /* True: access by user, false: access by kernel. */
     void *fault_addr;  /* Fault address. */
 
-    //printf ("fault_addr: %x\n", fault_addr);
     /* Obtain faulting address, the virtual address that was
        accessed to cause the fault.  It may point to code or to
        data.  It is not necessarily the address of the instruction
@@ -143,6 +142,7 @@ page_fault (struct intr_frame *f)
        (#PF)". */
     asm ("movl %%cr2, %0" : "=r" (fault_addr));
 
+    // printf ("fault_addr: %x\n", fault_addr);
     /* Turn interrupts back on (they were only off so that we could
        be assured of reading CR2 before it changed). */
     intr_enable ();
@@ -197,37 +197,14 @@ page_fault (struct intr_frame *f)
     else {
         // TODO: cleanup the process resource before killing it
         
-        /*
         printf ("Page fault at %p: %s error %s page in %s context.\n",
                 fault_addr,
                 not_present ? "not present" : "rights violation",
                 write ? "writing" : "reading",
                 user ? "user" : "kernel");
-        printf("There is no crying in Pintos!\n"); 
-        */
         kill (f);
     }
    
 }
 
-struct FTE* supplementary_page_load (struct SP* fault_page, bool locked)
-{
-    struct FTE* frame = NULL;
-    /*if (fault_page->mmentry != NULL) 
-    {
-        frame = lazy_load_segment(fault_page, fault_page->mmentry->backup_file);
-    } 
-    else*/ 
-    if(fault_page->executable && !fault_page->modified)
-    {
-        frame = load_segment_on_demand(fault_page, fault_page->owner->file_deny_execute);
-    } 
-    else if (fault_page->evicted)
-    {
-        if(fault_page->executable && !fault_page->modified) PANIC("EVICT EXEC\n");
-        // frame = read_from_swap(fault_page);
-    }
 
-    // frame->locked = locked;
-    return frame;
-}

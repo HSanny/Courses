@@ -169,7 +169,7 @@ page_fault (struct intr_frame *f)
     void * pbottom = (void*) (PHYS_BASE - cur->num_stack_pages * PGSIZE);
     // stack growth: if fault address is below the current esp
     if (fault_addr < pbottom) { // outside the stack
-        if (fault_addr > f->esp ||  
+        if (fault_addr >= f->esp ||  
             (int) fault_addr == (int) f->esp - 4 ||  // push instruction
             (int) fault_addr == (int) f->esp - 32)   // pusha instruction
         {

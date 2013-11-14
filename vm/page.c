@@ -1,4 +1,5 @@
 #include "lib/round.h"
+#include "lib/kernel/hash.h"
 #include "vm/page.h"
 #include "vm/frame.h"
 #include "threads/malloc.h"
@@ -18,6 +19,13 @@ bool sp_hash_less (const struct hash_elem *a, const struct hash_elem *b,
     struct SP * spa = hash_entry (a, struct SP, SP_helem);
     struct SP * spb = hash_entry (b, struct SP, SP_helem);
     return spa->vaddr < spb->vaddr;
+}
+
+/* Define the destructor for the supplemental page table */
+void sp_hash_destruct (struct hash_elem * elem, void * aux UNUSED)
+{
+    struct SP * sp = hash_entry (elem, struct SP, SP_helem);
+    free (sp); 
 }
 
 bool sp_table_init (struct hash * page_table) 

@@ -32,6 +32,8 @@ unsigned sp_hash (const struct hash_elem * elem, void * aux UNUSED);
 bool sp_hash_less (const struct hash_elem * a, const struct hash_elem * b,
        void * aux UNUSED);
 
+void sp_hash_destruct (struct hash_elem * elem, void * aux UNUSED);
+
 bool sp_table_init (struct hash * spt);
 
 struct SP * sp_table_put (struct hash * page_table, void * vaddr);

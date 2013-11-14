@@ -379,17 +379,7 @@ process_exit (void)
         pagedir_activate (NULL);
         pagedir_destroy (pd);
     }
-    // ------------------------------------------------------
-    // reclaim all supplemental page 
-    struct hash_iterator i;
-    hash_first (&i, cur->spt);
-    while (hash_next (&i)) {
-        struct SP * sp = hash_entry (hash_cur(&i), struct SP, SP_helem);
-         hash_delete (cur->spt, &sp->SP_helem);
-        // free (sp);
-    }
-    free (cur->spt);
-    // ------------------------------------------------------
+    hash_clear (cur->spt, sp_hash_destruct);
 }
 
 /* Sets up the CPU for running user code in the current

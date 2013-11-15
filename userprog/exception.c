@@ -7,6 +7,10 @@
 #include "threads/vaddr.h"
 #include "syscall.h"
 #include "process.h"
+#include "lib/kernel/hash.h"
+#ifdef VM
+#include "vm/swap.h"
+#endif
 
 /* Number of page faults processed. */
 static long long page_fault_cnt;
@@ -182,16 +186,16 @@ page_fault (struct intr_frame *f)
     if (fault_page != NULL && (fault_page->executable || fault_page->evicted)
             && (!write || fault_page->writable)
             ) {
+        printf ("size: %d\n", hash_size(&frame_table));
         struct FTE * frame = NULL;
         if (fault_page->executable && !fault_page->modified) {
           //  printf ("demand load one page\n");
             supplementary_page_load (fault_page, false);
         } else if (fault_page->evicted) {
             // TODO: stuff about swap
-            // printf ("swap\n");
-            ;
+            frame = swap_pool_read (fault_page);
+            if (frame != NULL) frame->locked = false;
         }
-        // if (frame != NULL) frame->locked = false;
     }
     // ---------------------------------------------------------
     else {

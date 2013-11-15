@@ -12,6 +12,8 @@
 
 #include "vm/page.h"
 #include "vm/swap.h"
+#include "lib/random.h"
+#include "lib/kernel/hash.h"
 
 
 struct FTE * fget_page_aux (enum palloc_flags flags, void * vaddr);
@@ -96,9 +98,7 @@ struct FTE * frame_table_remove (void* paddr)
     struct FTE * removed = NULL;
 
     // define the target stucture
-    // FIXME: may be problematic
     struct FTE temp;
-    // TODO: explain why use ROUND_DOWN
     temp.paddr = (void *) ROUND_DOWN ((int) paddr, PGSIZE);
 
     // delete the targeted hash table entry
@@ -115,7 +115,6 @@ struct FTE * frame_table_remove (void* paddr)
 /* allocate a frame and update the frame table */
 void * fget_page (enum palloc_flags flags, void * vaddr) 
 {
-//    printf("get\n");
     // acquire the lock
     lock_acquire (&frame_table_lock);
 
@@ -150,15 +149,32 @@ void * fget_page_lock (enum palloc_flags flags, void * vaddr)
 /* Rountine abstraction for getting a page */
 struct FTE * fget_page_aux (enum palloc_flags flags, void * vaddr) 
 {
-//    printf("aux\n");
     // make sure the resource in user pool is allocated, rather than kernel's
     ASSERT ((flags & PAL_USER) != 0);
 
     // physically apply for a memory location
     void * paddr = palloc_get_page (flags);
     if (paddr == NULL) {
-        // page_fault(thread_current()->interrupt);
-        // TODO: add mechanism for page fault, swapping out is required
+        // physical memory full: swapping out is required
+        unsigned long random_num = random_ulong ();
+        size_t size = hash_size (&frame_table);
+        printf ("hash_size: %d, random: %lu\n", size, random_num);
+        // int n = random_num % size;
+        int n = 1;
+
+        struct hash_iterator i;        
+        struct FTE * kicked_out = NULL;
+        hash_first(&i, &frame_table);
+        while (hash_next (&i)) {
+            kicked_out = hash_entry (hash_cur(&i), struct FTE, FTE_helem); 
+            if ( (n --) <= 0) break;
+        }
+        if (kicked_out != NULL) {
+            printf ("kick_addr: %x\n", kicked_out->paddr);
+            paddr = swap_out (kicked_out);
+        }
+        kicked_out = frame_table_remove(paddr);
+        free (kicked_out);
     }
 
     // get the page table owned by this process
@@ -206,7 +222,6 @@ void ffree_page (void *paddr)
 /* evict the frame to be evicted */
 struct FTE * fget_evict (void) 
 {
-//    printf("evict\n");
 
     return NULL;
 }

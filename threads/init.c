@@ -147,6 +147,7 @@ main (void)
         shutdown ();
         thread_exit ();
     }
+    swap_init ();
     //#################################################
 #endif
 

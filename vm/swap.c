@@ -19,7 +19,7 @@ void swap_init (void)
     lock_init (&swap_lock);
     // initialize the number of available slots
     struct block * swap_block = block_get_role (BLOCK_SWAP);
-    size_t num_swap_slots = block_size (swap_block) / SECTOR_PER_PAGE;
+    size_t num_swap_slots = block_size (swap_block) / SECTOR_PER_SLOT;
     // initialize the bitmap for the swap space
     swap_map = bitmap_create (num_swap_slots);
 }
@@ -42,6 +42,7 @@ void * swap_out (struct FTE * evict)
         PANIC("swap space full..");
 
     lock_release (&swap_lock);
+    return ppage;
 }
 
 bool swap_out_core (struct FTE * fte, bool dirty) 
@@ -50,13 +51,13 @@ bool swap_out_core (struct FTE * fte, bool dirty)
     if (fte->supplementary_page->executable) {
         if (fte->supplementary_page->modified || dirty) {
             fte->supplementary_page->modified = true;
-            return write_to_swap(fte);
+            return swap_pool_write(fte);
         }
         else return true;
     }  
     // for general data segment
     else {
-        return write_to_swap(fte);
+        return swap_pool_write(fte);
     }
 }
 
@@ -98,10 +99,10 @@ struct FTE * swap_pool_read (struct SP * fault_page)
     struct block * swap_block = block_get_role (BLOCK_SWAP);
 
     // mutual exclusion: prevent simultaneous writing
-    lock_acquire (&swap_table.swap_lock);
+    lock_acquire (&swap_lock);
 
     // get a not evictable page 
-    void * ppage = fget_page_lock (fault_page->vaddr);
+    void * ppage = fget_page_lock (PAL_USER, fault_page->vaddr);
     int i;
     for (i = 0; i < SECTOR_PER_SLOT; i ++) {
         void * paddr = ppage + BLOCK_SECTOR_SIZE * i;
@@ -115,7 +116,7 @@ struct FTE * swap_pool_read (struct SP * fault_page)
     fault_page->ppage = ppage;
     // update the bitmap: flip the bit associted with the swapped-in slot
     bitmap_flip (swap_map, swap_slot);
-    lock_release (&swap_table.swap_lock);
+    lock_release (&swap_lock);
 
     return frame_table_find(ppage);
 }

@@ -6,9 +6,9 @@
 
 void swap_init (void);
 
-void * swap_get_frame (struct FTE * evict);
+void * swap_out (struct FTE * evict);
 
-bool swap_out (struct FTE * fte, bool dirty);
+bool swap_out_core (struct FTE * fte, bool dirty);
 
 bool swap_pool_write (struct FTE * frame);
 

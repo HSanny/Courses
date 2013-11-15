@@ -4,6 +4,7 @@
 #include "threads/synch.h"
 #include "userprog/pagedir.h"
 #include "userprog/exception.h"
+#include "userprog/process.h"
 #include "devices/block.h"
 #include "lib/kernel/bitmap.h"
 #include "userprog/pagedir.h"
@@ -21,7 +22,7 @@ void swap_init (void)
     struct block * swap_block = block_get_role (BLOCK_SWAP);
     size_t num_swap_slots = block_size (swap_block) / SECTOR_PER_SLOT;
     // initialize the bitmap for the swap space
-    swap_map = bitmap_create (num_swap_slots);
+    swap_map = bitmap_create (1024);
 }
 
 void * swap_out (struct FTE * evict)
@@ -72,6 +73,7 @@ bool swap_pool_write (struct FTE * frame)
 
     // keep track of the swapping position in SPTE
     frame->supplementary_page->swap_slot = swap_slot;
+    frame->supplementary_page->evicted = true;
     // get the global swap partition
     struct block * swap_block = block_get_role (BLOCK_SWAP);
     void * data_base = frame->paddr;
@@ -94,18 +96,20 @@ struct FTE * swap_pool_read (struct SP * fault_page)
     // the fault page must be currently evicted
     ASSERT (fault_page->evicted == true);
 
-    // obtain the swapped slot index and swap disk block
-    size_t swap_slot = fault_page->swap_slot;
-    struct block * swap_block = block_get_role (BLOCK_SWAP);
+    // get a not evictable page 
+    void * ppage = fget_page_lock (PAL_USER, fault_page->vaddr);
 
     // mutual exclusion: prevent simultaneous writing
     lock_acquire (&swap_lock);
+    // install one new page 
+    install_page (fault_page->vaddr, ppage, fault_page->writable);
 
-    // get a not evictable page 
-    void * ppage = fget_page_lock (PAL_USER, fault_page->vaddr);
+    // obtain the swapped slot index and swap disk block
+    size_t swap_slot = fault_page->swap_slot;
+    struct block * swap_block = block_get_role (BLOCK_SWAP);
     int i;
     for (i = 0; i < SECTOR_PER_SLOT; i ++) {
-        void * paddr = ppage + BLOCK_SECTOR_SIZE * i;
+        void * paddr = (char *) ppage + BLOCK_SECTOR_SIZE * i;
         uint32_t sector = (swap_slot * SECTOR_PER_SLOT) + i;
         block_read (swap_block, sector, paddr);
     }

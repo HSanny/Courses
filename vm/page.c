@@ -121,15 +121,15 @@ struct FTE* supplementary_page_load (struct SP* fault_page, bool locked)
         frame = lazy_load_segment(fault_page, fault_page->mmentry->backup_file);
     } 
     else*/ 
-    if(fault_page->executable && !fault_page->modified)
+    if (fault_page->executable && !fault_page->modified)
     {
         frame = load_segment_on_demand(fault_page, fault_page->owner->file_deny_execute);
         frame->locked = locked;
     } 
     else if (fault_page->evicted)
     {
-        if(fault_page->executable && !fault_page->modified) PANIC("EVICT EXEC\n");
-        frame = swap_pool_read(fault_page);
+        ASSERT(fault_page->executable && !fault_page->modified);
+        frame = swap_pool_read (fault_page);
         frame->locked = locked;
     }
     return frame;

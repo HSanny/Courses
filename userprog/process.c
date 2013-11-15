@@ -33,8 +33,6 @@
 static bool TEST = 0;
 
 // signature
-static bool install_page (void *upage, void *kpage, bool writable);
-bool install_fault_page (struct SP * fp);
 static thread_func start_process NO_RETURN;
 static bool load (const char *cmdline, void (**eip) (void), void **esp);
 
@@ -745,7 +743,7 @@ setup_stack (void **esp)
    with palloc_get_page().
    Returns true on success, false if UPAGE is already mapped or
    if memory allocation fails. */
-    static bool
+    bool
 install_page (void *upage, void *kpage, bool writable)
 {
     struct thread *t = thread_current ();

@@ -156,25 +156,29 @@ struct FTE * fget_page_aux (enum palloc_flags flags, void * vaddr)
     void * paddr = palloc_get_page (flags);
     if (paddr == NULL) {
         // physical memory full: swapping out is required
-        unsigned long random_num = random_ulong ();
-        size_t size = hash_size (&frame_table);
-        printf ("hash_size: %d, random: %lu\n", size, random_num);
-        // int n = random_num % size;
-        int n = 1;
 
-        struct hash_iterator i;        
-        struct FTE * kicked_out = NULL;
-        hash_first(&i, &frame_table);
-        while (hash_next (&i)) {
-            kicked_out = hash_entry (hash_cur(&i), struct FTE, FTE_helem); 
-            if ( (n --) <= 0) break;
-        }
+        struct FTE * kicked_out = fget_evict ();
         if (kicked_out != NULL) {
-            printf ("kick_addr: %x\n", kicked_out->paddr);
-            paddr = swap_out (kicked_out);
+            printf ("kick paddr: %x, vaddr: %x, evicted: %d \n"
+                    , kicked_out->paddr, kicked_out->vaddr, kicked_out->supplementary_page->evicted);
+            if (!kicked_out->supplementary_page->executable || 
+                    kicked_out->supplementary_page->modified) {
+                // swap out
+                // printf ("aaaaa\n");
+                kicked_out->supplementary_page->evicted = true;
+                paddr = swap_out (kicked_out);
+            } else {
+                // no swapping out
+                // printf ("bbbb\n");
+                kicked_out->supplementary_page->evicted = false;
+                paddr = kicked_out->paddr;
+            }
+            kicked_out = frame_table_remove(paddr);
+            free (kicked_out);
         }
-        kicked_out = frame_table_remove(paddr);
-        free (kicked_out);
+        else {
+            printf ("kicked out frame not found..\n");
+        }
     }
 
     // get the page table owned by this process
@@ -193,7 +197,6 @@ struct FTE * fget_page_aux (enum palloc_flags flags, void * vaddr)
 /* deallocate one frame */
 void ffree_page (void *paddr)
 {
-//    printf("free\n");
     ASSERT ((int) paddr % PGSIZE == 0);
 
     struct thread * cur = thread_current();
@@ -222,7 +225,19 @@ void ffree_page (void *paddr)
 /* evict the frame to be evicted */
 struct FTE * fget_evict (void) 
 {
-
+    while (true)  {
+        struct hash_iterator i;
+        hash_first(&i, &frame_table);
+        while (hash_next(&i)) {
+            struct FTE* f = hash_entry(hash_cur(&i), struct FTE, FTE_helem);
+            if (pagedir_is_accessed(f->supplementary_page->pagedir, f->vaddr))
+                pagedir_set_accessed(f->supplementary_page->pagedir, f->vaddr, false);
+            else if(!f->locked ) {
+                f->locked = true;
+                return f;
+            }
+        }
+    }
     return NULL;
 }
 
@@ -231,7 +246,7 @@ void fcleanup (void)
 {
     struct thread * cur = thread_current();
     lock_acquire (&frame_table_lock);
-    
+
     struct hash_elem * delete_record [100];
     int s;
     for (s = 0; s < 100; s ++) {
@@ -256,7 +271,7 @@ void fcleanup (void)
             hash_delete(&frame_table, delete_record[s]);
         }
     }
-   
+
     lock_release (&frame_table_lock);
 }
 

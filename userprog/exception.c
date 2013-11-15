@@ -146,7 +146,8 @@ page_fault (struct intr_frame *f)
        (#PF)". */
     asm ("movl %%cr2, %0" : "=r" (fault_addr));
 
-    // printf ("fault_addr: %x\n", fault_addr);
+    if (fault_addr == 0) return ;
+    printf ("fault_addr: %x\n", fault_addr);
     /* Turn interrupts back on (they were only off so that we could
        be assured of reading CR2 before it changed). */
     intr_enable ();
@@ -185,22 +186,13 @@ page_fault (struct intr_frame *f)
     // demand paging system 
     if (fault_page != NULL && (fault_page->executable || fault_page->evicted)
             && (!write || fault_page->writable)
-            ) {
-        printf ("size: %d\n", hash_size(&frame_table));
+       ) {
         struct FTE * frame = NULL;
-        if (fault_page->executable && !fault_page->modified) {
-          //  printf ("demand load one page\n");
-            supplementary_page_load (fault_page, false);
-        } else if (fault_page->evicted) {
-            // TODO: stuff about swap
-            frame = swap_pool_read (fault_page);
-            if (frame != NULL) frame->locked = false;
-        }
+        supplementary_page_load (fault_page, false);
     }
     // ---------------------------------------------------------
     else {
         // TODO: cleanup the process resource before killing it
-        
         printf ("Page fault at %p: %s error %s page in %s context.\n",
                 fault_addr,
                 not_present ? "not present" : "rights violation",
@@ -208,7 +200,7 @@ page_fault (struct intr_frame *f)
                 user ? "user" : "kernel");
         kill (f);
     }
-   
+
 }
 
 

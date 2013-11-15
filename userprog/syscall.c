@@ -301,6 +301,7 @@ int read (int fd, void *buffer, unsigned size)
          !sp_table_find(cur->spt, buffer+size)->writable )
         exit (ERROR);
 
+
     unsigned read_byte = 0;
     // READ FROM THE EXTERNAL KEYBOARD
     if (fd == STDIN_FILENO) {
@@ -334,6 +335,14 @@ int read (int fd, void *buffer, unsigned size)
         // read bytes from specified file
         lock_acquire(&filesys_lock);
         read_byte = file_read (f, buffer, size);
+        //------------------------------------------------ 
+        int j;
+        for (j = 0; j < size ; j++) {
+            void * baddr = j + buffer;
+            struct SP * sp = sp_table_find (cur->spt, baddr);
+            sp->modified = true;
+        }
+        //------------------------------------------------
         lock_release(&filesys_lock);
     }
     if (TEST) printf("read_byte : %d\n", read_byte);
@@ -355,7 +364,7 @@ int write (int fd, const void *buffer, unsigned size)
     else if(fd == STDIN_FILENO){
         exit(-1);
     }
-    else{
+    else {
         // get the corresponding file structure
         struct file *f = get_file_by_fd(fd);
         // return error if required file is not found
@@ -565,8 +574,6 @@ int wait (tid_t pid)
 {
     return process_wait(pid);
 }
-
-
 
 const void* check_valid_uaddr(const void * uaddr, int size) 
 {

@@ -295,9 +295,11 @@ int filesize (int fd)
  * */
 int read (int fd, void *buffer, unsigned size) 
 {
-    
-    //if (buffer < thread_current()->_eip || buffer > PHYS_BASE) 
-     //   exit(-1);   
+    // check the head and end of buffer is modifiable
+    struct thread * cur = thread_current();
+    if (!sp_table_find(cur->spt, buffer)->writable || 
+         !sp_table_find(cur->spt, buffer+size)->writable )
+        exit (ERROR);
 
     unsigned read_byte = 0;
     // READ FROM THE EXTERNAL KEYBOARD
@@ -407,12 +409,17 @@ void get_ptr (struct intr_frame *f, int *arg, int n)
  * */
 void validate_ptr (const void *vaddr)
 {
-    check_valid_uaddr(vaddr, sizeof  (void *));
+    // check the validity of virtual address
     if (!is_user_vaddr(vaddr) || vaddr < USER_VADDR_BOTTOM || vaddr > PHYS_BASE)
     {
         if (TEST) printf("%s\n",thread_current()->name);
         exit(ERROR);
     }
+    // check whether this virtual address is allocated
+    struct thread * cur = thread_current();
+    if (sp_table_find(cur->spt, vaddr) == NULL) exit(ERROR);
+    // demand page if allocated but not loaded into physical memory
+    check_valid_uaddr(vaddr, sizeof  (void *));
 }
 
 
@@ -438,7 +445,6 @@ bool create (const char *file, unsigned initial_size)
 {
     if (file == NULL) exit (-1);
     validate_ptr (file);
-    // check_valid_uaddr(file, 1);
     lock_acquire(&filesys_lock);
     bool success = filesys_create (file, initial_size);
     lock_release(&filesys_lock);
@@ -451,11 +457,6 @@ bool create (const char *file, unsigned initial_size)
  * */
 int open ( const char *file)
 {
-    /*
-    if (!check_string(file))
-    {
-        check_string(file);
-    } */
     if (file == NULL) exit (ERROR);
     validate_ptr (file);
     
@@ -569,23 +570,20 @@ int wait (tid_t pid)
 
 const void* check_valid_uaddr(const void * uaddr, int size) 
 {
-    if (uaddr == NULL) 
-    {
+    if (uaddr == NULL) {
         return NULL;
     }
 
     struct hash* spt = thread_current()->spt;
-    const void *usaddr = uaddr; //user start addr 
-    void *ueaddr = (void*)((char*)uaddr + size - 1); //user end addr
+    const void *usaddr = uaddr;  
+    void *ueaddr = (void*)((char*)uaddr + size - 1); 
 
-    uint32_t *pd = thread_current()->pagedir; //WHAT THREAD IS THIS?!
+    uint32_t *pd = thread_current()->pagedir; 
 
-    //validate both the start and end addresses
-    //TODO NEED TO VALIDATE ALL PAGES IN BETWEEN
     const void* cur;
     for (cur=usaddr; cur<ueaddr; cur+=4096) {
         struct SP* supp_page = sp_table_find(spt, cur);
-        if (!is_user_vaddr(cur) || supp_page == NULL)        return NULL;
+        if (!is_user_vaddr(cur) || supp_page == NULL) return NULL;
 
         void* page = pagedir_get_page (pd, cur);
         if (page == NULL) supplementary_page_load(supp_page, false);
@@ -597,8 +595,7 @@ const void* check_valid_uaddr(const void * uaddr, int size)
     void *keaddr = pagedir_get_page (pd, ueaddr);
 
     // one of these is out of the bounds 
-    if (keaddr==NULL) 
-    {        
+    if (keaddr == NULL) {
         supplementary_page_load(supp_page, false);
     }
 

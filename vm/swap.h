@@ -5,18 +5,17 @@
 #include "vm/frame.h"
 
 struct swap_pool {
-    struct lock lock;
-    size_t swap_num_slots;
+    struct lock swap_lock;
+    size_t num_swap_slots;
     struct bitmap * swap_map;
 };
 
 void swap_init (void);
 
-void * swap_get_frame (struct frame * evict);
+void * swap_get_frame (struct FTE * evict);
 
 bool swap_out (struct FTE * fte, bool dirty);
 
 struct FTE * read_from_swap (struct SP * fault_page);
-
 
 #endif /* vm/swap.h */

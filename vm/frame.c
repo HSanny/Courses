@@ -238,7 +238,7 @@ void fcleanup (void)
    // struct hash_elem * delete_record [100];
     struct FTE *delete_record[hash_size(&frame_table)];
     int s;
-    for (s = 0; s < 100; s ++) {
+    for (s = 0; s < hash_size(&frame_table); s ++) {
         delete_record[s] = NULL;
     }
 

@@ -86,10 +86,57 @@ Ranking (scale below): Excellent
 >> `struct' member, global or static variable, `typedef', or
 >> enumeration.  Identify the purpose of each in 25 words or less.
 
+/* data structure for the frame table entry */
+struct FTE {
+    bool locked;        /* evictable bit */
+
+    tid_t owner;       /* the occupied thread/process */
+
+    void * paddr;      /* physical address */
+    void * vaddr;      /* virtual address */
+
+    struct SP * supplementary_page;  /* corresponding page */
+    struct hash_elem FTE_helem;   /* identify the hash element */
+};
+
+/* Defining data structure representing page in VAS */
+struct SP {
+    /* Basic identification */
+    struct thread * owner;      /* the thread using it */
+    struct hash_elem SP_helem;  /* element for hashing */
+    void * vaddr;               /* virtual address */
+
+    /* Loading Information */
+    uint32_t * pagedir;    /* page directory */
+    uint8_t * ppage;       /* physical address */
+    off_t offset;          /* offset of a file */
+    int page_read_bytes;   /* # of bytes to read */
+
+    /* Control Bits */
+    bool evicted;      /* residency in main memory */
+    bool modified;     /* dirty bit */
+    bool executable;   /* code segment page or not */
+    bool writable;     /* whether this page is modifiable */
+
+    /* Swapping */
+    size_t swap_slot;  /* Position swapped to */
+};
+
 ---- ALGORITHMS ----
 
 >> A2: In a few paragraphs, describe your code for locating the frame,
 >> if any, that contains the data of a given page.
+
+The way we locate a frame is to use hash table as data structure and physical
+address as the key to look it up.
+
+Our implementation uses demand paging as required. When a page fault occurs,
+we keep track of the fault address and use that fault address to trace the
+supplemental page, in which the metadata of the page is restored. Then we put
+that page into the physical memory and insert that frame to the frame (hash)
+table. 
+
+
 
 >> A3: How does your code coordinate accessed and dirty bits between
 >> kernel and user virtual addresses that alias a single frame, or

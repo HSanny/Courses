@@ -158,27 +158,15 @@ struct FTE * fget_page_aux (enum palloc_flags flags, void * vaddr)
         // physical memory full: swapping out is required
 
         struct FTE * kicked_out = fget_evict ();
-        if (kicked_out != NULL) {
-            printf ("kick paddr: %x, vaddr: %x, evicted: %d \n"
-                    , kicked_out->paddr, kicked_out->vaddr, kicked_out->supplementary_page->evicted);
-            if (!kicked_out->supplementary_page->executable || 
-                    kicked_out->supplementary_page->modified) {
-                // swap out
-                // printf ("aaaaa\n");
-                kicked_out->supplementary_page->evicted = true;
-                paddr = swap_out (kicked_out);
-            } else {
-                // no swapping out
-                // printf ("bbbb\n");
-                kicked_out->supplementary_page->evicted = false;
-                paddr = kicked_out->paddr;
-            }
-            kicked_out = frame_table_remove(paddr);
-            free (kicked_out);
-        }
-        else {
-            printf ("kicked out frame not found..\n");
-        }
+        paddr = swap_out (kicked_out);
+        // printf ("kick paddr: %x, vaddr: %x, evicted: %d \n"
+        //      , kicked_out->paddr, kicked_out->vaddr, kicked_out->supplementary_page->evicted);
+        if (!kicked_out->supplementary_page->executable || 
+                kicked_out->supplementary_page->modified) {
+            kicked_out->supplementary_page->evicted = true;
+        } 
+        struct FTE * temp = frame_table_remove(kicked_out->paddr);
+        free (temp);
     }
 
     // get the page table owned by this process
@@ -188,8 +176,8 @@ struct FTE * fget_page_aux (enum palloc_flags flags, void * vaddr)
 
     // update it in the global frame table
     struct FTE * fte = frame_table_put (paddr, vaddr, sp);
-    
-//    printf("finished aux\n");
+
+    // printf("finished aux\n");
 
     return fte;
 }
@@ -247,7 +235,8 @@ void fcleanup (void)
     struct thread * cur = thread_current();
     lock_acquire (&frame_table_lock);
 
-    struct hash_elem * delete_record [100];
+   // struct hash_elem * delete_record [100];
+    struct FTE *delete_record[100];
     int s;
     for (s = 0; s < 100; s ++) {
         delete_record[s] = NULL;
@@ -258,17 +247,19 @@ void fcleanup (void)
     hash_first (&i, &frame_table);
     s = 0;
     while (hash_next (&i)) {
-        struct FTE * fte = hash_entry (hash_cur (&i), struct FTE, FTE_helem);
+      struct FTE * fte = hash_entry (hash_cur (&i), struct FTE, FTE_helem);
         if (fte->owner == cur->tid) {
-            delete_record[s] = &fte->FTE_helem;
+            delete_record[s] = &fte;
             s ++;
         }
     }
+    int j;
     // remove recorded hash element
-    for (s = 0; s < 100; s ++) {
-        if (delete_record[s] == NULL) break;
+    for (j = 0; j < s; j ++) {
+        if (delete_record[j] == NULL) break;
         else {
-            hash_delete(&frame_table, delete_record[s]);
+         //   hash_delete(&frame_table, delete_record[s]);
+         frame_table_remove(delete_record[j]->paddr);
         }
     }
 

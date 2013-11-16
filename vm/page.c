@@ -128,7 +128,6 @@ struct FTE* supplementary_page_load (struct SP* fault_page, bool locked)
     } 
     else if (fault_page->evicted)
     {
-        ASSERT(fault_page->executable && !fault_page->modified);
         frame = swap_pool_read (fault_page);
         frame->locked = locked;
     }

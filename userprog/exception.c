@@ -146,8 +146,8 @@ page_fault (struct intr_frame *f)
        (#PF)". */
     asm ("movl %%cr2, %0" : "=r" (fault_addr));
 
-    if (fault_addr == 0) return ;
-    printf ("fault_addr: %x\n", fault_addr);
+    // if (fault_addr == 0) return ;
+    // printf ("fault_addr: %x\n", fault_addr);
     /* Turn interrupts back on (they were only off so that we could
        be assured of reading CR2 before it changed). */
     intr_enable ();
@@ -175,8 +175,8 @@ page_fault (struct intr_frame *f)
     // stack growth: if fault address is below the current esp
     if (fault_addr < pbottom) { // outside the stack
         if (fault_addr >= f->esp ||  
-            (int) fault_addr == (int) f->esp - 4 ||  // push instruction
-            (int) fault_addr == (int) f->esp - 32)   // pusha instruction
+                (int) fault_addr == (int) f->esp - 4 ||  // push instruction
+                (int) fault_addr == (int) f->esp - 32)   // pusha instruction
         {
             grow_stack (thread_current(), f, fault_addr);
             return ;
@@ -200,7 +200,4 @@ page_fault (struct intr_frame *f)
                 user ? "user" : "kernel");
         kill (f);
     }
-
 }
-
-

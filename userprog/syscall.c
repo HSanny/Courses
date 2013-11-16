@@ -20,11 +20,8 @@
 #endif
 
 #define ERROR -1
-#define MAX_ARGS 3
-#define USER_VADDR_BOTTOM ((void *) 0x08048000)
 #define TEST 0
 static bool check_string (const char* file);
-const void* check_valid_uaddr(const void * uaddr, int size);
 
 // ORIGINALLY PROVIDED FUNCITON
 static void syscall_handler (struct intr_frame *);
@@ -221,9 +218,6 @@ void exit (int status)
         }
     }
 
-    //-----------------------------------------------------
-    fcleanup();
-    //-----------------------------------------------------
     if (file_list != NULL)
     {
         e = list_begin(file_list);
@@ -239,6 +233,10 @@ void exit (int status)
             file_close(thread_current()->file_deny_execute);
         }
     }
+    //-----------------------------------------------------
+    // frame reclamation 
+    // fcleanup();
+    //-----------------------------------------------------
     // invoke other operations about relevant deallocation
     thread_exit();
 }
@@ -301,7 +299,6 @@ int read (int fd, void *buffer, unsigned size)
          !sp_table_find(cur->spt, buffer+size)->writable )
         exit (ERROR);
 
-
     unsigned read_byte = 0;
     // READ FROM THE EXTERNAL KEYBOARD
     if (fd == STDIN_FILENO) {
@@ -336,12 +333,14 @@ int read (int fd, void *buffer, unsigned size)
         lock_acquire(&filesys_lock);
         read_byte = file_read (f, buffer, size);
         //------------------------------------------------ 
+        /*
         int j;
         for (j = 0; j < size ; j++) {
             void * baddr = j + buffer;
             struct SP * sp = sp_table_find (cur->spt, baddr);
             sp->modified = true;
         }
+        */
         //------------------------------------------------
         lock_release(&filesys_lock);
     }

@@ -381,7 +381,7 @@ process_exit (void)
         pagedir_destroy (pd);
     }
     // clean up the supplemental page table and all the entries
-    hash_clear (cur->spt, sp_hash_destruct);
+    // hash_clear (cur->spt, sp_hash_destruct);
 }
 
 /* Sets up the CPU for running user code in the current

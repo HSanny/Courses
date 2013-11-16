@@ -207,6 +207,7 @@ void exit (int status)
     struct process_file *pf;
     struct list_elem *e; 
 
+    // printf ("1\n");
     // get the file_list occupied by current thread (process)
     struct list *file_list = &cur->file_list;
     // close all files recorded in the file_list
@@ -217,6 +218,7 @@ void exit (int status)
             file_close(pf->file);
         }
     }
+    // printf ("2\n");
 
     if (file_list != NULL)
     {
@@ -226,6 +228,7 @@ void exit (int status)
                 list_remove(e);
                 e = list_next(e);
         }
+     // printf ("3\n");
         if (thread_current()->file_deny_execute != NULL)
         {
             // free the writing limitation
@@ -233,9 +236,10 @@ void exit (int status)
             file_close(thread_current()->file_deny_execute);
         }
     }
+    // printf ("4\n");
     //-----------------------------------------------------
     // frame reclamation 
-    // fcleanup();
+    fcleanup();
     //-----------------------------------------------------
     // invoke other operations about relevant deallocation
     thread_exit();

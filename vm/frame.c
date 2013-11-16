@@ -236,7 +236,7 @@ void fcleanup (void)
     lock_acquire (&frame_table_lock);
 
    // struct hash_elem * delete_record [100];
-    struct FTE *delete_record[100];
+    struct FTE *delete_record[hash_size(&frame_table)];
     int s;
     for (s = 0; s < 100; s ++) {
         delete_record[s] = NULL;
@@ -249,7 +249,7 @@ void fcleanup (void)
     while (hash_next (&i)) {
       struct FTE * fte = hash_entry (hash_cur (&i), struct FTE, FTE_helem);
         if (fte->owner == cur->tid) {
-            delete_record[s] = &fte;
+            delete_record[s] = fte;
             s ++;
         }
     }

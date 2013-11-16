@@ -172,12 +172,17 @@ page_fault (struct intr_frame *f)
     struct SP * fault_page = sp_table_find (spt, fault_addr);
 
     void * pbottom = (void*) (PHYS_BASE - cur->num_stack_pages * PGSIZE);
+    printf("pbottom %0x\n", pbottom);
+    printf("fault addr%0x\n", fault_addr);
+    printf("true: %d\n", (fault_addr < pbottom));
     // stack growth: if fault address is below the current esp
     if (fault_addr < pbottom) { // outside the stack
+        printf("outside the stack\n");
         if (fault_addr >= f->esp ||  
                 (int) fault_addr == (int) f->esp - 4 ||  // push instruction
                 (int) fault_addr == (int) f->esp - 32)   // pusha instruction
         {
+            printf("grow\n");
             grow_stack (thread_current(), f, fault_addr);
             return ;
         }
@@ -192,6 +197,7 @@ page_fault (struct intr_frame *f)
     }
     // ---------------------------------------------------------
     else {
+        printf("else\n");
         // TODO: cleanup the process resource before killing it
         printf ("Page fault at %p: %s error %s page in %s context.\n",
                 fault_addr,

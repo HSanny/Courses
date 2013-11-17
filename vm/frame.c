@@ -159,12 +159,15 @@ struct FTE * fget_page_aux (enum palloc_flags flags, void * vaddr)
 
         struct FTE * kicked_out = fget_evict ();
         paddr = swap_out (kicked_out);
+        struct thread * cur = thread_current();
+        lock_acquire (&cur->spt_lock);
         // printf ("kick paddr: %x, vaddr: %x, evicted: %d \n"
         //      , kicked_out->paddr, kicked_out->vaddr, kicked_out->supplementary_page->evicted);
         if (!kicked_out->supplementary_page->executable || 
                 kicked_out->supplementary_page->modified) {
             kicked_out->supplementary_page->evicted = true;
         } 
+        lock_release (&cur->spt_lock);
         struct FTE * temp = frame_table_remove(kicked_out->paddr);
         free (temp);
     }

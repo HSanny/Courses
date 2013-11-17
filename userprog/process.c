@@ -70,16 +70,13 @@ struct FTE * load_segment_on_demand (struct SP * fault_page, struct file * file)
 
 void grow_stack (struct thread * t, struct intr_frame * f, void * fault_addr) 
 {
-    printf("growing stack\n");
     // compute the bottom address of the existing stack segment
     void * stack_bottom = (void *) (PHYS_BASE - t->num_stack_pages *PGSIZE);   
     // round up to PGSIZE (4096)
     int addr_dist = ROUND_UP ((uint32_t) stack_bottom - (uint32_t)fault_addr, PGSIZE);
-    printf("addr dist %d\n", addr_dist);
 
     // compute the number of page need to grow
     int num_new_page = addr_dist / PGSIZE;
-    printf("num pages %d\n", num_new_page);
     // check for page overflow
     if (t->num_stack_pages + num_new_page > MAX_STACK_PAGES) {
         PANIC ("Stack size too big, beyond 8MB. \n");

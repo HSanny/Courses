@@ -300,8 +300,9 @@ int read (int fd, void *buffer, unsigned size)
     // check the head and end of buffer is modifiable
     struct thread * cur = thread_current();
     if (!sp_table_find(cur->spt, buffer)->writable || 
-         !sp_table_find(cur->spt, buffer+size)->writable )
+         !sp_table_find(cur->spt, buffer+size)->writable ) {
         exit (ERROR);
+    }
 
     unsigned read_byte = 0;
     // READ FROM THE EXTERNAL KEYBOARD
@@ -324,28 +325,19 @@ int read (int fd, void *buffer, unsigned size)
         struct file * f = get_file_by_fd (fd);
 
         // file not found
-        if (f == NULL) return -1; 
+        if (f == NULL) {
+            return -1; 
+        }
 
         // get the size of requested file
         unsigned fsize = filesize (fd);
         if (TEST) printf("fsize: %d,  size: %d\n", fsize, size);
         if (TEST) printf("sbuffer: %d \n", sizeof buffer);
         // invalid if requested size is beyond the file size
-        if (size > fsize)  return -1; 
 
         // read bytes from specified file
         lock_acquire(&filesys_lock);
         read_byte = file_read (f, buffer, size);
-        //------------------------------------------------ 
-        /*
-        int j;
-        for (j = 0; j < size ; j++) {
-            void * baddr = j + buffer;
-            struct SP * sp = sp_table_find (cur->spt, baddr);
-            sp->modified = true;
-        }
-        */
-        //------------------------------------------------
         lock_release(&filesys_lock);
     }
     if (TEST) printf("read_byte : %d\n", read_byte);

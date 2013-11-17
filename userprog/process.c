@@ -287,7 +287,7 @@ start_process (void *file_name_)
         } 
 
         //FIXME: buggy - wait-killed test case
-        cur->stack_track = if_.esp;
+        //cur->stack_track = if_.esp;
         
         // dump for manual checking of the established stack
         if (TEST)

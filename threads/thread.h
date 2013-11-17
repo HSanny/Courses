@@ -131,10 +131,8 @@ struct thread
     // ##################################################
     struct hash * spt;  // supplementary page table
     struct lock spt_lock;  // lock of that spt
-    void * _eip;  // starting point of instruction pointer
     int num_stack_pages;
     struct intr_frame *interrupt;
-    uint8_t *stack_track;                     /* Saved stack pointer. */
     // ##################################################
 #endif
 

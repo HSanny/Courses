@@ -93,7 +93,6 @@ struct FTE * frame_table_put (void *paddr, void *vaddr, struct SP * page)
 /* remove the specified frame table entry */
 struct FTE * frame_table_remove (void* paddr) 
 {
-//    printf("remove\n");
     // presume nothing removed
     struct FTE * removed = NULL;
 
@@ -159,15 +158,12 @@ struct FTE * fget_page_aux (enum palloc_flags flags, void * vaddr)
 
         struct FTE * kicked_out = fget_evict ();
         paddr = swap_out (kicked_out);
-        struct thread * cur = thread_current();
-        lock_acquire (&cur->spt_lock);
         // printf ("kick paddr: %x, vaddr: %x, evicted: %d \n"
         //      , kicked_out->paddr, kicked_out->vaddr, kicked_out->supplementary_page->evicted);
         if (!kicked_out->supplementary_page->executable || 
                 kicked_out->supplementary_page->modified) {
             kicked_out->supplementary_page->evicted = true;
         } 
-        lock_release (&cur->spt_lock);
         struct FTE * temp = frame_table_remove(kicked_out->paddr);
         free (temp);
     }
@@ -213,22 +209,29 @@ void ffree_page (void *paddr)
     return ;
 }
 
-/* evict the frame to be evicted */
+/* clock algorithm: evict the frame to be evicted */
 struct FTE * fget_evict (void) 
 {
+    // infinite loop until find a valid evicted frame
     while (true)  {
+        // go through the whole frame table
         struct hash_iterator i;
         hash_first(&i, &frame_table);
         while (hash_next(&i)) {
-            struct FTE* f = hash_entry(hash_cur(&i), struct FTE, FTE_helem);
-            if (pagedir_is_accessed(f->supplementary_page->pagedir, f->vaddr))
-                pagedir_set_accessed(f->supplementary_page->pagedir, f->vaddr, false);
-            else if(!f->locked ) {
-                f->locked = true;
-                return f;
+            struct FTE* fte = hash_entry(hash_cur(&i), struct FTE, FTE_helem);
+            // check the reference bit in the built-in page table
+            if (pagedir_is_accessed(fte->supplementary_page->pagedir, fte->vaddr))
+                // sweep the reference bit
+                pagedir_set_accessed(fte->supplementary_page->pagedir, fte->vaddr, false);
+            else if(!fte->locked) { // locked frame is not evictable
+                // since frame f is to be evicted (important operation) 
+                // we should lock it at the moment
+                fte->locked = true;
+                return fte;
             }
         }
     }
+    // useless return
     return NULL;
 }
 
@@ -269,8 +272,4 @@ void fcleanup (void)
     lock_release (&frame_table_lock);
 }
 
-/* set page  */
-void fset_page_lock (void) 
-{
-    return ;
-} 
+

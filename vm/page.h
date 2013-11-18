@@ -46,4 +46,5 @@ struct SP * sp_table_find (struct hash * page_table, void * vaddr);
 struct SP * sp_table_remove (struct hash * page_table, void * vaddr);
 
 struct FTE* supplementary_page_load (struct SP* fault_page, bool locked);
+
 #endif /* vm/page.h */

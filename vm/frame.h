@@ -16,7 +16,7 @@
 struct FTE {
     bool locked;        /* evictable bit */
 
-    tid_t owner;
+    tid_t owner;       /* owner of current entry */
 
     void * paddr;      /* physical address */
     void * vaddr;      /* virtual address */
@@ -33,6 +33,9 @@ struct hash frame_table;
 
 /* initialize the frame table */
 bool frame_table_init (void);
+
+/* clean up all frames */
+void fcleanup (void);
 
 /* find the frame table entry */
 struct FTE * frame_table_find (void *paddr);
@@ -52,13 +55,7 @@ void * fget_page_lock (enum palloc_flags flags, void * vaddr);
 /* free page from frame table */
 void ffree_page (void * vaddr);
 
-/* evict one table */
+/* CLOCK: evict one frame */
 struct FTE * fget_evict (void);
-
-/* clean up all frames */
-void fcleanup (void);
-
-/* set page  */
-void fset_page_lock (void);
 
 #endif /* vm/frame.h */

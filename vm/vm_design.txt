@@ -77,6 +77,9 @@ Ranking (scale below): Excellent
 >> preparing your submission, other than the Pintos documentation, course
 >> text, lecture notes, and course staff.
 
+1. We implement the clock algorithm for the first extra credit section.
+
+
 			PAGE TABLE MANAGEMENT
 			=====================
 
@@ -86,78 +89,149 @@ Ranking (scale below): Excellent
 >> `struct' member, global or static variable, `typedef', or
 >> enumeration.  Identify the purpose of each in 25 words or less.
 
-/* data structure for the frame table entry */
-struct FTE {
-    bool locked;        /* evictable bit */
+   /*data structure for frame table entry*/
+   Added to struct FTE:
 
-    tid_t owner;       /* the occupied thread/process */
+   bool locked; 
+     shows if this frame table entry can be evicted 
 
-    void * paddr;      /* physical address */
-    void * vaddr;      /* virtual address */
+   tid_t owner; 
+     shows whhich thread process this frame table entry belongs to
 
-    struct SP * supplementary_page;  /* corresponding page */
-    struct hash_elem FTE_helem;   /* identify the hash element */
-};
+   void * paddr; 
+     stores the physical address represented in this entry
 
-/* Defining data structure representing page in VAS */
-struct SP {
-    /* Basic identification */
-    struct thread * owner;      /* the thread using it */
-    struct hash_elem SP_helem;  /* element for hashing */
-    void * vaddr;               /* virtual address */
+   void * vaddr; 
+     stores the virtual address that is corresponding to this frame table entry
 
-    /* Loading Information */
-    uint32_t * pagedir;    /* page directory */
-    uint8_t * ppage;       /* physical address */
-    off_t offset;          /* offset of a file */
-    int page_read_bytes;   /* # of bytes to read */
+   struct SP * supplementary_page; 
+     points to the corresponding supplementary page for this frame table entry
+ 
+   struct hash_elem FTE_helem; 
+     stores the hash element for this frame table entry
+  
+   Global variable:
 
-    /* Control Bits */
-    bool evicted;      /* residency in main memory */
-    bool modified;     /* dirty bit */
-    bool executable;   /* code segment page or not */
-    bool writable;     /* whether this page is modifiable */
+   struct lock frame_table_lock;
+     This is a global lock for frame table access.
 
-    /* Swapping */
-    size_t swap_slot;  /* Position swapped to */
-};
+   struct hash frame_table; 
+     This is the global frame table modeled as a hash table.
+
+
+   /* Defining data structure representing page in VAS */
+   Added to struct SP:
+
+   struct thread * owner; 
+     This shows which thread does this supplementary page belong to.
+
+   struct hash_elem SP_helem; 
+     stores the hash element for this supplementary page
+
+   void * vaddr;
+     stores the virtual address for this supplementary page
+
+   uint32_t * pagedir; 
+     stores the pointers to page table in pintos' page directory
+
+   uint8_t * ppage; 
+     stores the physical address for this supplementary page
+
+   off_t offset;
+     stores the offset position for a file
+
+   int page_read_bytes; 
+     stores number of bytes to read
+
+   bool evicted; 
+     shows if this page is swapped out in swap area
+
+   bool modified;
+     shows if this page is dirty
+
+   bool executable;
+     shows if this page is a code segment page
+   bool writable;
+     shows if this page is modifiable
+
+   /* new memeber for the struct thread */
+   Added to struct thread:
+
+   struct hash *spt;
+     points to the supplementary page table for this process
+
+   struct lock spt_lock;
+     stores the lock for that supplementary page table
+
+   int num_stack_pages;
+     saves number of pages allocated for stack
+
+   struct intr_frame *interrupt;
+     pointos to the interrupt frame for this process
 
 ---- ALGORITHMS ----
 
 >> A2: In a few paragraphs, describe your code for locating the frame,
 >> if any, that contains the data of a given page.
 
-The way we locate a frame is to use hash table as data structure and physical
-address as the key to look it up.
+   We modeled the frame table as a hash table. We use physical address as the
+   key of that hash table to find the frame (value).
 
-Our implementation uses demand paging as required. When a page fault occurs,
-we keep track of the fault address and use that fault address to trace the
-supplemental page, in which the metadata of the page is restored. Then we put
-that page into the physical memory and insert that frame to the frame (hash)
-table. 
+   Our implementation uses demand paging as required. When a page fault
+   occurs, we trace the fault address of that page fault. And after that, we
+   use the macro function ROUND_DOWN to formalize the address as multiple of
+   PGSIZE.  Then, that fault address is employed to look up the supplemental
+   page, in which the metadata of the page is restored. Then we put that page
+   into the physical memory and insert that frame to the frame (hash) table. 
 
 >> A3: How does your code coordinate accessed and dirty bits between
 >> kernel and user virtual addresses that alias a single frame, or
 >> alternatively how do you avoid the issue?
 
+   We avoid this issue by using demand paging mechanism with supplementary page.
 
-
+   When we load data from disk, we generate a supplementary page for each
+   particular page that ought to be residenet in the physical memory. The
+   supplementary page, uniquely identified by virtual address, contains page
+   directory and offset of the content in the file (file offset). All frame loading
+   and removal operation is achieved through the supplementary page. Thus, our
+   design avoid the case of having two vitual addresses pointing to the same
+   frame.
 
 ---- SYNCHRONIZATION ----
 
 >> A4: When two user processes both need a new frame at the same time,
 >> how are races avoided?
 
-In the function fget_evict(), we will consider the member "locked" of one
-frame. If that frame is locked, it is not allowed to be chosen as evicted
-frame. Thus, two user processes have to pick up different 
+   When a user process attempts to get a new frame, it has to call the function
+   fget_page(), where there is a lock called frame_table_lock to achieve
+   mutual exclusion. At the start of that function, we will grab the lock on
+   our global frame table and release it at the end. Thus, two process
+   can not create frame table entry at the same time.
 
 ---- RATIONALE ----
 
 >> A5: Why did you choose the data structure(s) that you did for
 >> representing virtual-to-physical mappings?
 
+   We use a supplementary page table to store the metadata and represent
+   virtual to physical mappings. The metadata includes information about if
+   this page is swapped out, whether this page is dirty, whether this page is
+   for the executable code and whether this page is modifiable, which swap
+   slot this page is placed and which thread does this page belongs to.
 
+   The supplemantary page table achieves a good abstraction for managing
+   swapping.  While it is true that we can merge these information into
+   pinto's page table, it is clearer to have a page table which has a one to
+   one mapping to physical memory and another supplementary page table to
+   record the eviction and other metadata information for that virtual
+   address.
+
+   Besides, as to frame table entry, we have a member keeping track of the
+   supplmentary page such that kernel could refer to metadata of the page
+   filling up that frame. To summarize, the supplementary page is the core
+   for achieving the functionality of demand paging, swapping, and memory
+   mapping. 
 
 
 		       PAGING TO AND FROM DISK
@@ -169,26 +243,87 @@ frame. Thus, two user processes have to pick up different
 >> `struct' member, global or static variable, `typedef', or
 >> enumeration.  Identify the purpose of each in 25 words or less.
 
-struct lock swap_lock;  /* global lock for swap space */
-struct bitmap * swap_map;   /* indicates the availability of slot */
+Added to struct SP:
 
----- ALGORITHMS ----
+   size_t swap_slot
+     stores the location on disk that this page swaps to
+
+Global variable added to swap.c
+  
+   struct lock swap_lock;
+     global lock for swap space
+
+   struct bitmap *swap_map;
+     indicate the availability of slots on swap space
+
+ ---- ALGORITHMS ----
 
 >> B2: When a frame is required but none is free, some frame must be
 >> evicted.  Describe your code for choosing a frame to evict.
 
-We use the clock algorithm to pick up the frame to be evicted. Specifically,
-we use the functions in pagedir.h to check whether one frame is 
-referenced or not.
+   We call the function fget_evict() to evict a frame, when there is no more
+   free frame in the frame table.
+
+   In this function, we implement the clock algorithm (EXTRA CREDIT).
+   We loop through the frame table to see the reference/access bit of each allocated
+   frame. If the frame's access bit is set, we will reset it to false. If the
+   frame's access bit is not set and the frame is not locked, we will evict
+   that frame and in the meanwhile lock that frame, such that other process
+   cannot evict that frame when it is being swapped to swap space.
+
+   Since we keep reseting the access bit to not accessed in the loop until we
+   find a page to evict, it is guaranteed that there is always one frame to be
+   evicted.
 
 >> B3: When a process P obtains a frame that was previously used by a
 >> process Q, how do you adjust the page table (and any other data
 >> structures) to reflect the frame Q no longer has?
 
+   There are three possibilities for process Q to lose the frame:
+   
+   1. Process Q exits.
+   In this case, the frame table entry occupied by process
+   Q will be removed since we invoke the funcion fleanup() in the
+   exit() system call, and the palloc_free_page() will be called to free the
+   corresponding physical memory. Also, the entire supplemantal page table and
+   all its entries are freed. By this means, this frame can be used again
+   by any other process such as process P. The pagedir_destroy will be called
+   to free all the pages inside the page directory of this process.
+
+   2. Frame get evicted (since full frame table) to swap space. 
+   In that case, we will write the content of that frame to swap space, and
+   in the meanwhile, update the swap_map (bitmap) by flipping the correponding
+   bit. And then we update the corresponding supplemantal page to keep track
+   of the position of the swapping slot and set "evicted" control bit. After that,
+   the frame table entry is removed from the global frame table and
+   corresponding physical memory location is freed by calling
+   palloc_free_page();
+
+   3. Frame get evicted (since full frame table), but not to swap space. 
+   This is the simplest case, since there is no modification within the
+   content of that frame, we directly remove that frame table entry and
+   free the corresponding page resident in the physical memory by using
+   palloc_free_page().
 
 >> B4: Explain your heuristic for deciding whether a page fault for an
 >> invalid virtual address should cause the stack to be extended into
 >> the page that faulted.
+
+   First of all we need to check if the faulting address is below (lower
+   address) the current process's stack bottom. If true, there could be a
+   need for stack growh but we should have the following further examination.
+   
+   Check whether
+   1. the faulting address is 4 below the esp (caused by push instruction) 
+   or 
+   2. the faulting address is 32 below the esp (caused by pusha instruction)
+   or
+   3. if the faulting address is above the esp but below the process bottom, a
+   large object is supposed to be allocated on the stack and push the esp
+   down. 
+   If one of above three condition is true, we will grow up the stack for that
+   virtual address.
+   
 
 ---- SYNCHRONIZATION ----
 
@@ -197,10 +332,49 @@ referenced or not.
 >> textbook for an explanation of the necessary conditions for
 >> deadlock.)
 
+   We use several locks to achieve synchronization for our VM. 
+   1. We have a lock for global frame table to avoid simultaneous
+   modificaiton to the frame table, which is also defined in global scope.
+   By using this lock, no race will occur if two processes are
+   asking for the frame allocation at the same time.
+
+   2. We also have a lock for swap space to restrict simultaneous acess
+   to swap pool. 
+   There could be a race when two processes are swapping out its frame
+   respectively at the same time if this lock is not used.
+   
+   3. Besides, we also have a supplemantary table lock for each process.
+
+   4. We also have a struct locked for each frame table entry to track whether
+   this frame table entry is allowed to be evicted. 
+
+   As to deadlock prevention, we need to ensure that no circular waiting is possible. 
+   For frame table locks, we generally only acquire locks in frame.c.
+   For supplementary table locks, we generally only acquire locks in page.c.
+   But there are a few exceptions: 
+   Inside ffree_page, we grab locks on frame table first and then we grab locks 
+   on supplementary table.
+   By grabing the locks in certain order, we avoid the deadlock between frame table locks
+   and supplementary table locks.
+
+   To prevent deadlocks between frame table locks and swap space lock, which
+   are both global lock and accessible by all processes, we only grab swap
+   space lock inside swap.c. One process can attempt to grab the global frame
+   table lock when it does not hold a swap lock and vice versa. Thus we
+   prevent deadlocks between frame table locks and swap space lock.
+
+   To prevent deadlocks between supplementary table locks and swap space lock,
+   we only grab swap space lock inside swap.c. It never try to grab
+   supplementary table locks while holding a swap space lock and vice versa.
+   Thus we prevent deadlocks between supplementary table locks and swap space
+   lock.
+
 >> B6: A page fault in process P can cause another process Q's frame
 >> to be evicted.  How do you ensure that Q cannot access or modify
 >> the page during the eviction process?  How do you avoid a race
 >> between P evicting Q's frame and Q faulting the page back in?
+
+
 
 >> B7: Suppose a page fault in process P causes a page to be read from
 >> the file system or swap.  How do you ensure that a second process Q

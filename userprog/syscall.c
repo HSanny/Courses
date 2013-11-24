@@ -544,7 +544,7 @@ int open ( const char *file)
         return ERROR;
     }
     // for a directory
-    if (inode_isdir(inode)) {
+    if (inode_is_dir(inode)) {
         lock_acquire (&filesys_lock);
         struct dir * new_dir = dir_open (inode);
         lock_release(&filesys_lock);

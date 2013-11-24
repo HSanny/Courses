@@ -63,11 +63,12 @@ bool readdir (int fd, char * name);
 bool isdir (int fd);
 int inumber (int fd);
 // AUXILIARY FUNCTIONS
+int add_file (struct file *);
+int add_dir (struct dir *d);
 struct process_file * get_pf_by_fd (int fd);
 // ********************************************************************
 
 // AUXILIARY FUNCTIONS
-int add_file (struct file *);
 struct file* get_file_by_fd (int fd);
 int find_kernel_ptr(const void *vaddr);
 void get_ptr(struct intr_frame *f, int *arg, int n);
@@ -380,15 +381,16 @@ int read (int fd, void *buffer, unsigned size)
     } 
     else if (fd == STDOUT_FILENO) {
         // invalid file descriptor
-        return -1;
+        return ERROR;
     } 
     else {
         // get file structure
-        struct file * f = get_file_by_fd (fd);
+        struct process_file * pf = get_pf_by_fd (fd);
 
         // file not found
-        if (f == NULL) {
-            return -1; 
+        if (pf == NULL) {
+            printf ("here:1\n");
+            return ERROR; 
         }
 
         // get the size of requested file
@@ -399,7 +401,7 @@ int read (int fd, void *buffer, unsigned size)
 
         // read bytes from specified file
         lock_acquire(&filesys_lock);
-        read_byte = file_read (f, buffer, size);
+        read_byte = file_read (pf->file, buffer, size);
         lock_release(&filesys_lock);
     }
     if (TEST) printf("read_byte : %d\n", read_byte);
@@ -430,6 +432,7 @@ int write (int fd, const void *buffer, unsigned size)
         if (!pf->isdir && pf->file != NULL) {
             lock_acquire(&filesys_lock);
             int numOfbyte = file_write(pf->file, buffer, size);
+           // printf ("numOfbyte: %d\n", numOfbyte);
             lock_release(&filesys_lock);
             return numOfbyte; 
         } else {
@@ -514,7 +517,8 @@ void check_buffer (void* buffer, unsigned size)
  * */
 bool create (const char *file, unsigned initial_size)
 {
-    if (file == NULL) exit (-1);
+    if (file == NULL) return false;
+    if (strlen(file) == 0) return false;
     validate_ptr (file);
    
     lock_acquire(&filesys_lock);
@@ -752,7 +756,6 @@ bool mkdir (const char * dirname)
     // update the inode data structure
     struct inode * in = inode_open (sector);
     inode_set_isdir (in, true);
-    inode_close (in);
 
     return true;
 };

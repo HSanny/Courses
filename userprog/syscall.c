@@ -719,7 +719,7 @@ bool chdir (const char * dirname)
     struct inode * inode;
     if (!dir_lookup (old_dir, dirname, &inode)) {
         // printf ("dir: %s\n", dirname);
-        return false;  
+        return false;
     }
     struct dir * new_dir = dir_open (inode);
 
@@ -744,8 +744,15 @@ bool mkdir (const char * dirname)
 
 bool readdir (int fd, char * name)
 {
-    // provided fd is not a directory
-    if (!isdir(fd)) return false;
+    check_buffer(name, NAME_MAX + 1);
+    // get the file structure using file decriptor
+    struct process_file * pf = get_pf_by_fd (fd);
+    if (pf == NULL) return ERROR;
+    if (pf->isdir && pf->dir != NULL) {
+        return dir_readdir(pf->dir, name);
+    } else {
+        return false;
+    }
 };
 
 bool isdir (int fd)

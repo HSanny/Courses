@@ -15,7 +15,7 @@ struct dir * ROOT_DIR;  /* cache the root directory */
 
 /* Block device that contains the file system. */
 struct block *fs_device;
-
+char ** separate_pathname (const char *);
 void filesys_init (bool format);
 void filesys_done (void);
 struct file *filesys_open (const char *name);

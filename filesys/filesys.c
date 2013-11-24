@@ -112,7 +112,6 @@ bool filesys_mkdir (const char * name)
     // update the inode data structure
     struct inode * in = inode_open (sector);
     inode_set_isdir (in, true);
-
     return true;
 }
 // =================================================================
@@ -123,18 +122,17 @@ bool filesys_mkdir (const char * name)
 filesys_init (bool format) 
 {
     fs_device = block_get_role (BLOCK_FILESYS);
-    if (fs_device == NULL)
-        PANIC ("No file system device found, can't initialize file system.");
+  if (fs_device == NULL)
+    PANIC ("No file system device found, can't initialize file system.");
 
-    inode_init ();
-    free_map_init ();
+  inode_init ();
+  filesys_cache_init();
+  free_map_init ();
 
-    if (format) 
-        do_format ();
+  if (format)
+    do_format ();
 
-    free_map_open ();
-
-    // ---------------------------------------------------
+  free_map_open ();
     ROOT_DIR = dir_open_root();
     // ---------------------------------------------------
 }

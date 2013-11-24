@@ -536,27 +536,34 @@ int open ( const char *file)
     validate_ptr (file);
 
     // printf ("file_addr: %x\n", file);
+    // printf ("file: %s\n", file);
 
     struct thread * cur = thread_current();
     struct dir * cwd = cur->cwd;
     struct inode * inode;
     if (!dir_lookup(cwd, file, &inode)) {
+        // printf ("1st place\n");
         return ERROR;
     }
+
+    // printf ("root: %d\n", inode_get_inumber(dir_get_inode(ROOT_DIR)));
+    // if (cur->cwd != NULL) printf ("cur: %d\n", inode_get_inumber(dir_get_inode(cur->cwd)));
     // for a directory
     if (inode_isdir(inode)) {
         lock_acquire (&filesys_lock);
         struct dir * new_dir = dir_open (inode);
         lock_release(&filesys_lock);
+        // printf ("2st place\n");
         return add_dir (new_dir);
     } else {
         // now for a simple file
         lock_acquire (&filesys_lock);
         // printf ("string: %s \n", file);
         struct file *f = filesys_open(file);
-        if (!f) {
+        if (f == NULL) {
             // release because of file-not-found error
             lock_release(&filesys_lock);
+          //  printf ("3st place\n");
             return ERROR;
         }
         int fd = add_file(f);
@@ -723,6 +730,9 @@ bool chdir (const char * dirname)
     if (old_dir != ROOT_DIR) dir_close (old_dir);
     // update the cwd of current process
     cur->cwd = new_dir;
+
+    // printf ("root: %d\n", inode_get_inumber(dir_get_inode(ROOT_DIR)));
+    // if (cur->cwd != NULL) printf ("cur: %d\n", inode_get_inumber(dir_get_inode(cur->cwd)));
     return true;
 };
 

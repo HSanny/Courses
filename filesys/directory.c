@@ -80,6 +80,7 @@ dir_close (struct dir *dir)
 struct inode *
 dir_get_inode (struct dir *dir) 
 {
+    ASSERT (dir != NULL);
   return dir->inode;
 }
 

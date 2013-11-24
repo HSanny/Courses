@@ -80,13 +80,16 @@ bool filesys_mkdir (const char * name)
     char ** ptr = separate_pathname (name);
     if (ptr == NULL) return false;
     int level = 0;
+    struct dir * cwd = cur->cwd;
     struct dir * tmp_dir = cur->cwd;
     struct inode * inode;
     while (*(ptr + level) != NULL && level < MAX_LEVEL-1) {
         char * dirname = * (ptr+level);
-       // printf ("str: %s\n", dirname);
+        // printf ("str: %s\n", dirname);
         if (!dir_lookup (tmp_dir, dirname, &inode)) return false;
-        if (tmp_dir != ROOT_DIR) dir_close(tmp_dir);
+        // each level must be a directory
+        if (!inode_isdir(inode)) return false;
+        // if (tmp_dir != ROOT_DIR && cwd != tmp_dir) dir_close(tmp_dir);
         tmp_dir = dir_open (inode);
         ++ level;
     } 
@@ -96,24 +99,28 @@ bool filesys_mkdir (const char * name)
     // then, create a directory for the final_level 
 
     // cached variable
-    block_sector_t sector;
-    // apply disk location towards the free map
-    if (!free_map_allocate (count, &sector)) return false;
-    // create the directory
-    if (!dir_create (sector, entries)) {
-        free_map_release(sector, count);
-        return false;
+    block_sector_t inode_sector;
+    // ========================================================
+    if (tmp_dir == NULL) {
+        // printf ("use root\n");
+        tmp_dir = ROOT_DIR;
     }
-    // add the directory (particular file) to cwd
-    if (!dir_add (tmp_dir, final_level, sector)) {
-        free_map_release(sector, count);
-        return false;
-    }
+    bool success = (tmp_dir != NULL
+            && free_map_allocate (count, &inode_sector)
+            && dir_create (inode_sector, entries)
+            && dir_add (tmp_dir, final_level, inode_sector));
+    if (!success && inode_sector != 0) 
+        free_map_release (inode_sector, 1);
+    // if (tmp_dir != ROOT_DIR && cwd != tmp_dir) dir_close (tmp_dir);
+    // printf ("root: %d\n", inode_get_inumber(dir_get_inode(ROOT_DIR)));
+    // if (cur->cwd != NULL) printf ("cur: %d\n", inode_get_inumber(dir_get_inode(cur->cwd)));
+    // ========================================================
+
     // update the inode data structure
-    struct inode * in = inode_open (sector);
+    struct inode * in = inode_open (inode_sector);
     inode_set_isdir (in, true);
 
-    return true;
+    return success;
 }
 // =================================================================
 
@@ -154,13 +161,13 @@ filesys_done (void)
     bool
 filesys_create (const char *name, off_t initial_size) 
 {
-    block_sector_t inode_sector = 0;
     //struct dir *dir = dir_open_root ();
     // ========================================================
     struct thread * cur = thread_current (); 
     char ** ptr = separate_pathname (name);
     if (ptr == NULL) return false;
     int level = 0;
+    struct dir * cwd = cur->cwd;
     struct dir * tmp_dir = cur->cwd;
     struct inode * inode;
     while (*(ptr + level) != NULL && level < MAX_LEVEL-1) {
@@ -169,7 +176,9 @@ filesys_create (const char *name, off_t initial_size)
         // printf ("level_len: %d\n", strlen(dirname));
         // printf ("str: %s\n", dirname);
         if (!dir_lookup (tmp_dir, dirname, &inode)) return false;
-        if (tmp_dir != ROOT_DIR) dir_close(tmp_dir);
+        // each level must be a directory
+        if (!inode_isdir(inode)) return false;
+       // if (tmp_dir != ROOT_DIR && cwd != tmp_dir)  dir_close(tmp_dir);
         tmp_dir = dir_open (inode);
         ++ level;
     } 
@@ -179,14 +188,22 @@ filesys_create (const char *name, off_t initial_size)
     // printf ("filename: %s\n", new_file_name);
     if (strlen (new_file_name) > MAX_LENGTH_EACH_LEVEL) return false;
     // ========================================================
-    if (tmp_dir == NULL) tmp_dir = dir_open_root();
+    if (tmp_dir == NULL) {
+        // printf ("root used\n");
+        tmp_dir = dir_open_root();
+    }
+    block_sector_t inode_sector;
     bool success = (tmp_dir != NULL
             && free_map_allocate (1, &inode_sector)
             && inode_create (inode_sector, initial_size)
             && dir_add (tmp_dir, new_file_name, inode_sector));
     if (!success && inode_sector != 0) 
         free_map_release (inode_sector, 1);
-    if (tmp_dir != ROOT_DIR) dir_close (tmp_dir);
+    // if (tmp_dir != ROOT_DIR && cwd != tmp_dir) dir_close (tmp_dir);
+
+    // printf ("root: %d\n", inode_get_inumber(dir_get_inode(ROOT_DIR)));
+    // printf ("tmp_dir: %d\n", inode_get_inumber(dir_get_inode(tmp_dir)));
+    // if (cur->cwd != NULL) printf ("cur: %d\n", inode_get_inumber(dir_get_inode(cur->cwd)));
     // ========================================================
     // TODO: FREE USELESS RESOURCES HERE
     // ========================================================
@@ -201,12 +218,14 @@ filesys_create (const char *name, off_t initial_size)
     struct file *
 filesys_open (const char *name)
 {
-    struct dir *dir = dir_open_root ();
+    struct thread * cur = thread_current();
+    struct dir *dir = (cur->cwd != NULL)? cur->cwd : dir_open_root();
+    
     struct inode *inode = NULL;
 
     if (dir != NULL)
         dir_lookup (dir, name, &inode);
-    dir_close (dir);
+    // if (dir != ROOT_DIR) dir_close (dir);
 
     return file_open (inode);
 }

@@ -1,11 +1,10 @@
 #include "userprog/syscall.h"
 #include <stdio.h>
 #include <syscall-nr.h>
+#include <string.h>
 #include <user/syscall.h>
 #include "devices/input.h"
 #include "devices/shutdown.h"
-#include "filesys/file.h"
-#include "filesys/filesys.h"
 #include "threads/interrupt.h"
 #include "threads/malloc.h"
 #include "threads/synch.h"
@@ -19,6 +18,14 @@
 #include "vm/page.h"
 #endif
 
+#ifdef FILESYS
+#include "filesys/inode.h"
+#include "filesys/file.h"
+#include "filesys/directory.h"
+#include "filesys/filesys.h"
+#include "filesys/free-map.h"
+#endif
+
 #define ERROR -1
 #define TEST 0
 static bool check_string (const char* file);
@@ -30,10 +37,34 @@ static void syscall_handler (struct intr_frame *);
 struct lock filesys_lock;
 // NEW DATA STRUCTURE
 struct process_file {
-    struct file *file;
+    struct file * file;
+    struct dir * dir;
+    bool isdir;
     int fd;
     struct list_elem elem;
 };
+
+
+// SYSTEM CALL IMPLEMENTATION
+int open (const char * file);
+bool create (const char *file, unsigned initial_size);
+int read (int fd, void *buffer, unsigned size);
+void close (int fd);
+bool remove (const char * file);
+tid_t exec (const char * cmdline);
+int wait (tid_t pid);
+void exit (int status);
+
+// SYSTEM CALL FOR FILE SYSTEM
+// ********************************************************************
+bool chdir (const char * dir);
+bool mkdir (const char * dir);
+bool readdir (int fd, char * name);
+bool isdir (int fd);
+int inumber (int fd);
+// AUXILIARY FUNCTIONS
+struct process_file * get_pf_by_fd (int fd);
+// ********************************************************************
 
 // AUXILIARY FUNCTIONS
 int add_file (struct file *);
@@ -46,17 +77,7 @@ void close_file (int);
 
 void check_filename (const char * filename);
 
-// SYSTEM CALL IMPLEMENTATION
-int open (const char *);
-bool create (const char *file, unsigned initial_size);
-int read (int fd, void *buffer, unsigned size);
-void close(int);
-bool remove (const char *);
-tid_t exec(const char *);
-int wait (tid_t pid);
-
-
-    void
+void
 syscall_init (void) 
 {
     lock_init(&filesys_lock);
@@ -67,11 +88,8 @@ syscall_init (void)
 syscall_handler (struct intr_frame *f UNUSED) 
 {
     int arg[MAX_ARGS];
- //    printf ("esp: %x \n", f ->esp);
-  //   printf ("syscall_handler invoked ..\n");
-   //  printf ("%d\n", * (int *) f->esp);
     validate_ptr((const void*) f->esp);
-// check_valid_uaddr((const void*) f->esp, 4);
+    // check_valid_uaddr((const void*) f->esp, 4);
     switch (* (int *) f->esp)
     {
         case SYS_HALT:
@@ -101,21 +119,18 @@ syscall_handler (struct intr_frame *f UNUSED)
         case SYS_CREATE:
             {
                 get_ptr(f, &arg[0], 2);
-                // arg[0] = find_kernel_ptr((const void *) arg[0]);
                 f->eax = create((const char *)arg[0], (unsigned) arg[1]);
                 break;
             }
         case SYS_REMOVE:
             {
                 get_ptr(f, &arg[0], 1);
-                // arg[0] = find_kernel_ptr((const void *) arg[0]);
                 f->eax = remove((const char *) arg[0]);
                 break;
             }
         case SYS_OPEN:
             {
                 get_ptr(f, &arg[0], 1);
-                // arg[0] = find_kernel_ptr((const void *) arg[0]);
                 if (sp_table_find (thread_current()->spt, (char *)arg[0]) == NULL) exit (ERROR);
                 f->eax = open((char *) arg[0]);
                 break; 				
@@ -130,7 +145,6 @@ syscall_handler (struct intr_frame *f UNUSED)
             {
                 get_ptr(f, &arg[0], 3);
                 check_buffer((void *) arg[1], (unsigned) arg[2]);
-               // arg[1] = find_kernel_ptr((void *) arg[1]);
                 if (sp_table_find (thread_current()->spt, (char *)arg[1]) == NULL) exit (ERROR);
                 f->eax = read(arg[0], (void *) arg[1],
                         (unsigned) arg[2]);
@@ -140,7 +154,6 @@ syscall_handler (struct intr_frame *f UNUSED)
             { 
                 get_ptr(f, &arg[0], 3);
                 check_buffer((void *) arg[1], (unsigned) arg[2]);
-                // arg[1] = find_kernel_ptr((const void *) arg[1]);
                 f->eax = write(arg[0], (const void *) arg[1],
                         (unsigned) arg[2]);
                 break;
@@ -161,6 +174,36 @@ syscall_handler (struct intr_frame *f UNUSED)
             {
                 get_ptr(f, &arg[0], 1);
                 close(arg[0]);
+                break;
+            }
+        case SYS_MKDIR:
+            { 
+                get_ptr(f, &arg[0], 1);
+                f->eax = mkdir((const char *) arg[0]);
+                break;
+            }
+        case SYS_CHDIR:
+            { 
+                get_ptr(f, &arg[0], 1);
+                f->eax = chdir((const char *)arg[0]);
+                break;
+            }
+        case SYS_READDIR:
+            { 
+                get_ptr(f, &arg[0], 2);
+                f->eax = readdir((const char *)arg[0], (char *) arg[1]);
+                break;
+            }
+        case SYS_ISDIR:
+            { 
+                get_ptr(f, &arg[0], 1);
+                f->eax = isdir((int) arg[0]);
+                break;
+            }
+        case SYS_INUMBER:
+            { 
+                get_ptr(f, &arg[0], 1);
+                f->eax = inumber((int) arg[0]);
                 break;
             }
     }
@@ -207,7 +250,6 @@ void exit (int status)
     struct process_file *pf;
     struct list_elem *e; 
 
-    // printf ("1\n");
     // get the file_list occupied by current thread (process)
     struct list *file_list = &cur->file_list;
     // close all files recorded in the file_list
@@ -215,20 +257,18 @@ void exit (int status)
         for (e = list_begin(file_list); e != list_end(file_list); 
                 e = list_next(e)) {
             pf = list_entry (e, struct process_file, elem);
-            file_close(pf->file);
+            if (!pf->isdir) file_close(pf->file);
         }
     }
-    // printf ("2\n");
 
     if (file_list != NULL)
     {
         e = list_begin(file_list);
         while(!list_empty(file_list))
         {
-                list_remove(e);
-                e = list_next(e);
+            list_remove(e);
+            e = list_next(e);
         }
-     // printf ("3\n");
         if (thread_current()->file_deny_execute != NULL)
         {
             // free the writing limitation
@@ -236,7 +276,6 @@ void exit (int status)
             file_close(thread_current()->file_deny_execute);
         }
     }
-    // printf ("4\n");
     //-----------------------------------------------------
     // frame reclamation 
     fcleanup();
@@ -269,6 +308,29 @@ struct file* get_file_by_fd (int fd)
     return NULL;
 }
 
+/* 
+ * Get the process_file structure by using file descriptor
+ * */
+struct process_file * get_pf_by_fd (int fd) 
+{
+    struct process_file *pf;
+    struct list_elem *e; 
+
+    // get the file_list occupied by current thread(process)
+    struct list file_list = thread_current()->file_list;
+    if (list_empty(&file_list) || fd < 0 || fd >= thread_current()->fd) {
+        return NULL; 
+    }
+    // iterate through the whole list
+    for (e = list_begin(&file_list); e != list_end(&file_list); 
+            e = list_next(e)) {
+        pf = list_entry (e, struct process_file, elem);
+        if (TEST) printf("fd: %d \n", pf->fd);
+        if (pf->fd == fd) return pf;
+    } 
+    // not found, return NULL
+    return NULL;
+}
 
 /* 
  * Return the size of file, using fd.
@@ -300,7 +362,7 @@ int read (int fd, void *buffer, unsigned size)
     // check the head and end of buffer is modifiable
     struct thread * cur = thread_current();
     if (!sp_table_find(cur->spt, buffer)->writable || 
-         !sp_table_find(cur->spt, buffer+size)->writable ) {
+            !sp_table_find(cur->spt, buffer+size)->writable ) {
         exit (ERROR);
     }
 
@@ -357,19 +419,24 @@ int write (int fd, const void *buffer, unsigned size)
         return size;
     }
     else if(fd == STDIN_FILENO){
-        exit(-1);
+        exit(ERROR);
     }
     else {
         // get the corresponding file structure
-        struct file *f = get_file_by_fd(fd);
+        struct process_file *pf = get_pf_by_fd (fd);
         // return error if required file is not found
-        if (!f) return ERROR;
+        if (pf == NULL) return ERROR;
         // write file with mutual exclusion
-        lock_acquire(&filesys_lock);
-        int numOfbyte = file_write(f, buffer, size);
-        lock_release(&filesys_lock);
-
-        return numOfbyte; 
+        if (!pf->isdir && pf->file != NULL) {
+            lock_acquire(&filesys_lock);
+            int numOfbyte = file_write(pf->file, buffer, size);
+            lock_release(&filesys_lock);
+            return numOfbyte; 
+        } else {
+            // no write is allowed for directory
+            // printf ("write to directory\n");
+            return ERROR;
+        }
     }
 }
 
@@ -449,6 +516,7 @@ bool create (const char *file, unsigned initial_size)
 {
     if (file == NULL) exit (-1);
     validate_ptr (file);
+   
     lock_acquire(&filesys_lock);
     bool success = filesys_create (file, initial_size);
     lock_release(&filesys_lock);
@@ -463,22 +531,37 @@ int open ( const char *file)
 {
     if (file == NULL) exit (ERROR);
     validate_ptr (file);
-    
+
     // printf ("file_addr: %x\n", file);
-    
-    lock_acquire (&filesys_lock);
-    // printf ("string: %s \n", file);
-    struct file *f = filesys_open(file);
-    if (!f) {
-        // release because of file-not-found error
-        lock_release(&filesys_lock);
+
+    struct thread * cur = thread_current();
+    struct dir * cwd = cur->cwd;
+    struct inode * inode;
+    if (!dir_lookup(cwd, file, &inode)) {
         return ERROR;
     }
-    int fd = add_file(f);
-    // release lock because of successful open
-    lock_release(&filesys_lock);
-    // printf ("fd: %d\n", fd);
-    return fd;
+    // for a directory
+    if (inode_isdir(inode)) {
+        lock_acquire (&filesys_lock);
+        struct dir * new_dir = dir_open (inode);
+        lock_release(&filesys_lock);
+        return add_dir (new_dir);
+    } else {
+        // now for a simple file
+        lock_acquire (&filesys_lock);
+        // printf ("string: %s \n", file);
+        struct file *f = filesys_open(file);
+        if (!f) {
+            // release because of file-not-found error
+            lock_release(&filesys_lock);
+            return ERROR;
+        }
+        int fd = add_file(f);
+        // release lock because of successful open
+        lock_release(&filesys_lock);
+        // printf ("fd: %d\n", fd);
+        return fd;
+    }
 }
 
 /*
@@ -488,13 +571,27 @@ int add_file (struct file *f)
 {
     struct process_file *pf = (struct process_file *)malloc(sizeof(struct
                 process_file)); 
+    pf->isdir = false;
     pf->file = f;
     pf->fd = thread_current()->fd;
     thread_current()->fd++;
     list_push_back(&thread_current()->file_list, &pf->elem);
     return pf->fd;
 }
-
+/*
+ * Process open a new directory 
+ * */
+int add_dir (struct dir *d)
+{
+    struct process_file *pf = (struct process_file *)malloc(sizeof(struct
+                process_file)); 
+    pf->isdir = true;
+    pf->dir = d;
+    pf->fd = thread_current()->fd;
+    thread_current()->fd++;
+    list_push_back(&thread_current()->file_list, &pf->elem);
+    return pf->fd;
+}
 /*
  * Close System Call
  * */
@@ -513,7 +610,7 @@ void close_file (int fd)
     struct thread *t = thread_current();
     struct list_elem *e;
 
-    for ( e = list_begin(&t->file_list); e != list_end (&t->file_list); e = list_next(e))
+    for (e = list_begin(&t->file_list); e != list_end (&t->file_list); e = list_next(e))
     {
         struct process_file *pf = list_entry (e, struct process_file, elem);
         if (fd == pf->fd || fd == -1)
@@ -556,7 +653,7 @@ tid_t exec(const char *cmdline){
     }
 
     // return pid until loading succeed
-    if ( cp->isLoaded == LOADED) {
+    if (cp->isLoaded == LOADED) {
         return pid;
     }
     return ERROR;
@@ -604,23 +701,90 @@ const void* check_valid_uaddr(const void * uaddr, int size)
     return uaddr;
 }
 
-
-static bool check_string (const char* file)
+bool chdir (const char * dirname) 
 {
-    if (file == NULL) 
-    {
+    struct thread * cur = thread_current ();
+    struct dir * old_dir = cur->cwd;
+
+    struct inode * inode;
+    if (!dir_lookup (old_dir, dirname, &inode)) {
+        // printf ("dir: %s\n", dirname);
+        return false;  
+    }
+    struct dir * new_dir = dir_open (inode);
+
+    // TODO: how to deal with the old directory data structure
+    // a. close it. but what if other process is using it
+    // b. leave it there. but what if there are thousands of directory
+    // reserved 
+    if (old_dir != ROOT_DIR) dir_close (old_dir);
+    // update the cwd of current process
+    cur->cwd = new_dir;
+    return true;
+};
+
+bool mkdir (const char * dirname) 
+{
+    // printf ("length:%d\n", strlen(dir));
+    if (strlen(dirname) == 0) 
+        return false;
+
+    struct thread * cur = thread_current ();
+    struct dir * cwd = cur->cwd;
+    // FIXME: how to determine the count and entries?
+    int count = 1;
+    int entries = 10;
+
+    // cached variable
+    block_sector_t sector;
+    // apply disk location towards the free map
+    if (!free_map_allocate (count, &sector)) return false;
+    // create the directory
+    if (!dir_create (sector, entries)) {
+        free_map_release(sector, count);
         return false;
     }
-
-    const char* cur = file;
-
-    if(check_valid_uaddr(cur,sizeof(char)) == NULL) return false;
-    while(*cur != '\0')
-    {
-        cur = cur + 1;
-        if(check_valid_uaddr(cur,sizeof(char)) == NULL) return false;
+    // add the directory (particular file) to cwd
+    if (!dir_add (cwd, dirname, sector)) {
+        free_map_release(sector, count);
+        return false;
     }
-    if(check_valid_uaddr(cur,sizeof(char)) == NULL) return false;
+    // update the inode data structure
+    struct inode * in = inode_open (sector);
+    inode_set_isdir (in, true);
+    inode_close (in);
 
     return true;
-}
+};
+
+bool readdir (int fd, char * name)
+{
+    // provided fd is not a directory
+    if (!isdir(fd)) return false;
+};
+
+bool isdir (int fd)
+{
+    // get the file structure using file decriptor
+    struct process_file * pf = get_pf_by_fd (fd);
+    // no pf found
+    if (pf == NULL) return ERROR;
+    // return isdir from the data structure
+    return pf->isdir;
+};
+
+int inumber (int fd) 
+{
+    // get the file structure using file decriptor
+    struct process_file * pf = get_pf_by_fd (fd);
+    // no pf found
+    if (pf == NULL) return ERROR;
+    // return inumber from the data structure
+    if (pf->isdir) {
+        if (pf->dir != NULL)
+            return inode_get_inumber (dir_get_inode(pf->dir));
+    } else {
+        if (pf->file != NULL)
+            return inode_get_inumber (file_get_inode(pf->file));
+    }
+};

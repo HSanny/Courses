@@ -136,6 +136,14 @@ struct thread
     // ##################################################
 #endif
 
+#ifdef FILESYS 
+    // ##################################################
+    // NEW MEMBER FOR PROJECT 4: SUBDIRECTORY
+    // ##################################################
+    struct dir * cwd;   // current working directory
+    // ##################################################
+#endif
+    
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
 

@@ -4,6 +4,11 @@
 #include <stdbool.h>
 #include "filesys/off_t.h"
 
+// ---------------------------------------------------
+struct dir * ROOT_DIR;  /* cache the root directory */
+// ---------------------------------------------------
+
+
 /* Sectors of system file inodes. */
 #define FREE_MAP_SECTOR 0       /* Free map file inode sector. */
 #define ROOT_DIR_SECTOR 1       /* Root directory file inode sector. */

@@ -238,7 +238,6 @@ read_command_line (void)
     printf("argc: %d \n", argc);
     for (i = 0; i < argc; i++)
         printf("argv[%d]: %s \n", i, argv[i]);
-
     //________________________________________________________________________ 
 
     /* Print kernel command line. */

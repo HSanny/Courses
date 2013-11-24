@@ -12,11 +12,17 @@
 #include "threads/synch.h"
 #include "threads/vaddr.h"
 #include "threads/malloc.h"
+
 #ifdef USERPROG
 #include "userprog/process.h"
 #endif
+
 #ifdef VM
 #include "vm/page.h"
+#endif
+
+#ifdef FILESYS
+#include "filesys/filesys.h"
 #endif
 
 
@@ -210,10 +216,12 @@ thread_create (const char *name, int priority,
     init_thread (t, name, priority);
     tid = t->tid = allocate_tid ();
 
+    struct thread * cur = thread_current();
+
     //****************************************************
     // FOR THE CHANGE IN PROJECT 2
 #ifdef USERPROG 
-    t->parent = thread_current()->tid;
+    t->parent = cur->tid;
     t->isLoaded = NOT_LOADED;
     list_init (&t->file_list);
     t->exit_value = NOT_EXIT;
@@ -236,6 +244,18 @@ thread_create (const char *name, int priority,
 #endif
     //****************************************************
     
+    //****************************************************
+    // FOR THE CHANGE IN PROJECT 4
+    //****************************************************
+    if (cur->cwd == NULL) {
+         t->cwd = ROOT_DIR;
+    } else {
+        t->cwd = cur->cwd;
+    }
+    // TODO: inherit file_list from parent
+
+    //****************************************************
+
     /* Prepare thread for first run by initializing its stack.
        Do this atomically so intermediate values for the 'stack' 
        member cannot be observed. */

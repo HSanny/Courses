@@ -37,7 +37,22 @@ struct inode
     bool removed;                       /* True if deleted, false otherwise. */
     int deny_write_cnt;                 /* 0: writes ok, >0: deny writes. */
     struct inode_disk data;             /* Inode content. */
+
+    bool isdir;
   };
+
+// ========================================================================
+bool inode_isdir (struct inode * in) 
+{
+    return in->isdir;
+}
+
+void inode_set_isdir (struct inode * in, bool isdir) 
+{
+    in->isdir = isdir;
+}
+// ========================================================================
+
 
 /* Returns the block device sector that contains byte offset POS
    within INODE.

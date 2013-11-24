@@ -388,8 +388,7 @@ int read (int fd, void *buffer, unsigned size)
         struct process_file * pf = get_pf_by_fd (fd);
 
         // file not found
-        if (pf == NULL) {
-            printf ("here:1\n");
+        if (pf == NULL || pf->isdir) {
             return ERROR; 
         }
 
@@ -517,9 +516,9 @@ void check_buffer (void* buffer, unsigned size)
  * */
 bool create (const char *file, unsigned initial_size)
 {
-    if (file == NULL) return false;
-    if (strlen(file) == 0) return false;
+    if (file == NULL) exit(ERROR);
     validate_ptr (file);
+    if (strlen(file) == 0) return false;
    
     lock_acquire(&filesys_lock);
     bool success = filesys_create (file, initial_size);
@@ -729,35 +728,8 @@ bool chdir (const char * dirname)
 
 bool mkdir (const char * dirname) 
 {
-    // printf ("length:%d\n", strlen(dir));
-    if (strlen(dirname) == 0) 
-        return false;
-
-    struct thread * cur = thread_current ();
-    struct dir * cwd = cur->cwd;
-    // FIXME: how to determine the count and entries?
-    int count = 1;
-    int entries = 10;
-
-    // cached variable
-    block_sector_t sector;
-    // apply disk location towards the free map
-    if (!free_map_allocate (count, &sector)) return false;
-    // create the directory
-    if (!dir_create (sector, entries)) {
-        free_map_release(sector, count);
-        return false;
-    }
-    // add the directory (particular file) to cwd
-    if (!dir_add (cwd, dirname, sector)) {
-        free_map_release(sector, count);
-        return false;
-    }
-    // update the inode data structure
-    struct inode * in = inode_open (sector);
-    inode_set_isdir (in, true);
-
-    return true;
+    validate_ptr (dirname);
+    return filesys_mkdir (dirname);
 };
 
 bool readdir (int fd, char * name)

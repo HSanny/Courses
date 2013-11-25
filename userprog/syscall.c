@@ -1,6 +1,6 @@
 // ========================================================================
 // UNCOMMENT THEMACROS TO ENABLE THE CORRESPONDING OUTPUT FOR TESTING
-//#define OPEN_TEST 
+// #define OPEN_TEST 
 //#define CREATE_TEST 
 //#define WRITE_TEST
 //#define CHDIR_TEST
@@ -95,6 +95,8 @@ void check_buffer (void* buffer, unsigned size);
 void close_file (int);
 
 void check_filename (const char * filename);
+
+char * remove_multiple_slash (const char *); 
 
 void
 syscall_init (void) 
@@ -563,6 +565,7 @@ int open ( const char *file)
 {
     if (file == NULL) exit (ERROR);
     validate_ptr (file);
+    char * pro_file = remove_multiple_slash (file);
 
 #ifdef OPEN_TEST
     printf ("*OPEN_SYSCALL* input_addr: %x\n", file);
@@ -572,12 +575,12 @@ int open ( const char *file)
     struct thread * cur = thread_current();
     struct dir * cwd = cur->cwd;
     struct inode * inode;
-    if (strcmp(file, "/") == 0) {
+    if (strcmp(pro_file, "/") == 0) {
 #ifdef OPEN_TEST
         printf ("*OPEN_SYSCALL* open root\n");
 #endif
         inode = dir_get_inode(dir_open_root());
-    } else if (!filesys_lookup(file, &inode)) {
+    } else if (!filesys_lookup(pro_file, &inode)) {
 #ifdef OPEN_TEST
         printf ("*OPEN_SYSCALL* file not found\n");
 #endif
@@ -605,7 +608,7 @@ int open ( const char *file)
     } else {
         // now for a simple file
         lock_acquire (&filesys_lock);
-        struct file *f = filesys_open(file);
+        struct file *f = filesys_open(pro_file);
         if (f == NULL) {
             // release because of file-not-found error
             lock_release(&filesys_lock);
@@ -854,3 +857,26 @@ int inumber (int fd)
             return inode_get_inumber (file_get_inode(pf->file));
     }
 };
+
+
+char * remove_multiple_slash (const char * name)
+{
+   int i, j;
+   int length = strlen(name);
+   char * new_str = (char *) malloc (length+1);
+   for (i = 0, j = 0; i < length; i ++) {
+        if (*(name+i) == '/') {
+            if (*(name+i+1) == '/') continue; // multiple-slash
+            else {
+                *(new_str+j) = *(name+i); // single-slash
+                ++j;
+            }
+        } else { // other char
+            *(new_str+j) = *(name+i);
+            ++j;
+        } 
+   }
+   *(new_str+j) = 0;
+   //printf ("rm_ms: %s\n", new_str);
+   return new_str;
+} 

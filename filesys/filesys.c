@@ -114,7 +114,11 @@ bool filesys_lookup (const char * name, struct inode ** inode)
 {
     // 0-length file name
     if (strlen(name) == 0) return false;
-
+    // address the root directory
+    if (!strcmp(name, "/")) {
+        *inode = dir_get_inode (dir_open_root());
+        return true;
+    }
     struct thread * cur = thread_current();
     if (inode_is_removed (dir_get_inode (cur->cwd))) {
 #ifdef FS_LOOKUP_TEST
@@ -125,7 +129,8 @@ bool filesys_lookup (const char * name, struct inode ** inode)
     // parse the input name
     char ** ptr = separate_pathname (name);
     char * filename = * (ptr+MAX_LEVEL-1);
-    if (ptr == NULL &&  filename == NULL) return false;
+    if (ptr == NULL && filename == NULL) return false;
+
     // enter specified directory
     struct dir * tmp_dir = enter_dir (ptr);
     if (tmp_dir == NULL) return false;

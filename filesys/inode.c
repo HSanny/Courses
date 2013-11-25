@@ -382,6 +382,19 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
             inode_lock(inode);
         }
         inode->length = inode_expand(inode, offset + size);
+        struct inode_disk disk_inode = {
+                .length = inode->length,
+                .magic = INODE_MAGIC,
+                .direct_index = inode->direct_index,
+                .indirect_index = inode->indirect_index,
+                .double_indirect_index = inode->double_indirect_index,
+                .isdir = inode->isdir,
+                .parent = inode->parent,
+            };
+            memcpy(&disk_inode.ptr, &inode->ptr,
+                    INODE_BLOCK_PTRS*sizeof(block_sector_t));
+            block_write(fs_device, inode->sector, &disk_inode);
+
         if (!inode->isdir)
         {
             inode_unlock(inode);

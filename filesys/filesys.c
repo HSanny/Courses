@@ -96,7 +96,7 @@ struct dir * enter_dir (char ** ptr)
 
         if (!dir_lookup (tmp_dir, dirname, &inode)) return false;
         // each level must be a directory
-        if (!inode_isdir(inode)) return false;
+        if (!inode_is_dir(inode)) return false;
         if (tmp_dir != ROOT_DIR && tmp_dir != cwd) dir_close(tmp_dir);
         tmp_dir = dir_open (inode);
 levelup:
@@ -163,7 +163,6 @@ bool filesys_mkdir (const char * name)
 
     return success;
 }
-// =================================================================
 
 /* Initializes the file system module.
    If FORMAT is true, reformats the file system. */
@@ -171,18 +170,16 @@ bool filesys_mkdir (const char * name)
 filesys_init (bool format) 
 {
     fs_device = block_get_role (BLOCK_FILESYS);
-    if (fs_device == NULL)
-        PANIC ("No file system device found, can't initialize file system.");
+  if (fs_device == NULL)
+    PANIC ("No file system device found, can't initialize file system.");
 
-    inode_init ();
-    free_map_init ();
+  inode_init ();
+  free_map_init ();
 
-    if (format) 
-        do_format ();
+  if (format)
+    do_format ();
 
-    free_map_open ();
-
-    // ---------------------------------------------------
+  free_map_open ();
     ROOT_DIR = dir_open_root();
     inode_set_isdir(dir_get_inode(ROOT_DIR), true);
     // ---------------------------------------------------
@@ -281,7 +278,7 @@ filesys_remove (const char *name)
     struct inode * inode;
     bool allowed = true;  // allow to remove it by default
     if (dir_lookup (dir, rm_file, &inode)) {
-        if (inode_isdir(inode)) {
+        if (inode_is_dir(inode)) {
             block_sector_t rm_dir_i = inode_get_inumber (inode);
             // check if the directory is parent of cwd
             struct dir * temp = dir_get_parent(cur->cwd);

@@ -4,10 +4,6 @@
 #include <stdbool.h>
 #include "filesys/off_t.h"
 
-// ---------------------------------------------------
-struct dir * ROOT_DIR;  /* cache the root directory */
-// ---------------------------------------------------
-
 
 /* Sectors of system file inodes. */
 #define FREE_MAP_SECTOR 0       /* Free map file inode sector. */
@@ -16,7 +12,11 @@ struct dir * ROOT_DIR;  /* cache the root directory */
 /* Block device that contains the file system. */
 struct block *fs_device;
 
+// ---------------------------------------------------
+struct dir * ROOT_DIR;  /* the root directory */
 struct inode;
+char ** separate_pathname (const char *);
+// ---------------------------------------------------
 
 void filesys_init (bool format);
 void filesys_done (void);

@@ -581,7 +581,7 @@ int open ( const char *file)
             inode_get_inumber(inode));
 #endif
     // for a directory
-    if (inode_isdir(inode)) {
+    if (inode_is_dir(inode)) {
         lock_acquire (&filesys_lock);
         struct dir * new_dir = dir_open (inode);
         lock_release(&filesys_lock);

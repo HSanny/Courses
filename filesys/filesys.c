@@ -95,7 +95,6 @@ bool filesys_mkdir (const char * name)
     // printf ("filename: %s\n", final_level);
     // then, create a directory for the final_level 
 
-    // cached variable
     block_sector_t sector;
     // apply disk location towards the free map
     if (!free_map_allocate (count, &sector)) return false;
@@ -126,7 +125,6 @@ filesys_init (bool format)
     PANIC ("No file system device found, can't initialize file system.");
 
   inode_init ();
-  filesys_cache_init();
   free_map_init ();
 
   if (format)

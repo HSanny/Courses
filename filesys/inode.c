@@ -3,11 +3,10 @@
 #include <debug.h>
 #include <round.h>
 #include <string.h>
-#include "filesys/cache.h"
 #include "filesys/filesys.h"
 #include "filesys/free-map.h"
 #include "threads/malloc.h"
-
+#include "threads/synch.h"
 /* Identifies an inode. */
 #define INODE_MAGIC 0x494e4f44
 
@@ -345,11 +344,14 @@ inode_read_at (struct inode *inode, void *buffer_, off_t size, off_t offset)
       if (chunk_size <= 0)
         break;
 
-      struct cache_entry *c = filesys_cache_block_get(sector_idx, false);
-      memcpy (buffer + bytes_read, (uint8_t *) &c->block + sector_ofs,
+      uint8_t temp[BLOCK_SECTOR_SIZE];
+      block_read(fs_device, sector_idx, &temp);
+      memcpy (buffer + bytes_read, (uint8_t *) &temp + sector_ofs,
          chunk_size);
-      c->accessed = true;
-      c->open_cnt--;
+
+
+      //c->accessed = true;
+     // c->open_cnt--;
 
       /* Advance. */
       size -= chunk_size;
@@ -406,12 +408,17 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
       if (chunk_size <= 0)
         break;
 
-      struct cache_entry *c = filesys_cache_block_get(sector_idx, true);
-      memcpy ((uint8_t *) &c->block + sector_ofs, buffer + bytes_written,
+      uint8_t temp[BLOCK_SECTOR_SIZE];
+      block_read(fs_device, sector_idx, &temp);
+
+  
+      memcpy ((uint8_t *) &temp + sector_ofs, buffer + bytes_written,
          chunk_size);
-      c->accessed = true;
-      c->dirty = true;
-      c->open_cnt--;
+      block_write(fs_device, sector_idx, &temp);
+
+      //c->accessed = true;
+      //c->dirty = true;
+      //c->open_cnt--;
 
       /* Advance. */
       size -= chunk_size;

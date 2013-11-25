@@ -5,7 +5,7 @@
 #include "filesys/off_t.h"
 
 // ---------------------------------------------------
-struct dir * ROOT_DIR;  /* cache the root directory */
+struct dir * ROOT_DIR;  /* the root directory */
 // ---------------------------------------------------
 
 

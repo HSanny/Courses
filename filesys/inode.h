@@ -30,4 +30,5 @@ void inode_set_isdir (struct inode *, bool);
 
 void inode_lock (const struct inode *inode);
 void inode_unlock (const struct inode *inode);
+bool inode_is_removed (struct inode * inode);
 #endif /* filesys/inode.h */

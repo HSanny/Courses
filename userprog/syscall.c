@@ -1,7 +1,10 @@
 // ========================================================================
 // UNCOMMENT THEMACROS TO ENABLE THE CORRESPONDING OUTPUT FOR TESTING
-// #define OPEN_TEST 
+//#define OPEN_TEST 
 //#define CREATE_TEST 
+//#define WRITE_TEST
+//#define CHDIR_TEST
+//#define READDIR_TEST
 // ========================================================================
 #include "userprog/syscall.h"
 #include <stdio.h>
@@ -429,6 +432,9 @@ int read (int fd, void *buffer, unsigned size)
 int write (int fd, const void *buffer, unsigned size)
 {
     validate_ptr (buffer);
+#ifdef WRITE_TEST
+    printf ("*WRITE_SYSCALL* fd: %d, size: %d\n", fd, size);
+#endif
     if (fd == STDOUT_FILENO)
     {
         putbuf(buffer, size);
@@ -446,12 +452,16 @@ int write (int fd, const void *buffer, unsigned size)
         if (!pf->isdir && pf->file != NULL) {
             lock_acquire(&filesys_lock);
             int numOfbyte = file_write(pf->file, buffer, size);
-           // printf ("numOfbyte: %d\n", numOfbyte);
             lock_release(&filesys_lock);
+#ifdef WRITE_TEST
+            printf ("*WRITE_SYSCALL* numOfbyte: %d\n", numOfbyte);
+#endif
             return numOfbyte; 
         } else {
             // no write is allowed for directory
-            // printf ("write to directory\n");
+#ifdef WRITE_TEST
+            printf ("*WRITE_SYSCALL* write to directory\n");
+#endif
             return ERROR;
         }
     }
@@ -539,9 +549,9 @@ bool create (const char *file, unsigned initial_size)
     printf ("*CREATE_SYSCALL* initial_size: %s\n", file);
 #endif  
 
-    lock_acquire(&filesys_lock);
+    lock_acquire (&filesys_lock);
     bool success = filesys_create (file, initial_size);
-    lock_release(&filesys_lock);
+    lock_release (&filesys_lock);
     return success;
 }
 
@@ -563,7 +573,9 @@ int open ( const char *file)
     struct dir * cwd = cur->cwd;
     struct inode * inode;
     if (strcmp(file, "/") == 0) {
+#ifdef OPEN_TEST
         printf ("*OPEN_SYSCALL* open root\n");
+#endif
         inode = dir_get_inode(dir_open_root());
     } else if (!filesys_lookup(file, &inode)) {
 #ifdef OPEN_TEST
@@ -584,11 +596,12 @@ int open ( const char *file)
     if (inode_is_dir(inode)) {
         lock_acquire (&filesys_lock);
         struct dir * new_dir = dir_open (inode);
+        int fd = add_dir (new_dir);
         lock_release(&filesys_lock);
 #ifdef OPEN_TEST
         printf ("*OPEN_SYSCALL* open a directory\n");
 #endif
-        return add_dir (new_dir);
+        return fd;
     } else {
         // now for a simple file
         lock_acquire (&filesys_lock);
@@ -644,6 +657,9 @@ int add_dir (struct dir *d)
  * */
 void close (int fd)
 {
+#ifdef CLOSE_TEST
+    printf ("*CLOSE_SYSCALL* fd: %d\n", fd);
+#endif
     lock_acquire(&filesys_lock);
     close_file(fd);
     lock_release(&filesys_lock);
@@ -657,17 +673,24 @@ void close_file (int fd)
     struct thread *t = thread_current();
     struct list_elem *e;
 
+#ifdef CLOSE_TEST
+    printf ("list_size: %d\n", list_size(&t->file_list));
+#endif
     for (e = list_begin(&t->file_list); e != list_end (&t->file_list); e = list_next(e))
     {
         struct process_file *pf = list_entry (e, struct process_file, elem);
         if (fd == pf->fd || fd == -1)
         {
-            file_close(pf->file);
+            if (pf->isdir) dir_close (pf->dir);
+            else file_close(pf->file);
             list_remove(&pf->elem);
             free(pf);
             break;
         }
     }
+#ifdef CLOSE_TEST
+    printf ("close file done\n");
+#endif
 }
 
 /*
@@ -753,11 +776,14 @@ bool chdir (const char * dirname)
     struct thread * cur = thread_current ();
     struct dir * old_dir = cur->cwd;
 
-    // printf ("root: %d\n", inode_get_inumber(dir_get_inode(ROOT_DIR)));
-    // if (cur->cwd != NULL) printf ("pre: %d\n", inode_get_inumber(dir_get_inode(cur->cwd)));
+#ifdef CHDIR_TEST
+    if (cur->cwd != NULL) printf ("chdir_pre: %d\n", inode_get_inumber(dir_get_inode(cur->cwd)));
+#endif
     struct inode * inode;
-    if (!dir_lookup (old_dir, dirname, &inode)) {
-       //  printf ("dir: %s\n", dirname);
+    if (!filesys_lookup ( dirname, &inode)) {
+#ifdef CHDIR_TEST
+    printf ("*CHDIR_CALL* %s failure\n", dirname);
+#endif
         return false;
     }
     struct dir * new_dir = dir_open (inode);
@@ -766,10 +792,12 @@ bool chdir (const char * dirname)
     // a. close it. but what if other process is using it
     // b. leave it there. but what if there are thousands of directory
     // reserved 
-    if (old_dir != ROOT_DIR) dir_close (old_dir);
+    // if (old_dir != ROOT_DIR) dir_close (old_dir);
     // update the cwd of current process
     cur->cwd = new_dir;
-    // if (cur->cwd != NULL) printf ("post: %d\n", inode_get_inumber(dir_get_inode(cur->cwd)));
+#ifdef CHDIR_TEST
+    if (cur->cwd != NULL) printf ("chdir_post: %d\n", inode_get_inumber(dir_get_inode(cur->cwd)));
+#endif
     return true;
 };
 
@@ -782,12 +810,20 @@ bool mkdir (const char * dirname)
 
 bool readdir (int fd, char * name)
 {
-    check_buffer(name, NAME_MAX + 1);
+    check_buffer(name, READDIR_MAX_LEN + 1);
+#ifdef READDIR_TEST
+    printf ("*READDIR_SYSCALL* fd: %d \n", fd);
+#endif
     // get the file structure using file decriptor
     struct process_file * pf = get_pf_by_fd (fd);
     if (pf == NULL) return ERROR;
     if (pf->isdir && pf->dir != NULL) {
-        return dir_readdir(pf->dir, name);
+        bool success = dir_readdir(pf->dir, name);
+#ifdef READDIR_TEST
+        if (success) printf ("*READDIR_SYSCALL* succ\n");
+        else printf ("*READDIR_SYSCALL* fail\n");
+#endif
+        return success;
     } else {
         return false;
     }

@@ -1,3 +1,8 @@
+// ==================================================================
+// uncomment to enable the tests
+// #define FS_CREATE_TEST
+// #define FS_LOOKUP_TEST
+// ==================================================================
 #include "filesys/filesys.h"
 #include <debug.h>
 #include <stdio.h>
@@ -8,7 +13,7 @@
 #include "filesys/inode.h"
 #include "filesys/directory.h"
 #include "threads/thread.h"
-
+// ==================================================================
 #define MAX_LEVEL 15 
 #define MAX_LENGTH_EACH_LEVEL 15
 /* Partition that contains the file system. */
@@ -110,13 +115,30 @@ bool filesys_lookup (const char * name, struct inode ** inode)
     // 0-length file name
     if (strlen(name) == 0) return false;
 
-    struct thread * cur = thread_current ();
-
+    struct thread * cur = thread_current();
+    if (inode_is_removed (dir_get_inode (cur->cwd))) {
+#ifdef FS_LOOKUP_TEST
+        printf ("*filesys_create* current dir removed\n");
+#endif
+        return false;
+    }
+    // parse the input name
     char ** ptr = separate_pathname (name);
-    if (ptr == NULL) return false;
-    struct dir * tmp_dir = enter_dir (ptr);
-
     char * filename = * (ptr+MAX_LEVEL-1);
+    if (ptr == NULL &&  filename == NULL) return false;
+    // enter specified directory
+    struct dir * tmp_dir = enter_dir (ptr);
+    if (tmp_dir == NULL) return false;
+
+    // deal with . and ..
+    if (strcmp(filename, ".") == 0) {
+        *inode = dir_get_inode (tmp_dir);
+        return true;
+    } else if (strcmp(filename, "..") == 0) {
+        *inode = dir_get_inode (dir_get_parent (tmp_dir));
+        return true;
+    }
+
     return dir_lookup (tmp_dir, filename, inode);
 }
 
@@ -127,7 +149,6 @@ bool filesys_mkdir (const char * name)
     if (strlen(name) == 0) 
         return false;
 
-    struct thread * cur = thread_current (); 
     char ** ptr = separate_pathname (name);
     if (ptr == NULL) return false;
     struct dir * tmp_dir = enter_dir (ptr);
@@ -149,8 +170,10 @@ bool filesys_mkdir (const char * name)
             && free_map_allocate (count, &inode_sector)
             && dir_create (inode_sector, entries)
             && dir_add (tmp_dir, final_level, inode_sector));
-    if (!success && inode_sector != 0) 
-        free_map_release (inode_sector, 1);
+    if (!success && inode_sector != 0) {
+        return success;
+        // free_map_release (inode_sector, 1);
+    }
 
     // if (tmp_dir != ROOT_DIR && cwd != tmp_dir) dir_close (tmp_dir);
     // printf ("root: %d\n", inode_get_inumber(dir_get_inode(ROOT_DIR)));
@@ -213,8 +236,18 @@ filesys_create (const char *name, off_t initial_size)
     if (strlen (new_file_name) > MAX_LENGTH_EACH_LEVEL) return false;
     // ========================================================
     if (tmp_dir == NULL) {
+#ifdef FS_CREATE_TEST
+        printf ("*filesys_create* use root\n");
+#endif
         tmp_dir = dir_open_root();
     }
+    if (inode_is_removed (dir_get_inode (tmp_dir))) {
+#ifdef FS_CREATE_TEST
+        printf ("*filesys_create* inode null\n");
+#endif
+        return false;
+    }
+    
     block_sector_t inode_sector;
     bool success = (tmp_dir != NULL
             && free_map_allocate (1, &inode_sector)
@@ -224,12 +257,11 @@ filesys_create (const char *name, off_t initial_size)
         free_map_release (inode_sector, 1);
     // if (tmp_dir != ROOT_DIR && cwd != tmp_dir) dir_close (tmp_dir);
 
-    // printf ("root: %d\n", inode_get_inumber(dir_get_inode(ROOT_DIR)));
-    // printf ("tmp_dir: %d\n", inode_get_inumber(dir_get_inode(tmp_dir)));
-    // if (cur->cwd != NULL) printf ("cur: %d\n", inode_get_inumber(dir_get_inode(cur->cwd)));
-    // ========================================================
-    // TODO: FREE USELESS RESOURCES HERE
-    // ========================================================
+#ifdef FS_CREATE_TEST
+    printf ("root: %d\n", inode_get_inumber(dir_get_inode(ROOT_DIR)));
+    printf ("tmp_dir: %d\n", inode_get_inumber(dir_get_inode(tmp_dir)));
+    if (cur->cwd != NULL) printf ("cur: %d\n", inode_get_inumber(dir_get_inode(cur->cwd)));
+#endif
     return success;
 }
 
@@ -289,10 +321,13 @@ filesys_remove (const char *name)
                     allowed = false; // not allowed
                     break;
                 }
-                temp = dir_get_parent(temp);
+                struct dir *del = dir_get_parent(temp);
+                dir_close (temp);
+                temp = del;
             }
         }
     }
+
 
     if (!allowed) return false;
 

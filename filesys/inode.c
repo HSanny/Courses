@@ -707,7 +707,12 @@ void inode_unlock (const struct inode *inode)
     lock_release(&((struct inode *) inode)->lock);
 }
 
-void inode_set_isdir (struct inode * in, bool isdir)
+void inode_set_isdir (struct inode * inode, bool isdir)
 {
-    in->isdir = isdir;
+    inode->isdir = isdir;
+}
+
+bool inode_is_removed (struct inode * inode)
+{
+    return inode->removed != 0;
 }

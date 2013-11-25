@@ -37,7 +37,6 @@ char ** separate_pathname (const char * path) {
                 str = (char *) malloc (2 * sizeof(char));
                 memcpy (str, path, 1);
                 *(str+1) = 0; // null terminator
-                last_pos = 1;
             } else { 
                 int size = pos-last_pos;
                 str = (char *) malloc ((size+1) * sizeof(char));
@@ -65,6 +64,62 @@ char ** separate_pathname (const char * path) {
     return ptr;
 }
 
+struct dir * enter_dir (char ** ptr)
+{
+    int level = 0;
+    // struct dir * cwd = cur->cwd;
+    struct thread * cur = thread_current();
+    struct dir * cwd = cur->cwd;
+    struct dir * tmp_dir;
+    if (cwd != NULL) tmp_dir = cur->cwd;
+    else tmp_dir = dir_open_root();
+    
+    struct inode * inode;
+    while (*(ptr + level) != NULL && level < MAX_LEVEL-1) {
+        char * dirname = * (ptr+level);
+        // printf ("str: %s\n", dirname);
+        if (strcmp("/", dirname) == 0) {
+            tmp_dir = dir_open_root();
+            goto levelup;  // skip the checking procedure
+        }
+        if (strcmp(".", dirname) == 0) {
+            // remain the current directory
+            goto levelup;
+        }
+        if (strcmp("..", dirname) == 0) {
+            // back to the parent directory
+            struct dir * parent_dir = dir_get_parent (tmp_dir);
+            dir_close (tmp_dir);
+            tmp_dir = parent_dir;
+            goto levelup;
+        }
+
+        if (!dir_lookup (tmp_dir, dirname, &inode)) return false;
+        // each level must be a directory
+        if (!inode_isdir(inode)) return false;
+        if (tmp_dir != ROOT_DIR && tmp_dir != cwd) dir_close(tmp_dir);
+        tmp_dir = dir_open (inode);
+levelup:
+        ++ level;
+    }
+    return tmp_dir;
+}
+
+bool filesys_lookup (const char * name, struct inode ** inode) 
+{
+    // 0-length file name
+    if (strlen(name) == 0) return false;
+
+    struct thread * cur = thread_current ();
+
+    char ** ptr = separate_pathname (name);
+    if (ptr == NULL) return false;
+    struct dir * tmp_dir = enter_dir (ptr);
+
+    char * filename = * (ptr+MAX_LEVEL-1);
+    return dir_lookup (tmp_dir, filename, inode);
+}
+
 bool filesys_mkdir (const char * name)
 {
     // printf ("length:%d\n", strlen(name));
@@ -73,51 +128,37 @@ bool filesys_mkdir (const char * name)
         return false;
 
     struct thread * cur = thread_current (); 
-    // FIXME: how to determine the count and entries?
-    int count = 1;
-    int entries = 10;
-
     char ** ptr = separate_pathname (name);
     if (ptr == NULL) return false;
-    int level = 0;
-    struct dir * cwd = cur->cwd;
-    struct dir * tmp_dir = cur->cwd;
-    struct inode * inode;
-    while (*(ptr + level) != NULL && level < MAX_LEVEL-1) {
-        char * dirname = * (ptr+level);
-        // printf ("str: %s\n", dirname);
-        if (!dir_lookup (tmp_dir, dirname, &inode)) return false;
-        // each level must be a directory
-        if (!inode_isdir(inode)) return false;
-        // if (tmp_dir != ROOT_DIR && cwd != tmp_dir) dir_close(tmp_dir);
-        tmp_dir = dir_open (inode);
-        ++ level;
-    } 
-
+    struct dir * tmp_dir = enter_dir (ptr);
+ 
     char * final_level = *(ptr+MAX_LEVEL-1);
     // printf ("filename: %s\n", final_level);
     // then, create a directory for the final_level 
 
     // cached variable
     block_sector_t inode_sector;
-    // ========================================================
     if (tmp_dir == NULL) {
-        // printf ("use root\n");
         tmp_dir = ROOT_DIR;
     }
+
+    // FIXME: how to determine the count and entries?
+    int count = 1;
+    int entries = 10;
     bool success = (tmp_dir != NULL
             && free_map_allocate (count, &inode_sector)
             && dir_create (inode_sector, entries)
             && dir_add (tmp_dir, final_level, inode_sector));
     if (!success && inode_sector != 0) 
         free_map_release (inode_sector, 1);
+
     // if (tmp_dir != ROOT_DIR && cwd != tmp_dir) dir_close (tmp_dir);
     // printf ("root: %d\n", inode_get_inumber(dir_get_inode(ROOT_DIR)));
     // if (cur->cwd != NULL) printf ("cur: %d\n", inode_get_inumber(dir_get_inode(cur->cwd)));
-    // ========================================================
 
     // update the inode data structure
     struct inode * in = inode_open (inode_sector);
+    inode_set_parent (in, inode_get_inumber(dir_get_inode(tmp_dir)));
     inode_set_isdir (in, true);
 
     return success;
@@ -143,6 +184,7 @@ filesys_init (bool format)
 
     // ---------------------------------------------------
     ROOT_DIR = dir_open_root();
+    inode_set_isdir(dir_get_inode(ROOT_DIR), true);
     // ---------------------------------------------------
 }
 
@@ -166,30 +208,14 @@ filesys_create (const char *name, off_t initial_size)
     struct thread * cur = thread_current (); 
     char ** ptr = separate_pathname (name);
     if (ptr == NULL) return false;
-    int level = 0;
-    struct dir * cwd = cur->cwd;
-    struct dir * tmp_dir = cur->cwd;
-    struct inode * inode;
-    while (*(ptr + level) != NULL && level < MAX_LEVEL-1) {
-        char * dirname = * (ptr+level);
-        if (strlen (dirname) > MAX_LENGTH_EACH_LEVEL) return false;
-        // printf ("level_len: %d\n", strlen(dirname));
-        // printf ("str: %s\n", dirname);
-        if (!dir_lookup (tmp_dir, dirname, &inode)) return false;
-        // each level must be a directory
-        if (!inode_isdir(inode)) return false;
-       // if (tmp_dir != ROOT_DIR && cwd != tmp_dir)  dir_close(tmp_dir);
-        tmp_dir = dir_open (inode);
-        ++ level;
-    } 
+    struct dir * tmp_dir = enter_dir (ptr); 
 
     char * new_file_name = *(ptr+MAX_LEVEL-1);
-    // printf ("filename_len: %d\n", strlen(new_file_name));
-    // printf ("filename: %s\n", new_file_name);
+     // printf ("filename_len: %d\n", strlen(new_file_name));
+     // printf ("filename: %s\n", new_file_name);
     if (strlen (new_file_name) > MAX_LENGTH_EACH_LEVEL) return false;
     // ========================================================
     if (tmp_dir == NULL) {
-        // printf ("root used\n");
         tmp_dir = dir_open_root();
     }
     block_sector_t inode_sector;
@@ -219,12 +245,15 @@ filesys_create (const char *name, off_t initial_size)
 filesys_open (const char *name)
 {
     struct thread * cur = thread_current();
-    struct dir *dir = (cur->cwd != NULL)? cur->cwd : dir_open_root();
+    char ** ptr = separate_pathname (name);
+    if (ptr == NULL) return false;
+    struct dir *dir = (cur->cwd != NULL)? enter_dir (ptr) : dir_open_root();
     
     struct inode *inode = NULL;
+    char * file_name = *(ptr+MAX_LEVEL-1);
 
     if (dir != NULL)
-        dir_lookup (dir, name, &inode);
+        dir_lookup (dir, file_name, &inode);
     // if (dir != ROOT_DIR) dir_close (dir);
 
     return file_open (inode);
@@ -237,9 +266,40 @@ filesys_open (const char *name)
     bool
 filesys_remove (const char *name) 
 {
-    struct dir *dir = dir_open_root ();
-    bool success = dir != NULL && dir_remove (dir, name);
-    dir_close (dir); 
+    // removal of root dir is disallowed
+    if (strcmp(name, "/") == 0) return false;
+
+    // removal of parent dir is disallowed
+    struct thread * cur = thread_current (); 
+   // printf ("*remove* cwd: %s \n", cur->cwd);
+
+    char ** ptr = separate_pathname (name);
+    if (ptr == NULL) return false;
+
+    struct dir * dir = enter_dir (ptr); 
+    char * rm_file = *(ptr+MAX_LEVEL-1);  // name of file to be removed
+    struct inode * inode;
+    bool allowed = true;  // allow to remove it by default
+    if (dir_lookup (dir, rm_file, &inode)) {
+        if (inode_isdir(inode)) {
+            block_sector_t rm_dir_i = inode_get_inumber (inode);
+            // check if the directory is parent of cwd
+            struct dir * temp = dir_get_parent(cur->cwd);
+            while (true) {
+                block_sector_t i = inode_get_inumber(dir_get_inode(temp)); 
+                if (i == 1) break;  // root dir
+                else if (i == rm_dir_i) {
+                    allowed = false; // not allowed
+                    break;
+                }
+                temp = dir_get_parent(temp);
+            }
+        }
+    }
+
+    if (!allowed) return false;
+
+    bool success = dir != NULL && dir_remove (dir, rm_file);
 
     return success;
 }

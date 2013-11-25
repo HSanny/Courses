@@ -39,6 +39,7 @@ struct inode
     struct inode_disk data;             /* Inode content. */
 
     bool isdir;
+    block_sector_t parent;
   };
 
 // ========================================================================
@@ -50,6 +51,15 @@ bool inode_isdir (struct inode * in)
 void inode_set_isdir (struct inode * in, bool isdir) 
 {
     in->isdir = isdir;
+}
+
+void inode_set_parent (struct inode * in, block_sector_t parent_inumber)
+{
+    in->parent = parent_inumber;
+}
+block_sector_t inode_get_parent (struct inode *in)
+{
+    return in->parent;
 }
 // ========================================================================
 

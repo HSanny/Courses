@@ -21,6 +21,22 @@ struct dir_entry
     bool in_use;                        /* In use or free? */
   };
 
+// ===============================================================
+struct dir * dir_get_parent (struct dir * dir)
+{
+    struct inode * dir_inode = dir_get_inode (dir);
+    if (inode_get_inumber(dir_inode) == 1) {
+        // root directory is its own parent
+        return dir;
+    }
+    block_sector_t parent_inumber = inode_get_parent (dir_inode);
+    struct inode * parent_inode = inode_open (parent_inumber);
+    struct dir * parent_dir = dir_open (parent_inode);
+     
+    return parent_dir;
+}
+// ===============================================================
+
 /* Creates a directory with space for ENTRY_CNT entries in the
    given SECTOR.  Returns true if successful, false on failure. */
 bool

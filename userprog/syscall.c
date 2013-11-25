@@ -1,3 +1,8 @@
+// ========================================================================
+// UNCOMMENT THEMACROS TO ENABLE THE CORRESPONDING OUTPUT FOR TESTING
+// #define OPEN_TEST 
+//#define CREATE_TEST 
+// ========================================================================
 #include "userprog/syscall.h"
 #include <stdio.h>
 #include <syscall-nr.h>
@@ -12,12 +17,12 @@
 #include "threads/vaddr.h"
 #include "userprog/pagedir.h"
 #include "userprog/process.h"
-
+// ========================================================================
 #ifdef VM
 #include "vm/frame.h"
 #include "vm/page.h"
 #endif
-
+// ========================================================================
 #ifdef FILESYS
 #include "filesys/inode.h"
 #include "filesys/file.h"
@@ -25,9 +30,19 @@
 #include "filesys/filesys.h"
 #include "filesys/free-map.h"
 #endif
-
+// ========================================================================
 #define ERROR -1
 #define TEST 0
+// ========================================================================
+int open (const char * file);
+bool create (const char *file, unsigned initial_size);
+int read (int fd, void *buffer, unsigned size);
+void close (int fd);
+bool remove (const char * file);
+tid_t exec (const char * cmdline);
+int wait (tid_t pid);
+void exit (int status);
+// ========================================================================
 static bool check_string (const char* file);
 
 // ORIGINALLY PROVIDED FUNCITON
@@ -519,7 +534,11 @@ bool create (const char *file, unsigned initial_size)
     if (file == NULL) exit(ERROR);
     validate_ptr (file);
     if (strlen(file) == 0) return false;
-   
+#ifdef CREATE_TEST
+    printf ("*CREATE_SYSCALL* filename: %s\n", file);
+    printf ("*CREATE_SYSCALL* initial_size: %s\n", file);
+#endif  
+
     lock_acquire(&filesys_lock);
     bool success = filesys_create (file, initial_size);
     lock_release(&filesys_lock);
@@ -535,41 +554,59 @@ int open ( const char *file)
     if (file == NULL) exit (ERROR);
     validate_ptr (file);
 
-    // printf ("file_addr: %x\n", file);
-    // printf ("file: %s\n", file);
+#ifdef OPEN_TEST
+    printf ("*OPEN_SYSCALL* input_addr: %x\n", file);
+    printf ("*OPEN_SYSCALL* filename: %s\n", file);
+#endif
 
     struct thread * cur = thread_current();
     struct dir * cwd = cur->cwd;
     struct inode * inode;
-    if (!dir_lookup(cwd, file, &inode)) {
-        // printf ("1st place\n");
+    if (strcmp(file, "/") == 0) {
+        printf ("*OPEN_SYSCALL* open root\n");
+        inode = dir_get_inode(dir_open_root());
+    } else if (!filesys_lookup(file, &inode)) {
+#ifdef OPEN_TEST
+        printf ("*OPEN_SYSCALL* file not found\n");
+#endif
         return ERROR;
     }
 
-    // printf ("root: %d\n", inode_get_inumber(dir_get_inode(ROOT_DIR)));
-    // if (cur->cwd != NULL) printf ("cur: %d\n", inode_get_inumber(dir_get_inode(cur->cwd)));
+#ifdef OPEN_TEST
+    printf ("*OPEN_SYSCALL* root: %d\n",
+            inode_get_inumber(dir_get_inode(ROOT_DIR)));
+    if (cur->cwd != NULL) printf ("*OPEN_SYSCALL* cur: %d\n",
+            inode_get_inumber(dir_get_inode(cur->cwd)));
+    if (inode != NULL) printf ("*OPEN_SYSCALL* inode: %d\n", 
+            inode_get_inumber(inode));
+#endif
     // for a directory
     if (inode_isdir(inode)) {
         lock_acquire (&filesys_lock);
         struct dir * new_dir = dir_open (inode);
         lock_release(&filesys_lock);
-        // printf ("2st place\n");
+#ifdef OPEN_TEST
+        printf ("*OPEN_SYSCALL* open a directory\n");
+#endif
         return add_dir (new_dir);
     } else {
         // now for a simple file
         lock_acquire (&filesys_lock);
-        // printf ("string: %s \n", file);
         struct file *f = filesys_open(file);
         if (f == NULL) {
             // release because of file-not-found error
             lock_release(&filesys_lock);
-          //  printf ("3st place\n");
+#ifdef OPEN_TEST
+            printf ("*OPEN_SYSCALL* open file failure\n");
+#endif
             return ERROR;
         }
         int fd = add_file(f);
         // release lock because of successful open
         lock_release(&filesys_lock);
-        // printf ("fd: %d\n", fd);
+#ifdef OPEN_TEST
+        printf ("*OPEN_SYSCALL* fd: %d\n", fd);
+#endif
         return fd;
     }
 }
@@ -648,7 +685,7 @@ bool remove (const char *file)
 /*
  * Exec System Call
  * */
-tid_t exec(const char *cmdline){
+tid_t exec (const char *cmdline) {
     // create new process to execute the given command line
     tid_t pid = process_execute(cmdline);
     // acquire the corresponding thread structure
@@ -716,9 +753,11 @@ bool chdir (const char * dirname)
     struct thread * cur = thread_current ();
     struct dir * old_dir = cur->cwd;
 
+    // printf ("root: %d\n", inode_get_inumber(dir_get_inode(ROOT_DIR)));
+    // if (cur->cwd != NULL) printf ("pre: %d\n", inode_get_inumber(dir_get_inode(cur->cwd)));
     struct inode * inode;
     if (!dir_lookup (old_dir, dirname, &inode)) {
-        // printf ("dir: %s\n", dirname);
+       //  printf ("dir: %s\n", dirname);
         return false;
     }
     struct dir * new_dir = dir_open (inode);
@@ -730,15 +769,14 @@ bool chdir (const char * dirname)
     if (old_dir != ROOT_DIR) dir_close (old_dir);
     // update the cwd of current process
     cur->cwd = new_dir;
-
-    // printf ("root: %d\n", inode_get_inumber(dir_get_inode(ROOT_DIR)));
-    // if (cur->cwd != NULL) printf ("cur: %d\n", inode_get_inumber(dir_get_inode(cur->cwd)));
+    // if (cur->cwd != NULL) printf ("post: %d\n", inode_get_inumber(dir_get_inode(cur->cwd)));
     return true;
 };
 
 bool mkdir (const char * dirname) 
 {
     validate_ptr (dirname);
+    // printf ("mkdir call: %s\n", dirname);
     return filesys_mkdir (dirname);
 };
 

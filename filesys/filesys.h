@@ -16,6 +16,8 @@ struct dir * ROOT_DIR;  /* cache the root directory */
 /* Block device that contains the file system. */
 struct block *fs_device;
 
+struct inode;
+
 void filesys_init (bool format);
 void filesys_done (void);
 struct file *filesys_open (const char *name);
@@ -23,6 +25,7 @@ bool filesys_remove (const char *name);
 // ---------------------------------------------------
 bool filesys_create (const char *name, off_t initial_size);
 bool filesys_mkdir (const char * dirname);
+bool filesys_lookup (const char * name, struct inode **);
 // ---------------------------------------------------
 
 #endif /* filesys/filesys.h */

@@ -317,7 +317,6 @@ struct file* get_file_by_fd (int fd)
     for (e = list_begin(&file_list); e != list_end(&file_list); 
             e = list_next(e)) {
         pf = list_entry (e, struct process_file, elem);
-        if (TEST) printf("fd: %d \n", pf->fd);
         if (pf->fd == fd) return pf->file;
     } 
     // not found, return NULL
@@ -546,9 +545,7 @@ bool create (const char *file, unsigned initial_size)
     printf ("*CREATE_SYSCALL* initial_size: %s\n", file);
 #endif  
 
-    // lock_acquire (&filesys_lock);
     bool success = filesys_create (file, initial_size);
-    //lock_release (&filesys_lock);
     return success;
 }
 
@@ -593,7 +590,6 @@ int open ( const char *file)
     if (inode_is_dir(inode)) {
         struct dir * new_dir = dir_open (inode);
         int fd = add_dir (new_dir);
-        // lock_release(&filesys_lock);
 #ifdef OPEN_TEST
         printf ("*OPEN_SYSCALL* open a directory\n");
 #endif
@@ -606,7 +602,6 @@ int open ( const char *file)
 #ifdef OPEN_TEST
             printf ("*OPEN_SYSCALL* open file failure\n");
 #endif
-        //    lock_release(&filesys_lock);
             return ERROR;
         }
         int fd = add_file(f);
@@ -614,7 +609,6 @@ int open ( const char *file)
 #ifdef OPEN_TEST
         printf ("*OPEN_SYSCALL* fd: %d\n", fd);
 #endif
-        //lock_release(&filesys_lock);
         return fd;
     }
 }
@@ -655,9 +649,7 @@ void close (int fd)
 #ifdef CLOSE_TEST
     printf ("*CLOSE_SYSCALL* fd: %d\n", fd);
 #endif
-    //lock_acquire(&filesys_lock);
     close_file(fd);
-    //lock_release(&filesys_lock);
 }
 
 /*
@@ -694,9 +686,7 @@ void close_file (int fd)
 bool remove (const char *file)
 {
     validate_ptr (file);
-    //lock_acquire(&filesys_lock);
     bool success = filesys_remove(file);
-    //lock_release(&filesys_lock);
     return success;
 }
 
@@ -768,7 +758,6 @@ const void* check_valid_uaddr(const void * uaddr, int size)
 
 bool chdir (const char * dirname) 
 {
-    //lock_acquire (&filesys_lock);
     struct thread * cur = thread_current ();
     struct dir * old_dir = cur->cwd;
 
@@ -780,7 +769,6 @@ bool chdir (const char * dirname)
 #ifdef CHDIR_TEST
         printf ("*CHDIR_CALL* %s failure\n", dirname);
 #endif
-       // lock_release (&filesys_lock);
         return false;
     }
     struct dir * new_dir = dir_open (inode);
@@ -790,7 +778,6 @@ bool chdir (const char * dirname)
 #ifdef CHDIR_TEST
     if (cur->cwd != NULL) printf ("chdir_post: %d\n", inode_get_inumber(dir_get_inode(cur->cwd)));
 #endif
-    //lock_release (&filesys_lock);
     return true;
 };
 
@@ -798,15 +785,12 @@ bool mkdir (const char * dirname)
 {
     validate_ptr (dirname);
     // printf ("mkdir call: %s\n", dirname);
-    //lock_acquire (&filesys_lock);
     bool success = filesys_mkdir (dirname);
-    //lock_release (&filesys_lock);
     return success;
 };
 
 bool readdir (int fd, char * name)
 {
-   // lock_acquire (&filesys_lock);
     check_buffer(name, READDIR_MAX_LEN + 1);
 #ifdef READDIR_TEST
     printf ("*READDIR_SYSCALL* fd: %d \n", fd);
@@ -814,26 +798,22 @@ bool readdir (int fd, char * name)
     // get the file structure using file decriptor
     struct process_file * pf = get_pf_by_fd (fd);
     if (pf == NULL) {
-        //lock_release (&filesys_lock);
         return ERROR;
     }
     if (pf->isdir && pf->dir != NULL) {
         bool success = dir_readdir(pf->dir, name);
-        //lock_release (&filesys_lock);
 #ifdef READDIR_TEST
         if (success) printf ("*READDIR_SYSCALL* succ\n");
         else printf ("*READDIR_SYSCALL* fail\n");
 #endif
         return success;
     } else {
-        //lock_release (&filesys_lock);
         return false;
     }
 };
 
 bool isdir (int fd)
 {
-    //lock_acquire (&filesys_lock);
     // get the file structure using file decriptor
     struct process_file * pf = get_pf_by_fd (fd);
     // no pf found
@@ -842,31 +822,26 @@ bool isdir (int fd)
         return ERROR;
     }
     // return isdir from the data structure
-    //lock_release (&filesys_lock);
     return pf->isdir;
 };
 
 int inumber (int fd) 
 {
-    //lock_acquire (&filesys_lock);
     // get the file structure using file decriptor
     struct process_file * pf = get_pf_by_fd (fd);
     // no pf found
     if (pf == NULL) {
-        //lock_release (&filesys_lock);
         return ERROR;
     }
     // return inumber from the data structure
     if (pf->isdir) {
         if (pf->dir != NULL) {
             block_sector_t inumber = inode_get_inumber (dir_get_inode(pf->dir));
-           // lock_release (&filesys_lock);
             return inumber;
         }
     } else {
         if (pf->file != NULL) {
             block_sector_t inumber = inode_get_inumber (file_get_inode(pf->file));
-            //lock_release (&filesys_lock);
             return inumber;
         }
     }

@@ -1,7 +1,7 @@
 PINTOS
 
-Until , Nov. 25, 2013, 5:00pm
-We have 24 tests left for pintos, specifically
+Until , Nov. 25, 2013, 10:00pm
+We have 19 tests left for pintos, specifically
 
 pass tests/userprog/args-none
 pass tests/userprog/args-single
@@ -136,12 +136,12 @@ FAIL tests/vm/mmap-over-stk
 FAIL tests/vm/mmap-remove
 pass tests/vm/mmap-zero
 pass tests/filesys/extended/dir-empty-name-persistence
-FAIL tests/filesys/extended/dir-mk-tree-persistence
-FAIL tests/filesys/extended/dir-mkdir-persistence
-FAIL tests/filesys/extended/dir-open-persistence
-FAIL tests/filesys/extended/dir-over-file-persistence
+pass tests/filesys/extended/dir-mk-tree-persistence
+pass tests/filesys/extended/dir-mkdir-persistence
+pass tests/filesys/extended/dir-open-persistence
+pass tests/filesys/extended/dir-over-file-persistence
 pass tests/filesys/extended/dir-rm-cwd-persistence
-FAIL tests/filesys/extended/dir-rm-parent-persistence
+pass tests/filesys/extended/dir-rm-parent-persistence
 pass tests/filesys/extended/dir-rm-root-persistence
 pass tests/filesys/extended/dir-rm-tree-persistence
 pass tests/filesys/extended/dir-rmdir-persistence
@@ -158,3 +158,5 @@ pass tests/filesys/extended/grow-sparse-persistence
 pass tests/filesys/extended/grow-tell-persistence
 pass tests/filesys/extended/grow-two-files-persistence
 pass tests/filesys/extended/syn-rw-persistence
+19 of 155 tests failed.
+

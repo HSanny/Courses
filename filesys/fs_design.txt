@@ -207,21 +207,34 @@ in each thread structure.
 >> should succeed, as should only one of two simultaneous attempts to
 >> create a file with the same name, and so on.
 
-
+Each inode has a specific lock. And when one thread or process apply
+modification operation on a directory or file under that directory, we lock
+the directory's inode and unlock it only after the operation. In this way,
+other threads and processes are not allowed to apply the modification on that
+directory, such as file/directory removal and creation.
 
 >> B5: Does your implementation allow a directory to be removed if it
 >> is open by a process or if it is in use as a process's current
 >> working directory?  If so, what happens to that process's future
 >> file system operations?  If not, how do you prevent it?
 
-
+Our implementation allows the currently opened or used directory to be
+removed, as indicated in the test case named dir-rm-cwd. After the removal, 
+opening that directory or its parent will cause failure. Needless to say, any
+file/directory creation and removal would be disabled on that directory.
 
 ---- RATIONALE ----
 
 >> B6: Explain why you chose to represent the current directory of a
 >> process the way you did.
 
-
+In our design, the way we keep track of the current directory of a process is
+to add a new member "cwd" in thread structure, that is, a pointer to directory
+structure. One significant reason we choose this strategy is to avoid
+complicated string manipulation (complex if we cache the path name of the
+current working directory in each process) when we change the current working
+directory. By recording the dir structure, the uniquely identified inode
+could be reached and thus trace its parent directory.
 
 
 			   SURVEY QUESTIONS

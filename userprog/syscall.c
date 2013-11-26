@@ -1,10 +1,13 @@
 // ========================================================================
 // UNCOMMENT THEMACROS TO ENABLE THE CORRESPONDING OUTPUT FOR TESTING
-// #define OPEN_TEST 
-//#define CREATE_TEST 
-//#define WRITE_TEST
-//#define CHDIR_TEST
-//#define READDIR_TEST
+/*
+ #define OPEN_TEST 
+#define CREATE_TEST 
+#define WRITE_TEST
+#define CHDIR_TEST
+#define READDIR_TEST
+#define CLOSE_TEST
+*/
 // ========================================================================
 #include "userprog/syscall.h"
 #include <stdio.h>
@@ -46,13 +49,10 @@ tid_t exec (const char * cmdline);
 int wait (tid_t pid);
 void exit (int status);
 // ========================================================================
-static bool check_string (const char* file);
 
 // ORIGINALLY PROVIDED FUNCITON
 static void syscall_handler (struct intr_frame *);
 
-// GLOBAL VARIABLE
-struct lock filesys_lock;
 // NEW DATA STRUCTURE
 struct process_file {
     struct file * file;
@@ -93,15 +93,11 @@ void get_ptr(struct intr_frame *f, int *arg, int n);
 void validate_ptr (const void *vaddr);
 void check_buffer (void* buffer, unsigned size);
 void close_file (int);
-
-void check_filename (const char * filename);
-
 char * remove_multiple_slash (const char *); 
 
 void
 syscall_init (void) 
 {
-    lock_init(&filesys_lock);
     intr_register_int (0x30, 3, INTR_ON, syscall_handler, "syscall");
 }
 
@@ -110,7 +106,6 @@ syscall_handler (struct intr_frame *f UNUSED)
 {
     int arg[MAX_ARGS];
     validate_ptr((const void*) f->esp);
-    // check_valid_uaddr((const void*) f->esp, 4);
     switch (* (int *) f->esp)
     {
         case SYS_HALT:
@@ -551,9 +546,9 @@ bool create (const char *file, unsigned initial_size)
     printf ("*CREATE_SYSCALL* initial_size: %s\n", file);
 #endif  
 
-    lock_acquire (&filesys_lock);
+    // lock_acquire (&filesys_lock);
     bool success = filesys_create (file, initial_size);
-    lock_release (&filesys_lock);
+    //lock_release (&filesys_lock);
     return success;
 }
 
@@ -563,13 +558,14 @@ bool create (const char *file, unsigned initial_size)
  * */
 int open ( const char *file)
 {
+    //lock_acquire (&filesys_lock);
     if (file == NULL) exit (ERROR);
     validate_ptr (file);
     char * pro_file = remove_multiple_slash (file);
 
 #ifdef OPEN_TEST
-    printf ("*OPEN_SYSCALL* input_addr: %x\n", file);
-    printf ("*OPEN_SYSCALL* filename: %s\n", file);
+    printf ("*OPEN_SYSCALL* input_addr: %x\n", pro_file);
+    printf ("*OPEN_SYSCALL* filename: %s\n", pro_file);
 #endif
 
     struct thread * cur = thread_current();
@@ -588,8 +584,6 @@ int open ( const char *file)
     }
 
 #ifdef OPEN_TEST
-    printf ("*OPEN_SYSCALL* root: %d\n",
-            inode_get_inumber(dir_get_inode(ROOT_DIR)));
     if (cur->cwd != NULL) printf ("*OPEN_SYSCALL* cur: %d\n",
             inode_get_inumber(dir_get_inode(cur->cwd)));
     if (inode != NULL) printf ("*OPEN_SYSCALL* inode: %d\n", 
@@ -597,32 +591,30 @@ int open ( const char *file)
 #endif
     // for a directory
     if (inode_is_dir(inode)) {
-        lock_acquire (&filesys_lock);
         struct dir * new_dir = dir_open (inode);
         int fd = add_dir (new_dir);
-        lock_release(&filesys_lock);
+        // lock_release(&filesys_lock);
 #ifdef OPEN_TEST
         printf ("*OPEN_SYSCALL* open a directory\n");
 #endif
         return fd;
     } else {
         // now for a simple file
-        lock_acquire (&filesys_lock);
         struct file *f = filesys_open(pro_file);
         if (f == NULL) {
             // release because of file-not-found error
-            lock_release(&filesys_lock);
 #ifdef OPEN_TEST
             printf ("*OPEN_SYSCALL* open file failure\n");
 #endif
+        //    lock_release(&filesys_lock);
             return ERROR;
         }
         int fd = add_file(f);
         // release lock because of successful open
-        lock_release(&filesys_lock);
 #ifdef OPEN_TEST
         printf ("*OPEN_SYSCALL* fd: %d\n", fd);
 #endif
+        //lock_release(&filesys_lock);
         return fd;
     }
 }
@@ -663,9 +655,9 @@ void close (int fd)
 #ifdef CLOSE_TEST
     printf ("*CLOSE_SYSCALL* fd: %d\n", fd);
 #endif
-    lock_acquire(&filesys_lock);
+    //lock_acquire(&filesys_lock);
     close_file(fd);
-    lock_release(&filesys_lock);
+    //lock_release(&filesys_lock);
 }
 
 /*
@@ -702,9 +694,9 @@ void close_file (int fd)
 bool remove (const char *file)
 {
     validate_ptr (file);
-    lock_acquire(&filesys_lock);
+    //lock_acquire(&filesys_lock);
     bool success = filesys_remove(file);
-    lock_release(&filesys_lock);
+    //lock_release(&filesys_lock);
     return success;
 }
 
@@ -776,6 +768,7 @@ const void* check_valid_uaddr(const void * uaddr, int size)
 
 bool chdir (const char * dirname) 
 {
+    //lock_acquire (&filesys_lock);
     struct thread * cur = thread_current ();
     struct dir * old_dir = cur->cwd;
 
@@ -783,24 +776,21 @@ bool chdir (const char * dirname)
     if (cur->cwd != NULL) printf ("chdir_pre: %d\n", inode_get_inumber(dir_get_inode(cur->cwd)));
 #endif
     struct inode * inode;
-    if (!filesys_lookup ( dirname, &inode)) {
+    if (!filesys_lookup (dirname, &inode)) {
 #ifdef CHDIR_TEST
-    printf ("*CHDIR_CALL* %s failure\n", dirname);
+        printf ("*CHDIR_CALL* %s failure\n", dirname);
 #endif
+       // lock_release (&filesys_lock);
         return false;
     }
     struct dir * new_dir = dir_open (inode);
 
-    // TODO: how to deal with the old directory data structure
-    // a. close it. but what if other process is using it
-    // b. leave it there. but what if there are thousands of directory
-    // reserved 
-    // if (old_dir != ROOT_DIR) dir_close (old_dir);
     // update the cwd of current process
     cur->cwd = new_dir;
 #ifdef CHDIR_TEST
     if (cur->cwd != NULL) printf ("chdir_post: %d\n", inode_get_inumber(dir_get_inode(cur->cwd)));
 #endif
+    //lock_release (&filesys_lock);
     return true;
 };
 
@@ -808,63 +798,87 @@ bool mkdir (const char * dirname)
 {
     validate_ptr (dirname);
     // printf ("mkdir call: %s\n", dirname);
-    return filesys_mkdir (dirname);
+    //lock_acquire (&filesys_lock);
+    bool success = filesys_mkdir (dirname);
+    //lock_release (&filesys_lock);
+    return success;
 };
 
 bool readdir (int fd, char * name)
 {
+   // lock_acquire (&filesys_lock);
     check_buffer(name, READDIR_MAX_LEN + 1);
 #ifdef READDIR_TEST
     printf ("*READDIR_SYSCALL* fd: %d \n", fd);
 #endif
     // get the file structure using file decriptor
     struct process_file * pf = get_pf_by_fd (fd);
-    if (pf == NULL) return ERROR;
+    if (pf == NULL) {
+        //lock_release (&filesys_lock);
+        return ERROR;
+    }
     if (pf->isdir && pf->dir != NULL) {
         bool success = dir_readdir(pf->dir, name);
+        //lock_release (&filesys_lock);
 #ifdef READDIR_TEST
         if (success) printf ("*READDIR_SYSCALL* succ\n");
         else printf ("*READDIR_SYSCALL* fail\n");
 #endif
         return success;
     } else {
+        //lock_release (&filesys_lock);
         return false;
     }
 };
 
 bool isdir (int fd)
 {
+    //lock_acquire (&filesys_lock);
     // get the file structure using file decriptor
     struct process_file * pf = get_pf_by_fd (fd);
     // no pf found
-    if (pf == NULL) return ERROR;
+    if (pf == NULL) {
+        //lock_release (&filesys_lock);
+        return ERROR;
+    }
     // return isdir from the data structure
+    //lock_release (&filesys_lock);
     return pf->isdir;
 };
 
 int inumber (int fd) 
 {
+    //lock_acquire (&filesys_lock);
     // get the file structure using file decriptor
     struct process_file * pf = get_pf_by_fd (fd);
     // no pf found
-    if (pf == NULL) return ERROR;
+    if (pf == NULL) {
+        //lock_release (&filesys_lock);
+        return ERROR;
+    }
     // return inumber from the data structure
     if (pf->isdir) {
-        if (pf->dir != NULL)
-            return inode_get_inumber (dir_get_inode(pf->dir));
+        if (pf->dir != NULL) {
+            block_sector_t inumber = inode_get_inumber (dir_get_inode(pf->dir));
+           // lock_release (&filesys_lock);
+            return inumber;
+        }
     } else {
-        if (pf->file != NULL)
-            return inode_get_inumber (file_get_inode(pf->file));
+        if (pf->file != NULL) {
+            block_sector_t inumber = inode_get_inumber (file_get_inode(pf->file));
+            //lock_release (&filesys_lock);
+            return inumber;
+        }
     }
 };
 
-
+/* address the multiple slash in a user-specified pathname */
 char * remove_multiple_slash (const char * name)
 {
-   int i, j;
-   int length = strlen(name);
-   char * new_str = (char *) malloc (length+1);
-   for (i = 0, j = 0; i < length; i ++) {
+    int i, j;
+    int length = strlen(name);
+    char * new_str = (char *) malloc (length+1);
+    for (i = 0, j = 0; i < length; i ++) {
         if (*(name+i) == '/') {
             if (*(name+i+1) == '/') continue; // multiple-slash
             else {
@@ -875,8 +889,8 @@ char * remove_multiple_slash (const char * name)
             *(new_str+j) = *(name+i);
             ++j;
         } 
-   }
-   *(new_str+j) = 0;
-   //printf ("rm_ms: %s\n", new_str);
-   return new_str;
+    }
+    *(new_str+j) = 0;
+    // printf ("or_ms: %s, rm_ms: %s\n", name, new_str);
+    return new_str;
 } 

@@ -167,6 +167,10 @@ bool filesys_mkdir (const char * name)
     if (tmp_dir == NULL) {
         tmp_dir = ROOT_DIR;
     }
+    struct inode * tmp_inode;
+    if (dir_lookup (tmp_dir, final_level, &tmp_inode)) {
+        return false;
+    }
 
     // FIXME: how to determine the count and entries?
     int count = 1;
@@ -230,7 +234,6 @@ filesys_create (const char *name, off_t initial_size)
 {
     //struct dir *dir = dir_open_root ();
     // ========================================================
-    struct thread * cur = thread_current (); 
     char ** ptr = separate_pathname (name);
     if (ptr == NULL) return false;
     struct dir * tmp_dir = enter_dir (ptr); 
@@ -256,7 +259,7 @@ filesys_create (const char *name, off_t initial_size)
     block_sector_t inode_sector;
     bool success = (tmp_dir != NULL
             && free_map_allocate (1, &inode_sector)
-            && inode_create (inode_sector, initial_size)
+            && inode_create (inode_sector, initial_size, false)
             && dir_add (tmp_dir, new_file_name, inode_sector));
     if (!success && inode_sector != 0) 
         free_map_release (inode_sector, 1);

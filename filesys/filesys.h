@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include "filesys/off_t.h"
+#include "threads/synch.h"
 
 
 /* Sectors of system file inodes. */
@@ -11,6 +12,8 @@
 
 /* Block device that contains the file system. */
 struct block *fs_device;
+
+struct lock filesys_lock;
 
 // ---------------------------------------------------
 struct dir * ROOT_DIR;  /* the root directory */

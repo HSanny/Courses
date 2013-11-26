@@ -164,9 +164,10 @@ inode_init (void)
    writes the new inode to sector SECTOR on the file system
    device.
    Returns true if successful.
+   inode->
    Returns false if memory or disk allocation fails. */
     bool
-inode_create (block_sector_t sector, off_t length)
+inode_create (block_sector_t sector, off_t length, bool isdir)
 {
     struct inode_disk *disk_inode = NULL;
     bool success = false;
@@ -186,7 +187,7 @@ inode_create (block_sector_t sector, off_t length)
             disk_inode->length = MAX_FILE_SIZE;
         }
         disk_inode->magic = INODE_MAGIC;
-        disk_inode->isdir = false;
+        disk_inode->isdir = isdir;
         disk_inode->parent = ROOT_DIR_SECTOR;
         if (inode_alloc(disk_inode))
         {

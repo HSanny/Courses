@@ -28,17 +28,18 @@
    Must be exactly BLOCK_SECTOR_SIZE bytes long. */
 struct inode_disk
 {
-    off_t length; /* File size in bytes. */
-    unsigned magic; /* Magic number. */
-    uint32_t direct_index;
-    uint32_t indirect_index;
-    uint32_t double_indirect_index;
-    bool isdir;
-    block_sector_t parent;
-    uint32_t unused[107]; /* Not used. */
+    off_t length;                        /* File size in bytes. */
+    unsigned magic;                      /* Magic number. */
+    uint32_t unused[107];                /* Not used. */
+    uint32_t direct_index;               /* stores how many pointers has been allocated inside this inode sector*/
+    uint32_t indirect_index;             /* stores how many indirect pointers has been allocated inside 1st level indirection block */
+    uint32_t double_indirect_index;      /* stores how many indirect pointers has been allocated inside 2nd level indirection block */
+    bool isdir;                           /* stores if this is a directory or not */
+    block_sector_t parent;                /* stores the inumber of its parent */
     block_sector_t ptr[INODE_BLOCK_PTRS]; /* Pointers to blocks */
 };
 
+/* structure for a block full of pointers */
 struct indirect_block
 {
     block_sector_t ptr[INDIRECT_BLOCK_PTRS];
@@ -60,6 +61,7 @@ void inode_dealloc_double_indirect_block (block_sector_t *ptr,
         size_t indirect_ptrs,
         size_t data_ptrs);
 
+
 // ========================================================================
 /* Returns the number of sectors to allocate for an inode SIZE
    bytes long. */
@@ -68,6 +70,8 @@ static inline size_t bytes_to_data_sectors (off_t size)
     return DIV_ROUND_UP (size, BLOCK_SECTOR_SIZE);
 }
 
+/* Returns the number of indirect pointers to allocate for an inode SIZE
+   bytes long. */
 static inline size_t bytes_to_indirect_sectors (off_t size)
 {
     if (size <= BLOCK_SECTOR_SIZE*DIRECT_BLOCKS)
@@ -78,6 +82,8 @@ static inline size_t bytes_to_indirect_sectors (off_t size)
     return DIV_ROUND_UP(size, BLOCK_SECTOR_SIZE*INDIRECT_BLOCK_PTRS);
 }
 
+/* Returns the number of double indirect pointers to allocate for an inode SIZE
+   bytes long. */
 static inline size_t bytes_to_double_indirect_sector (off_t size)
 {
     if (size <= BLOCK_SECTOR_SIZE*(DIRECT_BLOCKS +
@@ -90,19 +96,19 @@ static inline size_t bytes_to_double_indirect_sector (off_t size)
 /* In-memory inode. */
 struct inode
 {
-    struct list_elem elem; /* Element in inode list. */
-    block_sector_t sector; /* Sector number of disk location. */
-    int open_cnt; /* Number of openers. */
-    bool removed; /* True if deleted, false otherwise. */
-    int deny_write_cnt; /* 0: writes ok, >0: deny writes. */
-    off_t length; /* File size in bytes. */
+    struct list_elem elem;                /* Element in inode list. */
+    block_sector_t sector;                /* Sector number of disk location. */
+    int open_cnt;                         /* Number of openers. */
+    bool removed;                         /* True if deleted, false otherwise. */
+    int deny_write_cnt;                   /* 0: writes ok, >0: deny writes. */
+    off_t length;                         /* File size in bytes. */
     off_t read_length;
-    size_t direct_index;
-    size_t indirect_index;
-    size_t double_indirect_index;
-    bool isdir;
-    block_sector_t parent;
-    struct lock lock;
+    size_t direct_index;                  /* stores how many pointers has been allocated inside this inode sector*/
+    size_t indirect_index;                /* stores how many indirect pointers has been allocated inside 1st level indirection block */
+    size_t double_indirect_index;         /* stores how many indirect pointers has been allocated inside 2nd level indirection block */
+    bool isdir;                           /* store if this file is diretory or not */
+    block_sector_t parent;                /* store the inumber of its parent */
+    struct lock lock;                     /* lock on inode to achieve synchronization */
     block_sector_t ptr[INODE_BLOCK_PTRS]; /* Pointers to blocks */
 };
 
@@ -469,6 +475,7 @@ inode_length (struct inode *inode)
     return inode->length;
 }
 
+/* free inode */
 void inode_dealloc (struct inode *inode)
 {
     size_t data_sectors = bytes_to_data_sectors(inode->length);
@@ -499,6 +506,21 @@ void inode_dealloc (struct inode *inode)
     }
 }
 
+/* free indirect block */
+void inode_dealloc_indirect_block (block_sector_t *ptr,
+        size_t data_ptrs)
+{
+    unsigned int i;
+    struct indirect_block block;
+    block_read(fs_device, *ptr, &block);
+    for (i = 0; i < data_ptrs; i++)
+    {
+        free_map_release(block.ptr[i], 1);
+    }
+    free_map_release(*ptr, 1);
+}
+
+/* free double indirect block */
 void inode_dealloc_double_indirect_block (block_sector_t *ptr,
         size_t indirect_ptrs,
         size_t data_ptrs)
@@ -516,19 +538,7 @@ void inode_dealloc_double_indirect_block (block_sector_t *ptr,
     free_map_release(*ptr, 1);
 }
 
-void inode_dealloc_indirect_block (block_sector_t *ptr,
-        size_t data_ptrs)
-{
-    unsigned int i;
-    struct indirect_block block;
-    block_read(fs_device, *ptr, &block);
-    for (i = 0; i < data_ptrs; i++)
-    {
-        free_map_release(block.ptr[i], 1);
-    }
-    free_map_release(*ptr, 1);
-}
-
+/* grow file */
 off_t inode_expand (struct inode *inode, off_t new_length)
 {
     static char zeros[BLOCK_SECTOR_SIZE];
@@ -540,6 +550,7 @@ off_t inode_expand (struct inode *inode, off_t new_length)
         return new_length;
     }
 
+    // this is the case when only direct pointers are allocated
     while (inode->direct_index < INDIRECT_INDEX)
     {
         free_map_allocate (1, &inode->ptr[inode->direct_index]);
@@ -551,6 +562,8 @@ off_t inode_expand (struct inode *inode, off_t new_length)
             return new_length;
         }
     }
+
+    // this is the case when direct pointers and indirect pointers are allocated
     while (inode->direct_index < DOUBLE_INDIRECT_INDEX)
     {
         new_data_sectors = inode_expand_indirect_block(inode, new_data_sectors);
@@ -559,6 +572,8 @@ off_t inode_expand (struct inode *inode, off_t new_length)
             return new_length;
         }
     }
+
+    // this is the case when all pointers are allocated
     if (inode->direct_index == DOUBLE_INDIRECT_INDEX)
     {
         new_data_sectors = inode_expand_double_indirect_block(inode,
@@ -567,6 +582,42 @@ off_t inode_expand (struct inode *inode, off_t new_length)
     return new_length - new_data_sectors*BLOCK_SECTOR_SIZE;
 }
 
+/* grow file using indirect block */
+size_t inode_expand_indirect_block (struct inode *inode,
+        size_t new_data_sectors)
+{
+    static char zeros[BLOCK_SECTOR_SIZE];
+    struct indirect_block block;
+    if (inode->indirect_index == 0)
+    {
+        free_map_allocate(1, &inode->ptr[inode->direct_index]);
+    }
+    else
+    {
+        block_read(fs_device, inode->ptr[inode->direct_index], &block);
+    }
+    while (inode->indirect_index < INDIRECT_BLOCK_PTRS)
+    {
+        free_map_allocate(1, &block.ptr[inode->indirect_index]);
+        block_write(fs_device, block.ptr[inode->indirect_index], zeros);
+        inode->indirect_index++;
+        new_data_sectors--;
+        if (new_data_sectors == 0)
+        {
+            break;
+        }
+    }
+    block_write(fs_device, inode->ptr[inode->direct_index], &block);
+    if (inode->indirect_index == INDIRECT_BLOCK_PTRS)
+    {
+        inode->indirect_index = 0;
+        inode->direct_index++;
+    }
+    return new_data_sectors;
+}
+
+
+/* grow file using double indirect block */
 size_t inode_expand_double_indirect_block (struct inode *inode,
         size_t new_data_sectors)
 {
@@ -592,6 +643,7 @@ size_t inode_expand_double_indirect_block (struct inode *inode,
     return new_data_sectors;
 }
 
+/* helper function for grow file using double indirect block */
 size_t inode_expand_double_indirect_block_lvl_two (struct inode *inode,
         size_t new_data_sectors,
         struct indirect_block* outer_block)
@@ -628,39 +680,7 @@ size_t inode_expand_double_indirect_block_lvl_two (struct inode *inode,
     return new_data_sectors;
 }
 
-size_t inode_expand_indirect_block (struct inode *inode,
-        size_t new_data_sectors)
-{
-    static char zeros[BLOCK_SECTOR_SIZE];
-    struct indirect_block block;
-    if (inode->indirect_index == 0)
-    {
-        free_map_allocate(1, &inode->ptr[inode->direct_index]);
-    }
-    else
-    {
-        block_read(fs_device, inode->ptr[inode->direct_index], &block);
-    }
-    while (inode->indirect_index < INDIRECT_BLOCK_PTRS)
-    {
-        free_map_allocate(1, &block.ptr[inode->indirect_index]);
-        block_write(fs_device, block.ptr[inode->indirect_index], zeros);
-        inode->indirect_index++;
-        new_data_sectors--;
-        if (new_data_sectors == 0)
-        {
-            break;
-        }
-    }
-    block_write(fs_device, inode->ptr[inode->direct_index], &block);
-    if (inode->indirect_index == INDIRECT_BLOCK_PTRS)
-    {
-        inode->indirect_index = 0;
-        inode->direct_index++;
-    }
-    return new_data_sectors;
-}
-
+/* allocate an inode given an inode on disk */
 bool inode_alloc (struct inode_disk *disk_inode)
 {
     struct inode inode = {
@@ -678,54 +698,67 @@ bool inode_alloc (struct inode_disk *disk_inode)
     return true;
 }
 
+/* return true if this inode stores a file directory */
 bool inode_is_dir (const struct inode *inode)
 {
     return inode->isdir;
 }
 
+/* returns how many process is accessing this inode */
 int inode_get_open_cnt (const struct inode *inode)
 {
     return inode->open_cnt;
 }
 
+/* returns inumber of its parent */
 block_sector_t inode_get_parent (const struct inode *inode)
 {
     return inode->parent;
 }
 
+/* set the varaible to store inumber of its parent */
 void inode_set_parent (struct inode * in, block_sector_t parent_inumber)
 {
     in->parent = parent_inumber;
 }
 
+/* add a parent to a child inode */
 bool inode_add_parent (block_sector_t parent_sector,
         block_sector_t child_sector)
 {
+    // get the child inode using child inumber
     struct inode* inode = inode_open(child_sector);
+    // if the child does not exist, return false
     if (!inode)
     {
         return false;
     }
+
+    //stores the child's parent inside child's PARENT variable
     inode->parent = parent_sector;
     inode_close(inode);
     return true;
 }
 
+// acquire a lock on thsi inode
 void inode_lock (const struct inode *inode)
 {
     lock_acquire(&((struct inode *)inode)->lock);
 }
 
+// release the lock on this inode
 void inode_unlock (const struct inode *inode)
 {
     lock_release(&((struct inode *) inode)->lock);
 }
 
+// set the bool variable to store if it is a directory or not
 void inode_set_isdir (struct inode * inode, bool isdir)
 {
     inode->isdir = isdir;
 }
 
+//indicate whether this inode is removed 
 bool inode_is_removed (struct inode * inode)
 {
     return inode->removed != 0;

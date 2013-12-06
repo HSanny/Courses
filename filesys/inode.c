@@ -102,7 +102,7 @@ struct inode
     bool removed;                         /* True if deleted, false otherwise. */
     int deny_write_cnt;                   /* 0: writes ok, >0: deny writes. */
     off_t length;                         /* File size in bytes. */
-    off_t read_length;
+    off_t read_length;                    /* for reading files after file size, implementaion for file growth */
     size_t direct_index;                  /* stores how many pointers has been allocated inside this inode sector*/
     size_t indirect_index;                /* stores how many indirect pointers has been allocated inside 1st level indirection block */
     size_t double_indirect_index;         /* stores how many indirect pointers has been allocated inside 2nd level indirection block */
@@ -368,25 +368,24 @@ inode_read_at (struct inode *inode, void *buffer_, off_t size, off_t offset)
 }
 
 /* Writes SIZE bytes from BUFFER into INODE, starting at OFFSET.
-   Returns the number of bytes actually written, which may be
-   less than SIZE if end of file is reached or an error occurs.
-   (Normally a write at end of file would extend the inode, but
-   growth is not yet implemented.) */
+   Returns the number of bytes actually written, extend file is implemented */
     off_t
 inode_write_at (struct inode *inode, const void *buffer_, off_t size,
         off_t offset)
 {
     const uint8_t *buffer = buffer_;
     off_t bytes_written = 0;
+    bool sync = false;
 
     if (inode->deny_write_cnt)
         return 0;
 
-    if (offset + size > inode_length(inode))
+    if (offset + size >inode_length(inode))
     {
         if (!inode->isdir)
         {
             inode_lock(inode);
+            sync = true;
         }
         inode->length = inode_expand(inode, offset + size);
         struct inode_disk disk_inode = {
@@ -401,12 +400,7 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
             memcpy(&disk_inode.ptr, &inode->ptr,
                     INODE_BLOCK_PTRS*sizeof(block_sector_t));
             block_write(fs_device, inode->sector, &disk_inode);
-
-        if (!inode->isdir)
-        {
-            inode_unlock(inode);
-        }
-    }
+   }
 
     while (size > 0)
     {
@@ -445,6 +439,11 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
     }
 
     inode->read_length = inode_length(inode);
+    if (!inode->isdir && sync)
+        {
+            inode_unlock(inode);
+        }
+ 
     return bytes_written;
 }
 

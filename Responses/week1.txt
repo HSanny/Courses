@@ -1,0 +1,25 @@
+Class Reading for 01/16
+
+Textbook - Chapter 1 through the end of Section 1.1 (Rest of chapter 1 is
+optional - I recommend at least skimming it)
+Textbook - Chapter 2
+
+Insightful questions;
+Clarification questions about ambiguities;
+Comments about the relation of the reading to previous readings;
+Critiques;
+Thoughts on what you would like to learn about in more detail;
+Possible extensions or related studies;
+Thoughts on the reading's importance; and
+Summaries of the most important things you learned;
+
+The definition of Turing Test proposed in 1.1.1 may not be logically sound, in
+the sense that a human interrogator's "cannot tell whether the written
+response come from a person or a computer" could be attributable to
+individual identificaiton weakness.
+
+In practice, it would be tremendously challenging to achieve the pure
+rationality, which means a globally optimal decision. The challenge exists in
+the complexity of objective function. Generally speaking, the objective
+function may not be uni-modal, and thus, common numerical optimization methods
+can only guarantee a local optima with efficiency. 

@@ -1,0 +1,66 @@
+===========================================================
+
+Insightful questions;
+
+Clarification questions about ambiguities;
+
+Comments about the relation of the reading to previous readings;
+
+Critiques;
+
+Thoughts on what you would like to learn about in more detail;
+
+Possible extensions or related studies;
+
+Thoughts on the reading's importance; and
+
+Summaries of the most important things you learned.
+
+===========================================================
+Class Reading for 01/21
+Reading Task:  
+    Textbook - Chapter 3 through the end of 3.4 
+    Respond to the readings by email
+    Append to your response a solution to at least one exercise from the end of
+    the chapter.
+===========================================================
+ 
+Search refers to the process of looking for a sequence of actions that reaches
+the goal. The search takes an environment as input and output a solution, that
+is, a sequence of actions. After the solution is figured out, the agent can
+execute the computed solution and apply changes on environment to derive
+expected optimal objective.
+
+An open-loop agent ignores its perception from environment since it knows
+the outcome of each-step behavior in advance. 
+
+Before solving the real-world problem, we can exploit suitable methods on
+corresponding toy problem for experimentation. 
+
+In the area of AI, complete definition of a problem is supposed to include th
+e followings:
+    States, Initial States, Transition Model, Goal Test, Path Cost.
+
+We already have knowledge about two uninformed search:  the breadth first
+search and depth first search. BFS first considers the completeness of
+searching at each level, whereas DFS first takes depth of searching into
+account. 
+
+Is there any particular search mixing both types of search method, in which
+the degree of mixture can be human-specified? In fact, Uniform-cost search and
+depth-limited search can be regarded as mixed methods, but these two searching
+methods based on different strategies.
+
+===========================================================
+Class Reading for 01/23
+Readings: due Thursday 1/23 (email response due Wed 1/22 by 8 pm)
+
+Textbook - rest of Chapter 3
+Append to your response a solution to at least one exercise from the end of
+the chapter.
+===========================================================
+
+
+
+
+===========================================================

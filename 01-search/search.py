@@ -8,9 +8,7 @@
 # Abbeel in Spring 2013.
 # For more info, see http://inst.eecs.berkeley.edu/~cs188/pacman/pacman.html
 
-"""
-In search.py, you will implement generic search algorithms which are called
-by Pacman agents (in searchAgents.py).
+""" In search.py, you will implement generic search algorithms which are called by Pacman agents (in searchAgents.py).
 """
 
 import util
@@ -87,25 +85,19 @@ def depthFirstSearch(problem):
     stack = util.Stack()
     ## use the stack to restore (state, actions, stepCost) pair
     stack.push((problem.getStartState(), list([]), 0))
-    return DFS_core(problem, stack)
-
-def DFS_core(problem, stack):
-    if stack.isEmpty():
-        return []
-
-    (current, actions, old_Cost) = stack.pop()
-    if problem.isGoalState(current):
-        # return a series of actions to current state
-        return actions
-    else:
-        successors = problem.getSuccessors(current)
-        if not successors:
-            return []
+    ## use .. to label the explored set
+    
+    while not stack.isEmpty():
+        (current, actions, totalcost) = stack.pop()
+        if problem.isGoalState(current):
+            # return a series of actions to current state
+            return actions
         else:
-            for (successor, action, new_Cost) in :
-                if new_Cost < old_Cost:
-                    stack.push((successor, list(actions) + [action], new_Cost))
-                    return DFS_core(problem, stack)
+            successors = problem.getSuccessors(current)
+            for (successor, action, totalcost) in successors:
+                if 
+                stack.push((successor, list(actions) + [action], totalcost+cost))
+                #  label current is explored 
 
 
 def breadthFirstSearch(problem):

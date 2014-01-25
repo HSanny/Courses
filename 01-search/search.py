@@ -85,32 +85,77 @@ def depthFirstSearch(problem):
     stack = util.Stack()
     ## use the stack to restore (state, actions, stepCost) pair
     stack.push((problem.getStartState(), list([]), 0))
-    ## use .. to label the explored set
+    ## use set to label the explored set
+    explored = set()
     
+    ## non-recursive version of stack
     while not stack.isEmpty():
+        # pop out the top of stack
         (current, actions, totalcost) = stack.pop()
-        if problem.isGoalState(current):
+        if current in explored: # explored state
+            continue
+        elif problem.isGoalState(current): 
             # return a series of actions to current state
             return actions
         else:
             successors = problem.getSuccessors(current)
-            for (successor, action, totalcost) in successors:
-                if 
-                stack.push((successor, list(actions) + [action], totalcost+cost))
-                #  label current is explored 
+            explored.update([current]) # label current state as explored
 
+            if successors is None: 
+                continue
+            # add all states as successor
+            for (successor, action, cost) in successors:
+                if (successor) not in explored:
+                    stack.push((successor, list(actions) + [action], totalcost+cost))
 
 def breadthFirstSearch(problem):
     """
     Search the shallowest nodes in the search tree first.
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    #util.raiseNotDefined()
+    queue = util.Queue()
+    queue.push((problem.getStartState(), list([]), 0))
+    explored = set()
+
+    while not queue.isEmpty():
+        (current, actions, pathcost) = queue.pop()
+        if current in explored:
+            continue
+        elif problem.isGoalState(current):
+            return actions
+        else: # further breadth search
+            successors = problem.getSuccessors(current)
+            explored.update([current])
+            for (suc, act, stepcost) in successors:
+                if suc not in explored:
+                    queue.push((suc, list(actions) + [act], pathcost+stepcost))
+    
 
 def uniformCostSearch(problem):
     "Search the node of least total cost first. "
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    #util.raiseNotDefined()
+    pq = util.PriorityQueue()
+    pq.push((problem.getStartState(), list([]), 0.0), 0.0)
+    explored = set()
+
+    while not pq.isEmpty():
+        (current, actions, pathcost) = pq.pop()
+        if current in explored:
+            continue
+        elif problem.isGoalState(current):
+            return actions
+        else:
+            successors = problem.getSuccessors(current)
+            explored.update([current])
+            if successors is None:
+                continue
+            for (suc, act, stepcost) in successors:
+                if suc not in explored:
+                    pq.push((suc, list(actions)+[act], pathcost+stepcost),
+                            pathcost+stepcost)
+    
 
 def nullHeuristic(state, problem=None):
     """
@@ -122,7 +167,25 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     "Search the node that has the lowest combined cost and heuristic first."
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    pq = util.PriorityQueue()
+    pq.push((problem.getStartState(), list([]), 0.0), 0.0)
+    explored = set()
+    while not pq.isEmpty():
+        (current, actions, pathcost) = pq.pop()
+        if current in explored:
+            continue
+        elif problem.isGoalState(current):
+            return actions
+        else:
+            successors = problem.getSuccessors(current)
+            explored.update([current])
+            for (suc, act, cost) in successors:
+                if suc not in explored:
+                    sucPathCost = pathcost + cost
+                    pq.push((suc, list(actions)+[act], sucPathCost),
+                            sucPathCost+heuristic(suc, problem))
+
+    #util.raiseNotDefined()
 
 
 # Abbreviations

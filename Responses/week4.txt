@@ -1,0 +1,124 @@
+Class Reading for 02/04
+-----------------------------------------------------------------------
+
+5.1 
+Now we goes into the problem with competitive environment, dealing with multiple agents
+whose goals are in conflict to each other. 
+
+Since the nondeterminism of the opposite agents, the state space to be
+searched would be large at each step. Note that solution is not computed at
+the very beginning like classical search on ideal situation (observable,
+deterministic and known). 
+
+Prunning allows us to truncate the searching state space by ignoring some
+meaningless states, which make no sense to ultimate result.
+
+Elements of a game:
+    S_0: Initial State
+    PLAYER(s): the player of state s
+    ACTIONS(s): set of legal moves in one state s
+    RESULT(s,a): set of possible result by acting a in state s 
+    TERMINAL-TEST(s): test whether state s is terminal state
+    UTILITY(a,p): numeric value for a game that ends in terminal state s for
+          a player p
+
+A zero-sum game is defined as one where the total payoff to all
+players does not vary for every instance of the game.
+----
+5.2 Perfectly optimal search in a game
+
+Minimax algorithm can be regarded as two players try their best to confront
+each other on the final outcome of utility function. The player tries to
+maximize the utility function is usually labelled as MAX, whereas the other
+one who minimize the utility function at each step is called MIN.
+
+Intuitively speaking, Minimax is the most naive method to solve an
+adversarial search problem. The naiveness of this method partially exists in
+the impractical aspect, where players may not be able to always perform
+optimally. (the weakness is the assumption required by minimax algorithm.)
+
+The minimax algorithm performs a complete depth-first exploration of the game
+tree. Time complexity is O(b**m). Space complexity is O(bm).
+
+Generalize minimax algorithm to the situation of multiple players. Utility
+function is supposed to be changed as mapping from n-dimensional vector to
+n-dimensioanl vector. (n is the number of players.) Under such circumstance,
+the collaboration would occur out of selfish purpose.
+----
+5.3 Alpha-beta pruning: a more practical technique
+Alpha-beta pruning technique prunes the searching path that does not matter
+towards final decision.
+
+Ordering of expansion does mater: we could not prune any successors of D at
+all because the worst successors (from the point of view of MIN) were
+generated first.
+
+Alpha–beta can solve a tree roughly twice as deep as minimax in the same amount
+of time.
+
+-----
+5.4 Imperfect real-time decision: further more practical technique
+
+To make real-time decision, one can apply heuristic evaluation function to
+states in the search, turning nonterminal nodes to terminal leaves as early as
+possible. That would save plenty of time for decision making.
+
+Alteration can be made as follows:
+    - Change utility function in each step to be heuristic evaluation function
+    - Change terminal test to be cutoff test that decides when to apply
+      evaluation function
+
+Now, we can see that under observable, deterministic, known multi-agent environment,
+there exist a trade-off between time cost(real-timeness) and optimality of search.
+-----
+5.5 Stochastic Game: Multi-agent environment with nondeterminism
+
+Since the nondeterminism is introduced in stochastic game, positions do not
+have definite minimax values. Instead, we can only calculate the expected
+value of a position: the average over all possible outcomes of the chance
+nodes.
+
+Solving a game with dice would be just like solving a game without dice, but
+time complexity is different, O((bn)**m). n is the number of distinct rolls.
+
+-----
+5.6 Partially Observable Games: relax observability assumption
+
+In reality, "fog of war" would cause partially observable situation.
+
+Kriegspiel, a partially observable chess, is used as example here.
+
+For Kriegspiel, a winning strategy, or guaranteed check- mate, is one that,
+for each possible percept sequence, leads to an actual checkmate for every
+possible board state in the current belief state, regardless of how the
+opponent moves.
+
+Kriegspiel admits an entirely new concept that makes no sense in fully
+observable games: probabilistic checkmate. Such checkmates are still required
+to work in every board state in the belief state; they are probabilistic with
+respect to randomization of the winning player’s moves.
+
+-----
+5.7 State-of-the-art program
+Chess has a great contribution to the area of artificial intelligence.
+Some other well-known contributors are: 
+    Checkers, Backgammon, Go, Bridge, Scrabble.
+
+===============================================================================
+Response to exercises
+5.1 Suppose you have an oracle, OM(s), that correctly predicts the opponent’s
+move in any state. Using this, formulate the definition of a game as a
+(single-agent) search problem. Describe an algorithm for finding the optimal
+move.
+
+Initial State: start state of that game
+PLAYER(s): oracle and its opponent
+ACTIONS(s): oracle's possible moves in a state
+RESULT(s,a): result of oracle's move and his prediction of opponent action
+TERMINAL-TEST(s): check whether the winner of the game is produced
+UTILITY(s,p): utility function for player p
+
+No need for minimax algorithm, basic classical search algorithm is enough.
+I may take simple depth first search algorithm to find the solution, the
+sequence of oracle's action with maximum utility.
+

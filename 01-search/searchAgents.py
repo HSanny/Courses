@@ -357,22 +357,50 @@ def cornersHeuristic(state, problem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    # These are the corner coordinates
+    ## These are the corner coordinates
     corners = problem.corners 
-    x, y = state[0] # sucessor position
+    position = state[0] # sucessor position
     food = state[1] # succesor food distribution
 
-    ## sorting by means of priority queue
-    pq = util.PriorityQueue()
+    ## list all existing fruits
+    dots = list([])
     for (cx, cy) in corners:
         if food[cx][cy]:
-            dist = mazeDistance((x, y), (cx, cy), problem.startingGameState)
-            pq.push((cx, cy), dist)
-    
-    if pq.isEmpty():
+            dots.append((cx, cy))
+
+    ## use queue to generate all possible permutations of fruits
+    queue = util.Queue()
+    ## structure (expression, remained)
+    queue.push((list([]), range(0, len(dots))))
+    permutations = list([])
+    while not queue.isEmpty():
+        (expression, remained) = queue.pop()
+        if remained is None or len(remained) == 0:
+            permutations.append(tuple(expression))
+        else:
+            for l in remained:
+                newremain = remained[:]
+                newremain.remove(l)
+                newexpression = expression[:]
+                newexpression.append([l])
+                queue.push((newexpression, newremain))
+
+    # compute the weight for permutations distance
+    # and get the minimal for heuristic
+    if len(permutations) == 0 or len(dots)== 0:
         return 0
-    else:
-        return mazeDistance((x,y), pq.pop(), problem.startingGameState)
+    min_dist = None
+    for p in permutations:
+        dist = mazeDistance(position, dots[p[0][0]], problem.startingGameState)
+        ndots = len(p)
+        for i in range(0, ndots-1):
+            dist += mazeDistance(dots[p[i][0]], dots[p[i+1][0]],
+                                 problem.startingGameState)
+        if min_dist is None or dist < min_dist:
+            min_dist = dist
+
+    return min_dist
+
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
@@ -463,6 +491,7 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
+    ''' heuristic by counting remained amount of food
     count = 0
     S = 4
     height = len(foodGrid.data)
@@ -472,6 +501,72 @@ def foodHeuristic(state, problem):
             if foodGrid[x][y]:
                 count += -1
     return count
+    '''
+    # heuristic by finding minimal spanning tree of the remaining food
+    # find all dots
+    dots = list([])
+    for x in range(0, len(foodGrid.data)):
+        for y in range(0, len(foodGrid.data[0])):
+            if foodGrid[x][y]:
+                dots.append((x,y))
+    # count current position as a dot
+    dots.append(position)
+    
+    # compute mutual distance and put into the list of edges
+    edges = list([])
+    for i in range(0, len(dots)):
+        for j in range(i+1, len(dots)):
+            dist = mazeDistance(dots[i], dots[j], problem.startingGameState)
+            e = (dots[i], dots[j], dist)
+            edges.append(e)
+    # figure out the MST
+    explored = set([position])
+    MST = list([])
+    while len(edges) != 0:
+        extensions = list([])
+        toremove = list([])
+        for i in range(0, len(edges)):
+            #print i, len(edges),edges[i]
+            u = edges[i][0]
+            v = edges[i][1]
+            u_exp = u in explored
+            v_exp = v in explored
+            if u_exp and v_exp: 
+                # this edge lead to a cycle
+                toremove.append(edges[i])
+            elif u_exp or v_exp:
+                # may be extension
+                extensions.append(edges[i])
+        for e in toremove:
+            edges.remove(e)
+        if len(extensions) == 0:
+            continue
+        extensions.sort(key=lambda e:e[2])
+        #print extensions
+        edge_to_add = extensions.pop(0)
+        explored.update([edge_to_add[0], edge_to_add[1]])
+        MST.append(edge_to_add)
+
+    
+    # compute the total weight of the derived MST
+    weight = 0
+    for e in MST:
+        weight += e[2]
+    print weight
+    return weight
+    '''
+    # heuristic by brute-force
+    # find all dots
+    dots = list([])
+    for x in range(0, len(foodGrid.data)):
+        for y in range(0, len(foodGrid.data[0])):
+            if foodGrid[x][y]:
+                dots.append((x,y))
+    # count current position as a dot
+    g
+    dots.append(position)
+    '''
+    
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"

@@ -499,7 +499,30 @@ class ClosestDotSearchAgent(SearchAgent):
         problem = AnyFoodSearchProblem(gameState)
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # These are the corner coordinates
+        x, y = startPosition # sucessor position
+
+        # find all dots
+        dots = list([])
+        for tmpx in range(0, len(food.data)):
+            for tmpy in range(0, len(food.data[0])):
+                if food[tmpx][tmpy]:
+                    dots.append((tmpx, tmpy))
+
+        ## sorting by means of priority queue
+        pq = util.PriorityQueue()
+        for (dot_x, dot_y) in dots:
+            if food[dot_x][dot_y]:
+                dist = mazeDistance((x, y), (dot_x, dot_y), gameState)
+                pq.push((dot_x, dot_y), dist)
+    
+        if pq.isEmpty():
+            return []
+        else:
+            target_dot = pq.pop()
+            problem.goal = target_dot
+            actions = search.breadthFirstSearch(problem)
+            return actions
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -535,7 +558,8 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         x,y = state
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return x == self.goal[0] and y == self.goal[1]
+        #util.raiseNotDefined()
 
 ##################
 # Mini-contest 1 #

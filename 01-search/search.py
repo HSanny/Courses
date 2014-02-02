@@ -113,7 +113,6 @@ def breadthFirstSearch(problem):
     Search the shallowest nodes in the search tree first.
     """
     "*** YOUR CODE HERE ***"
-    #util.raiseNotDefined()
     queue = util.Queue()
     queue.push((problem.getStartState(), list([]), 0))
     explored = set()
@@ -186,7 +185,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                             sucPathCost+heuristic(suc, problem))
 
     #util.raiseNotDefined()
-
 
 # Abbreviations
 bfs = breadthFirstSearch

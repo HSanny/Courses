@@ -491,18 +491,52 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    ''' heuristic by counting remained amount of food
-    count = 0
-    S = 4
-    height = len(foodGrid.data)
-    width = len(foodGrid.data[0])
-    for x in range(max(0, position[0]-S), min(position[0]+S, height)):
-        for y in range(max(0, position[1]-S), min(position[1]+S, width)):
-            if foodGrid[x][y]:
-                count += -1
-    return count
-    '''
-    '''
+    if foodGrid.count() < 5:
+        ## brute-force algorithm
+        ## These are the corner coordinates
+        position = state[0] # sucessor position
+        food = state[1] # succesor food distribution
+
+        ## list all existing fruits
+        dots = list([])
+        for cx in range(0, len(food.data)):
+            for cy in range(0, len(food.data[0])):
+                if food[cx][cy]:
+                    dots.append((cx, cy))
+    
+        ## use queue to generate all possible permutations of fruits
+        queue = util.Queue()
+        ## structure (expression, remained)
+        queue.push((list([]), range(0, len(dots))))
+        permutations = list([])
+        while not queue.isEmpty():
+            (expression, remained) = queue.pop()
+            if remained is None or len(remained) == 0:
+                permutations.append(tuple(expression))
+            else:
+                for l in remained:
+                    newremain = remained[:]
+                    newremain.remove(l)
+                    newexpression = expression[:]
+                    newexpression.append([l])
+                    queue.push((newexpression, newremain))
+
+        # compute the weight for permutations distance
+        # and get the minimal for heuristic
+        if len(permutations) == 0 or len(dots)== 0:
+            return 0
+        min_dist = None
+        for p in permutations:
+            dist = mazeDistance(position, dots[p[0][0]], problem.startingGameState)
+            ndots = len(p)
+            for i in range(0, ndots-1):
+                dist += mazeDistance(dots[p[i][0]], dots[p[i+1][0]],
+                                 problem.startingGameState)
+            if min_dist is None or dist < min_dist:
+                min_dist = dist
+    
+        return min_dist
+
     # heuristic by finding minimal spanning tree of the remaining food
     # find all dots
     dots = list([])
@@ -545,60 +579,68 @@ def foodHeuristic(state, problem):
         extensions.sort(key=lambda e:e[2])
         #print extensions
         edge_to_add = extensions.pop(0)
+        #print "add:", edge_to_add
         explored.update([edge_to_add[0], edge_to_add[1]])
         MST.append(edge_to_add)
-
     
     # compute the total weight of the derived MST
     weight = 0
     for e in MST:
         weight += e[2]
+    #print weight
+    return weight
+    '''
+    # heuristic by greedy algorithm
+    if not problem.heuristicInfo.has_key('DIST_MAT'):
+        fruits = list([])
+        for x in range(0, len(foodGrid.data)):
+            for y in range(0, len(foodGrid.data[0])):
+                if foodGrid[x][y]:
+                    fruits.append((x,y))
+        numfrutis = len(fruits)
+        problem.heuristicInfo.update({'FRUITS_LIST':fruits, 'NFRUITS':numfrutis})
+        # compute mutual distance and put into the list of edges
+        DIST_MAT = [[0 for x in range(0, numfrutis)] for y in range(0, numfrutis)]
+        for i in range(0, len(fruits)):
+            DIST_MAT[i][i] = 0
+            for j in range(i+1, len(fruits)):
+                dist = mazeDistance(fruits[i], fruits[j], problem.startingGameState)
+                DIST_MAT[i][j] = dist
+                DIST_MAT[j][i] = dist
+        problem.heuristicInfo.update({'DIST_MAT':DIST_MAT})
+    # get heuristicInfo from dictionary
+    numfrutis = problem.heuristicInfo['NFRUITS']
+    flist = problem.heuristicInfo['FRUITS_LIST']
+    dmat = problem.heuristicInfo['DIST_MAT']
+    # count current position as a dot
+    current = position
+    # figure out the MST
+    fruitsAccessed = 0
+    weight = 0
+    explored = set([])
+    while fruitsAccessed != numfrutis:
+        min_dist = None
+        min_dist_fruit = None
+        for i in range(0, numfrutis):
+            if not cmp(current, flist[i]):
+                continue
+            elif flist[i] in explored:
+                continue
+            else:
+                dist = mazeDistance(current, flist[i], problem.startingGameState) 
+                if min_dist is None or dist < min_dist:
+                    min_dist = dist
+                    min_dist_fruit = i
+        fruitsAccessed += 1
+        if min_dist is not None: 
+            weight += min_dist
+            print flist[min_dist_fruit]
+            explored.add(flist[min_dist_fruit])
+            current = flist[min_dist_fruit]
     print weight
     return weight
     '''
-    ## These are the corner coordinates
-    position = state[0] # sucessor position
-    food = state[1] # succesor food distribution
 
-    ## list all existing fruits
-    dots = list([])
-    for cx in range(0, len(food.data)):
-        for cy in range(0, len(food.data[0])):
-            if food[cx][cy]:
-                dots.append((cx, cy))
-
-    ## use queue to generate all possible permutations of fruits
-    queue = util.Queue()
-    ## structure (expression, remained)
-    queue.push((list([]), range(0, len(dots))))
-    permutations = list([])
-    while not queue.isEmpty():
-        (expression, remained) = queue.pop()
-        if remained is None or len(remained) == 0:
-            permutations.append(tuple(expression))
-        else:
-            for l in remained:
-                newremain = remained[:]
-                newremain.remove(l)
-                newexpression = expression[:]
-                newexpression.append([l])
-                queue.push((newexpression, newremain))
-
-    # compute the weight for permutations distance
-    # and get the minimal for heuristic
-    if len(permutations) == 0 or len(dots)== 0:
-        return 0
-    min_dist = None
-    for p in permutations:
-        dist = mazeDistance(position, dots[p[0][0]], problem.startingGameState)
-        ndots = len(p)
-        for i in range(0, ndots-1):
-            dist += mazeDistance(dots[p[i][0]], dots[p[i+1][0]],
-                                 problem.startingGameState)
-        if min_dist is None or dist < min_dist:
-            min_dist = dist
-
-    return min_dist
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"

@@ -2,10 +2,9 @@
 *** TITLE: CS343H Artificial Intelligence Project 1
 *** AUTHOR: Jimmy Lin (JIMMYLIN@UTEXAS.EDU)
 *** EID: XL5224
-*** DESCRIPTION: 
 ***     
 ************************************************************************
-Summary of this project:
+Description of this project:
 q1: Implement the Depth First Search algorithm: using stack
     Note that there is also an recusive implementation for DFS but we did not
     choose to do it.

@@ -690,6 +690,10 @@ class ApproximateSearchAgent(Agent):
     def registerInitialState(self, state):
         "This method is called before any moves are made."
         "*** YOUR CODE HERE ***"
+        util.raiseNotDefined()
+        self.actions = self.getAction(state)
+        costs = self.getCostOfActions(self.actions)
+        
 
     def getAction(self, state):
         """
@@ -699,6 +703,7 @@ class ApproximateSearchAgent(Agent):
         """
         "*** YOUR CODE HERE ***"
         util.raiseNotDefined()
+
 
 def mazeDistance(point1, point2, gameState):
     """

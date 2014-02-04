@@ -1,0 +1,8 @@
+MAIN_DIR=$(cd ..)
+TEST_DIR=$(pwd)
+
+for i in 1 2 3 4 5
+do 
+$MAIN_DIR/run $TEST_DIR/sample_input/input$i.txt $TEST_DIR/output/output$i.txt
+result=$(diff $TEST_DIR/sample_output/output$i.txt $TEST_DIR/output/output$i.txt)
+done

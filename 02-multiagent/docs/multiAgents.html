@@ -1,0 +1,197 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<title>multiAgents.py</title>
+<link rel="stylesheet" type="text/css" href="highlight.css">
+</head>
+<body class="hl">
+<pre class="hl"><span class="hl slc"># multiAgents.py</span>
+<span class="hl slc"># --------------</span>
+<span class="hl slc"># Licensing Information: Please do not distribute or publish solutions to this</span>
+<span class="hl slc"># project. You are free to use and extend these projects for educational</span>
+<span class="hl slc"># purposes. The Pacman AI projects were developed at UC Berkeley, primarily by</span>
+<span class="hl slc"># John DeNero (denero&#64;cs.berkeley.edu) and Dan Klein (klein&#64;cs.berkeley.edu).</span>
+<span class="hl slc"># Student side autograding was added by Brad Miller, Nick Hay, and Pieter </span>
+<span class="hl slc"># Abbeel in Spring 2013.</span>
+<span class="hl slc"># For more info, see http://inst.eecs.berkeley.edu/~cs188/pacman/pacman.html</span>
+
+<span class="hl kwa">from</span> util <span class="hl kwa">import</span> manhattanDistance
+<span class="hl kwa">from</span> game <span class="hl kwa">import</span> Directions
+<span class="hl kwa">import</span> random<span class="hl opt">,</span> util
+
+<span class="hl kwa">from</span> game <span class="hl kwa">import</span> Agent
+
+<span class="hl kwa">class</span> <span class="hl kwd">ReflexAgent</span><span class="hl opt">(</span>Agent<span class="hl opt">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">      A reflex agent chooses an action at each choice point by examining</span>
+<span class="hl str">      its alternatives via a state evaluation function.</span>
+<span class="hl str"></span>
+<span class="hl str">      The code below is provided as a guide.  You are welcome to change</span>
+<span class="hl str">      it in any way you see fit, so long as you don't touch our method</span>
+<span class="hl str">      headers.</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+
+
+    <span class="hl kwa">def</span> <span class="hl kwd">getAction</span><span class="hl opt">(</span>self<span class="hl opt">,</span> gameState<span class="hl opt">):</span>
+        <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">        You do not need to change this method, but you're welcome to.</span>
+<span class="hl str"></span>
+<span class="hl str">        getAction chooses among the best options according to the evaluation function.</span>
+<span class="hl str"></span>
+<span class="hl str">        Just like in the previous project, getAction takes a GameState and returns</span>
+<span class="hl str">        some Directions.X for some X in the set {North, South, West, East, Stop}</span>
+<span class="hl str">        &quot;&quot;&quot;</span>
+        <span class="hl slc"># Collect legal moves and successor states</span>
+        legalMoves <span class="hl opt">=</span> gameState<span class="hl opt">.</span><span class="hl kwd">getLegalActions</span><span class="hl opt">()</span>
+
+        <span class="hl slc"># Choose one of the best actions</span>
+        scores <span class="hl opt">= [</span>self<span class="hl opt">.</span><span class="hl kwd">evaluationFunction</span><span class="hl opt">(</span>gameState<span class="hl opt">,</span> action<span class="hl opt">)</span> <span class="hl kwa">for</span> action <span class="hl kwa">in</span> legalMoves<span class="hl opt">]</span>
+        bestScore <span class="hl opt">=</span> <span class="hl kwb">max</span><span class="hl opt">(</span>scores<span class="hl opt">)</span>
+        bestIndices <span class="hl opt">= [</span>index <span class="hl kwa">for</span> index <span class="hl kwa">in</span> <span class="hl kwb">range</span><span class="hl opt">(</span><span class="hl kwb">len</span><span class="hl opt">(</span>scores<span class="hl opt">))</span> <span class="hl kwa">if</span> scores<span class="hl opt">[</span>index<span class="hl opt">] ==</span> bestScore<span class="hl opt">]</span>
+        chosenIndex <span class="hl opt">=</span> random<span class="hl opt">.</span><span class="hl kwd">choice</span><span class="hl opt">(</span>bestIndices<span class="hl opt">)</span> <span class="hl slc"># Pick randomly among the best</span>
+
+        <span class="hl str">&quot;Add more of your code here if you want to&quot;</span>
+
+        <span class="hl kwa">return</span> legalMoves<span class="hl opt">[</span>chosenIndex<span class="hl opt">]</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">evaluationFunction</span><span class="hl opt">(</span>self<span class="hl opt">,</span> currentGameState<span class="hl opt">,</span> action<span class="hl opt">):</span>
+        <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">        Design a better evaluation function here.</span>
+<span class="hl str"></span>
+<span class="hl str">        The evaluation function takes in the current and proposed successor</span>
+<span class="hl str">        GameStates (pacman.py) and returns a number, where higher numbers are better.</span>
+<span class="hl str"></span>
+<span class="hl str">        The code below extracts some useful information from the state, like the</span>
+<span class="hl str">        remaining food (newFood) and Pacman position after moving (newPos).</span>
+<span class="hl str">        newScaredTimes holds the number of moves that each ghost will remain</span>
+<span class="hl str">        scared because of Pacman having eaten a power pellet.</span>
+<span class="hl str"></span>
+<span class="hl str">        Print out these variables to see what you're getting, then combine them</span>
+<span class="hl str">        to create a masterful evaluation function.</span>
+<span class="hl str">        &quot;&quot;&quot;</span>
+        <span class="hl slc"># Useful information you can extract from a GameState (pacman.py)</span>
+        successorGameState <span class="hl opt">=</span> currentGameState<span class="hl opt">.</span><span class="hl kwd">generatePacmanSuccessor</span><span class="hl opt">(</span>action<span class="hl opt">)</span>
+        newPos <span class="hl opt">=</span> successorGameState<span class="hl opt">.</span><span class="hl kwd">getPacmanPosition</span><span class="hl opt">()</span>
+        newFood <span class="hl opt">=</span> successorGameState<span class="hl opt">.</span><span class="hl kwd">getFood</span><span class="hl opt">()</span>
+        newGhostStates <span class="hl opt">=</span> successorGameState<span class="hl opt">.</span><span class="hl kwd">getGhostStates</span><span class="hl opt">()</span>
+        newScaredTimes <span class="hl opt">= [</span>ghostState<span class="hl opt">.</span>scaredTimer <span class="hl kwa">for</span> ghostState <span class="hl kwa">in</span> newGhostStates<span class="hl opt">]</span>
+
+        <span class="hl str">&quot;*** YOUR CODE HERE ***&quot;</span>
+        <span class="hl kwa">return</span> successorGameState<span class="hl opt">.</span><span class="hl kwd">getScore</span><span class="hl opt">()</span>
+
+<span class="hl kwa">def</span> <span class="hl kwd">scoreEvaluationFunction</span><span class="hl opt">(</span>currentGameState<span class="hl opt">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">      This default evaluation function just returns the score of the state.</span>
+<span class="hl str">      The score is the same one displayed in the Pacman GUI.</span>
+<span class="hl str"></span>
+<span class="hl str">      This evaluation function is meant for use with adversarial search agents</span>
+<span class="hl str">      (not reflex agents).</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+    <span class="hl kwa">return</span> currentGameState<span class="hl opt">.</span><span class="hl kwd">getScore</span><span class="hl opt">()</span>
+
+<span class="hl kwa">class</span> <span class="hl kwd">MultiAgentSearchAgent</span><span class="hl opt">(</span>Agent<span class="hl opt">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">      This class provides some common elements to all of your</span>
+<span class="hl str">      multi-agent searchers.  Any methods defined here will be available</span>
+<span class="hl str">      to the MinimaxPacmanAgent, AlphaBetaPacmanAgent &amp; ExpectimaxPacmanAgent.</span>
+<span class="hl str"></span>
+<span class="hl str">      You *do not* need to make any changes here, but you can if you want to</span>
+<span class="hl str">      add functionality to all your adversarial search agents.  Please do not</span>
+<span class="hl str">      remove anything, however.</span>
+<span class="hl str"></span>
+<span class="hl str">      Note: this is an abstract class: one that should not be instantiated.  It's</span>
+<span class="hl str">      only partially specified, and designed to be extended.  Agent (game.py)</span>
+<span class="hl str">      is another abstract class.</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">__init__</span><span class="hl opt">(</span>self<span class="hl opt">,</span> evalFn <span class="hl opt">=</span> <span class="hl str">'scoreEvaluationFunction'</span><span class="hl opt">,</span> depth <span class="hl opt">=</span> <span class="hl str">'2'</span><span class="hl opt">):</span>
+        self<span class="hl opt">.</span>index <span class="hl opt">=</span> <span class="hl num">0</span> <span class="hl slc"># Pacman is always agent index 0</span>
+        self<span class="hl opt">.</span>evaluationFunction <span class="hl opt">=</span> util<span class="hl opt">.</span><span class="hl kwd">lookup</span><span class="hl opt">(</span>evalFn<span class="hl opt">,</span> <span class="hl kwb">globals</span><span class="hl opt">())</span>
+        self<span class="hl opt">.</span>depth <span class="hl opt">=</span> <span class="hl kwb">int</span><span class="hl opt">(</span>depth<span class="hl opt">)</span>
+
+<span class="hl kwa">class</span> <span class="hl kwd">MinimaxAgent</span><span class="hl opt">(</span>MultiAgentSearchAgent<span class="hl opt">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">      Your minimax agent (question 2)</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">getAction</span><span class="hl opt">(</span>self<span class="hl opt">,</span> gameState<span class="hl opt">):</span>
+        <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">          Returns the minimax action from the current gameState using self.depth</span>
+<span class="hl str">          and self.evaluationFunction.</span>
+<span class="hl str"></span>
+<span class="hl str">          Here are some method calls that might be useful when implementing minimax.</span>
+<span class="hl str"></span>
+<span class="hl str">          gameState.getLegalActions(agentIndex):</span>
+<span class="hl str">            Returns a list of legal actions for an agent</span>
+<span class="hl str">            agentIndex=0 means Pacman, ghosts are &gt;= 1</span>
+<span class="hl str"></span>
+<span class="hl str">          gameState.generateSuccessor(agentIndex, action):</span>
+<span class="hl str">            Returns the successor game state after an agent takes an action</span>
+<span class="hl str"></span>
+<span class="hl str">          gameState.getNumAgents():</span>
+<span class="hl str">            Returns the total number of agents in the game</span>
+<span class="hl str">        &quot;&quot;&quot;</span>
+        <span class="hl str">&quot;*** YOUR CODE HERE ***&quot;</span>
+        util<span class="hl opt">.</span><span class="hl kwd">raiseNotDefined</span><span class="hl opt">()</span>
+
+<span class="hl kwa">class</span> <span class="hl kwd">AlphaBetaAgent</span><span class="hl opt">(</span>MultiAgentSearchAgent<span class="hl opt">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">      Your minimax agent with alpha-beta pruning (question 3)</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">getAction</span><span class="hl opt">(</span>self<span class="hl opt">,</span> gameState<span class="hl opt">):</span>
+        <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">          Returns the minimax action using self.depth and self.evaluationFunction</span>
+<span class="hl str">        &quot;&quot;&quot;</span>
+        <span class="hl str">&quot;*** YOUR CODE HERE ***&quot;</span>
+        util<span class="hl opt">.</span><span class="hl kwd">raiseNotDefined</span><span class="hl opt">()</span>
+
+<span class="hl kwa">class</span> <span class="hl kwd">ExpectimaxAgent</span><span class="hl opt">(</span>MultiAgentSearchAgent<span class="hl opt">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">      Your expectimax agent (question 4)</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">getAction</span><span class="hl opt">(</span>self<span class="hl opt">,</span> gameState<span class="hl opt">):</span>
+        <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">          Returns the expectimax action using self.depth and self.evaluationFunction</span>
+<span class="hl str"></span>
+<span class="hl str">          All ghosts should be modeled as choosing uniformly at random from their</span>
+<span class="hl str">          legal moves.</span>
+<span class="hl str">        &quot;&quot;&quot;</span>
+        <span class="hl str">&quot;*** YOUR CODE HERE ***&quot;</span>
+        util<span class="hl opt">.</span><span class="hl kwd">raiseNotDefined</span><span class="hl opt">()</span>
+
+<span class="hl kwa">def</span> <span class="hl kwd">betterEvaluationFunction</span><span class="hl opt">(</span>currentGameState<span class="hl opt">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">      Your extreme ghost-hunting, pellet-nabbing, food-gobbling, unstoppable</span>
+<span class="hl str">      evaluation function (question 5).</span>
+<span class="hl str"></span>
+<span class="hl str">      DESCRIPTION: &lt;write something here so we know what you did&gt;</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+    <span class="hl str">&quot;*** YOUR CODE HERE ***&quot;</span>
+    util<span class="hl opt">.</span><span class="hl kwd">raiseNotDefined</span><span class="hl opt">()</span>
+
+<span class="hl slc"># Abbreviation</span>
+better <span class="hl opt">=</span> betterEvaluationFunction
+
+<span class="hl kwa">class</span> <span class="hl kwd">ContestAgent</span><span class="hl opt">(</span>MultiAgentSearchAgent<span class="hl opt">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">      Your agent for the mini-contest</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">getAction</span><span class="hl opt">(</span>self<span class="hl opt">,</span> gameState<span class="hl opt">):</span>
+        <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">          Returns an action.  You can use any method you want and search to any depth you want.</span>
+<span class="hl str">          Just remember that the mini-contest is timed, so you have to trade off speed and computation.</span>
+<span class="hl str"></span>
+<span class="hl str">          Ghosts don't behave randomly anymore, but they aren't perfect either -- they'll usually</span>
+<span class="hl str">          just make a beeline straight towards Pacman (or away from him if they're scared!)</span>
+<span class="hl str">        &quot;&quot;&quot;</span>
+        <span class="hl str">&quot;*** YOUR CODE HERE ***&quot;</span>
+        util<span class="hl opt">.</span><span class="hl kwd">raiseNotDefined</span><span class="hl opt">()</span>
+
+</pre>
+</body>
+</html>
+<!--HTML generated by highlight 3.8, http://www.andre-simon.de/-->

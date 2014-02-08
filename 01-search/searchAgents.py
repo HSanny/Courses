@@ -401,7 +401,6 @@ def cornersHeuristic(state, problem):
 
     return min_dist
 
-
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
     def __init__(self):

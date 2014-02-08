@@ -8,6 +8,8 @@
 # Abbeel in Spring 2013.
 # For more info, see http://inst.eecs.berkeley.edu/~cs188/pacman/pacman.html
 
+import searchAgents, search
+
 from util import manhattanDistance
 from game import Directions
 import random, util
@@ -23,7 +25,6 @@ class ReflexAgent(Agent):
       it in any way you see fit, so long as you don't touch our method
       headers.
     """
-
 
     def getAction(self, gameState):
         """
@@ -66,10 +67,40 @@ class ReflexAgent(Agent):
         successorGameState = currentGameState.generatePacmanSuccessor(action)
         newPos = successorGameState.getPacmanPosition()
         newFood = successorGameState.getFood()
+        # list of ghost in (x,y), direction
         newGhostStates = successorGameState.getGhostStates()
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
 
         "*** YOUR CODE HERE ***"
+        px, py = newPos
+        ghostDistance = 0
+        isGhostNearby = False
+        ## if the ghost occurs within 3 x 3 grid of pacman, we indicate that
+        ## the pacman is in danger, thus take measures to protect it
+        for ghost in newGhostStates:
+            gx,gy = ghost.getPosition()
+            ghostDistance += (gx - px)**2 + (gy - py)**2
+            if abs(px - gx) <= 3 and (py - gy) <= 3:
+                isGhostNearby = True
+
+        minFoodDistance = newFood.height**2 + newFood.width**2
+        closestFood = None
+        for tmpx in range(0, newFood.width):
+            for tmpy in range(0, newFood.height):
+                if newFood[tmpx][tmpy]:
+                    dist = (tmpx-px)**2 + (tmpy-py)**2
+                    if dist < minFoodDistance:
+                        minFoodDistance = dist
+                        closestFood = (tmpx, tmpy)
+        
+        if closestFood is None:
+            heuristic = 0
+        else:
+            heuristic = searchAgents.mazeDistance (newPos, closestFood, currentGameState)
+        if isGhostNearby: # here we care about safety
+            successorGameState.data.score = ghostDistance
+        else:  # here we care about food eating
+            successorGameState.data.score = -heuristic
         return successorGameState.getScore()
 
 def scoreEvaluationFunction(currentGameState):

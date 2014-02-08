@@ -6,9 +6,8 @@
 ##         JIMMY LIN (xl5224) - JimmyLin@utexas.edu  
 ##
 ## DESCRIPTION: 
-##    Algorithm Assignment #1: BIDDING SYSTEM
-##    We implement the bidding-item stable matching by using
-## Brute-Force algorithm.
+##    Algorithm Assignment #2: BIDDING SYSTEM
+##    We incrementally implement the bidding-item stable matching.
 ## 
 #################################################################
 ## Edited by MacVim
@@ -19,10 +18,12 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.PriorityQueue;
+import java.util.Comparator;
 
 // ****************************************************************
 // Item data structure
-class Item {
+class Item implements Comparable<Item>{
     // fields characterizing item
     int id;  
     int quality;  
@@ -40,10 +41,14 @@ class Item {
         this.price = price;  
         this.highest_bid_price = price;
         this.highest_bid_id = -1;
+        this.matchedBySingleItem = false;
     }
     public String toString () {
         String str = "bid: " + this.quality + "," + this.price;
         return str;
+    }
+    public int compareTo (Item item) {
+        return item.quality - this.quality;  // descending order
     }
 }
 
@@ -74,7 +79,7 @@ class SingleItemBid extends Bid {
         return this.offer;
     }
 }
-class LinearBid extends Bid {
+class LinearBid extends Bid implements Comparable<LinearBid> {
     int intercept;
     int slope;
     LinearBid (int intercept, int slope) {
@@ -86,6 +91,9 @@ class LinearBid extends Bid {
         int weight = quality * this.slope + this.intercept;
         // System.out.println(weight);
         return weight;
+    }
+    int compareTo (LinearBid lb) {
+        return lb.slope - this.slope;
     }
 }
 // ****************************************************************
@@ -100,54 +108,68 @@ class Bidding {
         int nItems = Integer.parseInt(reader.readLine());
         // System.out.println("number of items: " + n);
 
-        // create and parse item array
-        Item [] items = new Item [nItems];
+        // create and parse item array 
+        // use priority queue to sort the items
+        PriorityQueue<Item> pqItems = new PriorityQueue<Item> (nItems);
         String line = null;
         for (int i = 0; i < nItems; i ++) {
             line = reader.readLine();
             String [] item_infos = line.split(" ");
             int tmp_quality = Integer.parseInt(item_infos[0]);
             int tmp_price = Integer.parseInt(item_infos[1]);
-            items[i] = new Item (tmp_quality, tmp_price);
+            pqItems.offer(new Item (tmp_quality, tmp_price));
             // System.out.println(items[i].toString());
+        }
+        Item [] items = new Item [nItems];
+        // the sorting priority queue
+        for (int i = 0; i < nItems; i ++) {
+            items[i] = pqItems.poll();
+            // System.out.println(items[i].quality);
         }
 
         // create and parse bidding arraylist
         ArrayList<Bid> bids = new ArrayList<Bid> ();
+        ArrayList<Bid> matchedBids = new ArrayList<Bid> ();
         while ((line = reader.readLine()) != null) {
             String [] bidding_infos = line.split(" ");
             int type = Integer.parseInt(bidding_infos[0]);
             if (type == 1) { // single-item bid
                 int tmp_price = Integer.parseInt(bidding_infos[1]);
                 int tmp_id = Integer.parseInt(bidding_infos[2]);
-                bids.add (new SingleItemBid(tmp_price, tmp_id));
+                SingleItemBid newSingleBid = new SingleItemBid(tmp_price, tmp_id);
+                bids.add (newSingleBid);
                 // update the item
-                if (items[tmp_id].highest_bid_price < tmp_price) {
-                    // accept since this bid provide higher price
-                    items[tmp_id].highest_bid_price = tmp_price;
-                    items[tmp_id].highest_bid_id = Bid.id_count - 1;
+                for (int i = 0; i < nItems; i ++) {
+                    if (items[i].id == tmp_id && items[i].highest_bid_price < tmp_price) {
+                        // accept since this bid provide higher price
+                        items[i].highest_bid_price = tmp_price;
+                        items[i].highest_bid_id = Bid.id_count - 1;
+                        matchedBids.add(newSingleBid);
+                    }
                 }
                 // System.out.println("1 " + tmp_id + ", " + tmp_price);
             } else if (type == 2) { // linear bid
                 int intercept = Integer.parseInt(bidding_infos[1]);
                 int slope = Integer.parseInt(bidding_infos[2]);
-                bids.add (new LinearBid(intercept, slope));
-                int max_increment = -1;
-                int item_to_assign = -1;
-                int max_assign_price = -1;
-                for (int i = 0; i < nItems; i++) {
-                    Item tmp_item = items[i];
-                    int tmp_price = slope * tmp_item.quality + intercept;
-                    int increment = tmp_price - items[i].highest_bid_price;
-                    if (increment > max_increment) {
-                        max_increment = increment;
-                        item_to_assign = i;
-                        max_assign_price = tmp_price;
+                LinearBid newLinearBid = new LinearBid(intercept, slope);
+                bids.add (newLinearBid);
+                int maximum_weight = -Integer.MAX_VALUE;
+                int nLinearBidContribute = matchedBids.size()
+                for (int i = 0; i < nLinearBidContribute; i++) {
+                    // create temporary contribution set
+                    PriorityQueue<Bid> tmp_LinearBids = new PriorityQueue<Bid>
+                        (nLinearBidContribute); 
+                    for (int j = 0; j < nLinearBidContribute; j ++) {
+                        if (i == j) continue;
+                        tmp_LinearBids.offer(items[j]);
                     }
-                }
-                if (item_to_assign >= 0 && max_increment > 0) {
-                    items[item_to_assign].highest_bid_price = max_assign_price;
-                    items[item_to_assign].highest_bid_id = Bid.id_count - 1;
+                    tmp_LinearBids.offer(newLinearBid);
+                    // compute the local weight
+                    local_weight = 0
+                    for (int j = 0; j < ; j ++) {
+                        if (items[j].matchedBySingleItem) continue;
+                        
+                    }
                 }
                  // System.out.println("2 " + intercept + ", " + slope);
             } else if (type == 3) { // for summary

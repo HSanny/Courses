@@ -63,6 +63,15 @@ class Bid {
         this.type = type;
         this.bid_id = Bid.id_count++;
     }
+    int compareTo (Bid b) {
+        if (b.type == 1 && this.type == 1) {
+            return b.offer - this.offer;
+        } else if (b.type == 2 && this.type ==2) {
+            return b.slope - this.slope;
+        } else {
+            return b.type - this.type;
+        }
+    }
 }
 
 class SingleItemBid extends Bid {
@@ -92,14 +101,10 @@ class LinearBid extends Bid implements Comparable<LinearBid> {
         // System.out.println(weight);
         return weight;
     }
-    int compareTo (LinearBid lb) {
-        return lb.slope - this.slope;
-    }
 }
 // ****************************************************************
 
 class Bidding {
-    static int highest_weight;
     public static void main (String [] args) throws IOException {
         BufferedReader reader = new BufferedReader(new
                 InputStreamReader (System.in));
@@ -141,9 +146,18 @@ class Bidding {
                 // update the item
                 for (int i = 0; i < nItems; i ++) {
                     if (items[i].id == tmp_id && items[i].highest_bid_price < tmp_price) {
+                        // remove the original one which worths less
+                        for (int k = 0; k < nItems; k ++) {
+                            if (!items[k].matchedByLinearBid && !items[k].matchedBySingleBid)
+                                local_weight += items[k].price;
+                        }
+                        if (items[i].) {
+                            
+                        }
                         // accept since this bid provide higher price
                         items[i].highest_bid_price = tmp_price;
                         items[i].highest_bid_id = Bid.id_count - 1;
+                        // add the new single bid
                         matchedBids.add(newSingleBid);
                     }
                 }
@@ -154,22 +168,57 @@ class Bidding {
                 LinearBid newLinearBid = new LinearBid(intercept, slope);
                 bids.add (newLinearBid);
                 int maximum_weight = -Integer.MAX_VALUE;
-                int nLinearBidContribute = matchedBids.size()
-                for (int i = 0; i < nLinearBidContribute; i++) {
+                int nMatchedBids = matchedBids.size();
+
+                for (int i = 0; i < nMatchedBids + 1; i++) {
+                    // reset the assignment 
+
                     // create temporary contribution set
-                    PriorityQueue<Bid> tmp_LinearBids = new PriorityQueue<Bid>
-                        (nLinearBidContribute); 
-                    for (int j = 0; j < nLinearBidContribute; j ++) {
+                    PriorityQueue<Bid> tmp_Bids = new PriorityQueue<Bid>
+                        (nMatchedBids); 
+                    for (int j = 0; j < nMatchedBids; j ++) {
                         if (i == j) continue;
-                        tmp_LinearBids.offer(items[j]);
+                        tmp_Bids.offer(matchedBids.get(j));
                     }
-                    tmp_LinearBids.offer(newLinearBid);
+                    if (i != nMatchedBids) {
+                        tmp_Bids.offer(newLinearBid);
+                    }
                     // compute the local weight
-                    local_weight = 0
-                    for (int j = 0; j < ; j ++) {
-                        if (items[j].matchedBySingleItem) continue;
-                        
+                    local_weight = 0;
+                    // to array
+                    Bid [] tmp_Bids_array = new Bid [nMatchedBids];
+                    for (int j = 0; j < nMatchedBids; j ++) {
+                        tmp_Bids_array[j] = tmp_Bids.poll();
+                        if (tmp_Bids_array[j].type == 1) {
+                            // update to be single item bid
+                            local_weight += tmp_Bids_array[j].offer;
+                            for (int k = 0; k < nItems; k ++) {
+                                if (items[k].id == tmp_Bids_array[j].item_id) {
+                                    items[k].matchedBySingleBid = true;
+                                    break;
+                                }
+                            }
+                        } else {
+                            int tmp_slope = tmp_Bids_array[j].slope;
+                            int tmp_intercept = tmp_Bids_array[j].intercept;
+                            // update to be linear bid 
+                            for (int k = 0; k < nItems; k ++) {
+                                if (!items[k].matchedByLinearBid && !items[k].matchedBySingleBid) {
+                                    local_weight += tmp_slope * items[k].quality + tmp_intercept;
+                                    items[k].matchedByLinearBid = true;
+                                    break;
+                                }
+                            }
+                        }
+                        for (int k = 0; k < nItems; k ++) {
+                            if (!items[k].matchedByLinearBid && !items[k].matchedBySingleBid)
+                                local_weight += items[k].price;
+                        }
+                        if (local_weight > maximum_weight) {
+                            maximum_weight = local_weight;
+                        }
                     }
+
                 }
                  // System.out.println("2 " + intercept + ", " + slope);
             } else if (type == 3) { // for summary

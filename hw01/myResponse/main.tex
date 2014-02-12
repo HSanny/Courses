@@ -26,7 +26,7 @@
 \renewcommand{\TUTOR}{Adarsh Prasad}
 \renewcommand{\TASK}{Homework 01}
 \renewcommand{\RELEASEDATE}{Feb. 02 2014}
-\renewcommand{\DUEDATE}{Feb. 08 2014}
+\renewcommand{\DUEDATE}{Feb. 12 2014}
 \renewcommand{\TIMECONSUME}{6 hours}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% DOCUMENTATION STARTS FROM HERE 
@@ -174,8 +174,8 @@ The computation of Gini index split by attribute B is as follows:
  Thus, the gain of Gini index by spliting at attribute B $Gain_B$ is 
 \begin{align*}
     Gain_B &= Gini(root) - Gini(leftChild) - Gini(rightChild) \\
-           &= 0.48 - \frac{6}{10} \times 0.278 + \frac{4}{10} \times 0.375 =
-    0.4632
+           &= 0.48 - \frac{6}{10} \times 0.278 - \frac{4}{10} \times 0.375 =
+    0.1632
  \end{align*}
 
   Comparing the gain of Gini index $Gain_A$ and $Gain_B$, we have
@@ -246,7 +246,7 @@ of the induced tree?
 \\
 \begin{figure}[h]
     \centering
-    \includegraphics[width=3in,height=4in]{./section3.png} \\
+    \includegraphics[width=5in,height=4in]{./section3.png} \\
     \caption{Statistics about the decision tree production}
 \end{figure}
 
@@ -287,7 +287,7 @@ For this instance, we classify all records in C and D as "class 1" object, and
 in the meanwhile assign all records in E and F as "class 2" object. Thus, the training
 error rate $e$ would be 
     $$
-    e = (30 + 30) / 190 = 15.7\%
+    e = (30 + 30) / 190 = 31.58\%
     $$
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

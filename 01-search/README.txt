@@ -2,36 +2,38 @@
 *** TITLE: CS343H Artificial Intelligence Project 1
 *** AUTHOR: Jimmy Lin (JIMMYLIN@UTEXAS.EDU)
 *** EID: XL5224
-*** DESCRIPTION: 
 ***     
 ************************************************************************
-Summary of this project:
-q1:
+Description of this project:
+q1: Implement the Depth First Search algorithm: using stack
+    Note that there is also an recusive implementation for DFS but we did not
+    choose to do it.
 
-q2:
+q2: Implement the Breadth First Search algorithm: using stack
 
-q3:
+q3: Implement the Uniform Cost Search aglorithm: using priority queue
 
-q4:
+q4: Implement A star graph search algorithm: using priority queue
 
-q5:
+q5: Define the CornerProblem
 
-q6:
+q6: Corner heuristic function: Brute-force algorithm
+    We try all possible permuations of corner fruits and use the
+    length of the shortest path as heuristic function
+ 
+q7: Heuristic function for eating all fruits: 
 
-q7:
+    We use mixture of brute-force algorithm and Prim algorithm.
+      - For a problem with small size, brute-force algorithm is employed to
+        secure admissibility and consistency.
+      - For a problem with large size, prim algorithm is utilized to find the
+        minimal spanning tree(MST). And we regard the total length of MST as
+        heuristic. 
+      - The drawing line for big and small problem is whether the number of
+        fruits is bigger than five.
 
-
-1. DFS has its two implementation: one with recursion, the other is without recursion
-but using stack.
-2. BFS can be achieved by means of queue.
-3. UCS alwasy expands the nodes with least *path cost* under current
-situation.
-
-Q7: find a heuristic for eating all the dots
-1. use the count of existing food: 12500-node expansion
-2. use the maze distance to the closest food: fail, run out of time
-3.
-
+q8: Suboptimal solution
+    
 ===========
 Starting on 2-2 at 13:48:45
 

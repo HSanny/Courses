@@ -490,7 +490,9 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    if foodGrid.count() < 5:
+    BIGORSMALL = 5
+    ### CASE 1: Brute-force algorithm
+    if foodGrid.count() < BIGORSMALL:
         ## brute-force algorithm
         ## These are the corner coordinates
         position = state[0] # sucessor position
@@ -536,23 +538,26 @@ def foodHeuristic(state, problem):
     
         return min_dist
 
+    # CASE 2: Prim Algorithm
     # heuristic by finding minimal spanning tree of the remaining food
-    # find all dots
-    dots = list([])
-    for x in range(0, len(foodGrid.data)):
-        for y in range(0, len(foodGrid.data[0])):
-            if foodGrid[x][y]:
-                dots.append((x,y))
-    # count current position as a dot
-    dots.append(position)
+    if True:
+        # find all dots
+        dots = list([])
+        for x in range(0, len(foodGrid.data)):
+            for y in range(0, len(foodGrid.data[0])):
+                if foodGrid[x][y]:
+                    dots.append((x,y))
+        # count current position as a dot
+        dots.append(position)
     
-    # compute mutual distance and put into the list of edges
-    edges = list([])
-    for i in range(0, len(dots)):
-        for j in range(i+1, len(dots)):
-            dist = mazeDistance(dots[i], dots[j], problem.startingGameState)
-            e = (dots[i], dots[j], dist)
-            edges.append(e)
+        # compute mutual distance and put into the list of edges
+        edges = list([])
+        for i in range(0, len(dots)):
+            for j in range(i+1, len(dots)):
+                dist = mazeDistance(dots[i], dots[j], problem.startingGameState)
+                e = (dots[i], dots[j], dist)
+                edges.append(e)
+
     # figure out the MST
     explored = set([position])
     MST = list([])
@@ -576,9 +581,7 @@ def foodHeuristic(state, problem):
         if len(extensions) == 0:
             continue
         extensions.sort(key=lambda e:e[2])
-        #print extensions
         edge_to_add = extensions.pop(0)
-        #print "add:", edge_to_add
         explored.update([edge_to_add[0], edge_to_add[1]])
         MST.append(edge_to_add)
     
@@ -586,60 +589,7 @@ def foodHeuristic(state, problem):
     weight = 0
     for e in MST:
         weight += e[2]
-    #print weight
     return weight
-    '''
-    # heuristic by greedy algorithm
-    if not problem.heuristicInfo.has_key('DIST_MAT'):
-        fruits = list([])
-        for x in range(0, len(foodGrid.data)):
-            for y in range(0, len(foodGrid.data[0])):
-                if foodGrid[x][y]:
-                    fruits.append((x,y))
-        numfrutis = len(fruits)
-        problem.heuristicInfo.update({'FRUITS_LIST':fruits, 'NFRUITS':numfrutis})
-        # compute mutual distance and put into the list of edges
-        DIST_MAT = [[0 for x in range(0, numfrutis)] for y in range(0, numfrutis)]
-        for i in range(0, len(fruits)):
-            DIST_MAT[i][i] = 0
-            for j in range(i+1, len(fruits)):
-                dist = mazeDistance(fruits[i], fruits[j], problem.startingGameState)
-                DIST_MAT[i][j] = dist
-                DIST_MAT[j][i] = dist
-        problem.heuristicInfo.update({'DIST_MAT':DIST_MAT})
-    # get heuristicInfo from dictionary
-    numfrutis = problem.heuristicInfo['NFRUITS']
-    flist = problem.heuristicInfo['FRUITS_LIST']
-    dmat = problem.heuristicInfo['DIST_MAT']
-    # count current position as a dot
-    current = position
-    # figure out the MST
-    fruitsAccessed = 0
-    weight = 0
-    explored = set([])
-    while fruitsAccessed != numfrutis:
-        min_dist = None
-        min_dist_fruit = None
-        for i in range(0, numfrutis):
-            if not cmp(current, flist[i]):
-                continue
-            elif flist[i] in explored:
-                continue
-            else:
-                dist = mazeDistance(current, flist[i], problem.startingGameState) 
-                if min_dist is None or dist < min_dist:
-                    min_dist = dist
-                    min_dist_fruit = i
-        fruitsAccessed += 1
-        if min_dist is not None: 
-            weight += min_dist
-            print flist[min_dist_fruit]
-            explored.add(flist[min_dist_fruit])
-            current = flist[min_dist_fruit]
-    print weight
-    return weight
-    '''
-
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
@@ -739,6 +689,10 @@ class ApproximateSearchAgent(Agent):
     def registerInitialState(self, state):
         "This method is called before any moves are made."
         "*** YOUR CODE HERE ***"
+        util.raiseNotDefined()
+        self.actions = self.getAction(state)
+        costs = self.getCostOfActions(self.actions)
+        
 
     def getAction(self, state):
         """
@@ -748,6 +702,7 @@ class ApproximateSearchAgent(Agent):
         """
         "*** YOUR CODE HERE ***"
         util.raiseNotDefined()
+
 
 def mazeDistance(point1, point2, gameState):
     """

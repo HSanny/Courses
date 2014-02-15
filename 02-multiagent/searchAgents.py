@@ -75,7 +75,7 @@ class SearchAgent(Agent):
             raise AttributeError, fn + ' is not a search function in search.py.'
         func = getattr(search, fn)
         if 'heuristic' not in func.func_code.co_varnames:
-            print('[SearchAgent] using function ' + fn)
+            #print('[SearchAgent] using function ' + fn)
             self.searchFunction = func
         else:
             if heuristic in globals().keys():
@@ -84,7 +84,7 @@ class SearchAgent(Agent):
                 heur = getattr(search, heuristic)
             else:
                 raise AttributeError, heuristic + ' is not a function in searchAgents.py or search.py.'
-            print('[SearchAgent] using function %s and heuristic %s' % (fn, heuristic))
+            #print('[SearchAgent] using function %s and heuristic %s' % (fn, heuristic))
             # Note: this bit of Python trickery combines the search algorithm and the heuristic
             self.searchFunction = lambda x: func(x, heuristic=heur)
 
@@ -92,7 +92,7 @@ class SearchAgent(Agent):
         if prob not in globals().keys() or not prob.endswith('Problem'):
             raise AttributeError, prob + ' is not a search problem type in SearchAgents.py.'
         self.searchType = globals()[prob]
-        print('[SearchAgent] using problem type ' + prob)
+        #print('[SearchAgent] using problem type ' + prob)
 
     def registerInitialState(self, state):
         """
@@ -586,60 +586,7 @@ def foodHeuristic(state, problem):
     weight = 0
     for e in MST:
         weight += e[2]
-    #print weight
     return weight
-    '''
-    # heuristic by greedy algorithm
-    if not problem.heuristicInfo.has_key('DIST_MAT'):
-        fruits = list([])
-        for x in range(0, len(foodGrid.data)):
-            for y in range(0, len(foodGrid.data[0])):
-                if foodGrid[x][y]:
-                    fruits.append((x,y))
-        numfrutis = len(fruits)
-        problem.heuristicInfo.update({'FRUITS_LIST':fruits, 'NFRUITS':numfrutis})
-        # compute mutual distance and put into the list of edges
-        DIST_MAT = [[0 for x in range(0, numfrutis)] for y in range(0, numfrutis)]
-        for i in range(0, len(fruits)):
-            DIST_MAT[i][i] = 0
-            for j in range(i+1, len(fruits)):
-                dist = mazeDistance(fruits[i], fruits[j], problem.startingGameState)
-                DIST_MAT[i][j] = dist
-                DIST_MAT[j][i] = dist
-        problem.heuristicInfo.update({'DIST_MAT':DIST_MAT})
-    # get heuristicInfo from dictionary
-    numfrutis = problem.heuristicInfo['NFRUITS']
-    flist = problem.heuristicInfo['FRUITS_LIST']
-    dmat = problem.heuristicInfo['DIST_MAT']
-    # count current position as a dot
-    current = position
-    # figure out the MST
-    fruitsAccessed = 0
-    weight = 0
-    explored = set([])
-    while fruitsAccessed != numfrutis:
-        min_dist = None
-        min_dist_fruit = None
-        for i in range(0, numfrutis):
-            if not cmp(current, flist[i]):
-                continue
-            elif flist[i] in explored:
-                continue
-            else:
-                dist = mazeDistance(current, flist[i], problem.startingGameState) 
-                if min_dist is None or dist < min_dist:
-                    min_dist = dist
-                    min_dist_fruit = i
-        fruitsAccessed += 1
-        if min_dist is not None: 
-            weight += min_dist
-            print flist[min_dist_fruit]
-            explored.add(flist[min_dist_fruit])
-            current = flist[min_dist_fruit]
-    print weight
-    return weight
-    '''
-
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
@@ -699,6 +646,7 @@ class AnyFoodSearchProblem(PositionSearchProblem):
       This search problem is just like the PositionSearchProblem, but
       has a different goal test, which you need to fill in below.  The
       state space and successor function do not need to be changed.
+    i''
 
       The class definition above, AnyFoodSearchProblem(PositionSearchProblem),
       inherits the methods of the PositionSearchProblem.

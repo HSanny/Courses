@@ -25,6 +25,8 @@ class ReflexAgent(Agent):
       it in any way you see fit, so long as you don't touch our method
       headers.
     """
+    def __init__(self):
+        self.heuristicInfo = None
 
     def getAction(self, gameState):
         """
@@ -70,38 +72,66 @@ class ReflexAgent(Agent):
         # list of ghost in (x,y), direction
         newGhostStates = successorGameState.getGhostStates()
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
+        #print newScaredTimes
+        # current position
+        curPos = currentGameState.getPacmanPosition()
 
         "*** YOUR CODE HERE ***"
         px, py = newPos
         ghostDistance = 0
         isGhostNearby = False
-        ## if the ghost occurs within 3 x 3 grid of pacman, we indicate that
+        ## GHOST EATING MECHANISM:
+        findGhost = 0
+        killGhost = sum(newScaredTimes)
+        for gindex in range(0, len(newScaredTimes)):
+            if newScaredTimes[gindex] > 0:
+                gposition = newGhostStates[gindex].getPosition()
+                gposition = (int(gposition[0]), int(gposition[1]))
+                findGhost -= searchAgents.mazeDistance(newPos,
+                                           gposition, currentGameState)
+        if killGhost > 0:
+            return findGhost
+
+        ## SAFETY MECHANISM: 
+        ## if the ghost occurs within 6 steps of pacman, we indicate that
         ## the pacman is in danger, thus take measures to protect it
         for ghost in newGhostStates:
-            gx,gy = ghost.getPosition()
-            ghostDistance += (gx - px)**2 + (gy - py)**2
-            if abs(px - gx) <= 3 and (py - gy) <= 3:
+            gx, gy = ghost.getPosition()
+            gPos = (int(gx), int(gy))
+            gDist = searchAgents.mazeDistance(gPos, newPos, successorGameState)
+            if gDist <= 3:
+                ghostDistance += gDist
                 isGhostNearby = True
-
-        minFoodDistance = newFood.height**2 + newFood.width**2
-        closestFood = None
-        for tmpx in range(0, newFood.width):
-            for tmpy in range(0, newFood.height):
-                if newFood[tmpx][tmpy]:
-                    dist = (tmpx-px)**2 + (tmpy-py)**2
-                    if dist < minFoodDistance:
-                        minFoodDistance = dist
-                        closestFood = (tmpx, tmpy)
-        
-        if closestFood is None:
-            heuristic = 0
-        else:
-            heuristic = searchAgents.mazeDistance (newPos, closestFood, currentGameState)
         if isGhostNearby: # here we care about safety
-            successorGameState.data.score = ghostDistance
-        else:  # here we care about food eating
-            successorGameState.data.score = -heuristic
-        return successorGameState.getScore()
+            self.heuristicInfo = None
+            return ghostDistance - 1000
+
+        ## FOOD EATING MECHANISM:
+        ## search the closest food and find actions to reach it
+        heuristic = 0
+        if self.heuristicInfo is None or self.heuristicInfo == []:
+            agent = searchAgents.ClosestDotSearchAgent(fn="breadthFirstSearch")
+            actions = agent.findPathToClosestDot(currentGameState)
+            if len(actions) == 0:
+                heuristic = 0
+            else: 
+                if action == actions[0]:
+                    heuristic = 1
+                else:
+                    heuristic = 0
+                if len(actions) > 1:
+                    self.heuristicInfo = actions[1:]
+                else: # len == 1
+                    self.heuristicInfo = None
+        else:
+            print self.heuristicInfo
+            if action == self.heuristicInfo[0]:
+                heuristic = 1
+                self.heuristicInfo = self.heuristicInfo[1:]
+            else:
+                heuristic = 0
+
+        return heuristic
 
 def scoreEvaluationFunction(currentGameState):
     """

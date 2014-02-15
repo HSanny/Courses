@@ -126,6 +126,9 @@ def scoreEvaluationFunction(currentGameState):
     """
     return currentGameState.getScore()
 
+global alpha, beta
+alpha = -float('inf')
+beta = float('inf')
 class MultiAgentSearchAgent(Agent):
     """
       This class provides some common elements to all of your
@@ -171,28 +174,8 @@ class MinimaxAgent(MultiAgentSearchAgent):
         "*** YOUR CODE HERE ***"
         nAgents = gameState.getNumAgents() 
         agentIndex = self.index % nAgents
-        #print self.index, self.depth
+        ## note that in game, a ply corresponds to one move of all agents
         if self.index / nAgents == self.depth: # for the leaf node
-            '''
-            if self.depth <= nAgents:
-                tmp_agent = MinimaxAgent()
-                tmp_agent.index = self.index + 1
-                tmp_agent.depth = self.depth + 1
-                if self.index % nAgents == 0: opt = max
-                else: opt = min
-                succesors = []
-                for action in gameState.getLegalActions(agentIndex):
-                    successor = gameState.generateSuccessor(agentIndex, action)
-                    succesors.append(successor)
-                if len(succesors) == 0:
-                    return self.evaluationFunction(gameState)
-                scores = []
-                for suc in succesors:
-                    tmp_score = tmp_agent.evaluationFunction(suc)
-                    scores.append(tmp_score)
-                return opt(scores) # middle
-            else:
-                '''
             return self.evaluationFunction(gameState)
         elif self.index == 0: # for the root node
             succesors = []
@@ -229,9 +212,8 @@ class MinimaxAgent(MultiAgentSearchAgent):
                 tmp_score = tmp_agent.getAction(suc)
                 scores.append(tmp_score)
             if len(scores) == 0: return tmp_agent.evaluationFunction(gameState)
-            else: return opt(scores) # middle
-            
-
+            else: return opt(scores) 
+   
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
       Your minimax agent with alpha-beta pruning (question 3)
@@ -242,7 +224,57 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
           Returns the minimax action using self.depth and self.evaluationFunction
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        nAgents = gameState.getNumAgents() 
+        agentIndex = self.index % nAgents
+        global beta, alpha
+        ## note that in game, a ply corresponds to one move of all agents
+        if self.index / nAgents == self.depth: # for the leaf node
+            return self.evaluationFunction(gameState)
+        elif self.index == 0: # for the root node
+            succesors = []
+            actions = gameState.getLegalActions(self.index)
+            for action in actions:
+                successor = gameState.generateSuccessor(self.index, action)
+                succesors.append(successor)
+            max_score = None
+            max_asgn = None
+            tmp_agent = MinimaxAgent()
+            tmp_agent.index = self.index + 1
+            tmp_agent.depth = self.depth
+            for i in range(0, len(succesors)):
+                suc = succesors[i]
+                tmp_score = tmp_agent.getAction(suc)
+                if max_score is None or tmp_score > max_score:
+                    max_score = tmp_score
+                    max_asgn = i
+                #print tmp_score, i
+            #print  max_score, actions[max_asgn]
+            return actions[max_asgn]
+        else: # for all other immediate node
+            isMaxValue = (self.index % nAgents == 0)
+            if isMaxValue: 
+                opt = max
+                optimal = -float('inf')
+            else: 
+                opt = min
+                optimal = float('inf')
+            if len(gameState.getLegalActions(agentIndex)) == 0:
+                return tmp_agent.evaluationFunction(gameState)
+            tmp_agent = MinimaxAgent()
+            tmp_agent.index = self.index + 1
+            tmp_agent.depth = self.depth
+            for action in gameState.getLegalActions(agentIndex):
+                successor = gameState.generateSuccessor(agentIndex, action)
+                tmp_score = tmp_agent.getActions()
+                optimal = opt(optimal, tmp_score)
+                if isMaxValue:
+                    if tmp_score >= self.beta: return optimal
+                    alpha = opt(alpha, optimal)
+                else:
+                    if tmp_score <= self.alpha: return optimal
+                    beta = opt(beta, optimal)
+            return optimal
+
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """

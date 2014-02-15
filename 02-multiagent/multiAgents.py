@@ -169,7 +169,68 @@ class MinimaxAgent(MultiAgentSearchAgent):
             Returns the total number of agents in the game
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        nAgents = gameState.getNumAgents() 
+        agentIndex = self.index % nAgents
+        #print self.index, self.depth
+        if self.index / nAgents == self.depth: # for the leaf node
+            '''
+            if self.depth <= nAgents:
+                tmp_agent = MinimaxAgent()
+                tmp_agent.index = self.index + 1
+                tmp_agent.depth = self.depth + 1
+                if self.index % nAgents == 0: opt = max
+                else: opt = min
+                succesors = []
+                for action in gameState.getLegalActions(agentIndex):
+                    successor = gameState.generateSuccessor(agentIndex, action)
+                    succesors.append(successor)
+                if len(succesors) == 0:
+                    return self.evaluationFunction(gameState)
+                scores = []
+                for suc in succesors:
+                    tmp_score = tmp_agent.evaluationFunction(suc)
+                    scores.append(tmp_score)
+                return opt(scores) # middle
+            else:
+                '''
+            return self.evaluationFunction(gameState)
+        elif self.index == 0: # for the root node
+            succesors = []
+            actions = gameState.getLegalActions(self.index)
+            for action in actions:
+                successor = gameState.generateSuccessor(self.index, action)
+                succesors.append(successor)
+            max_score = None
+            max_asgn = None
+            tmp_agent = MinimaxAgent()
+            tmp_agent.index = self.index + 1
+            tmp_agent.depth = self.depth
+            for i in range(0, len(succesors)):
+                suc = succesors[i]
+                tmp_score = tmp_agent.getAction(suc)
+                if max_score is None or tmp_score > max_score:
+                    max_score = tmp_score
+                    max_asgn = i
+                #print tmp_score, i
+            #print  max_score, actions[max_asgn]
+            return actions[max_asgn]
+        else: # for all other immediate node
+            if self.index % nAgents == 0: opt = max
+            else: opt = min
+            succesors = []
+            for action in gameState.getLegalActions(agentIndex):
+                successor = gameState.generateSuccessor(agentIndex, action)
+                succesors.append(successor)
+            scores = []
+            tmp_agent = MinimaxAgent()
+            tmp_agent.index = self.index + 1
+            tmp_agent.depth = self.depth
+            for suc in succesors:
+                tmp_score = tmp_agent.getAction(suc)
+                scores.append(tmp_score)
+            if len(scores) == 0: return tmp_agent.evaluationFunction(gameState)
+            else: return opt(scores) # middle
+            
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """

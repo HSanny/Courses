@@ -109,27 +109,10 @@ class ReflexAgent(Agent):
         ## FOOD EATING MECHANISM:
         ## search the closest food and find actions to reach it
         heuristic = 0
-        if self.heuristicInfo is None or self.heuristicInfo == []:
-            agent = searchAgents.ClosestDotSearchAgent(fn="breadthFirstSearch")
-            actions = agent.findPathToClosestDot(currentGameState)
-            if len(actions) == 0:
-                heuristic = 0
-            else: 
-                if action == actions[0]:
-                    heuristic = 1
-                else:
-                    heuristic = 0
-                if len(actions) > 1:
-                    self.heuristicInfo = actions[1:]
-                else: # len == 1
-                    self.heuristicInfo = None
-        else:
-            print self.heuristicInfo
-            if action == self.heuristicInfo[0]:
-                heuristic = 1
-                self.heuristicInfo = self.heuristicInfo[1:]
-            else:
-                heuristic = 0
+        agent = searchAgents.ClosestDotSearchAgent(fn="breadthFirstSearch")
+        actions = agent.findPathToClosestDot(currentGameState)
+        if action == actions[0]:
+            heuristic = 1
 
         return heuristic
 

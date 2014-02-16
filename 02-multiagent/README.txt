@@ -20,7 +20,10 @@ wasted on debugging.
 Q3: 
 
 
-Q4:
+Q4: DONE
+Implementation shares the same framework as Q2's. The only difference exists
+in the opt operation. For the chance node, we use expectation rather than
+original min for MIN player.
 
 Q5:
 

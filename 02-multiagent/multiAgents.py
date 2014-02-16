@@ -293,10 +293,16 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
             return optimal
 #}}}
 
+def expectation (scores):
+    return 1.0 * sum(scores) / len(scores)
+
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
       Your expectimax agent (question 4)
     """
+    def update(self, index, depth):
+        self.index = index
+        self.depth = depth
 
     def getAction(self, gameState):
         """
@@ -306,7 +312,44 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
           legal moves.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        nAgents = gameState.getNumAgents() 
+        agentIndex = self.index % nAgents
+        ## note that in game, a ply corresponds to one move of all agents
+        if self.index == nAgents * self.depth: # for the leaf node
+            return self.evaluationFunction(gameState)
+        elif self.index == 0: # for the root node
+            succesors = []
+            actions = gameState.getLegalActions(self.index)
+            for action in actions:
+                successor = gameState.generateSuccessor(self.index, action)
+                succesors.append(successor)
+            max_score = None
+            max_asgn = None
+            tmp_agent = ExpectimaxAgent()
+            tmp_agent.update(self.index + 1, self.depth)
+            for i in range(0, len(succesors)):
+                suc = succesors[i]
+                tmp_score = tmp_agent.getAction(suc)
+                if max_score is None or tmp_score > max_score:
+                    max_score = tmp_score
+                    max_asgn = i
+            return actions[max_asgn]
+        else: # for all other immediate node
+            if self.index % nAgents == 0: opt = max
+            else: opt = expectation
+            succesors = []
+            for action in gameState.getLegalActions(agentIndex):
+                successor = gameState.generateSuccessor(agentIndex, action)
+                succesors.append(successor)
+            scores = []
+            tmp_agent = ExpectimaxAgent()
+            tmp_agent.update(self.index + 1, self.depth)
+            for suc in succesors:
+                tmp_score = tmp_agent.getAction(suc)
+                scores.append(tmp_score)
+            if len(scores) == 0: return tmp_agent.evaluationFunction(gameState)
+            else: return opt(scores) 
+
 
 def betterEvaluationFunction(currentGameState):
     """
@@ -316,7 +359,6 @@ def betterEvaluationFunction(currentGameState):
       DESCRIPTION: <write something here so we know what you did>
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
 
 # Abbreviation
 better = betterEvaluationFunction

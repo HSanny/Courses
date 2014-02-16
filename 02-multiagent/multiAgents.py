@@ -242,30 +242,29 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         actions = gameState.getLegalActions(agentIndex)
         if len(actions) == 0:
             return self.evaluationFunction(gameState)
-#{{{
+
         ## note that in game, a ply corresponds to one move of all agents
         if self.index == self.depth * nAgents: # for the leaf node
             return self.evaluationFunction(gameState)
 
         if self.index == 0: # for the root node
+            self.alpha = -float('inf')
+            self.beta = float('inf')
             max_score = None
             max_asgn = None
+            tmp_agent = AlphaBetaAgent(depth=self.depth)
+            tmp_agent.initialize(self.index+1, self)
             for i in range(0, len(actions)):
+                tmp_agent.update(self.alpha, self.beta)
                 successor = gameState.generateSuccessor(self.index, actions[i])
-                if self.index + 1 == nAgents * self.depth:
-                    tmp_score = self.evaluationFunction(successor)
-                else:
-                    tmp_agent = AlphaBetaAgent(depth=self.depth)
-                    tmp_agent.initialize(self.index+1, self)
-                    tmp_agent.update(self.alpha, self.beta)
-                    tmp_score = tmp_agent.getAction(successor)
+                tmp_score = tmp_agent.getAction(successor)
                 self.alpha = max(self.alpha, tmp_score)
                 if max_score is None or tmp_score > max_score:
                     max_score = tmp_score
                     max_asgn = i
-            #print  max_score, actions[max_asgn]
             return actions[max_asgn]
         else: # for all other immediate node 
+            ## initial setup
             isMaxValue = (self.index % nAgents == 0)
             if isMaxValue: 
                 opt = max
@@ -273,26 +272,21 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
             else: 
                 opt = min
                 optimal = float('inf')
+            ## construct tmp agent
+            tmp_agent = AlphaBetaAgent(depth=self.depth)
+            tmp_agent.initialize(self.index+1, self)
             for action in actions:
+                tmp_agent.update(self.alpha, self.beta)
                 successor = gameState.generateSuccessor(agentIndex, action)
-                if self.index + 1 == nAgents * self.depth:
-                    tmp_score = self.evaluationFunction(successor)
-                else:
-                    tmp_agent = AlphaBetaAgent(depth=self.depth)
-                    tmp_agent.initialize(self.index+1, self)
-                    tmp_agent.update(self.alpha, self.beta)
-                    tmp_score = tmp_agent.getAction(successor)
+                tmp_score = tmp_agent.getAction(successor)
                 optimal = opt(optimal, tmp_score)
-                #print tmp_score, optimal, (self.alpha, self.beta), (self.lastAgent.alpha, self.lastAgent.beta)
                 if isMaxValue:
                     if optimal > self.beta: return optimal
                     self.alpha = opt(self.alpha, optimal)
                 else:
                     if optimal < self.alpha: return optimal
                     self.beta = opt(self.beta, optimal)
-
             return optimal
-#}}}
 
 def expectation (scores):
     return 1.0 * sum(scores) / len(scores)

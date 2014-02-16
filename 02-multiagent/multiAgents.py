@@ -143,6 +143,7 @@ class MultiAgentSearchAgent(Agent):
 
     def __init__(self, evalFn = 'scoreEvaluationFunction', depth = '2'):
         self.index = 0 # Pacman is always agent index 0
+        self.evalFn = evalFn
         self.evaluationFunction = util.lookup(evalFn, globals())
         self.depth = int(depth)
 
@@ -300,6 +301,9 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
     """
       Your expectimax agent (question 4)
     """
+    def __init__(self, evalFn = 'scoreEvaluationFunction', depth = '2'):
+        MultiAgentSearchAgent.__init__(self,evalFn,depth)
+
     def update(self, index, depth):
         self.index = index
         self.depth = depth
@@ -325,7 +329,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
                 succesors.append(successor)
             max_score = None
             max_asgn = None
-            tmp_agent = ExpectimaxAgent()
+            tmp_agent = ExpectimaxAgent(evalFn=self.evalFn, depth=self.depth)
             tmp_agent.update(self.index + 1, self.depth)
             for i in range(0, len(succesors)):
                 suc = succesors[i]
@@ -342,7 +346,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
                 successor = gameState.generateSuccessor(agentIndex, action)
                 succesors.append(successor)
             scores = []
-            tmp_agent = ExpectimaxAgent()
+            tmp_agent = ExpectimaxAgent(evalFn=self.evalFn, depth=self.depth)
             tmp_agent.update(self.index + 1, self.depth)
             for suc in succesors:
                 tmp_score = tmp_agent.getAction(suc)
@@ -350,15 +354,85 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
             if len(scores) == 0: return tmp_agent.evaluationFunction(gameState)
             else: return opt(scores) 
 
-
+global nTotalFood, target, nRemained
+nTotalFood = None
+target = None
 def betterEvaluationFunction(currentGameState):
     """
       Your extreme ghost-hunting, pellet-nabbing, food-gobbling, unstoppable
       evaluation function (question 5).
 
-      DESCRIPTION: <write something here so we know what you did>
+      DESCRIPTION: returns a number, where higher numbers are better
     """
     "*** YOUR CODE HERE ***"
+    return currentGameState.getScore() 
+    pacmanPosition = currentGameState.getPacmanPosition()
+    GhostStates = currentGameState.getGhostStates()
+    foodGrid = currentGameState.getFood()
+    actions = currentGameState.getLegalActions(0)
+    ScaredTimes = [ghostState.scaredTimer for ghostState in GhostStates]
+
+    if target is None:
+        agent = searchAgents.ClosestDotSearchAgent(fn="breadthFirstSearch")
+        actions = agent.findPathToClosestDot(currentGameState)
+    # distance measure
+    DM = searchAgents.mazeDistance
+
+    nGhosts = len(GhostStates)
+    distToGhost = [0 for x in range(0, nGhosts)]
+
+    ## GHOST MECHANISM:
+    for gindex in range(0, nGhosts):
+        gPosition = GhostStates[gindex].getPosition()
+        gPosition = (int(gPosition[0]), int(gPosition[1]))
+        distToGhost[gindex] = DM(pacmanPosition, gPosition, currentGameState)
+    
+    ## penalty to close ghost
+    penGhosts = 0
+    DANGERDISTANCE = 3
+    SAFETYDESIRE = 1000
+    for gindex in range(0, nGhosts):
+        if distToGhost[gindex] < DANGERDISTANCE and ScaredTimes[gindex] <= 0:
+            penGhosts += 1.0 * SAFETYDESIRE / (distToGhost[gindex]+1)
+        elif ScaredTimes[gindex] > 0: 
+            penGhosts -= 1.0 * SAFETYDESIRE / (distToGhost[gindex]+1)
+
+    ## reward to close food
+    rwdFood = 0
+    FOODDESIRE = 100
+    #agent = searchAgents.ClosestDotSearchAgent(fn="breadthFirstSearch")
+    #actions = agent.findPathToClosestDot(currentGameState)
+
+    rwdFood = 50 * (nTotalFood - nRemainedFood)
+
+    ### NOTE: the final score of current state, the higher the better
+    score = -penGhosts + rwdFood + random.random()
+    
+    '''
+    ## SAFETY MECHANISM: 
+    ## if the ghost occurs within 6 steps of pacman, we indicate that
+    ## the pacman is in danger, thus take measures to protect it
+    for ghost in newGhostStates:
+        gx, gy = ghost.getPosition()
+        gPos = (int(gx), int(gy))
+        gDist = searchAgents.mazeDistance(gPos, newPos, successorGameState)
+        if gDist <= 3:
+            ghostDistance += gDist
+            isGhostNearby = True
+    if isGhostNearby: # here we care about safety
+        self.heuristicInfo = None
+        return ghostDistance - 1000
+
+    ## FOOD EATING MECHANISM:
+    ## search the closest food and find actions to reach it
+    heuristic = 0
+    agent = searchAgents.ClosestDotSearchAgent(fn="breadthFirstSearch")
+    actions = agent.findPathToClosestDot(currentGameState)
+    if action == actions[0]:
+        heuristic = 1
+
+    return heuristic
+    '''
 
 # Abbreviation
 better = betterEvaluationFunction

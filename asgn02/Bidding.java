@@ -41,7 +41,6 @@ class Item implements Comparable<Item>{
         this.price = price;  
         this.highest_bid_price = price;
         this.highest_bid_id = -1;
-        this.matchedBySingleItem = false;
     }
     public String toString () {
         String str = "bid: " + this.quality + "," + this.price;
@@ -54,7 +53,7 @@ class Item implements Comparable<Item>{
 
 // ****************************************************************
 // Bid data structure
-class Bid {
+class Bid implements Comparable<Bid> {
     int type;
     int bid_id;
 
@@ -63,11 +62,11 @@ class Bid {
         this.type = type;
         this.bid_id = Bid.id_count++;
     }
-    int compareTo (Bid b) {
+    public int compareTo (Bid b) {
         if (b.type == 1 && this.type == 1) {
-            return b.offer - this.offer;
+            return ((SingleItemBid) b).offer - ((SingleItemBid) this).offer;
         } else if (b.type == 2 && this.type ==2) {
-            return b.slope - this.slope;
+            return ((LinearBid) b).slope - ((LinearBid) this).slope;
         } else {
             return b.type - this.type;
         }
@@ -88,7 +87,7 @@ class SingleItemBid extends Bid {
         return this.offer;
     }
 }
-class LinearBid extends Bid implements Comparable<LinearBid> {
+class LinearBid extends Bid {
     int intercept;
     int slope;
     LinearBid (int intercept, int slope) {
@@ -138,35 +137,241 @@ class Bidding {
         // create and parse bidding arraylist
         ArrayList<Bid> bids = new ArrayList<Bid> ();
         ArrayList<Bid> matchedBids = new ArrayList<Bid> ();
-        ;
+        int [] assignment = new int [nItems];
+        for (int i = 0; i < nItems; i ++) {
+            assignment[i] = items[i].highest_bid_id;  // retained by seller  
+        }
         while ((line = reader.readLine()) != null) {
             String [] bidding_infos = line.split(" ");
             int type = Integer.parseInt(bidding_infos[0]);
-            Item newadded = null;
+            Bid newbid = null;
             if (type == 1) { // single-item bid
                 int tmp_price = Integer.parseInt(bidding_infos[1]);
                 int tmp_id = Integer.parseInt(bidding_infos[2]);
-                newadded = new SingleItemBid(tmp_price, tmp_id);
-                bids.add (newadded);
-                if (newLinearBid.offer <= items[tmp_id].highest_bid_price) {
+                newbid = new SingleItemBid(tmp_price, tmp_id);
+                bids.add (newbid);
+                if (((SingleItemBid) newbid).offer <= items[tmp_id].highest_bid_price) {
                     // this single item bid remained unmatched
                     continue;
+                } else {
+                    int previous_bid_id = items[tmp_id].highest_bid_id;
+                    items[tmp_id].highest_bid_id = newbid.bid_id;
+                    items[tmp_id].highest_bid_price = ((SingleItemBid) newbid).offer;
+                    assignment[tmp_id] = newbid.bid_id;
+                    if (previous_bid_id < 0) {
+                        continue;
+                    } else if (bids.get(previous_bid_id).type == 1) {
+                        matchedBids.remove(bids.get(previous_bid_id));
+                        continue;
+                    } else if (bids.get(previous_bid_id).type == 2) {
+                        // sort the items unmatched and matched to linear bid
+                        PriorityQueue<Item> sortpqitem = new PriorityQueue<Item> ();
+                        for (int i = 0; i < nItems; i ++) {
+                            if (items[i].highest_bid_id < 0)
+                                sortpqitem.add(items[i]);
+                            else if (bids.get(items[i].highest_bid_id).type == 2) {
+                                sortpqitem.add(items[i]);
+                            }
+                        }
+                        // convert to the array
+                        Item [] ssitems = new Item [sortpqitem.size()];
+                        sortpqitem.toArray(ssitems);
+                        // reset the assignment of linear bid item
+                        for (int i = 0; i < nItems; i ++) {
+                            int matched_bid = items[i].highest_bid_id; 
+                            if (matched_bid < 0 || bids.get(matched_bid).type == 2)
+                                assignment[i] = -1;
+                        }
+                        // sort the bids
+                        PriorityQueue<Bid> sortpqbid = new PriorityQueue<Bid> ();
+                        for (int i = 0; i < matchedBids.size(); i ++) {
+                            Bid tmp_bid = matchedBids.get(i);
+                            if (tmp_bid.type == 2) {
+                                sortpqbid.add(tmp_bid);
+                            }
+                        }
+                        // convert to the array
+                        Bid [] ssbids = new Bid [sortpqbid.size()];
+                        sortpqbid.toArray(ssbids);
+                        for (int i = 0; i < Math.min(ssitems.length, ssbids.length); i ++) {
+                             items[ssitems[i].id].highest_bid_id = ssbids[i].bid_id;
+                             items[ssitems[i].id].highest_bid_price =
+                                 ((LinearBid) ssbids[i]).slope * ssitems[i].quality +
+                                 ((LinearBid) ssbids[i]).intercept;
+                             assignment[ssitems[i].id] = ssbids[i].bid_id;
+                        }
+                        matchedBids = new ArrayList<Bid> ();
+                        for (int i = 0; i < assignment.length; i ++) {
+                            if (assignment[i] >= 0)
+                                matchedBids.add(bids.get(assignment[i]));
+                        }
+                    }
                 }
                 // System.out.println("1 " + tmp_id + ", " + tmp_price);
             } else if (type == 2) { // linear bid
                 int intercept = Integer.parseInt(bidding_infos[1]);
                 int slope = Integer.parseInt(bidding_infos[2]);
-                newadded = new LinearBid(intercept, slope);
-                bids.add (newadded);
+                newbid = new LinearBid(intercept, slope);
+                bids.add (newbid);
+                //-----------------------------------------------------------//
+                if (matchedBids.size() < items.length) {
+                    // sort the items unmatched and matched to linear bid
+                    PriorityQueue<Item> sortpqitem = new PriorityQueue<Item> (nItems);
+                    for (int i = 0; i < nItems; i ++) {
+                        sortpqitem.offer(items[i]);
+                    }
+                    // convert to the arraylist
+                    ArrayList<Item> ar_items = new ArrayList<Item>(sortpqitem.size());
+                    // transfer content in priority queue to arraylist
+                    // reset the assignment of linear bid item
+                    for (int i = 0; i < nItems; i ++) {
+                        // transfer
+                        Item tmp_item = sortpqitem.poll();  
+                        ar_items.add(tmp_item);
+                        // reset
+                        int matched_item = items[i].highest_bid_id;
+                        if (matched_item < 0 || bids.get(matched_item).type == 2)
+                            assignment[i] = -1;
+                    }
+
+                    // sort the bids
+                    PriorityQueue<Bid> sortpqbid = new PriorityQueue<Bid> ();
+                    for (int i = 0; i < matchedBids.size(); i ++) {
+                        Bid tmp_bid = matchedBids.get(i);
+                        if (tmp_bid.type == 2) {
+                            sortpqbid.add(tmp_bid);
+                        }
+                    }
+                    sortpqbid.add(newbid);
+
+                    // do bid-item matching
+                    while (sortpqbid.size() != 0) {
+                        int price;
+                        LinearBid lb = (LinearBid) sortpqbid.peek();
+                        if (lb.slope < 0) {
+                            // reverse the ar_items
+                            int numItemNow = ar_items.size();
+                            ArrayList<Item> cache = new ArrayList<Item> (ar_items);
+                            for (int j = 0; j < numItemNow; j ++) {
+                                ar_items.set(numItemNow-j-1, cache.get(j));
+                            }
+                        }
+                        for (int j = 0; j < ar_items.size(); j ++) {
+                            Item tmp_item = items[ar_items.get(j).id];
+                            price = lb.slope * tmp_item.quality + lb.intercept;
+                            // System.out.println(j + ", "+ price + ", " + tmp_item.highest_bid_price
+                              //      + ", " + tmp_item.id);
+                            if (price >= tmp_item.highest_bid_price) {
+                                // remove previous
+                                int previous = tmp_item.highest_bid_id;
+                                if (previous >= 0) {
+                                    if (bids.get(previous).type == 2)
+                                        sortpqbid.offer(bids.get(previous));
+                                }
+                                // update new
+                                items[tmp_item.id].highest_bid_id = lb.bid_id;
+                                items[tmp_item.id].highest_bid_price =
+                                   lb.slope * tmp_item.quality + lb.intercept;
+                                assignment[tmp_item.id] = lb.bid_id;
+                                sortpqbid.poll();
+                                ar_items.remove(j);
+                                break;
+                            } else continue;
+                        }
+                        if (lb.slope < 0) {
+                            // reverse the ar_items
+                            int numItemNow = ar_items.size();
+                            ArrayList<Item> cache = new ArrayList<Item> (ar_items);
+                            for (int j = 0; j < numItemNow; j ++) {
+                                ar_items.set(numItemNow-j-1, cache.get(j));
+                            }
+                        }
+                    }
+
+                    matchedBids = new ArrayList<Bid> ();
+                    for (int i = 0; i < assignment.length; i ++) {
+                        if (assignment[i] >= 0) {
+                            matchedBids.add(bids.get(assignment[i]));
+                        }
+                    }
+                    continue;
+                }
+                // for large number of bids
+                ArrayList<Bid> copyMatchedBids;
+                int max_weight = -(Integer.MAX_VALUE -1);
+                // sort the items unmatched and matched to linear bid
+                PriorityQueue<Item> sortpqitem = new PriorityQueue<Item> ();
+                for (int i = 0; i < nItems; i ++) {
+                    if (items[i].highest_bid_id < 0)
+                        sortpqitem.add(items[i]);
+                    else if (bids.get(items[i].highest_bid_id).type == 2) {
+                        sortpqitem.add(items[i]);
+                    }
+                }
+                for (int j = 0; j < matchedBids.size(); j ++) {
+                    int tmp_weight = 0;
+                    copyMatchedBids = new ArrayList<Bid> (matchedBids);
+                    copyMatchedBids.remove(j);
+                    copyMatchedBids.add(newbid);
+                    // temporary assignment
+                    int [] tmp_assignment = new int [nItems];
+                    for (int i = 0; i < nItems; i ++) {
+                        tmp_assignment[i] = -1;
+                    }
+
+                    // sort the bids
+                    PriorityQueue<Bid> sortpqbid = new PriorityQueue<Bid> ();
+                    PriorityQueue<Item> newsortedpqitem = new PriorityQueue<Item> 
+                        (sortpqitem);
+                    for (int i = 0; i < copyMatchedBids.size(); i ++) {
+                        Bid tmp_bid = matchedBids.get(i);
+                        if (tmp_bid.type == 1) {
+                            int tmp_itemId = ((SingleItemBid) tmp_bid).item_id;
+                            newsortedpqitem.remove(items[tmp_itemId]);
+                            tmp_assignment[tmp_itemId] = tmp_bid.bid_id;
+                            tmp_weight += ((SingleItemBid) tmp_bid).offer;
+                        } else if (tmp_bid.type == 2) {
+                            sortpqbid.add(tmp_bid);
+                        }
+                    }
+                    // convert to the array
+                    Item [] ssitems = new Item [newsortedpqitem.size()];
+                    newsortedpqitem.toArray(ssitems);
+                    // convert to the array
+                    Bid [] ssbids = new Bid [sortpqbid.size()];
+                    sortpqbid.toArray(ssbids);
+                    for (int i = 0; i < Math.min(ssitems.length, ssbids.length); i ++) {
+                        // items[ssitems[i].id].highest_bid_id = ssbids[i].id;
+                        tmp_weight += ((LinearBid)ssbids[i]).slope * ssitems[i].quality +
+                            ((LinearBid) ssbids[i]).intercept;
+                        tmp_assignment[ssitems[i].id] = ssbids[i].bid_id;
+                    }
+                    if (tmp_weight > max_weight) {
+                        matchedBids = new ArrayList<Bid> ();
+                        for (int i = 0; i < tmp_assignment.length; i ++) {
+                            if (tmp_assignment[i] >= 0) {
+                                matchedBids.add(bids.get(tmp_assignment[i]));
+                            }
+                        }
+                    }
+                }
                 // System.out.println("2 " + intercept + ", " + slope);
             } else if (type == 3) { // for summary
                 int maximum_weight = 0;
                 int nBids = bids.size();
-                int [] assignment = new int [nItems];
                 // assignment
                 for (int i = 0; i < nItems; i ++) {
-                    assignment[i] = items[i].highest_bid_id;  // retained by seller  
-                    maximum_weight += items[i].highest_bid_price;
+                    if (assignment[i] < 0) {
+                        maximum_weight += items[i].price;
+                        continue;
+                    }
+                    Bid assignedBid = bids.get(assignment[i]);
+                    if (assignedBid.type == 1) { // single-item bid
+                        maximum_weight += ((SingleItemBid) assignedBid).offer;
+                    } else { // linear bid
+                        maximum_weight += ((LinearBid) assignedBid).slope *
+                            items[i].quality + ((LinearBid)assignedBid).intercept;
+                    } 
                 }
                 // output
                 String summary = Integer.toString (maximum_weight);
@@ -175,18 +380,6 @@ class Bidding {
                 }
                 System.out.println(summary);
             } 
-            int [] tmp_assignment = new int []();
-            if (type == 1 || type == 2) {
-                // update the assignment 
-                ArrayList<Item> tmpItems = new ArrayList<Item> (items);
-                ArrayList<Bid> tmpBids = new ArrayList<Bid> (matchedBids);
-                tmpBids.add (newadded);
-                // get rid of single-item bid
-                for (int i = 0; i < tmpBids.size(); i ++) {
-                    if (tmpBids.get(i).type == 1 && )
-                }
-            }
-
         }
     }
 }

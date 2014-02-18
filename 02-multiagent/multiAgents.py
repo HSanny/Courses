@@ -192,8 +192,6 @@ class MinimaxAgent(MultiAgentSearchAgent):
                 if max_score is None or tmp_score > max_score:
                     max_score = tmp_score
                     max_asgn = i
-                #print tmp_score, i
-            #print  max_score, actions[max_asgn]
             return actions[max_asgn]
         else: # for all other immediate node
             if self.index % nAgents == 0: opt = max
@@ -348,8 +346,6 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
             if len(scores) == 0: return tmp_agent.evaluationFunction(gameState)
             else: return opt(scores) 
 
-global lastPosition
-lastPosition = None
 def betterEvaluationFunction(currentGameState):
     """
       Your extreme ghost-hunting, pellet-nabbing, food-gobbling, unstoppable
@@ -394,6 +390,88 @@ def betterEvaluationFunction(currentGameState):
     
 # Abbreviation
 better = betterEvaluationFunction
+class LocalMinimaxAgent(MultiAgentSearchAgent):
+
+    def __init__(self, locality = 5, evalFn = 'scoreEvaluationFunction', depth = '2'):
+        MultiAgentSearchAgent.__init__(self,evalFn,depth)
+        self.locality = locality
+
+    def getAction(self, gameState):
+        """
+          Returns the minimax action from the current gameState using self.depth
+          and self.evaluationFunction.
+
+          Here are some method calls that might be useful when implementing minimax.
+
+          gameState.getLegalActions(agentIndex):
+            Returns a list of legal actions for an agent
+            agentIndex=0 means Pacman, ghosts are >= 1
+
+          gameState.generateSuccessor(agentIndex, action):
+            Returns the successor game state after an agent takes an action
+
+          gameState.getNumAgents():
+            Returns the total number of agents in the game
+        """
+        "*** YOUR CODE HERE ***"
+        nAgents = gameState.getNumAgents() 
+        pacmanPosition = gameState.getPacmanPosition()
+        ghostPositions = gameState.getGhostStates()
+        nGhosts = nAgents - 1
+        localGhosts = []
+        allDist = []
+        assert (nGhosts == len(ghostPositions))
+        for i in range(0, nGhosts):
+            ghostPos = ghostPositions[i].getPosition()
+            ghostPos = (int(ghostPos[0]), int(ghostPos[1]))
+            dist = searchAgents.mazeDistance(pacmanPosition,
+                            ghostPos, gameState)
+            if dist <= self.locality:
+                localGhosts.append(ghostPositions[i])
+                allDist.append(dist)
+                
+        nLocalGhosts = len(localGhosts)
+        nAgents = nLocalGhosts + 1
+        print nAgents, allDist
+
+        agentIndex = self.index % nAgents
+        ## note that in game, a ply corresponds to one move of all agents
+        if self.index == self.depth * nAgents: # for the leaf node
+            return self.evaluationFunction(gameState)
+        elif self.index == 0: # for the root node
+            succesors = []
+            actions = gameState.getLegalActions(self.index)
+            for action in actions:
+                successor = gameState.generateSuccessor(self.index, action)
+                succesors.append(successor)
+            max_score = None
+            max_asgn = None
+            tmp_agent = MinimaxAgent()
+            tmp_agent.index = self.index + 1
+            tmp_agent.depth = self.depth
+            for i in range(0, len(succesors)):
+                suc = succesors[i]
+                tmp_score = tmp_agent.getAction(suc)
+                if max_score is None or tmp_score > max_score:
+                    max_score = tmp_score
+                    max_asgn = i
+            return actions[max_asgn]
+        else: # for all other immediate node
+            if self.index % nAgents == 0: opt = max
+            else: opt = min
+            succesors = []
+            for action in gameState.getLegalActions(agentIndex):
+                successor = gameState.generateSuccessor(agentIndex, action)
+                succesors.append(successor)
+            scores = []
+            tmp_agent = MinimaxAgent()
+            tmp_agent.index = self.index + 1
+            tmp_agent.depth = self.depth
+            for suc in succesors:
+                tmp_score = tmp_agent.getAction(suc)
+                scores.append(tmp_score)
+            if len(scores) == 0: return tmp_agent.evaluationFunction(gameState)
+            else: return opt(scores) 
 
 class ContestAgent(MultiAgentSearchAgent):
     """
@@ -409,5 +487,9 @@ class ContestAgent(MultiAgentSearchAgent):
           just make a beeline straight towards Pacman (or away from him if they're scared!)
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        minmaxAgent = LocalMinimaxAgent(evalFn = 'betterEvaluationFunction', depth
+                                        = '3')
+            
+        return minmaxAgent.getAction(gameState)
 
+        

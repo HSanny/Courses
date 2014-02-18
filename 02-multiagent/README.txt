@@ -45,6 +45,9 @@ three elements we are supposed to consider:
     for d, we employ random.random() to avoid DIRECTIONS.STOP.
 
 Mini-Contest:
-
-
-
+    The overall strategy of designing a good pacman agent can be seen as the
+    following three stages: 
+        a. defend pacman itself
+        b. eat fruits
+        c. attack ghost at scared time
+    

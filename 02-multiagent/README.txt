@@ -29,8 +29,20 @@ Implementation shares the same framework as Q2's. The only difference exists
 in the opt operation. For the chance node, we use expectation rather than
 original min for MIN player.
 
-Q5: [Half Way]
+Q5: [DONE] Heuristic Function over game state 
+To evaluate the heuristic function over game state of pacman game, there are
+three elements we are supposed to consider:
+    a. the desire of pacman to keep it safe (away from ghost)
+    b. the desire of pacman to devour the scared ghost
+    c. the desire of eating food
+    d. the desire of avoiding wasting time
 
+    for a, we introduce safety mechanism with highest priority (desire = 1000)
+    for b, we introduce mechanism of approaching ghost with secondary priority
+    (100, should be this value since the score of devouring a ghost is about
+    300.)
+    for c, we directly use the provided getScore() function
+    for d, we employ random.random() to avoid DIRECTIONS.STOP.
 
 Mini-Contest:
 

@@ -7,7 +7,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%  PACKAGES USED IN THIS TEX SOURCE FILE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\usepackage{geometry,amsthm,amsmath,graphicx,fancyheadings}
+\usepackage{geometry,amsthm,amsmath,graphicx,fancyheadings,fancybox}
 \usepackage[colorlinks,
             linkcolor=blue,
             anchorcolor=red,
@@ -24,7 +24,7 @@
 \renewcommand{\TASK}{Assignment 03}
 \renewcommand{\RELEASEDATE}{February. 19 2014}
 \renewcommand{\DUEDATE}{February. 26 2014}
-\renewcommand{\TIMECONSUME}{8 hours}
+\renewcommand{\TIMECONSUME}{10 hours}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% DOCUMENTATION STARTS FROM HERE 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -41,19 +41,212 @@
 \renewcommand{\contentsname}{Contents}
 \begin{center} 
     \tableofcontents 
-    %\listoftables 
-    %\listoffigures
 \end{center}
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% GENERAL DOCUMENTATION BEGINS 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\wm}[1]{\ensuremath{w(M_{#1})}}
+\newcommand{\wmp}[1]{\ensuremath{w(M'_{#1})}}
+\newcommand{\wmi}{\ensuremath{w(M_i)}}
+\newcommand{\wmip}{\ensuremath{w(M'_i)}}
+\newcommand{\constantTime}{\ensuremath{\mathcal{O}(1)}}
+\newcommand{\linearTime}{\ensuremath{\mathcal{O}(n)}}
+\newcommand{\lbw}[1]{\ensuremath{a_{#1} q_{#1} + b_{#1}}}  %% linear bid weight
+\newcommand{\sbw}[1]{\ensuremath{m_{#1}}}
 \section{Exercise 3}
+\ovalbox{
+\begin{minipage}{15cm}
+Show how to compute $\wmi$ for all $i$ such that $0 \leq i < |A|$ in a total of
+$O(n)$ time.
+\end{minipage} }
 
+\subsection{Overall Idea}
+Since there are $n$ items, if we want to compute all the $w(M_i)$, the
+technique of dynamic programming is first one to consider. Specifically, we
+can compute $\wm{0}$, cache it and then compute $\wm{1}$ based on $\wm{0}$ by
+constant time $\constantTime$. And then we repeat this process for $n$ times.
+In this manner, we derive all $n$ $\wmi$ in $\linearTime$.\\
+In the case, each $\wm{i}$ represents one matching with one linear bid
+removed under configuration $U''$. 
 
+\subsection{Mathematical Notation}
+Before introducing procedural description and mathematical proof, we first
+present a series of mathematical notations as follows: 
+\begin{itemize}
+    \item{$\wmi$ is the weight of MWMCM $\wmi$.}
+    \item{$a_l$ slope of one linear bid with index $l$.}
+    \item{$b_l$ intercept of one linear bid with index $l$.}
+    \item{$q_l$ quality of one item with index $l$.}
+    \item{$m_l$ offer of one bid with index $l$.}
+\end{itemize}
+
+Besides, all linear bids are sorted in descending order according to the
+slope. And there is no need to sort the single-item bids in this scenario. 
+
+\subsection{Algorithmic Description}
+Given the sorted array of linear bid in terms of its slope and sorted array of
+single item bid in terms of its offer price. 
+
+\begin{itemize}
+    \item{First of all, we compute the $\wm{0}$ in $\linearTime$.
+        Specifically: }
+        \begin{itemize}
+        \item{Match all single-item bids to items according to the provided
+            one-one correspondence}
+        \item{Remove all matched item from the sorted array of item}
+        \item{Match all linear bids to the remained items by virtue of
+                matching the linear bid with the highest slope to the item
+            with the highest quality}
+        \end{itemize}
+
+    \item{Then, we sequentially compute $\wm{k}$ based on $\wm{k-1}$ at
+        $\constantTime$. The formula for incremental computation is given as
+    follows: }
+    $$
+    \wm{k} = \wm{k-1} + (a_{k-1} q_{k-1} + b_{k-1}) 
+        - (a_k q_k + b_k)
+    $$
+\end{itemize}
+ 
+Since there are one linear time computation and $k-1$ constant time
+computation. The time complexity of this method is in linear time
+$\linearTime$.
+
+\newpage
+\subsection{Mathematical Proof}
+Since the computation of $\wm{0}$ as MWMCM in $mcm(G', U''-A[0])$ is justified
+in the last assignment, you can reference my solution in the assignment 2 for
+the proof of that part. And in the following, what I am doing is to validate
+the formula for incremental computation. 
+
+\begin{align*}
+    \wm{0} = \Sigma_{n \neq 0} (a_n q_n + b_n) + \Sigma_s m_s \\
+    \wm{1} = \Sigma_{n \neq 1} (a_n q_n + b_n) + \Sigma_s m_s 
+\end{align*}
+$$
+\vdots 
+$$
+\begin{align*}
+    \wm{k} = \Sigma_{n \neq k} (a_n q_n + b_n) + \Sigma_s m_s
+\end{align*}
+
+We observe that the incremental formula is 
+    $$
+    \wm{k} = \wm{k-1} + (\lbw{k-1}) - (\lbw{k})
+    $$
+
+Then, we prove it by mathematical induction. \\[0.5cm]
+\textbf{Base case}: 
+
+for $k = 0$, obviously it does hold.
+\begin{align*}
+    \wm{1} &= \Sigma_{n \neq 1} (\lbw{n}) + \Sigma_s m_s \\
+           &= \Sigma_{n \neq 1} (\lbw{n}) + \Sigma_s m_s 
+    + (\lbw{1}) - (\lbw{0}) - (\lbw{1}) + (\lbw{0}) \\
+    &= \Sigma_{n}(\lbw{n}) + \Sigma_s m_s - (\lbw{0}) - (\lbw{1}) + (\lbw{0})  \\
+    &= \Sigma_{n \neq 0} (\lbw{n}) + \Sigma_s m_s + (\lbw{0}) - (\lbw{1})  \\
+    &= \wm{0} + (\lbw{0}) - (\lbw{1}) 
+\end{align*}
+\textbf{Inductive cases}: 
+
+Assume that the relationship between the case of
+$k-1$ and $k$ holds, now we prove that it also holds for $k$ and $k+1$. ($k+1$
+items in total).  
+
+That is to say, given
+\begin{align*}
+    \wm{k} = \wm{k-1} + (\lbw{k-1}) - (\lbw{k})
+\end{align*}
+
+We need to prove
+\begin{align*}
+    \wm{k+1} = \wm{k} + (\lbw{k}) - (\lbw{k+1})
+\end{align*}
+
+By the definition of $\wm{k+1}$ and $\wm{k}$, it can be easily derived that
+the inductive cases hold. The specific proof procedure is similar to the base
+case. 
+
+\newpage
 \section{Exercise 4}
-\section{}
+\ovalbox{
+\begin{minipage}{15cm}
+Show how to compute $w(M'_i)$ for all $i$ such that $0 \leq i < |B|$ in a total of
+$O(n)$ time.
+\end{minipage}}
+\subsection{Overall Idea}
+This case is slightly more complicated than the previously introduced
+scenario. This is because the linear bids are the source of instability.
+However, we can use the same approach as that of solving Exercise 3. Briefly,
+the base computation for $\wmip$ remained unvaried, whereas the following
+incremental computation became more complex.
 
+\subsection{Mathematical Notation}
+Everything used in the solution for exercise 3 is still available in this
+section except that the single-item array should also be sorted in terms of
+the quality of item it offers to. \\
+That is, for all single-item bids $s$
+\begin{align*} 
+    \text{single[0].offerto.quality} \geq \text{single[1].offerto.quality}
+    \geq \dots \geq \text{single[s].offerto.quality}
+\end{align*}
+Additionally, we have to conceptualize new concepts as follows:
+\begin{itemize}
+    \item{$a'_s$ represents the slope of linear bid matched to the item, which
+        is originally matched to single-item bid $s$.}
+    \item{$b'_s$ represents the intercept of linear bid matched to the item,
+            is originally matched to single-item bid $s$.}
+    \item{$q_s$ represents the quality of item which
+        single-item bid $s$ offers to.}
+\end{itemize}
+
+\subsection{Algorithmic Description}
+Given the sorted array of linear bids in terms of its slope and sorted array of
+single-item bids in terms of the \textbf{quality of item it offers to}. 
+
+\begin{itemize}
+    \item{First of all, we compute the $\wmp{0}$ in $\linearTime$.
+        Specifically: }
+        \begin{itemize}
+            \item{Match all single-item bids within $U''-u$ to items according to
+                the provided one-one correspondence.}
+            \item{Remove all matched items from the sorted array of items.}
+            \item{Match all linear bids to the remained items by virtue of
+                    matching the linear bid with the highest slope to the item
+                with the highest quality.}
+        \end{itemize}
+    \item{Then, we compute $\wmp{m}$ based on $\wmp{m-1}$ at $\constantTime$}
+        \begin{itemize}
+        \item{Compute the update on matching made by single-item matching,
+                that is to add the offer price of single-item bid indexed by
+                $s-1$ back and subtract the offer price of single-item bid
+            indexed by $s$.}
+        \item{Compute the update on matching made by linear bid. It is a
+            little more complicated since the change of single-item bid will
+        deprive the original matching made by linear bids. We rematch all the
+        items whose quality is between the quality of the item we added
+        and that of the item we subtracted.} 
+    \end{itemize}
+    \item{To summarize, at the step above the mathematical formula for
+        incremental computation is given as follows: } $$ 
+    \wmp{m} = \wmp{m-1} + U_{single} + U_{linear}
+    $$ 
+    where $U_{single}$ corresponds to update on single-item bid matching,
+    $$ 
+    U_{single} = \sbw{s-1} - \sbw{s}
+    $$ 
+    and $U_{linear}$ corresponds to update on linear bid matching,
+    $$ 
+    U_{linear} = \Sigma_{q_{s-1} \leq q_j \leq q_{s}} (q_j * (a'_{j-1} - a'_j)) 
+    $$ 
+\end{itemize}
+ 
+Since there are one linear time computation and $m-1$ constant time
+computation. Precisely speaking, a particular incremental computation for each
+$\wmp{m}$ is not constant but all the whole stage of incremental computing is
+in linear time. Thus, The time complexity of this method is in linear time
+$\linearTime$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% General Documentation ends

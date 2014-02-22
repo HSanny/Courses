@@ -41,7 +41,27 @@ class ValueIterationAgent(ValueEstimationAgent):
 
         # Write value iteration code here
         "*** YOUR CODE HERE ***"
-
+	self.valueIteration()
+	
+    def valueIteration(self):
+        #Repeat until convergence or max # of iterations:
+        for i in range(self.iterations):
+            preValues = self.copyValues()
+	    for state in self.mdp.getStates():
+		possibleActions = self.mdp.getPossibleActions(state)
+		if (len(possibleActions) > 0):
+		    maxValue = -99999999
+		    for action in possibleActions:
+		        tempSum = 0
+			for [nextState, prob] in self.mdp.getTransitionStatesAndProbs(state,action):
+			    tempSum = tempSum + prob*(self.mdp.getReward(state,action,nextState)+self.discount*preValues[nextState])
+			if(tempSum > maxValue): maxValue = tempSum
+		    self.values[state] = maxValue 
+    def copyValues(self):
+	preValues = util.Counter()
+	for state in self.values:
+	    preValues[state] = self.values[state]
+	return preValues
 
     def getValue(self, state):
         """
@@ -56,7 +76,10 @@ class ValueIterationAgent(ValueEstimationAgent):
           value function stored in self.values.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        tempSum = 0
+        for [nextState, prob] in self.mdp.getTransitionStatesAndProbs(state,action):
+	    tempSum = tempSum + prob*(self.mdp.getReward(state,action,nextState)+self.discount*self.values[nextState])
+	return tempSum
 
     def computeActionFromValues(self, state):
         """
@@ -68,7 +91,15 @@ class ValueIterationAgent(ValueEstimationAgent):
           terminal state, you should return None.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        possibleActions = self.mdp.getPossibleActions(state)
+	[bestAction,maxValue] = [None,-99999999]
+	if (len(possibleActions) > 0):
+	    for action in self.mdp.getPossibleActions(state):
+		tempSum = 0
+		for [nextState, prob] in self.mdp.getTransitionStatesAndProbs(state,action):
+		    tempSum = tempSum + prob*(self.mdp.getReward(state,action,nextState)+self.discount*self.values[nextState])
+		if(tempSum > maxValue): [bestAction,maxValue] = [action,tempSum]
+	return bestAction
 
     def getPolicy(self, state):
         return self.computeActionFromValues(state)

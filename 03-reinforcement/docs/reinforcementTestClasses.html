@@ -1,0 +1,932 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<title>reinforcementTestClasses.py</title>
+<link rel="stylesheet" type="text/css" href="highlight.css">
+</head>
+<body class="hl">
+<pre class="hl"><span class="hl slc"># reinforcementTestClasses.py</span>
+<span class="hl slc"># ---------------------------</span>
+<span class="hl slc"># Licensing Information: Please do not distribute or publish solutions to this</span>
+<span class="hl slc"># project. You are free to use and extend these projects for educational</span>
+<span class="hl slc"># purposes. The Pacman AI projects were developed at UC Berkeley, primarily by</span>
+<span class="hl slc"># John DeNero (denero&#64;cs.berkeley.edu) and Dan Klein (klein&#64;cs.berkeley.edu).</span>
+<span class="hl slc"># Student side autograding was added by Brad Miller, Nick Hay, and Pieter </span>
+<span class="hl slc"># Abbeel in Spring 2013.</span>
+<span class="hl slc"># For more info, see http://inst.eecs.berkeley.edu/~cs188/pacman/pacman.html</span>
+
+<span class="hl kwa">import</span> testClasses
+<span class="hl kwa">import</span> random<span class="hl opt">,</span> math<span class="hl opt">,</span> traceback<span class="hl opt">,</span> sys<span class="hl opt">,</span> os
+<span class="hl kwa">import</span> layout<span class="hl opt">,</span> textDisplay<span class="hl opt">,</span> pacman<span class="hl opt">,</span> gridworld
+<span class="hl kwa">import</span> time
+<span class="hl kwa">from</span> util <span class="hl kwa">import</span> Counter<span class="hl opt">,</span> TimeoutFunction<span class="hl opt">,</span> FixedRandom
+<span class="hl kwa">from</span> collections <span class="hl kwa">import</span> defaultdict
+<span class="hl kwa">from</span> pprint <span class="hl kwa">import</span> PrettyPrinter
+<span class="hl kwa">from</span> hashlib <span class="hl kwa">import</span> sha1
+pp <span class="hl opt">=</span> <span class="hl kwd">PrettyPrinter</span><span class="hl opt">()</span>
+VERBOSE <span class="hl opt">=</span> <span class="hl kwa">False</span>
+
+<span class="hl kwa">import</span> gridworld
+
+LIVINGREWARD <span class="hl opt">= -</span><span class="hl num">0.1</span>
+NOISE <span class="hl opt">=</span> <span class="hl num">0.2</span>
+
+<span class="hl kwa">class</span> <span class="hl kwd">ValueIterationTest</span><span class="hl opt">(</span>testClasses<span class="hl opt">.</span>TestCase<span class="hl opt">):</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">__init__</span><span class="hl opt">(</span>self<span class="hl opt">,</span> question<span class="hl opt">,</span> testDict<span class="hl opt">):</span>
+        <span class="hl kwb">super</span><span class="hl opt">(</span>ValueIterationTest<span class="hl opt">,</span> self<span class="hl opt">).</span><span class="hl kwd">__init__</span><span class="hl opt">(</span>question<span class="hl opt">,</span> testDict<span class="hl opt">)</span>
+        self<span class="hl opt">.</span>discount <span class="hl opt">=</span> <span class="hl kwb">float</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'discount'</span><span class="hl opt">])</span>
+        self<span class="hl opt">.</span>grid <span class="hl opt">=</span> gridworld<span class="hl opt">.</span><span class="hl kwd">Gridworld</span><span class="hl opt">(</span><span class="hl kwd">parseGrid</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'grid'</span><span class="hl opt">]))</span>
+        iterations <span class="hl opt">=</span> <span class="hl kwb">int</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'valueIterations'</span><span class="hl opt">])</span>
+        <span class="hl kwa">if</span> <span class="hl str">'noise'</span> <span class="hl kwa">in</span> testDict<span class="hl opt">:</span> self<span class="hl opt">.</span>grid<span class="hl opt">.</span><span class="hl kwd">setNoise</span><span class="hl opt">(</span><span class="hl kwb">float</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'noise'</span><span class="hl opt">]))</span>
+        <span class="hl kwa">if</span> <span class="hl str">'livingReward'</span> <span class="hl kwa">in</span> testDict<span class="hl opt">:</span> self<span class="hl opt">.</span>grid<span class="hl opt">.</span><span class="hl kwd">setLivingReward</span><span class="hl opt">(</span><span class="hl kwb">float</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'livingReward'</span><span class="hl opt">]))</span>
+        maxPreIterations <span class="hl opt">=</span> <span class="hl num">10</span>
+        self<span class="hl opt">.</span>numsIterationsForDisplay <span class="hl opt">=</span> <span class="hl kwb">range</span><span class="hl opt">(</span><span class="hl kwb">min</span><span class="hl opt">(</span>iterations<span class="hl opt">,</span> maxPreIterations<span class="hl opt">))</span>
+        self<span class="hl opt">.</span>testOutFile <span class="hl opt">=</span> testDict<span class="hl opt">[</span><span class="hl str">'test_out_file'</span><span class="hl opt">]</span>
+        <span class="hl kwa">if</span> maxPreIterations <span class="hl opt">&lt;</span> iterations<span class="hl opt">:</span>
+            self<span class="hl opt">.</span>numsIterationsForDisplay<span class="hl opt">.</span><span class="hl kwd">append</span><span class="hl opt">(</span>iterations<span class="hl opt">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">writeFailureFile</span><span class="hl opt">(</span>self<span class="hl opt">,</span> string<span class="hl opt">):</span>
+        with <span class="hl kwb">open</span><span class="hl opt">(</span>self<span class="hl opt">.</span>testOutFile<span class="hl opt">,</span> <span class="hl str">'w'</span><span class="hl opt">)</span> <span class="hl kwa">as</span> handle<span class="hl opt">:</span>
+            handle<span class="hl opt">.</span><span class="hl kwd">write</span><span class="hl opt">(</span>string<span class="hl opt">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">removeFailureFileIfExists</span><span class="hl opt">(</span>self<span class="hl opt">):</span>
+        <span class="hl kwa">if</span> os<span class="hl opt">.</span>path<span class="hl opt">.</span><span class="hl kwd">exists</span><span class="hl opt">(</span>self<span class="hl opt">.</span>testOutFile<span class="hl opt">):</span>
+            os<span class="hl opt">.</span><span class="hl kwd">remove</span><span class="hl opt">(</span>self<span class="hl opt">.</span>testOutFile<span class="hl opt">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">execute</span><span class="hl opt">(</span>self<span class="hl opt">,</span> grades<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> solutionDict<span class="hl opt">):</span>
+        failureOutputFileString <span class="hl opt">=</span> <span class="hl str">''</span>
+        failureOutputStdString <span class="hl opt">=</span> <span class="hl str">''</span>
+        <span class="hl kwa">for</span> n <span class="hl kwa">in</span> self<span class="hl opt">.</span>numsIterationsForDisplay<span class="hl opt">:</span>
+            checkPolicy <span class="hl opt">= (</span>n <span class="hl opt">==</span> self<span class="hl opt">.</span>numsIterationsForDisplay<span class="hl opt">[-</span><span class="hl num">1</span><span class="hl opt">])</span>
+            testPass<span class="hl opt">,</span> stdOutString<span class="hl opt">,</span> fileOutString <span class="hl opt">=</span> self<span class="hl opt">.</span><span class="hl kwd">executeNIterations</span><span class="hl opt">(</span>grades<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> solutionDict<span class="hl opt">,</span> n<span class="hl opt">,</span> checkPolicy<span class="hl opt">)</span>
+            failureOutputStdString <span class="hl opt">+=</span> stdOutString
+            failureOutputFileString <span class="hl opt">+=</span> fileOutString
+            <span class="hl kwa">if not</span> testPass<span class="hl opt">:</span>
+                self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span>failureOutputStdString<span class="hl opt">)</span>
+                self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">'For more details to help you debug, see test output file %s</span><span class="hl esc">\n\n</span><span class="hl str">'</span> <span class="hl opt">%</span> self<span class="hl opt">.</span>testOutFile<span class="hl opt">)</span>
+                self<span class="hl opt">.</span><span class="hl kwd">writeFailureFile</span><span class="hl opt">(</span>failureOutputFileString<span class="hl opt">)</span>
+                <span class="hl kwa">return</span> self<span class="hl opt">.</span><span class="hl kwd">testFail</span><span class="hl opt">(</span>grades<span class="hl opt">)</span>
+        self<span class="hl opt">.</span><span class="hl kwd">removeFailureFileIfExists</span><span class="hl opt">()</span>
+        <span class="hl kwa">return</span> self<span class="hl opt">.</span><span class="hl kwd">testPass</span><span class="hl opt">(</span>grades<span class="hl opt">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">executeNIterations</span><span class="hl opt">(</span>self<span class="hl opt">,</span> grades<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> solutionDict<span class="hl opt">,</span> n<span class="hl opt">,</span> checkPolicy<span class="hl opt">):</span>
+        testPass <span class="hl opt">=</span> <span class="hl kwa">True</span>
+        valuesPretty<span class="hl opt">,</span> qValuesPretty<span class="hl opt">,</span> actions<span class="hl opt">,</span> policyPretty <span class="hl opt">=</span> self<span class="hl opt">.</span><span class="hl kwd">runAgent</span><span class="hl opt">(</span>moduleDict<span class="hl opt">,</span> n<span class="hl opt">)</span>
+        stdOutString <span class="hl opt">=</span> <span class="hl str">''</span>
+        fileOutString <span class="hl opt">=</span> <span class="hl str">''</span>
+        valuesKey <span class="hl opt">=</span> <span class="hl str">&quot;values_k_%d&quot;</span> <span class="hl opt">%</span> n
+        <span class="hl kwa">if</span> self<span class="hl opt">.</span><span class="hl kwd">comparePrettyValues</span><span class="hl opt">(</span>valuesPretty<span class="hl opt">,</span> solutionDict<span class="hl opt">[</span>valuesKey<span class="hl opt">]):</span>
+            fileOutString <span class="hl opt">+=</span> <span class="hl str">&quot;Values at iteration %d are correct.</span><span class="hl esc">\n</span><span class="hl str">&quot;</span> <span class="hl opt">%</span> n
+            fileOutString <span class="hl opt">+=</span> <span class="hl str">&quot;   Student/correct solution:</span><span class="hl esc">\n</span> <span class="hl str">%s</span><span class="hl esc">\n</span><span class="hl str">&quot;</span> <span class="hl opt">%</span> self<span class="hl opt">.</span><span class="hl kwd">prettyValueSolutionString</span><span class="hl opt">(</span>valuesKey<span class="hl opt">,</span> valuesPretty<span class="hl opt">)</span>
+        <span class="hl kwa">else</span><span class="hl opt">:</span>
+            testPass <span class="hl opt">=</span> <span class="hl kwa">False</span>
+            outString <span class="hl opt">=</span> <span class="hl str">&quot;Values at iteration %d are NOT correct.</span><span class="hl esc">\n</span><span class="hl str">&quot;</span> <span class="hl opt">%</span> n
+            outString <span class="hl opt">+=</span> <span class="hl str">&quot;   Student solution:</span><span class="hl esc">\n</span> <span class="hl str">%s</span><span class="hl esc">\n</span><span class="hl str">&quot;</span> <span class="hl opt">%</span> self<span class="hl opt">.</span><span class="hl kwd">prettyValueSolutionString</span><span class="hl opt">(</span>valuesKey<span class="hl opt">,</span> valuesPretty<span class="hl opt">)</span>
+            outString <span class="hl opt">+=</span> <span class="hl str">&quot;   Correct solution:</span><span class="hl esc">\n</span> <span class="hl str">%s</span><span class="hl esc">\n</span><span class="hl str">&quot;</span> <span class="hl opt">%</span> self<span class="hl opt">.</span><span class="hl kwd">prettyValueSolutionString</span><span class="hl opt">(</span>valuesKey<span class="hl opt">,</span> solutionDict<span class="hl opt">[</span>valuesKey<span class="hl opt">])</span>
+            stdOutString <span class="hl opt">+=</span> outString
+            fileOutString <span class="hl opt">+=</span> outString
+        <span class="hl kwa">for</span> action <span class="hl kwa">in</span> actions<span class="hl opt">:</span>
+            qValuesKey <span class="hl opt">=</span> <span class="hl str">'q_values_k_%d_action_%s'</span> <span class="hl opt">% (</span>n<span class="hl opt">,</span> action<span class="hl opt">)</span>
+            qValues <span class="hl opt">=</span> qValuesPretty<span class="hl opt">[</span>action<span class="hl opt">]</span>
+            <span class="hl kwa">if</span> self<span class="hl opt">.</span><span class="hl kwd">comparePrettyValues</span><span class="hl opt">(</span>qValues<span class="hl opt">,</span> solutionDict<span class="hl opt">[</span>qValuesKey<span class="hl opt">]):</span>
+                fileOutString <span class="hl opt">+=</span> <span class="hl str">&quot;Q-Values at iteration %d for action %s are correct.</span><span class="hl esc">\n</span><span class="hl str">&quot;</span> <span class="hl opt">% (</span>n<span class="hl opt">,</span> action<span class="hl opt">)</span>
+                fileOutString <span class="hl opt">+=</span> <span class="hl str">&quot;   Student/correct solution:</span><span class="hl esc">\n</span> <span class="hl str">%s</span><span class="hl esc">\n</span><span class="hl str">&quot;</span> <span class="hl opt">%</span> self<span class="hl opt">.</span><span class="hl kwd">prettyValueSolutionString</span><span class="hl opt">(</span>qValuesKey<span class="hl opt">,</span> qValues<span class="hl opt">)</span>
+            <span class="hl kwa">else</span><span class="hl opt">:</span>
+                testPass <span class="hl opt">=</span> <span class="hl kwa">False</span>
+                outString <span class="hl opt">=</span> <span class="hl str">&quot;Q-Values at iteration %d for action %s are NOT correct.</span><span class="hl esc">\n</span><span class="hl str">&quot;</span> <span class="hl opt">% (</span>n<span class="hl opt">,</span> action<span class="hl opt">)</span>
+                outString <span class="hl opt">+=</span> <span class="hl str">&quot;   Student solution:</span><span class="hl esc">\n</span> <span class="hl str">%s</span><span class="hl esc">\n</span><span class="hl str">&quot;</span> <span class="hl opt">%</span> self<span class="hl opt">.</span><span class="hl kwd">prettyValueSolutionString</span><span class="hl opt">(</span>qValuesKey<span class="hl opt">,</span> qValues<span class="hl opt">)</span>
+                outString <span class="hl opt">+=</span> <span class="hl str">&quot;   Correct solution:</span><span class="hl esc">\n</span> <span class="hl str">%s</span><span class="hl esc">\n</span><span class="hl str">&quot;</span> <span class="hl opt">%</span> self<span class="hl opt">.</span><span class="hl kwd">prettyValueSolutionString</span><span class="hl opt">(</span>qValuesKey<span class="hl opt">,</span> solutionDict<span class="hl opt">[</span>qValuesKey<span class="hl opt">])</span>
+                stdOutString <span class="hl opt">+=</span> outString
+                fileOutString <span class="hl opt">+=</span> outString
+        <span class="hl kwa">if</span> checkPolicy<span class="hl opt">:</span>
+            <span class="hl kwa">if not</span> self<span class="hl opt">.</span><span class="hl kwd">comparePrettyValues</span><span class="hl opt">(</span>policyPretty<span class="hl opt">,</span> solutionDict<span class="hl opt">[</span><span class="hl str">'policy'</span><span class="hl opt">]):</span>
+                testPass <span class="hl opt">=</span> <span class="hl kwa">False</span>
+                outString <span class="hl opt">=</span> <span class="hl str">&quot;Policy is NOT correct.</span><span class="hl esc">\n</span><span class="hl str">&quot;</span>
+                outString <span class="hl opt">+=</span> <span class="hl str">&quot;   Student solution:</span><span class="hl esc">\n</span> <span class="hl str">%s</span><span class="hl esc">\n</span><span class="hl str">&quot;</span> <span class="hl opt">%</span> self<span class="hl opt">.</span><span class="hl kwd">prettyValueSolutionString</span><span class="hl opt">(</span><span class="hl str">'policy'</span><span class="hl opt">,</span> policyPretty<span class="hl opt">)</span>
+                outString <span class="hl opt">+=</span> <span class="hl str">&quot;   Correct solution:</span><span class="hl esc">\n</span> <span class="hl str">%s</span><span class="hl esc">\n</span><span class="hl str">&quot;</span> <span class="hl opt">%</span> self<span class="hl opt">.</span><span class="hl kwd">prettyValueSolutionString</span><span class="hl opt">(</span><span class="hl str">'policy'</span><span class="hl opt">,</span> solutionDict<span class="hl opt">[</span><span class="hl str">'policy'</span><span class="hl opt">])</span>
+                stdOutString <span class="hl opt">+=</span> outString
+                fileOutString <span class="hl opt">+=</span> outString
+        <span class="hl kwa">return</span> testPass<span class="hl opt">,</span> stdOutString<span class="hl opt">,</span> fileOutString
+
+    <span class="hl kwa">def</span> <span class="hl kwd">writeSolution</span><span class="hl opt">(</span>self<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> filePath<span class="hl opt">):</span>
+        with <span class="hl kwb">open</span><span class="hl opt">(</span>filePath<span class="hl opt">,</span> <span class="hl str">'w'</span><span class="hl opt">)</span> <span class="hl kwa">as</span> handle<span class="hl opt">:</span>
+            policyPretty <span class="hl opt">=</span> <span class="hl str">''</span>
+            actions <span class="hl opt">= []</span>
+            <span class="hl kwa">for</span> n <span class="hl kwa">in</span> self<span class="hl opt">.</span>numsIterationsForDisplay<span class="hl opt">:</span>
+                valuesPretty<span class="hl opt">,</span> qValuesPretty<span class="hl opt">,</span> actions<span class="hl opt">,</span> policyPretty <span class="hl opt">=</span> self<span class="hl opt">.</span><span class="hl kwd">runAgent</span><span class="hl opt">(</span>moduleDict<span class="hl opt">,</span> n<span class="hl opt">)</span>
+                handle<span class="hl opt">.</span><span class="hl kwd">write</span><span class="hl opt">(</span>self<span class="hl opt">.</span><span class="hl kwd">prettyValueSolutionString</span><span class="hl opt">(</span><span class="hl str">'values_k_%d'</span> <span class="hl opt">%</span> n<span class="hl opt">,</span> valuesPretty<span class="hl opt">))</span>
+                <span class="hl kwa">for</span> action <span class="hl kwa">in</span> actions<span class="hl opt">:</span>
+                    handle<span class="hl opt">.</span><span class="hl kwd">write</span><span class="hl opt">(</span>self<span class="hl opt">.</span><span class="hl kwd">prettyValueSolutionString</span><span class="hl opt">(</span><span class="hl str">'q_values_k_%d_action_%s'</span> <span class="hl opt">% (</span>n<span class="hl opt">,</span> action<span class="hl opt">),</span> qValuesPretty<span class="hl opt">[</span>action<span class="hl opt">]))</span>
+            handle<span class="hl opt">.</span><span class="hl kwd">write</span><span class="hl opt">(</span>self<span class="hl opt">.</span><span class="hl kwd">prettyValueSolutionString</span><span class="hl opt">(</span><span class="hl str">'policy'</span><span class="hl opt">,</span> policyPretty<span class="hl opt">))</span>
+            handle<span class="hl opt">.</span><span class="hl kwd">write</span><span class="hl opt">(</span>self<span class="hl opt">.</span><span class="hl kwd">prettyValueSolutionString</span><span class="hl opt">(</span><span class="hl str">'actions'</span><span class="hl opt">,</span> <span class="hl str">'</span><span class="hl esc">\n</span><span class="hl str">'</span><span class="hl opt">.</span><span class="hl kwd">join</span><span class="hl opt">(</span>actions<span class="hl opt">) +</span> <span class="hl str">'</span><span class="hl esc">\n</span><span class="hl str">'</span><span class="hl opt">))</span>
+        <span class="hl kwa">return True</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">runAgent</span><span class="hl opt">(</span>self<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> numIterations<span class="hl opt">):</span>
+        agent <span class="hl opt">=</span> moduleDict<span class="hl opt">[</span><span class="hl str">'valueIterationAgents'</span><span class="hl opt">].</span><span class="hl kwd">ValueIterationAgent</span><span class="hl opt">(</span>self<span class="hl opt">.</span>grid<span class="hl opt">,</span> discount<span class="hl opt">=</span>self<span class="hl opt">.</span>discount<span class="hl opt">,</span> iterations<span class="hl opt">=</span>numIterations<span class="hl opt">)</span>
+        states <span class="hl opt">=</span> self<span class="hl opt">.</span>grid<span class="hl opt">.</span><span class="hl kwd">getStates</span><span class="hl opt">()</span>
+        actions <span class="hl opt">=</span> <span class="hl kwb">list</span><span class="hl opt">(</span><span class="hl kwb">reduce</span><span class="hl opt">(</span><span class="hl kwa">lambda</span> a<span class="hl opt">,</span> b<span class="hl opt">:</span> <span class="hl kwb">set</span><span class="hl opt">(</span>a<span class="hl opt">).</span><span class="hl kwd">union</span><span class="hl opt">(</span>b<span class="hl opt">), [</span>self<span class="hl opt">.</span>grid<span class="hl opt">.</span><span class="hl kwd">getPossibleActions</span><span class="hl opt">(</span>state<span class="hl opt">)</span> <span class="hl kwa">for</span> state <span class="hl kwa">in</span> states<span class="hl opt">]))</span>
+        values <span class="hl opt">= {}</span>
+        qValues <span class="hl opt">= {}</span>
+        policy <span class="hl opt">= {}</span>
+        <span class="hl kwa">for</span> state <span class="hl kwa">in</span> states<span class="hl opt">:</span>
+            values<span class="hl opt">[</span>state<span class="hl opt">] =</span> agent<span class="hl opt">.</span><span class="hl kwd">getValue</span><span class="hl opt">(</span>state<span class="hl opt">)</span>
+            policy<span class="hl opt">[</span>state<span class="hl opt">] =</span> agent<span class="hl opt">.</span><span class="hl kwd">computeActionFromValues</span><span class="hl opt">(</span>state<span class="hl opt">)</span>
+            possibleActions <span class="hl opt">=</span> self<span class="hl opt">.</span>grid<span class="hl opt">.</span><span class="hl kwd">getPossibleActions</span><span class="hl opt">(</span>state<span class="hl opt">)</span>
+            <span class="hl kwa">for</span> action <span class="hl kwa">in</span> actions<span class="hl opt">:</span>
+                <span class="hl kwa">if not</span> qValues<span class="hl opt">.</span><span class="hl kwd">has_key</span><span class="hl opt">(</span>action<span class="hl opt">):</span>
+                    qValues<span class="hl opt">[</span>action<span class="hl opt">] = {}</span>
+                <span class="hl kwa">if</span> action <span class="hl kwa">in</span> possibleActions<span class="hl opt">:</span>
+                    qValues<span class="hl opt">[</span>action<span class="hl opt">][</span>state<span class="hl opt">] =</span> agent<span class="hl opt">.</span><span class="hl kwd">computeQValueFromValues</span><span class="hl opt">(</span>state<span class="hl opt">,</span> action<span class="hl opt">)</span>
+                <span class="hl kwa">else</span><span class="hl opt">:</span>
+                    qValues<span class="hl opt">[</span>action<span class="hl opt">][</span>state<span class="hl opt">] =</span> <span class="hl kwa">None</span>
+        valuesPretty <span class="hl opt">=</span> self<span class="hl opt">.</span><span class="hl kwd">prettyValues</span><span class="hl opt">(</span>values<span class="hl opt">)</span>
+        policyPretty <span class="hl opt">=</span> self<span class="hl opt">.</span><span class="hl kwd">prettyPolicy</span><span class="hl opt">(</span>policy<span class="hl opt">)</span>
+        qValuesPretty <span class="hl opt">= {}</span>
+        <span class="hl kwa">for</span> action <span class="hl kwa">in</span> actions<span class="hl opt">:</span>
+            qValuesPretty<span class="hl opt">[</span>action<span class="hl opt">] =</span> self<span class="hl opt">.</span><span class="hl kwd">prettyValues</span><span class="hl opt">(</span>qValues<span class="hl opt">[</span>action<span class="hl opt">])</span>
+        <span class="hl kwa">return</span> <span class="hl opt">(</span>valuesPretty<span class="hl opt">,</span> qValuesPretty<span class="hl opt">,</span> actions<span class="hl opt">,</span> policyPretty<span class="hl opt">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">prettyPrint</span><span class="hl opt">(</span>self<span class="hl opt">,</span> elements<span class="hl opt">,</span> formatString<span class="hl opt">):</span>
+        pretty <span class="hl opt">=</span> <span class="hl str">''</span>
+        states <span class="hl opt">=</span> self<span class="hl opt">.</span>grid<span class="hl opt">.</span><span class="hl kwd">getStates</span><span class="hl opt">()</span>
+        <span class="hl kwa">for</span> ybar <span class="hl kwa">in</span> <span class="hl kwb">range</span><span class="hl opt">(</span>self<span class="hl opt">.</span>grid<span class="hl opt">.</span>grid<span class="hl opt">.</span>height<span class="hl opt">):</span>
+            y <span class="hl opt">=</span> self<span class="hl opt">.</span>grid<span class="hl opt">.</span>grid<span class="hl opt">.</span>height<span class="hl opt">-</span><span class="hl num">1</span><span class="hl opt">-</span>ybar
+            row <span class="hl opt">= []</span>
+            <span class="hl kwa">for</span> x <span class="hl kwa">in</span> <span class="hl kwb">range</span><span class="hl opt">(</span>self<span class="hl opt">.</span>grid<span class="hl opt">.</span>grid<span class="hl opt">.</span>width<span class="hl opt">):</span>
+                <span class="hl kwa">if</span> <span class="hl opt">(</span>x<span class="hl opt">,</span> y<span class="hl opt">)</span> <span class="hl kwa">in</span> states<span class="hl opt">:</span>
+                    value <span class="hl opt">=</span> elements<span class="hl opt">[(</span>x<span class="hl opt">,</span> y<span class="hl opt">)]</span>
+                    <span class="hl kwa">if</span> value <span class="hl kwa">is None</span><span class="hl opt">:</span>
+                        row<span class="hl opt">.</span><span class="hl kwd">append</span><span class="hl opt">(</span><span class="hl str">'   illegal'</span><span class="hl opt">)</span>
+                    <span class="hl kwa">else</span><span class="hl opt">:</span>
+                        row<span class="hl opt">.</span><span class="hl kwd">append</span><span class="hl opt">(</span>formatString<span class="hl opt">.</span><span class="hl kwd">format</span><span class="hl opt">(</span>elements<span class="hl opt">[(</span>x<span class="hl opt">,</span>y<span class="hl opt">)]))</span>
+                <span class="hl kwa">else</span><span class="hl opt">:</span>
+                    row<span class="hl opt">.</span><span class="hl kwd">append</span><span class="hl opt">(</span><span class="hl str">'_'</span> <span class="hl opt">*</span> <span class="hl num">10</span><span class="hl opt">)</span>
+            pretty <span class="hl opt">+=</span> <span class="hl str">'        %s</span><span class="hl esc">\n</span><span class="hl str">'</span> <span class="hl opt">% (</span><span class="hl str">&quot;   &quot;</span><span class="hl opt">.</span><span class="hl kwd">join</span><span class="hl opt">(</span>row<span class="hl opt">), )</span>
+        pretty <span class="hl opt">+=</span> <span class="hl str">'</span><span class="hl esc">\n</span><span class="hl str">'</span>
+        <span class="hl kwa">return</span> pretty
+
+    <span class="hl kwa">def</span> <span class="hl kwd">prettyValues</span><span class="hl opt">(</span>self<span class="hl opt">,</span> values<span class="hl opt">):</span>
+        <span class="hl kwa">return</span> self<span class="hl opt">.</span><span class="hl kwd">prettyPrint</span><span class="hl opt">(</span>values<span class="hl opt">,</span> <span class="hl str">'{0:10.4f}'</span><span class="hl opt">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">prettyPolicy</span><span class="hl opt">(</span>self<span class="hl opt">,</span> policy<span class="hl opt">):</span>
+        <span class="hl kwa">return</span> self<span class="hl opt">.</span><span class="hl kwd">prettyPrint</span><span class="hl opt">(</span>policy<span class="hl opt">,</span> <span class="hl str">'{0:10s}'</span><span class="hl opt">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">prettyValueSolutionString</span><span class="hl opt">(</span>self<span class="hl opt">,</span> name<span class="hl opt">,</span> pretty<span class="hl opt">):</span>
+        <span class="hl kwa">return</span> <span class="hl str">'%s: &quot;&quot;&quot;</span><span class="hl esc">\n</span><span class="hl str">%s</span><span class="hl esc">\n</span><span class="hl str">&quot;&quot;&quot;</span><span class="hl esc">\n\n</span><span class="hl str">'</span> <span class="hl opt">% (</span>name<span class="hl opt">,</span> pretty<span class="hl opt">.</span><span class="hl kwd">rstrip</span><span class="hl opt">())</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">comparePrettyValues</span><span class="hl opt">(</span>self<span class="hl opt">,</span> aPretty<span class="hl opt">,</span> bPretty<span class="hl opt">,</span> tolerance<span class="hl opt">=</span><span class="hl num">0.01</span><span class="hl opt">):</span>
+        aList <span class="hl opt">=</span> self<span class="hl opt">.</span><span class="hl kwd">parsePrettyValues</span><span class="hl opt">(</span>aPretty<span class="hl opt">)</span>
+        bList <span class="hl opt">=</span> self<span class="hl opt">.</span><span class="hl kwd">parsePrettyValues</span><span class="hl opt">(</span>bPretty<span class="hl opt">)</span>
+        <span class="hl kwa">if</span> <span class="hl kwb">len</span><span class="hl opt">(</span>aList<span class="hl opt">) !=</span> <span class="hl kwb">len</span><span class="hl opt">(</span>bList<span class="hl opt">):</span>
+            <span class="hl kwa">return False</span>
+        <span class="hl kwa">for</span> a<span class="hl opt">,</span> b <span class="hl kwa">in</span> <span class="hl kwb">zip</span><span class="hl opt">(</span>aList<span class="hl opt">,</span> bList<span class="hl opt">):</span>
+            <span class="hl kwa">try</span><span class="hl opt">:</span>
+                aNum <span class="hl opt">=</span> <span class="hl kwb">float</span><span class="hl opt">(</span>a<span class="hl opt">)</span>
+                bNum <span class="hl opt">=</span> <span class="hl kwb">float</span><span class="hl opt">(</span>b<span class="hl opt">)</span>
+                <span class="hl slc"># error = abs((aNum - bNum) / ((aNum + bNum) / 2.0))</span>
+                error <span class="hl opt">=</span> <span class="hl kwb">abs</span><span class="hl opt">(</span>aNum <span class="hl opt">-</span> bNum<span class="hl opt">)</span>
+                <span class="hl kwa">if</span> error <span class="hl opt">&gt;</span> tolerance<span class="hl opt">:</span>
+                    <span class="hl kwa">return False</span>
+            <span class="hl kwa">except</span> <span class="hl kwc">ValueError</span><span class="hl opt">:</span>
+                <span class="hl kwa">if</span> a<span class="hl opt">.</span><span class="hl kwd">strip</span><span class="hl opt">() !=</span> b<span class="hl opt">.</span><span class="hl kwd">strip</span><span class="hl opt">():</span>
+                    <span class="hl kwa">return False</span>
+        <span class="hl kwa">return True</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">parsePrettyValues</span><span class="hl opt">(</span>self<span class="hl opt">,</span> pretty<span class="hl opt">):</span>
+        values <span class="hl opt">=</span> pretty<span class="hl opt">.</span><span class="hl kwd">split</span><span class="hl opt">()</span>
+        <span class="hl kwa">return</span> values
+
+
+<span class="hl kwa">class</span> <span class="hl kwd">ApproximateQLearningTest</span><span class="hl opt">(</span>testClasses<span class="hl opt">.</span>TestCase<span class="hl opt">):</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">__init__</span><span class="hl opt">(</span>self<span class="hl opt">,</span> question<span class="hl opt">,</span> testDict<span class="hl opt">):</span>
+        <span class="hl kwb">super</span><span class="hl opt">(</span>ApproximateQLearningTest<span class="hl opt">,</span> self<span class="hl opt">).</span><span class="hl kwd">__init__</span><span class="hl opt">(</span>question<span class="hl opt">,</span> testDict<span class="hl opt">)</span>
+        self<span class="hl opt">.</span>discount <span class="hl opt">=</span> <span class="hl kwb">float</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'discount'</span><span class="hl opt">])</span>
+        self<span class="hl opt">.</span>grid <span class="hl opt">=</span> gridworld<span class="hl opt">.</span><span class="hl kwd">Gridworld</span><span class="hl opt">(</span><span class="hl kwd">parseGrid</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'grid'</span><span class="hl opt">]))</span>
+        <span class="hl kwa">if</span> <span class="hl str">'noise'</span> <span class="hl kwa">in</span> testDict<span class="hl opt">:</span> self<span class="hl opt">.</span>grid<span class="hl opt">.</span><span class="hl kwd">setNoise</span><span class="hl opt">(</span><span class="hl kwb">float</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'noise'</span><span class="hl opt">]))</span>
+        <span class="hl kwa">if</span> <span class="hl str">'livingReward'</span> <span class="hl kwa">in</span> testDict<span class="hl opt">:</span> self<span class="hl opt">.</span>grid<span class="hl opt">.</span><span class="hl kwd">setLivingReward</span><span class="hl opt">(</span><span class="hl kwb">float</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'livingReward'</span><span class="hl opt">]))</span>
+        self<span class="hl opt">.</span>grid <span class="hl opt">=</span> gridworld<span class="hl opt">.</span><span class="hl kwd">Gridworld</span><span class="hl opt">(</span><span class="hl kwd">parseGrid</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'grid'</span><span class="hl opt">]))</span>
+        self<span class="hl opt">.</span>env <span class="hl opt">=</span> gridworld<span class="hl opt">.</span><span class="hl kwd">GridworldEnvironment</span><span class="hl opt">(</span>self<span class="hl opt">.</span>grid<span class="hl opt">)</span>
+        self<span class="hl opt">.</span>epsilon <span class="hl opt">=</span> <span class="hl kwb">float</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'epsilon'</span><span class="hl opt">])</span>
+        self<span class="hl opt">.</span>learningRate <span class="hl opt">=</span> <span class="hl kwb">float</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'learningRate'</span><span class="hl opt">])</span>
+        self<span class="hl opt">.</span>extractor <span class="hl opt">=</span> <span class="hl str">'IdentityExtractor'</span>
+        <span class="hl kwa">if</span> <span class="hl str">'extractor'</span> <span class="hl kwa">in</span> testDict<span class="hl opt">:</span>
+            self<span class="hl opt">.</span>extractor <span class="hl opt">=</span> testDict<span class="hl opt">[</span><span class="hl str">'extractor'</span><span class="hl opt">]</span>
+        self<span class="hl opt">.</span>opts <span class="hl opt">= {</span><span class="hl str">'actionFn'</span><span class="hl opt">:</span> self<span class="hl opt">.</span>env<span class="hl opt">.</span>getPossibleActions<span class="hl opt">,</span> <span class="hl str">'epsilon'</span><span class="hl opt">:</span> self<span class="hl opt">.</span>epsilon<span class="hl opt">,</span> <span class="hl str">'gamma'</span><span class="hl opt">:</span> self<span class="hl opt">.</span>discount<span class="hl opt">,</span> <span class="hl str">'alpha'</span><span class="hl opt">:</span> self<span class="hl opt">.</span>learningRate<span class="hl opt">}</span>
+        numExperiences <span class="hl opt">=</span> <span class="hl kwb">int</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'numExperiences'</span><span class="hl opt">])</span>
+        maxPreExperiences <span class="hl opt">=</span> <span class="hl num">10</span>
+        self<span class="hl opt">.</span>numsExperiencesForDisplay <span class="hl opt">=</span> <span class="hl kwb">range</span><span class="hl opt">(</span><span class="hl kwb">min</span><span class="hl opt">(</span>numExperiences<span class="hl opt">,</span> maxPreExperiences<span class="hl opt">))</span>
+        self<span class="hl opt">.</span>testOutFile <span class="hl opt">=</span> testDict<span class="hl opt">[</span><span class="hl str">'test_out_file'</span><span class="hl opt">]</span>
+        <span class="hl kwa">if</span> maxPreExperiences <span class="hl opt">&lt;</span> numExperiences<span class="hl opt">:</span>
+            self<span class="hl opt">.</span>numsExperiencesForDisplay<span class="hl opt">.</span><span class="hl kwd">append</span><span class="hl opt">(</span>numExperiences<span class="hl opt">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">writeFailureFile</span><span class="hl opt">(</span>self<span class="hl opt">,</span> string<span class="hl opt">):</span>
+        with <span class="hl kwb">open</span><span class="hl opt">(</span>self<span class="hl opt">.</span>testOutFile<span class="hl opt">,</span> <span class="hl str">'w'</span><span class="hl opt">)</span> <span class="hl kwa">as</span> handle<span class="hl opt">:</span>
+            handle<span class="hl opt">.</span><span class="hl kwd">write</span><span class="hl opt">(</span>string<span class="hl opt">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">removeFailureFileIfExists</span><span class="hl opt">(</span>self<span class="hl opt">):</span>
+        <span class="hl kwa">if</span> os<span class="hl opt">.</span>path<span class="hl opt">.</span><span class="hl kwd">exists</span><span class="hl opt">(</span>self<span class="hl opt">.</span>testOutFile<span class="hl opt">):</span>
+            os<span class="hl opt">.</span><span class="hl kwd">remove</span><span class="hl opt">(</span>self<span class="hl opt">.</span>testOutFile<span class="hl opt">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">execute</span><span class="hl opt">(</span>self<span class="hl opt">,</span> grades<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> solutionDict<span class="hl opt">):</span>
+        failureOutputFileString <span class="hl opt">=</span> <span class="hl str">''</span>
+        failureOutputStdString <span class="hl opt">=</span> <span class="hl str">''</span>
+        <span class="hl kwa">for</span> n <span class="hl kwa">in</span> self<span class="hl opt">.</span>numsExperiencesForDisplay<span class="hl opt">:</span>
+            testPass<span class="hl opt">,</span> stdOutString<span class="hl opt">,</span> fileOutString <span class="hl opt">=</span> self<span class="hl opt">.</span><span class="hl kwd">executeNExperiences</span><span class="hl opt">(</span>grades<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> solutionDict<span class="hl opt">,</span> n<span class="hl opt">)</span>
+            failureOutputStdString <span class="hl opt">+=</span> stdOutString
+            failureOutputFileString <span class="hl opt">+=</span> fileOutString
+            <span class="hl kwa">if not</span> testPass<span class="hl opt">:</span>
+                self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span>failureOutputStdString<span class="hl opt">)</span>
+                self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">'For more details to help you debug, see test output file %s</span><span class="hl esc">\n\n</span><span class="hl str">'</span> <span class="hl opt">%</span> self<span class="hl opt">.</span>testOutFile<span class="hl opt">)</span>
+                self<span class="hl opt">.</span><span class="hl kwd">writeFailureFile</span><span class="hl opt">(</span>failureOutputFileString<span class="hl opt">)</span>
+                <span class="hl kwa">return</span> self<span class="hl opt">.</span><span class="hl kwd">testFail</span><span class="hl opt">(</span>grades<span class="hl opt">)</span>
+        self<span class="hl opt">.</span><span class="hl kwd">removeFailureFileIfExists</span><span class="hl opt">()</span>
+        <span class="hl kwa">return</span> self<span class="hl opt">.</span><span class="hl kwd">testPass</span><span class="hl opt">(</span>grades<span class="hl opt">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">executeNExperiences</span><span class="hl opt">(</span>self<span class="hl opt">,</span> grades<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> solutionDict<span class="hl opt">,</span> n<span class="hl opt">):</span>
+        testPass <span class="hl opt">=</span> <span class="hl kwa">True</span>
+        qValuesPretty<span class="hl opt">,</span> weights<span class="hl opt">,</span> actions<span class="hl opt">,</span> lastExperience <span class="hl opt">=</span> self<span class="hl opt">.</span><span class="hl kwd">runAgent</span><span class="hl opt">(</span>moduleDict<span class="hl opt">,</span> n<span class="hl opt">)</span>
+        stdOutString <span class="hl opt">=</span> <span class="hl str">''</span>
+        fileOutString <span class="hl opt">=</span> <span class="hl str">&quot;==================== Iteration %d ====================</span><span class="hl esc">\n</span><span class="hl str">&quot;</span> <span class="hl opt">%</span> n
+        <span class="hl kwa">if</span> lastExperience <span class="hl kwa">is not None</span><span class="hl opt">:</span>
+            fileOutString <span class="hl opt">+=</span> <span class="hl str">&quot;Agent observed the transition (startState = %s, action = %s, endState = %s, reward = %f)</span><span class="hl esc">\n\n</span><span class="hl str">&quot;</span> <span class="hl opt">%</span> lastExperience
+        weightsKey <span class="hl opt">=</span> <span class="hl str">'weights_k_%d'</span> <span class="hl opt">%</span> n
+        <span class="hl kwa">if</span> weights <span class="hl opt">==</span> <span class="hl kwb">eval</span><span class="hl opt">(</span>solutionDict<span class="hl opt">[</span>weightsKey<span class="hl opt">]):</span>
+            fileOutString <span class="hl opt">+=</span> <span class="hl str">&quot;Weights at iteration %d are correct.&quot;</span> <span class="hl opt">%</span> n
+            fileOutString <span class="hl opt">+=</span> <span class="hl str">&quot;   Student/correct solution:</span><span class="hl esc">\n\n</span><span class="hl str">%s</span><span class="hl esc">\n\n</span><span class="hl str">&quot;</span> <span class="hl opt">%</span> pp<span class="hl opt">.</span><span class="hl kwd">pformat</span><span class="hl opt">(</span>weights<span class="hl opt">)</span>
+        <span class="hl kwa">for</span> action <span class="hl kwa">in</span> actions<span class="hl opt">:</span>
+            qValuesKey <span class="hl opt">=</span> <span class="hl str">'q_values_k_%d_action_%s'</span> <span class="hl opt">% (</span>n<span class="hl opt">,</span> action<span class="hl opt">)</span>
+            qValues <span class="hl opt">=</span> qValuesPretty<span class="hl opt">[</span>action<span class="hl opt">]</span>
+            <span class="hl kwa">if</span> self<span class="hl opt">.</span><span class="hl kwd">comparePrettyValues</span><span class="hl opt">(</span>qValues<span class="hl opt">,</span> solutionDict<span class="hl opt">[</span>qValuesKey<span class="hl opt">]):</span>
+                fileOutString <span class="hl opt">+=</span> <span class="hl str">&quot;Q-Values at iteration %d for action '%s' are correct.&quot;</span> <span class="hl opt">% (</span>n<span class="hl opt">,</span> action<span class="hl opt">)</span>
+                fileOutString <span class="hl opt">+=</span> <span class="hl str">&quot;   Student/correct solution:</span><span class="hl esc">\n\t</span><span class="hl str">%s&quot;</span> <span class="hl opt">%</span> self<span class="hl opt">.</span><span class="hl kwd">prettyValueSolutionString</span><span class="hl opt">(</span>qValuesKey<span class="hl opt">,</span> qValues<span class="hl opt">)</span>
+            <span class="hl kwa">else</span><span class="hl opt">:</span>
+                testPass <span class="hl opt">=</span> <span class="hl kwa">False</span>
+                outString <span class="hl opt">=</span> <span class="hl str">&quot;Q-Values at iteration %d for action '%s' are NOT correct.&quot;</span> <span class="hl opt">% (</span>n<span class="hl opt">,</span> action<span class="hl opt">)</span>
+                outString <span class="hl opt">+=</span> <span class="hl str">&quot;   Student solution:</span><span class="hl esc">\n\t</span><span class="hl str">%s&quot;</span> <span class="hl opt">%</span> self<span class="hl opt">.</span><span class="hl kwd">prettyValueSolutionString</span><span class="hl opt">(</span>qValuesKey<span class="hl opt">,</span> qValues<span class="hl opt">)</span>
+                outString <span class="hl opt">+=</span> <span class="hl str">&quot;   Correct solution:</span><span class="hl esc">\n\t</span><span class="hl str">%s&quot;</span> <span class="hl opt">%</span> self<span class="hl opt">.</span><span class="hl kwd">prettyValueSolutionString</span><span class="hl opt">(</span>qValuesKey<span class="hl opt">,</span> solutionDict<span class="hl opt">[</span>qValuesKey<span class="hl opt">])</span>
+                stdOutString <span class="hl opt">+=</span> outString
+                fileOutString <span class="hl opt">+=</span> outString
+        <span class="hl kwa">return</span> testPass<span class="hl opt">,</span> stdOutString<span class="hl opt">,</span> fileOutString
+
+    <span class="hl kwa">def</span> <span class="hl kwd">writeSolution</span><span class="hl opt">(</span>self<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> filePath<span class="hl opt">):</span>
+        with <span class="hl kwb">open</span><span class="hl opt">(</span>filePath<span class="hl opt">,</span> <span class="hl str">'w'</span><span class="hl opt">)</span> <span class="hl kwa">as</span> handle<span class="hl opt">:</span>
+            <span class="hl kwa">for</span> n <span class="hl kwa">in</span> self<span class="hl opt">.</span>numsExperiencesForDisplay<span class="hl opt">:</span>
+                qValuesPretty<span class="hl opt">,</span> weights<span class="hl opt">,</span> actions<span class="hl opt">,</span> _ <span class="hl opt">=</span> self<span class="hl opt">.</span><span class="hl kwd">runAgent</span><span class="hl opt">(</span>moduleDict<span class="hl opt">,</span> n<span class="hl opt">)</span>
+                handle<span class="hl opt">.</span><span class="hl kwd">write</span><span class="hl opt">(</span>self<span class="hl opt">.</span><span class="hl kwd">prettyValueSolutionString</span><span class="hl opt">(</span><span class="hl str">'weights_k_%d'</span> <span class="hl opt">%</span> n<span class="hl opt">,</span> pp<span class="hl opt">.</span><span class="hl kwd">pformat</span><span class="hl opt">(</span>weights<span class="hl opt">)))</span>
+                <span class="hl kwa">for</span> action <span class="hl kwa">in</span> actions<span class="hl opt">:</span>
+                    handle<span class="hl opt">.</span><span class="hl kwd">write</span><span class="hl opt">(</span>self<span class="hl opt">.</span><span class="hl kwd">prettyValueSolutionString</span><span class="hl opt">(</span><span class="hl str">'q_values_k_%d_action_%s'</span> <span class="hl opt">% (</span>n<span class="hl opt">,</span> action<span class="hl opt">),</span> qValuesPretty<span class="hl opt">[</span>action<span class="hl opt">]))</span>
+        <span class="hl kwa">return True</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">runAgent</span><span class="hl opt">(</span>self<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> numExperiences<span class="hl opt">):</span>
+        agent <span class="hl opt">=</span> moduleDict<span class="hl opt">[</span><span class="hl str">'qlearningAgents'</span><span class="hl opt">].</span><span class="hl kwd">ApproximateQAgent</span><span class="hl opt">(</span>extractor<span class="hl opt">=</span>self<span class="hl opt">.</span>extractor<span class="hl opt">, **</span>self<span class="hl opt">.</span>opts<span class="hl opt">)</span>
+        states <span class="hl opt">=</span> <span class="hl kwb">filter</span><span class="hl opt">(</span><span class="hl kwa">lambda</span> state <span class="hl opt">:</span> <span class="hl kwb">len</span><span class="hl opt">(</span>self<span class="hl opt">.</span>grid<span class="hl opt">.</span><span class="hl kwd">getPossibleActions</span><span class="hl opt">(</span>state<span class="hl opt">)) &gt;</span> <span class="hl num">0</span><span class="hl opt">,</span> self<span class="hl opt">.</span>grid<span class="hl opt">.</span><span class="hl kwd">getStates</span><span class="hl opt">())</span>
+        states<span class="hl opt">.</span><span class="hl kwd">sort</span><span class="hl opt">()</span>
+        randObj <span class="hl opt">=</span> <span class="hl kwd">FixedRandom</span><span class="hl opt">().</span>random
+        <span class="hl slc"># choose a random start state and a random possible action from that state</span>
+        <span class="hl slc"># get the next state and reward from the transition function</span>
+        lastExperience <span class="hl opt">=</span> <span class="hl kwa">None</span>
+        <span class="hl kwa">for</span> i <span class="hl kwa">in</span> <span class="hl kwb">range</span><span class="hl opt">(</span>numExperiences<span class="hl opt">):</span>
+            startState <span class="hl opt">=</span> randObj<span class="hl opt">.</span><span class="hl kwd">choice</span><span class="hl opt">(</span>states<span class="hl opt">)</span>
+            action <span class="hl opt">=</span> randObj<span class="hl opt">.</span><span class="hl kwd">choice</span><span class="hl opt">(</span>self<span class="hl opt">.</span>grid<span class="hl opt">.</span><span class="hl kwd">getPossibleActions</span><span class="hl opt">(</span>startState<span class="hl opt">))</span>
+            <span class="hl opt">(</span>endState<span class="hl opt">,</span> reward<span class="hl opt">) =</span> self<span class="hl opt">.</span>env<span class="hl opt">.</span><span class="hl kwd">getRandomNextState</span><span class="hl opt">(</span>startState<span class="hl opt">,</span> action<span class="hl opt">,</span> randObj<span class="hl opt">=</span>randObj<span class="hl opt">)</span>
+            lastExperience <span class="hl opt">= (</span>startState<span class="hl opt">,</span> action<span class="hl opt">,</span> endState<span class="hl opt">,</span> reward<span class="hl opt">)</span>
+            agent<span class="hl opt">.</span><span class="hl kwd">update</span><span class="hl opt">(*</span>lastExperience<span class="hl opt">)</span>
+        actions <span class="hl opt">=</span> <span class="hl kwb">list</span><span class="hl opt">(</span><span class="hl kwb">reduce</span><span class="hl opt">(</span><span class="hl kwa">lambda</span> a<span class="hl opt">,</span> b<span class="hl opt">:</span> <span class="hl kwb">set</span><span class="hl opt">(</span>a<span class="hl opt">).</span><span class="hl kwd">union</span><span class="hl opt">(</span>b<span class="hl opt">), [</span>self<span class="hl opt">.</span>grid<span class="hl opt">.</span><span class="hl kwd">getPossibleActions</span><span class="hl opt">(</span>state<span class="hl opt">)</span> <span class="hl kwa">for</span> state <span class="hl kwa">in</span> states<span class="hl opt">]))</span>
+        qValues <span class="hl opt">= {}</span>
+        weights <span class="hl opt">=</span> agent<span class="hl opt">.</span><span class="hl kwd">getWeights</span><span class="hl opt">()</span>
+        <span class="hl kwa">for</span> state <span class="hl kwa">in</span> states<span class="hl opt">:</span>
+            possibleActions <span class="hl opt">=</span> self<span class="hl opt">.</span>grid<span class="hl opt">.</span><span class="hl kwd">getPossibleActions</span><span class="hl opt">(</span>state<span class="hl opt">)</span>
+            <span class="hl kwa">for</span> action <span class="hl kwa">in</span> actions<span class="hl opt">:</span>
+                <span class="hl kwa">if not</span> qValues<span class="hl opt">.</span><span class="hl kwd">has_key</span><span class="hl opt">(</span>action<span class="hl opt">):</span>
+                    qValues<span class="hl opt">[</span>action<span class="hl opt">] = {}</span>
+                <span class="hl kwa">if</span> action <span class="hl kwa">in</span> possibleActions<span class="hl opt">:</span>
+                    qValues<span class="hl opt">[</span>action<span class="hl opt">][</span>state<span class="hl opt">] =</span> agent<span class="hl opt">.</span><span class="hl kwd">getQValue</span><span class="hl opt">(</span>state<span class="hl opt">,</span> action<span class="hl opt">)</span>
+                <span class="hl kwa">else</span><span class="hl opt">:</span>
+                    qValues<span class="hl opt">[</span>action<span class="hl opt">][</span>state<span class="hl opt">] =</span> <span class="hl kwa">None</span>
+        qValuesPretty <span class="hl opt">= {}</span>
+        <span class="hl kwa">for</span> action <span class="hl kwa">in</span> actions<span class="hl opt">:</span>
+            qValuesPretty<span class="hl opt">[</span>action<span class="hl opt">] =</span> self<span class="hl opt">.</span><span class="hl kwd">prettyValues</span><span class="hl opt">(</span>qValues<span class="hl opt">[</span>action<span class="hl opt">])</span>
+        <span class="hl kwa">return</span> <span class="hl opt">(</span>qValuesPretty<span class="hl opt">,</span> weights<span class="hl opt">,</span> actions<span class="hl opt">,</span> lastExperience<span class="hl opt">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">prettyPrint</span><span class="hl opt">(</span>self<span class="hl opt">,</span> elements<span class="hl opt">,</span> formatString<span class="hl opt">):</span>
+        pretty <span class="hl opt">=</span> <span class="hl str">''</span>
+        states <span class="hl opt">=</span> self<span class="hl opt">.</span>grid<span class="hl opt">.</span><span class="hl kwd">getStates</span><span class="hl opt">()</span>
+        <span class="hl kwa">for</span> ybar <span class="hl kwa">in</span> <span class="hl kwb">range</span><span class="hl opt">(</span>self<span class="hl opt">.</span>grid<span class="hl opt">.</span>grid<span class="hl opt">.</span>height<span class="hl opt">):</span>
+            y <span class="hl opt">=</span> self<span class="hl opt">.</span>grid<span class="hl opt">.</span>grid<span class="hl opt">.</span>height<span class="hl opt">-</span><span class="hl num">1</span><span class="hl opt">-</span>ybar
+            row <span class="hl opt">= []</span>
+            <span class="hl kwa">for</span> x <span class="hl kwa">in</span> <span class="hl kwb">range</span><span class="hl opt">(</span>self<span class="hl opt">.</span>grid<span class="hl opt">.</span>grid<span class="hl opt">.</span>width<span class="hl opt">):</span>
+                <span class="hl kwa">if</span> <span class="hl opt">(</span>x<span class="hl opt">,</span> y<span class="hl opt">)</span> <span class="hl kwa">in</span> states<span class="hl opt">:</span>
+                    value <span class="hl opt">=</span> elements<span class="hl opt">[(</span>x<span class="hl opt">,</span> y<span class="hl opt">)]</span>
+                    <span class="hl kwa">if</span> value <span class="hl kwa">is None</span><span class="hl opt">:</span>
+                        row<span class="hl opt">.</span><span class="hl kwd">append</span><span class="hl opt">(</span><span class="hl str">'   illegal'</span><span class="hl opt">)</span>
+                    <span class="hl kwa">else</span><span class="hl opt">:</span>
+                        row<span class="hl opt">.</span><span class="hl kwd">append</span><span class="hl opt">(</span>formatString<span class="hl opt">.</span><span class="hl kwd">format</span><span class="hl opt">(</span>elements<span class="hl opt">[(</span>x<span class="hl opt">,</span>y<span class="hl opt">)]))</span>
+                <span class="hl kwa">else</span><span class="hl opt">:</span>
+                    row<span class="hl opt">.</span><span class="hl kwd">append</span><span class="hl opt">(</span><span class="hl str">'_'</span> <span class="hl opt">*</span> <span class="hl num">10</span><span class="hl opt">)</span>
+            pretty <span class="hl opt">+=</span> <span class="hl str">'        %s</span><span class="hl esc">\n</span><span class="hl str">'</span> <span class="hl opt">% (</span><span class="hl str">&quot;   &quot;</span><span class="hl opt">.</span><span class="hl kwd">join</span><span class="hl opt">(</span>row<span class="hl opt">), )</span>
+        pretty <span class="hl opt">+=</span> <span class="hl str">'</span><span class="hl esc">\n</span><span class="hl str">'</span>
+        <span class="hl kwa">return</span> pretty
+
+    <span class="hl kwa">def</span> <span class="hl kwd">prettyValues</span><span class="hl opt">(</span>self<span class="hl opt">,</span> values<span class="hl opt">):</span>
+        <span class="hl kwa">return</span> self<span class="hl opt">.</span><span class="hl kwd">prettyPrint</span><span class="hl opt">(</span>values<span class="hl opt">,</span> <span class="hl str">'{0:10.4f}'</span><span class="hl opt">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">prettyPolicy</span><span class="hl opt">(</span>self<span class="hl opt">,</span> policy<span class="hl opt">):</span>
+        <span class="hl kwa">return</span> self<span class="hl opt">.</span><span class="hl kwd">prettyPrint</span><span class="hl opt">(</span>policy<span class="hl opt">,</span> <span class="hl str">'{0:10s}'</span><span class="hl opt">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">prettyValueSolutionString</span><span class="hl opt">(</span>self<span class="hl opt">,</span> name<span class="hl opt">,</span> pretty<span class="hl opt">):</span>
+        <span class="hl kwa">return</span> <span class="hl str">'%s: &quot;&quot;&quot;</span><span class="hl esc">\n</span><span class="hl str">%s</span><span class="hl esc">\n</span><span class="hl str">&quot;&quot;&quot;</span><span class="hl esc">\n\n</span><span class="hl str">'</span> <span class="hl opt">% (</span>name<span class="hl opt">,</span> pretty<span class="hl opt">.</span><span class="hl kwd">rstrip</span><span class="hl opt">())</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">comparePrettyValues</span><span class="hl opt">(</span>self<span class="hl opt">,</span> aPretty<span class="hl opt">,</span> bPretty<span class="hl opt">,</span> tolerance<span class="hl opt">=</span><span class="hl num">0.01</span><span class="hl opt">):</span>
+        aList <span class="hl opt">=</span> self<span class="hl opt">.</span><span class="hl kwd">parsePrettyValues</span><span class="hl opt">(</span>aPretty<span class="hl opt">)</span>
+        bList <span class="hl opt">=</span> self<span class="hl opt">.</span><span class="hl kwd">parsePrettyValues</span><span class="hl opt">(</span>bPretty<span class="hl opt">)</span>
+        <span class="hl kwa">if</span> <span class="hl kwb">len</span><span class="hl opt">(</span>aList<span class="hl opt">) !=</span> <span class="hl kwb">len</span><span class="hl opt">(</span>bList<span class="hl opt">):</span>
+            <span class="hl kwa">return False</span>
+        <span class="hl kwa">for</span> a<span class="hl opt">,</span> b <span class="hl kwa">in</span> <span class="hl kwb">zip</span><span class="hl opt">(</span>aList<span class="hl opt">,</span> bList<span class="hl opt">):</span>
+            <span class="hl kwa">try</span><span class="hl opt">:</span>
+                aNum <span class="hl opt">=</span> <span class="hl kwb">float</span><span class="hl opt">(</span>a<span class="hl opt">)</span>
+                bNum <span class="hl opt">=</span> <span class="hl kwb">float</span><span class="hl opt">(</span>b<span class="hl opt">)</span>
+                <span class="hl slc"># error = abs((aNum - bNum) / ((aNum + bNum) / 2.0))</span>
+                error <span class="hl opt">=</span> <span class="hl kwb">abs</span><span class="hl opt">(</span>aNum <span class="hl opt">-</span> bNum<span class="hl opt">)</span>
+                <span class="hl kwa">if</span> error <span class="hl opt">&gt;</span> tolerance<span class="hl opt">:</span>
+                    <span class="hl kwa">return False</span>
+            <span class="hl kwa">except</span> <span class="hl kwc">ValueError</span><span class="hl opt">:</span>
+                <span class="hl kwa">if</span> a<span class="hl opt">.</span><span class="hl kwd">strip</span><span class="hl opt">() !=</span> b<span class="hl opt">.</span><span class="hl kwd">strip</span><span class="hl opt">():</span>
+                    <span class="hl kwa">return False</span>
+        <span class="hl kwa">return True</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">parsePrettyValues</span><span class="hl opt">(</span>self<span class="hl opt">,</span> pretty<span class="hl opt">):</span>
+        values <span class="hl opt">=</span> pretty<span class="hl opt">.</span><span class="hl kwd">split</span><span class="hl opt">()</span>
+        <span class="hl kwa">return</span> values
+
+
+<span class="hl kwa">class</span> <span class="hl kwd">QLearningTest</span><span class="hl opt">(</span>testClasses<span class="hl opt">.</span>TestCase<span class="hl opt">):</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">__init__</span><span class="hl opt">(</span>self<span class="hl opt">,</span> question<span class="hl opt">,</span> testDict<span class="hl opt">):</span>
+        <span class="hl kwb">super</span><span class="hl opt">(</span>QLearningTest<span class="hl opt">,</span> self<span class="hl opt">).</span><span class="hl kwd">__init__</span><span class="hl opt">(</span>question<span class="hl opt">,</span> testDict<span class="hl opt">)</span>
+        self<span class="hl opt">.</span>discount <span class="hl opt">=</span> <span class="hl kwb">float</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'discount'</span><span class="hl opt">])</span>
+        self<span class="hl opt">.</span>grid <span class="hl opt">=</span> gridworld<span class="hl opt">.</span><span class="hl kwd">Gridworld</span><span class="hl opt">(</span><span class="hl kwd">parseGrid</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'grid'</span><span class="hl opt">]))</span>
+        <span class="hl kwa">if</span> <span class="hl str">'noise'</span> <span class="hl kwa">in</span> testDict<span class="hl opt">:</span> self<span class="hl opt">.</span>grid<span class="hl opt">.</span><span class="hl kwd">setNoise</span><span class="hl opt">(</span><span class="hl kwb">float</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'noise'</span><span class="hl opt">]))</span>
+        <span class="hl kwa">if</span> <span class="hl str">'livingReward'</span> <span class="hl kwa">in</span> testDict<span class="hl opt">:</span> self<span class="hl opt">.</span>grid<span class="hl opt">.</span><span class="hl kwd">setLivingReward</span><span class="hl opt">(</span><span class="hl kwb">float</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'livingReward'</span><span class="hl opt">]))</span>
+        self<span class="hl opt">.</span>grid <span class="hl opt">=</span> gridworld<span class="hl opt">.</span><span class="hl kwd">Gridworld</span><span class="hl opt">(</span><span class="hl kwd">parseGrid</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'grid'</span><span class="hl opt">]))</span>
+        self<span class="hl opt">.</span>env <span class="hl opt">=</span> gridworld<span class="hl opt">.</span><span class="hl kwd">GridworldEnvironment</span><span class="hl opt">(</span>self<span class="hl opt">.</span>grid<span class="hl opt">)</span>
+        self<span class="hl opt">.</span>epsilon <span class="hl opt">=</span> <span class="hl kwb">float</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'epsilon'</span><span class="hl opt">])</span>
+        self<span class="hl opt">.</span>learningRate <span class="hl opt">=</span> <span class="hl kwb">float</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'learningRate'</span><span class="hl opt">])</span>
+        self<span class="hl opt">.</span>opts <span class="hl opt">= {</span><span class="hl str">'actionFn'</span><span class="hl opt">:</span> self<span class="hl opt">.</span>env<span class="hl opt">.</span>getPossibleActions<span class="hl opt">,</span> <span class="hl str">'epsilon'</span><span class="hl opt">:</span> self<span class="hl opt">.</span>epsilon<span class="hl opt">,</span> <span class="hl str">'gamma'</span><span class="hl opt">:</span> self<span class="hl opt">.</span>discount<span class="hl opt">,</span> <span class="hl str">'alpha'</span><span class="hl opt">:</span> self<span class="hl opt">.</span>learningRate<span class="hl opt">}</span>
+        numExperiences <span class="hl opt">=</span> <span class="hl kwb">int</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'numExperiences'</span><span class="hl opt">])</span>
+        maxPreExperiences <span class="hl opt">=</span> <span class="hl num">10</span>
+        self<span class="hl opt">.</span>numsExperiencesForDisplay <span class="hl opt">=</span> <span class="hl kwb">range</span><span class="hl opt">(</span><span class="hl kwb">min</span><span class="hl opt">(</span>numExperiences<span class="hl opt">,</span> maxPreExperiences<span class="hl opt">))</span>
+        self<span class="hl opt">.</span>testOutFile <span class="hl opt">=</span> testDict<span class="hl opt">[</span><span class="hl str">'test_out_file'</span><span class="hl opt">]</span>
+        <span class="hl kwa">if</span> maxPreExperiences <span class="hl opt">&lt;</span> numExperiences<span class="hl opt">:</span>
+            self<span class="hl opt">.</span>numsExperiencesForDisplay<span class="hl opt">.</span><span class="hl kwd">append</span><span class="hl opt">(</span>numExperiences<span class="hl opt">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">writeFailureFile</span><span class="hl opt">(</span>self<span class="hl opt">,</span> string<span class="hl opt">):</span>
+        with <span class="hl kwb">open</span><span class="hl opt">(</span>self<span class="hl opt">.</span>testOutFile<span class="hl opt">,</span> <span class="hl str">'w'</span><span class="hl opt">)</span> <span class="hl kwa">as</span> handle<span class="hl opt">:</span>
+            handle<span class="hl opt">.</span><span class="hl kwd">write</span><span class="hl opt">(</span>string<span class="hl opt">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">removeFailureFileIfExists</span><span class="hl opt">(</span>self<span class="hl opt">):</span>
+        <span class="hl kwa">if</span> os<span class="hl opt">.</span>path<span class="hl opt">.</span><span class="hl kwd">exists</span><span class="hl opt">(</span>self<span class="hl opt">.</span>testOutFile<span class="hl opt">):</span>
+            os<span class="hl opt">.</span><span class="hl kwd">remove</span><span class="hl opt">(</span>self<span class="hl opt">.</span>testOutFile<span class="hl opt">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">execute</span><span class="hl opt">(</span>self<span class="hl opt">,</span> grades<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> solutionDict<span class="hl opt">):</span>
+        failureOutputFileString <span class="hl opt">=</span> <span class="hl str">''</span>
+        failureOutputStdString <span class="hl opt">=</span> <span class="hl str">''</span>
+        <span class="hl kwa">for</span> n <span class="hl kwa">in</span> self<span class="hl opt">.</span>numsExperiencesForDisplay<span class="hl opt">:</span>
+            checkValuesAndPolicy <span class="hl opt">= (</span>n <span class="hl opt">==</span> self<span class="hl opt">.</span>numsExperiencesForDisplay<span class="hl opt">[-</span><span class="hl num">1</span><span class="hl opt">])</span>
+            testPass<span class="hl opt">,</span> stdOutString<span class="hl opt">,</span> fileOutString <span class="hl opt">=</span> self<span class="hl opt">.</span><span class="hl kwd">executeNExperiences</span><span class="hl opt">(</span>grades<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> solutionDict<span class="hl opt">,</span> n<span class="hl opt">,</span> checkValuesAndPolicy<span class="hl opt">)</span>
+            failureOutputStdString <span class="hl opt">+=</span> stdOutString
+            failureOutputFileString <span class="hl opt">+=</span> fileOutString
+            <span class="hl kwa">if not</span> testPass<span class="hl opt">:</span>
+                self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span>failureOutputStdString<span class="hl opt">)</span>
+                self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">'For more details to help you debug, see test output file %s</span><span class="hl esc">\n\n</span><span class="hl str">'</span> <span class="hl opt">%</span> self<span class="hl opt">.</span>testOutFile<span class="hl opt">)</span>
+                self<span class="hl opt">.</span><span class="hl kwd">writeFailureFile</span><span class="hl opt">(</span>failureOutputFileString<span class="hl opt">)</span>
+                <span class="hl kwa">return</span> self<span class="hl opt">.</span><span class="hl kwd">testFail</span><span class="hl opt">(</span>grades<span class="hl opt">)</span>
+        self<span class="hl opt">.</span><span class="hl kwd">removeFailureFileIfExists</span><span class="hl opt">()</span>
+        <span class="hl kwa">return</span> self<span class="hl opt">.</span><span class="hl kwd">testPass</span><span class="hl opt">(</span>grades<span class="hl opt">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">executeNExperiences</span><span class="hl opt">(</span>self<span class="hl opt">,</span> grades<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> solutionDict<span class="hl opt">,</span> n<span class="hl opt">,</span> checkValuesAndPolicy<span class="hl opt">):</span>
+        testPass <span class="hl opt">=</span> <span class="hl kwa">True</span>
+        valuesPretty<span class="hl opt">,</span> qValuesPretty<span class="hl opt">,</span> actions<span class="hl opt">,</span> policyPretty<span class="hl opt">,</span> lastExperience <span class="hl opt">=</span> self<span class="hl opt">.</span><span class="hl kwd">runAgent</span><span class="hl opt">(</span>moduleDict<span class="hl opt">,</span> n<span class="hl opt">)</span>
+        stdOutString <span class="hl opt">=</span> <span class="hl str">''</span>
+        fileOutString <span class="hl opt">=</span> <span class="hl str">&quot;==================== Iteration %d ====================</span><span class="hl esc">\n</span><span class="hl str">&quot;</span> <span class="hl opt">%</span> n
+        <span class="hl kwa">if</span> lastExperience <span class="hl kwa">is not None</span><span class="hl opt">:</span>
+            fileOutString <span class="hl opt">+=</span> <span class="hl str">&quot;Agent observed the transition (startState = %s, action = %s, endState = %s, reward = %f)</span><span class="hl esc">\n\n\n</span><span class="hl str">&quot;</span> <span class="hl opt">%</span> lastExperience
+        <span class="hl kwa">for</span> action <span class="hl kwa">in</span> actions<span class="hl opt">:</span>
+            qValuesKey <span class="hl opt">=</span> <span class="hl str">'q_values_k_%d_action_%s'</span> <span class="hl opt">% (</span>n<span class="hl opt">,</span> action<span class="hl opt">)</span>
+            qValues <span class="hl opt">=</span> qValuesPretty<span class="hl opt">[</span>action<span class="hl opt">]</span>
+            <span class="hl kwa">if</span> self<span class="hl opt">.</span><span class="hl kwd">comparePrettyValues</span><span class="hl opt">(</span>qValues<span class="hl opt">,</span> solutionDict<span class="hl opt">[</span>qValuesKey<span class="hl opt">]):</span>
+                fileOutString <span class="hl opt">+=</span> <span class="hl str">&quot;Q-Values at iteration %d for action '%s' are correct.&quot;</span> <span class="hl opt">% (</span>n<span class="hl opt">,</span> action<span class="hl opt">)</span>
+                fileOutString <span class="hl opt">+=</span> <span class="hl str">&quot;   Student/correct solution:</span><span class="hl esc">\n\t</span><span class="hl str">%s&quot;</span> <span class="hl opt">%</span> self<span class="hl opt">.</span><span class="hl kwd">prettyValueSolutionString</span><span class="hl opt">(</span>qValuesKey<span class="hl opt">,</span> qValues<span class="hl opt">)</span>
+            <span class="hl kwa">else</span><span class="hl opt">:</span>
+                testPass <span class="hl opt">=</span> <span class="hl kwa">False</span>
+                outString <span class="hl opt">=</span> <span class="hl str">&quot;Q-Values at iteration %d for action '%s' are NOT correct.&quot;</span> <span class="hl opt">% (</span>n<span class="hl opt">,</span> action<span class="hl opt">)</span>
+                outString <span class="hl opt">+=</span> <span class="hl str">&quot;   Student solution:</span><span class="hl esc">\n\t</span><span class="hl str">%s&quot;</span> <span class="hl opt">%</span> self<span class="hl opt">.</span><span class="hl kwd">prettyValueSolutionString</span><span class="hl opt">(</span>qValuesKey<span class="hl opt">,</span> qValues<span class="hl opt">)</span>
+                outString <span class="hl opt">+=</span> <span class="hl str">&quot;   Correct solution:</span><span class="hl esc">\n\t</span><span class="hl str">%s&quot;</span> <span class="hl opt">%</span> self<span class="hl opt">.</span><span class="hl kwd">prettyValueSolutionString</span><span class="hl opt">(</span>qValuesKey<span class="hl opt">,</span> solutionDict<span class="hl opt">[</span>qValuesKey<span class="hl opt">])</span>
+                stdOutString <span class="hl opt">+=</span> outString
+                fileOutString <span class="hl opt">+=</span> outString
+        <span class="hl kwa">if</span> checkValuesAndPolicy<span class="hl opt">:</span>
+            <span class="hl kwa">if not</span> self<span class="hl opt">.</span><span class="hl kwd">comparePrettyValues</span><span class="hl opt">(</span>valuesPretty<span class="hl opt">,</span> solutionDict<span class="hl opt">[</span><span class="hl str">'values'</span><span class="hl opt">]):</span>
+                testPass <span class="hl opt">=</span> <span class="hl kwa">False</span>
+                outString <span class="hl opt">=</span> <span class="hl str">&quot;Values are NOT correct.&quot;</span>
+                outString <span class="hl opt">+=</span> <span class="hl str">&quot;   Student solution:</span><span class="hl esc">\n\t</span><span class="hl str">%s&quot;</span> <span class="hl opt">%</span> self<span class="hl opt">.</span><span class="hl kwd">prettyValueSolutionString</span><span class="hl opt">(</span><span class="hl str">'values'</span><span class="hl opt">,</span> valuesPretty<span class="hl opt">)</span>
+                outString <span class="hl opt">+=</span> <span class="hl str">&quot;   Correct solution:</span><span class="hl esc">\n\t</span><span class="hl str">%s&quot;</span> <span class="hl opt">%</span> self<span class="hl opt">.</span><span class="hl kwd">prettyValueSolutionString</span><span class="hl opt">(</span><span class="hl str">'values'</span><span class="hl opt">,</span> solutionDict<span class="hl opt">[</span><span class="hl str">'values'</span><span class="hl opt">])</span>
+                stdOutString <span class="hl opt">+=</span> outString
+                fileOutString <span class="hl opt">+=</span> outString
+            <span class="hl kwa">if not</span> self<span class="hl opt">.</span><span class="hl kwd">comparePrettyValues</span><span class="hl opt">(</span>policyPretty<span class="hl opt">,</span> solutionDict<span class="hl opt">[</span><span class="hl str">'policy'</span><span class="hl opt">]):</span>
+                testPass <span class="hl opt">=</span> <span class="hl kwa">False</span>
+                outString <span class="hl opt">=</span> <span class="hl str">&quot;Policy is NOT correct.&quot;</span>
+                outString <span class="hl opt">+=</span> <span class="hl str">&quot;   Student solution:</span><span class="hl esc">\n\t</span><span class="hl str">%s&quot;</span> <span class="hl opt">%</span> self<span class="hl opt">.</span><span class="hl kwd">prettyValueSolutionString</span><span class="hl opt">(</span><span class="hl str">'policy'</span><span class="hl opt">,</span> policyPretty<span class="hl opt">)</span>
+                outString <span class="hl opt">+=</span> <span class="hl str">&quot;   Correct solution:</span><span class="hl esc">\n\t</span><span class="hl str">%s&quot;</span> <span class="hl opt">%</span> self<span class="hl opt">.</span><span class="hl kwd">prettyValueSolutionString</span><span class="hl opt">(</span><span class="hl str">'policy'</span><span class="hl opt">,</span> solutionDict<span class="hl opt">[</span><span class="hl str">'policy'</span><span class="hl opt">])</span>
+                stdOutString <span class="hl opt">+=</span> outString
+                fileOutString <span class="hl opt">+=</span> outString
+        <span class="hl kwa">return</span> testPass<span class="hl opt">,</span> stdOutString<span class="hl opt">,</span> fileOutString
+
+    <span class="hl kwa">def</span> <span class="hl kwd">writeSolution</span><span class="hl opt">(</span>self<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> filePath<span class="hl opt">):</span>
+        with <span class="hl kwb">open</span><span class="hl opt">(</span>filePath<span class="hl opt">,</span> <span class="hl str">'w'</span><span class="hl opt">)</span> <span class="hl kwa">as</span> handle<span class="hl opt">:</span>
+            valuesPretty <span class="hl opt">=</span> <span class="hl str">''</span>
+            policyPretty <span class="hl opt">=</span> <span class="hl str">''</span>
+            <span class="hl kwa">for</span> n <span class="hl kwa">in</span> self<span class="hl opt">.</span>numsExperiencesForDisplay<span class="hl opt">:</span>
+                valuesPretty<span class="hl opt">,</span> qValuesPretty<span class="hl opt">,</span> actions<span class="hl opt">,</span> policyPretty<span class="hl opt">,</span> _ <span class="hl opt">=</span> self<span class="hl opt">.</span><span class="hl kwd">runAgent</span><span class="hl opt">(</span>moduleDict<span class="hl opt">,</span> n<span class="hl opt">)</span>
+                <span class="hl kwa">for</span> action <span class="hl kwa">in</span> actions<span class="hl opt">:</span>
+                    handle<span class="hl opt">.</span><span class="hl kwd">write</span><span class="hl opt">(</span>self<span class="hl opt">.</span><span class="hl kwd">prettyValueSolutionString</span><span class="hl opt">(</span><span class="hl str">'q_values_k_%d_action_%s'</span> <span class="hl opt">% (</span>n<span class="hl opt">,</span> action<span class="hl opt">),</span> qValuesPretty<span class="hl opt">[</span>action<span class="hl opt">]))</span>
+            handle<span class="hl opt">.</span><span class="hl kwd">write</span><span class="hl opt">(</span>self<span class="hl opt">.</span><span class="hl kwd">prettyValueSolutionString</span><span class="hl opt">(</span><span class="hl str">'values'</span><span class="hl opt">,</span> valuesPretty<span class="hl opt">))</span>
+            handle<span class="hl opt">.</span><span class="hl kwd">write</span><span class="hl opt">(</span>self<span class="hl opt">.</span><span class="hl kwd">prettyValueSolutionString</span><span class="hl opt">(</span><span class="hl str">'policy'</span><span class="hl opt">,</span> policyPretty<span class="hl opt">))</span>
+        <span class="hl kwa">return True</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">runAgent</span><span class="hl opt">(</span>self<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> numExperiences<span class="hl opt">):</span>
+        agent <span class="hl opt">=</span> moduleDict<span class="hl opt">[</span><span class="hl str">'qlearningAgents'</span><span class="hl opt">].</span><span class="hl kwd">QLearningAgent</span><span class="hl opt">(**</span>self<span class="hl opt">.</span>opts<span class="hl opt">)</span>
+        states <span class="hl opt">=</span> <span class="hl kwb">filter</span><span class="hl opt">(</span><span class="hl kwa">lambda</span> state <span class="hl opt">:</span> <span class="hl kwb">len</span><span class="hl opt">(</span>self<span class="hl opt">.</span>grid<span class="hl opt">.</span><span class="hl kwd">getPossibleActions</span><span class="hl opt">(</span>state<span class="hl opt">)) &gt;</span> <span class="hl num">0</span><span class="hl opt">,</span> self<span class="hl opt">.</span>grid<span class="hl opt">.</span><span class="hl kwd">getStates</span><span class="hl opt">())</span>
+        states<span class="hl opt">.</span><span class="hl kwd">sort</span><span class="hl opt">()</span>
+        randObj <span class="hl opt">=</span> <span class="hl kwd">FixedRandom</span><span class="hl opt">().</span>random
+        <span class="hl slc"># choose a random start state and a random possible action from that state</span>
+        <span class="hl slc"># get the next state and reward from the transition function</span>
+        lastExperience <span class="hl opt">=</span> <span class="hl kwa">None</span>
+        <span class="hl kwa">for</span> i <span class="hl kwa">in</span> <span class="hl kwb">range</span><span class="hl opt">(</span>numExperiences<span class="hl opt">):</span>
+            startState <span class="hl opt">=</span> randObj<span class="hl opt">.</span><span class="hl kwd">choice</span><span class="hl opt">(</span>states<span class="hl opt">)</span>
+            action <span class="hl opt">=</span> randObj<span class="hl opt">.</span><span class="hl kwd">choice</span><span class="hl opt">(</span>self<span class="hl opt">.</span>grid<span class="hl opt">.</span><span class="hl kwd">getPossibleActions</span><span class="hl opt">(</span>startState<span class="hl opt">))</span>
+            <span class="hl opt">(</span>endState<span class="hl opt">,</span> reward<span class="hl opt">) =</span> self<span class="hl opt">.</span>env<span class="hl opt">.</span><span class="hl kwd">getRandomNextState</span><span class="hl opt">(</span>startState<span class="hl opt">,</span> action<span class="hl opt">,</span> randObj<span class="hl opt">=</span>randObj<span class="hl opt">)</span>
+            lastExperience <span class="hl opt">= (</span>startState<span class="hl opt">,</span> action<span class="hl opt">,</span> endState<span class="hl opt">,</span> reward<span class="hl opt">)</span>
+            agent<span class="hl opt">.</span><span class="hl kwd">update</span><span class="hl opt">(*</span>lastExperience<span class="hl opt">)</span>
+        actions <span class="hl opt">=</span> <span class="hl kwb">list</span><span class="hl opt">(</span><span class="hl kwb">reduce</span><span class="hl opt">(</span><span class="hl kwa">lambda</span> a<span class="hl opt">,</span> b<span class="hl opt">:</span> <span class="hl kwb">set</span><span class="hl opt">(</span>a<span class="hl opt">).</span><span class="hl kwd">union</span><span class="hl opt">(</span>b<span class="hl opt">), [</span>self<span class="hl opt">.</span>grid<span class="hl opt">.</span><span class="hl kwd">getPossibleActions</span><span class="hl opt">(</span>state<span class="hl opt">)</span> <span class="hl kwa">for</span> state <span class="hl kwa">in</span> states<span class="hl opt">]))</span>
+        values <span class="hl opt">= {}</span>
+        qValues <span class="hl opt">= {}</span>
+        policy <span class="hl opt">= {}</span>
+        <span class="hl kwa">for</span> state <span class="hl kwa">in</span> states<span class="hl opt">:</span>
+            values<span class="hl opt">[</span>state<span class="hl opt">] =</span> agent<span class="hl opt">.</span><span class="hl kwd">computeValueFromQValues</span><span class="hl opt">(</span>state<span class="hl opt">)</span>
+            policy<span class="hl opt">[</span>state<span class="hl opt">] =</span> agent<span class="hl opt">.</span><span class="hl kwd">computeActionFromQValues</span><span class="hl opt">(</span>state<span class="hl opt">)</span>
+            possibleActions <span class="hl opt">=</span> self<span class="hl opt">.</span>grid<span class="hl opt">.</span><span class="hl kwd">getPossibleActions</span><span class="hl opt">(</span>state<span class="hl opt">)</span>
+            <span class="hl kwa">for</span> action <span class="hl kwa">in</span> actions<span class="hl opt">:</span>
+                <span class="hl kwa">if not</span> qValues<span class="hl opt">.</span><span class="hl kwd">has_key</span><span class="hl opt">(</span>action<span class="hl opt">):</span>
+                    qValues<span class="hl opt">[</span>action<span class="hl opt">] = {}</span>
+                <span class="hl kwa">if</span> action <span class="hl kwa">in</span> possibleActions<span class="hl opt">:</span>
+                    qValues<span class="hl opt">[</span>action<span class="hl opt">][</span>state<span class="hl opt">] =</span> agent<span class="hl opt">.</span><span class="hl kwd">getQValue</span><span class="hl opt">(</span>state<span class="hl opt">,</span> action<span class="hl opt">)</span>
+                <span class="hl kwa">else</span><span class="hl opt">:</span>
+                    qValues<span class="hl opt">[</span>action<span class="hl opt">][</span>state<span class="hl opt">] =</span> <span class="hl kwa">None</span>
+        valuesPretty <span class="hl opt">=</span> self<span class="hl opt">.</span><span class="hl kwd">prettyValues</span><span class="hl opt">(</span>values<span class="hl opt">)</span>
+        policyPretty <span class="hl opt">=</span> self<span class="hl opt">.</span><span class="hl kwd">prettyPolicy</span><span class="hl opt">(</span>policy<span class="hl opt">)</span>
+        qValuesPretty <span class="hl opt">= {}</span>
+        <span class="hl kwa">for</span> action <span class="hl kwa">in</span> actions<span class="hl opt">:</span>
+            qValuesPretty<span class="hl opt">[</span>action<span class="hl opt">] =</span> self<span class="hl opt">.</span><span class="hl kwd">prettyValues</span><span class="hl opt">(</span>qValues<span class="hl opt">[</span>action<span class="hl opt">])</span>
+        <span class="hl kwa">return</span> <span class="hl opt">(</span>valuesPretty<span class="hl opt">,</span> qValuesPretty<span class="hl opt">,</span> actions<span class="hl opt">,</span> policyPretty<span class="hl opt">,</span> lastExperience<span class="hl opt">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">prettyPrint</span><span class="hl opt">(</span>self<span class="hl opt">,</span> elements<span class="hl opt">,</span> formatString<span class="hl opt">):</span>
+        pretty <span class="hl opt">=</span> <span class="hl str">''</span>
+        states <span class="hl opt">=</span> self<span class="hl opt">.</span>grid<span class="hl opt">.</span><span class="hl kwd">getStates</span><span class="hl opt">()</span>
+        <span class="hl kwa">for</span> ybar <span class="hl kwa">in</span> <span class="hl kwb">range</span><span class="hl opt">(</span>self<span class="hl opt">.</span>grid<span class="hl opt">.</span>grid<span class="hl opt">.</span>height<span class="hl opt">):</span>
+            y <span class="hl opt">=</span> self<span class="hl opt">.</span>grid<span class="hl opt">.</span>grid<span class="hl opt">.</span>height<span class="hl opt">-</span><span class="hl num">1</span><span class="hl opt">-</span>ybar
+            row <span class="hl opt">= []</span>
+            <span class="hl kwa">for</span> x <span class="hl kwa">in</span> <span class="hl kwb">range</span><span class="hl opt">(</span>self<span class="hl opt">.</span>grid<span class="hl opt">.</span>grid<span class="hl opt">.</span>width<span class="hl opt">):</span>
+                <span class="hl kwa">if</span> <span class="hl opt">(</span>x<span class="hl opt">,</span> y<span class="hl opt">)</span> <span class="hl kwa">in</span> states<span class="hl opt">:</span>
+                    value <span class="hl opt">=</span> elements<span class="hl opt">[(</span>x<span class="hl opt">,</span> y<span class="hl opt">)]</span>
+                    <span class="hl kwa">if</span> value <span class="hl kwa">is None</span><span class="hl opt">:</span>
+                        row<span class="hl opt">.</span><span class="hl kwd">append</span><span class="hl opt">(</span><span class="hl str">'   illegal'</span><span class="hl opt">)</span>
+                    <span class="hl kwa">else</span><span class="hl opt">:</span>
+                        row<span class="hl opt">.</span><span class="hl kwd">append</span><span class="hl opt">(</span>formatString<span class="hl opt">.</span><span class="hl kwd">format</span><span class="hl opt">(</span>elements<span class="hl opt">[(</span>x<span class="hl opt">,</span>y<span class="hl opt">)]))</span>
+                <span class="hl kwa">else</span><span class="hl opt">:</span>
+                    row<span class="hl opt">.</span><span class="hl kwd">append</span><span class="hl opt">(</span><span class="hl str">'_'</span> <span class="hl opt">*</span> <span class="hl num">10</span><span class="hl opt">)</span>
+            pretty <span class="hl opt">+=</span> <span class="hl str">'        %s</span><span class="hl esc">\n</span><span class="hl str">'</span> <span class="hl opt">% (</span><span class="hl str">&quot;   &quot;</span><span class="hl opt">.</span><span class="hl kwd">join</span><span class="hl opt">(</span>row<span class="hl opt">), )</span>
+        pretty <span class="hl opt">+=</span> <span class="hl str">'</span><span class="hl esc">\n</span><span class="hl str">'</span>
+        <span class="hl kwa">return</span> pretty
+
+    <span class="hl kwa">def</span> <span class="hl kwd">prettyValues</span><span class="hl opt">(</span>self<span class="hl opt">,</span> values<span class="hl opt">):</span>
+        <span class="hl kwa">return</span> self<span class="hl opt">.</span><span class="hl kwd">prettyPrint</span><span class="hl opt">(</span>values<span class="hl opt">,</span> <span class="hl str">'{0:10.4f}'</span><span class="hl opt">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">prettyPolicy</span><span class="hl opt">(</span>self<span class="hl opt">,</span> policy<span class="hl opt">):</span>
+        <span class="hl kwa">return</span> self<span class="hl opt">.</span><span class="hl kwd">prettyPrint</span><span class="hl opt">(</span>policy<span class="hl opt">,</span> <span class="hl str">'{0:10s}'</span><span class="hl opt">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">prettyValueSolutionString</span><span class="hl opt">(</span>self<span class="hl opt">,</span> name<span class="hl opt">,</span> pretty<span class="hl opt">):</span>
+        <span class="hl kwa">return</span> <span class="hl str">'%s: &quot;&quot;&quot;</span><span class="hl esc">\n</span><span class="hl str">%s</span><span class="hl esc">\n</span><span class="hl str">&quot;&quot;&quot;</span><span class="hl esc">\n\n</span><span class="hl str">'</span> <span class="hl opt">% (</span>name<span class="hl opt">,</span> pretty<span class="hl opt">.</span><span class="hl kwd">rstrip</span><span class="hl opt">())</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">comparePrettyValues</span><span class="hl opt">(</span>self<span class="hl opt">,</span> aPretty<span class="hl opt">,</span> bPretty<span class="hl opt">,</span> tolerance<span class="hl opt">=</span><span class="hl num">0.01</span><span class="hl opt">):</span>
+        aList <span class="hl opt">=</span> self<span class="hl opt">.</span><span class="hl kwd">parsePrettyValues</span><span class="hl opt">(</span>aPretty<span class="hl opt">)</span>
+        bList <span class="hl opt">=</span> self<span class="hl opt">.</span><span class="hl kwd">parsePrettyValues</span><span class="hl opt">(</span>bPretty<span class="hl opt">)</span>
+        <span class="hl kwa">if</span> <span class="hl kwb">len</span><span class="hl opt">(</span>aList<span class="hl opt">) !=</span> <span class="hl kwb">len</span><span class="hl opt">(</span>bList<span class="hl opt">):</span>
+            <span class="hl kwa">return False</span>
+        <span class="hl kwa">for</span> a<span class="hl opt">,</span> b <span class="hl kwa">in</span> <span class="hl kwb">zip</span><span class="hl opt">(</span>aList<span class="hl opt">,</span> bList<span class="hl opt">):</span>
+            <span class="hl kwa">try</span><span class="hl opt">:</span>
+                aNum <span class="hl opt">=</span> <span class="hl kwb">float</span><span class="hl opt">(</span>a<span class="hl opt">)</span>
+                bNum <span class="hl opt">=</span> <span class="hl kwb">float</span><span class="hl opt">(</span>b<span class="hl opt">)</span>
+                <span class="hl slc"># error = abs((aNum - bNum) / ((aNum + bNum) / 2.0))</span>
+                error <span class="hl opt">=</span> <span class="hl kwb">abs</span><span class="hl opt">(</span>aNum <span class="hl opt">-</span> bNum<span class="hl opt">)</span>
+                <span class="hl kwa">if</span> error <span class="hl opt">&gt;</span> tolerance<span class="hl opt">:</span>
+                    <span class="hl kwa">return False</span>
+            <span class="hl kwa">except</span> <span class="hl kwc">ValueError</span><span class="hl opt">:</span>
+                <span class="hl kwa">if</span> a<span class="hl opt">.</span><span class="hl kwd">strip</span><span class="hl opt">() !=</span> b<span class="hl opt">.</span><span class="hl kwd">strip</span><span class="hl opt">():</span>
+                    <span class="hl kwa">return False</span>
+        <span class="hl kwa">return True</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">parsePrettyValues</span><span class="hl opt">(</span>self<span class="hl opt">,</span> pretty<span class="hl opt">):</span>
+        values <span class="hl opt">=</span> pretty<span class="hl opt">.</span><span class="hl kwd">split</span><span class="hl opt">()</span>
+        <span class="hl kwa">return</span> values
+
+
+<span class="hl kwa">class</span> <span class="hl kwd">EpsilonGreedyTest</span><span class="hl opt">(</span>testClasses<span class="hl opt">.</span>TestCase<span class="hl opt">):</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">__init__</span><span class="hl opt">(</span>self<span class="hl opt">,</span> question<span class="hl opt">,</span> testDict<span class="hl opt">):</span>
+        <span class="hl kwb">super</span><span class="hl opt">(</span>EpsilonGreedyTest<span class="hl opt">,</span> self<span class="hl opt">).</span><span class="hl kwd">__init__</span><span class="hl opt">(</span>question<span class="hl opt">,</span> testDict<span class="hl opt">)</span>
+        self<span class="hl opt">.</span>discount <span class="hl opt">=</span> <span class="hl kwb">float</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'discount'</span><span class="hl opt">])</span>
+        self<span class="hl opt">.</span>grid <span class="hl opt">=</span> gridworld<span class="hl opt">.</span><span class="hl kwd">Gridworld</span><span class="hl opt">(</span><span class="hl kwd">parseGrid</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'grid'</span><span class="hl opt">]))</span>
+        <span class="hl kwa">if</span> <span class="hl str">'noise'</span> <span class="hl kwa">in</span> testDict<span class="hl opt">:</span> self<span class="hl opt">.</span>grid<span class="hl opt">.</span><span class="hl kwd">setNoise</span><span class="hl opt">(</span><span class="hl kwb">float</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'noise'</span><span class="hl opt">]))</span>
+        <span class="hl kwa">if</span> <span class="hl str">'livingReward'</span> <span class="hl kwa">in</span> testDict<span class="hl opt">:</span> self<span class="hl opt">.</span>grid<span class="hl opt">.</span><span class="hl kwd">setLivingReward</span><span class="hl opt">(</span><span class="hl kwb">float</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'livingReward'</span><span class="hl opt">]))</span>
+
+        self<span class="hl opt">.</span>grid <span class="hl opt">=</span> gridworld<span class="hl opt">.</span><span class="hl kwd">Gridworld</span><span class="hl opt">(</span><span class="hl kwd">parseGrid</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'grid'</span><span class="hl opt">]))</span>
+        self<span class="hl opt">.</span>env <span class="hl opt">=</span> gridworld<span class="hl opt">.</span><span class="hl kwd">GridworldEnvironment</span><span class="hl opt">(</span>self<span class="hl opt">.</span>grid<span class="hl opt">)</span>
+        self<span class="hl opt">.</span>epsilon <span class="hl opt">=</span> <span class="hl kwb">float</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'epsilon'</span><span class="hl opt">])</span>
+        self<span class="hl opt">.</span>learningRate <span class="hl opt">=</span> <span class="hl kwb">float</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'learningRate'</span><span class="hl opt">])</span>
+        self<span class="hl opt">.</span>numExperiences <span class="hl opt">=</span> <span class="hl kwb">int</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'numExperiences'</span><span class="hl opt">])</span>
+        self<span class="hl opt">.</span>numIterations <span class="hl opt">=</span> <span class="hl kwb">int</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'iterations'</span><span class="hl opt">])</span>
+        self<span class="hl opt">.</span>opts <span class="hl opt">= {</span><span class="hl str">'actionFn'</span><span class="hl opt">:</span> self<span class="hl opt">.</span>env<span class="hl opt">.</span>getPossibleActions<span class="hl opt">,</span> <span class="hl str">'epsilon'</span><span class="hl opt">:</span> self<span class="hl opt">.</span>epsilon<span class="hl opt">,</span> <span class="hl str">'gamma'</span><span class="hl opt">:</span> self<span class="hl opt">.</span>discount<span class="hl opt">,</span> <span class="hl str">'alpha'</span><span class="hl opt">:</span> self<span class="hl opt">.</span>learningRate<span class="hl opt">}</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">execute</span><span class="hl opt">(</span>self<span class="hl opt">,</span> grades<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> solutionDict<span class="hl opt">):</span>
+        <span class="hl kwa">if</span> self<span class="hl opt">.</span><span class="hl kwd">testEpsilonGreedy</span><span class="hl opt">(</span>moduleDict<span class="hl opt">):</span>
+            <span class="hl kwa">return</span> self<span class="hl opt">.</span><span class="hl kwd">testPass</span><span class="hl opt">(</span>grades<span class="hl opt">)</span>
+        <span class="hl kwa">else</span><span class="hl opt">:</span>
+            <span class="hl kwa">return</span> self<span class="hl opt">.</span><span class="hl kwd">testFail</span><span class="hl opt">(</span>grades<span class="hl opt">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">writeSolution</span><span class="hl opt">(</span>self<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> filePath<span class="hl opt">):</span>
+        with <span class="hl kwb">open</span><span class="hl opt">(</span>filePath<span class="hl opt">,</span> <span class="hl str">'w'</span><span class="hl opt">)</span> <span class="hl kwa">as</span> handle<span class="hl opt">:</span>
+            handle<span class="hl opt">.</span><span class="hl kwd">write</span><span class="hl opt">(</span><span class="hl str">'# This is the solution file for %s.</span><span class="hl esc">\n</span><span class="hl str">'</span> <span class="hl opt">%</span> self<span class="hl opt">.</span>path<span class="hl opt">)</span>
+            handle<span class="hl opt">.</span><span class="hl kwd">write</span><span class="hl opt">(</span><span class="hl str">'# File intentionally blank.</span><span class="hl esc">\n</span><span class="hl str">'</span><span class="hl opt">)</span>
+        <span class="hl kwa">return True</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">runAgent</span><span class="hl opt">(</span>self<span class="hl opt">,</span> moduleDict<span class="hl opt">):</span>
+        agent <span class="hl opt">=</span> moduleDict<span class="hl opt">[</span><span class="hl str">'qlearningAgents'</span><span class="hl opt">].</span><span class="hl kwd">QLearningAgent</span><span class="hl opt">(**</span>self<span class="hl opt">.</span>opts<span class="hl opt">)</span>
+        states <span class="hl opt">=</span> <span class="hl kwb">filter</span><span class="hl opt">(</span><span class="hl kwa">lambda</span> state <span class="hl opt">:</span> <span class="hl kwb">len</span><span class="hl opt">(</span>self<span class="hl opt">.</span>grid<span class="hl opt">.</span><span class="hl kwd">getPossibleActions</span><span class="hl opt">(</span>state<span class="hl opt">)) &gt;</span> <span class="hl num">0</span><span class="hl opt">,</span> self<span class="hl opt">.</span>grid<span class="hl opt">.</span><span class="hl kwd">getStates</span><span class="hl opt">())</span>
+        states<span class="hl opt">.</span><span class="hl kwd">sort</span><span class="hl opt">()</span>
+        randObj <span class="hl opt">=</span> <span class="hl kwd">FixedRandom</span><span class="hl opt">().</span>random
+        <span class="hl slc"># choose a random start state and a random possible action from that state</span>
+        <span class="hl slc"># get the next state and reward from the transition function</span>
+        <span class="hl kwa">for</span> i <span class="hl kwa">in</span> <span class="hl kwb">range</span><span class="hl opt">(</span>self<span class="hl opt">.</span>numExperiences<span class="hl opt">):</span>
+            startState <span class="hl opt">=</span> randObj<span class="hl opt">.</span><span class="hl kwd">choice</span><span class="hl opt">(</span>states<span class="hl opt">)</span>
+            action <span class="hl opt">=</span> randObj<span class="hl opt">.</span><span class="hl kwd">choice</span><span class="hl opt">(</span>self<span class="hl opt">.</span>grid<span class="hl opt">.</span><span class="hl kwd">getPossibleActions</span><span class="hl opt">(</span>startState<span class="hl opt">))</span>
+            <span class="hl opt">(</span>endState<span class="hl opt">,</span> reward<span class="hl opt">) =</span> self<span class="hl opt">.</span>env<span class="hl opt">.</span><span class="hl kwd">getRandomNextState</span><span class="hl opt">(</span>startState<span class="hl opt">,</span> action<span class="hl opt">,</span> randObj<span class="hl opt">=</span>randObj<span class="hl opt">)</span>
+            agent<span class="hl opt">.</span><span class="hl kwd">update</span><span class="hl opt">(</span>startState<span class="hl opt">,</span> action<span class="hl opt">,</span> endState<span class="hl opt">,</span> reward<span class="hl opt">)</span>
+        <span class="hl kwa">return</span> agent
+
+    <span class="hl kwa">def</span> <span class="hl kwd">testEpsilonGreedy</span><span class="hl opt">(</span>self<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> tolerance<span class="hl opt">=</span><span class="hl num">0.025</span><span class="hl opt">):</span>
+        agent <span class="hl opt">=</span> self<span class="hl opt">.</span><span class="hl kwd">runAgent</span><span class="hl opt">(</span>moduleDict<span class="hl opt">)</span>
+        <span class="hl kwa">for</span> state <span class="hl kwa">in</span> self<span class="hl opt">.</span>grid<span class="hl opt">.</span><span class="hl kwd">getStates</span><span class="hl opt">():</span>
+            numLegalActions <span class="hl opt">=</span> <span class="hl kwb">len</span><span class="hl opt">(</span>agent<span class="hl opt">.</span><span class="hl kwd">getLegalActions</span><span class="hl opt">(</span>state<span class="hl opt">))</span>
+            <span class="hl kwa">if</span> numLegalActions <span class="hl opt">&lt;=</span> <span class="hl num">1</span><span class="hl opt">:</span>
+                <span class="hl kwa">continue</span>
+            numGreedyChoices <span class="hl opt">=</span> <span class="hl num">0</span>
+            optimalAction <span class="hl opt">=</span> agent<span class="hl opt">.</span><span class="hl kwd">computeActionFromQValues</span><span class="hl opt">(</span>state<span class="hl opt">)</span>
+            <span class="hl kwa">for</span> iteration <span class="hl kwa">in</span> <span class="hl kwb">range</span><span class="hl opt">(</span>self<span class="hl opt">.</span>numIterations<span class="hl opt">):</span>
+                <span class="hl slc"># assume that their computeActionFromQValues implementation is correct (q4 tests this)</span>
+                <span class="hl kwa">if</span> agent<span class="hl opt">.</span><span class="hl kwd">getAction</span><span class="hl opt">(</span>state<span class="hl opt">) ==</span> optimalAction<span class="hl opt">:</span>
+                    numGreedyChoices <span class="hl opt">+=</span> <span class="hl num">1</span>
+            <span class="hl slc"># e = epsilon, g = # greedy actions, n = numIterations, k = numLegalActions</span>
+            <span class="hl slc"># g = n * [(1-e) + e/k] -&gt; e = (n - g) / (n - n/k)</span>
+            empiricalEpsilonNumerator <span class="hl opt">=</span> self<span class="hl opt">.</span>numIterations <span class="hl opt">-</span> numGreedyChoices
+            empiricalEpsilonDenominator <span class="hl opt">=</span> self<span class="hl opt">.</span>numIterations <span class="hl opt">-</span> self<span class="hl opt">.</span>numIterations <span class="hl opt">/</span> <span class="hl kwb">float</span><span class="hl opt">(</span>numLegalActions<span class="hl opt">)</span>
+            empiricalEpsilon <span class="hl opt">=</span> empiricalEpsilonNumerator <span class="hl opt">/</span> empiricalEpsilonDenominator
+            error <span class="hl opt">=</span> <span class="hl kwb">abs</span><span class="hl opt">(</span>empiricalEpsilon <span class="hl opt">-</span> self<span class="hl opt">.</span>epsilon<span class="hl opt">)</span>
+            <span class="hl kwa">if</span> error <span class="hl opt">&gt;</span> tolerance<span class="hl opt">:</span>
+                self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">&quot;Epsilon-greedy action selection is not correct.&quot;</span><span class="hl opt">)</span>
+                self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">&quot;Actual epsilon = %f; student empirical epsilon = %f; error = %f &gt; tolerance = %f&quot;</span> <span class="hl opt">% (</span>self<span class="hl opt">.</span>epsilon<span class="hl opt">,</span> empiricalEpsilon<span class="hl opt">,</span> error<span class="hl opt">,</span> tolerance<span class="hl opt">))</span>
+                <span class="hl kwa">return False</span>
+        <span class="hl kwa">return True</span>
+
+
+<span class="hl slc">### q6</span>
+<span class="hl kwa">class</span> <span class="hl kwd">Question6Test</span><span class="hl opt">(</span>testClasses<span class="hl opt">.</span>TestCase<span class="hl opt">):</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">__init__</span><span class="hl opt">(</span>self<span class="hl opt">,</span> question<span class="hl opt">,</span> testDict<span class="hl opt">):</span>
+        <span class="hl kwb">super</span><span class="hl opt">(</span>Question6Test<span class="hl opt">,</span> self<span class="hl opt">).</span><span class="hl kwd">__init__</span><span class="hl opt">(</span>question<span class="hl opt">,</span> testDict<span class="hl opt">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">execute</span><span class="hl opt">(</span>self<span class="hl opt">,</span> grades<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> solutionDict<span class="hl opt">):</span>
+        studentSolution <span class="hl opt">=</span> moduleDict<span class="hl opt">[</span><span class="hl str">'analysis'</span><span class="hl opt">].</span><span class="hl kwd">question6</span><span class="hl opt">()</span>
+        studentSolution <span class="hl opt">=</span> <span class="hl kwb">str</span><span class="hl opt">(</span>studentSolution<span class="hl opt">).</span><span class="hl kwd">strip</span><span class="hl opt">().</span><span class="hl kwd">lower</span><span class="hl opt">()</span>
+        hashedSolution <span class="hl opt">=</span> <span class="hl kwd">sha1</span><span class="hl opt">(</span>studentSolution<span class="hl opt">).</span><span class="hl kwd">hexdigest</span><span class="hl opt">()</span>
+        <span class="hl kwa">if</span> hashedSolution <span class="hl opt">==</span> <span class="hl str">'46729c96bb1e4081fdc81a8ff74b3e5db8fba415'</span><span class="hl opt">:</span>
+            <span class="hl kwa">return</span> self<span class="hl opt">.</span><span class="hl kwd">testPass</span><span class="hl opt">(</span>grades<span class="hl opt">)</span>
+        <span class="hl kwa">else</span><span class="hl opt">:</span>
+            self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">&quot;Solution is not correct.&quot;</span><span class="hl opt">)</span>
+            self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">&quot;   Student solution: %s&quot;</span> <span class="hl opt">% (</span>studentSolution<span class="hl opt">,))</span>
+            <span class="hl kwa">return</span> self<span class="hl opt">.</span><span class="hl kwd">testFail</span><span class="hl opt">(</span>grades<span class="hl opt">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">writeSolution</span><span class="hl opt">(</span>self<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> filePath<span class="hl opt">):</span>
+        handle <span class="hl opt">=</span> <span class="hl kwb">open</span><span class="hl opt">(</span>filePath<span class="hl opt">,</span> <span class="hl str">'w'</span><span class="hl opt">)</span>
+        handle<span class="hl opt">.</span><span class="hl kwd">write</span><span class="hl opt">(</span><span class="hl str">'# This is the solution file for %s.</span><span class="hl esc">\n</span><span class="hl str">'</span> <span class="hl opt">%</span> self<span class="hl opt">.</span>path<span class="hl opt">)</span>
+        handle<span class="hl opt">.</span><span class="hl kwd">write</span><span class="hl opt">(</span><span class="hl str">'# File intentionally blank.</span><span class="hl esc">\n</span><span class="hl str">'</span><span class="hl opt">)</span>
+        handle<span class="hl opt">.</span><span class="hl kwd">close</span><span class="hl opt">()</span>
+        <span class="hl kwa">return True</span>
+
+
+<span class="hl slc">### q7/q8</span>
+<span class="hl slc">### =====</span>
+<span class="hl slc">## Average wins of a pacman agent</span>
+
+<span class="hl kwa">class</span> <span class="hl kwd">EvalAgentTest</span><span class="hl opt">(</span>testClasses<span class="hl opt">.</span>TestCase<span class="hl opt">):</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">__init__</span><span class="hl opt">(</span>self<span class="hl opt">,</span> question<span class="hl opt">,</span> testDict<span class="hl opt">):</span>
+        <span class="hl kwb">super</span><span class="hl opt">(</span>EvalAgentTest<span class="hl opt">,</span> self<span class="hl opt">).</span><span class="hl kwd">__init__</span><span class="hl opt">(</span>question<span class="hl opt">,</span> testDict<span class="hl opt">)</span>
+        self<span class="hl opt">.</span>pacmanParams <span class="hl opt">=</span> testDict<span class="hl opt">[</span><span class="hl str">'pacmanParams'</span><span class="hl opt">]</span>
+
+        self<span class="hl opt">.</span>scoreMinimum <span class="hl opt">=</span> <span class="hl kwb">int</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'scoreMinimum'</span><span class="hl opt">])</span> <span class="hl kwa">if</span> <span class="hl str">'scoreMinimum'</span> <span class="hl kwa">in</span> testDict <span class="hl kwa">else None</span>
+        self<span class="hl opt">.</span>nonTimeoutMinimum <span class="hl opt">=</span> <span class="hl kwb">int</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'nonTimeoutMinimum'</span><span class="hl opt">])</span> <span class="hl kwa">if</span> <span class="hl str">'nonTimeoutMinimum'</span> <span class="hl kwa">in</span> testDict <span class="hl kwa">else None</span>
+        self<span class="hl opt">.</span>winsMinimum <span class="hl opt">=</span> <span class="hl kwb">int</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'winsMinimum'</span><span class="hl opt">])</span> <span class="hl kwa">if</span> <span class="hl str">'winsMinimum'</span> <span class="hl kwa">in</span> testDict <span class="hl kwa">else None</span>
+
+        self<span class="hl opt">.</span>scoreThresholds <span class="hl opt">= [</span><span class="hl kwb">int</span><span class="hl opt">(</span>s<span class="hl opt">)</span> <span class="hl kwa">for</span> s <span class="hl kwa">in</span> testDict<span class="hl opt">.</span><span class="hl kwd">get</span><span class="hl opt">(</span><span class="hl str">'scoreThresholds'</span><span class="hl opt">,</span><span class="hl str">''</span><span class="hl opt">).</span><span class="hl kwd">split</span><span class="hl opt">()]</span>
+        self<span class="hl opt">.</span>nonTimeoutThresholds <span class="hl opt">= [</span><span class="hl kwb">int</span><span class="hl opt">(</span>s<span class="hl opt">)</span> <span class="hl kwa">for</span> s <span class="hl kwa">in</span> testDict<span class="hl opt">.</span><span class="hl kwd">get</span><span class="hl opt">(</span><span class="hl str">'nonTimeoutThresholds'</span><span class="hl opt">,</span><span class="hl str">''</span><span class="hl opt">).</span><span class="hl kwd">split</span><span class="hl opt">()]</span>
+        self<span class="hl opt">.</span>winsThresholds <span class="hl opt">= [</span><span class="hl kwb">int</span><span class="hl opt">(</span>s<span class="hl opt">)</span> <span class="hl kwa">for</span> s <span class="hl kwa">in</span> testDict<span class="hl opt">.</span><span class="hl kwd">get</span><span class="hl opt">(</span><span class="hl str">'winsThresholds'</span><span class="hl opt">,</span><span class="hl str">''</span><span class="hl opt">).</span><span class="hl kwd">split</span><span class="hl opt">()]</span>
+
+        self<span class="hl opt">.</span>maxPoints <span class="hl opt">=</span> <span class="hl kwb">sum</span><span class="hl opt">([</span><span class="hl kwb">len</span><span class="hl opt">(</span>t<span class="hl opt">)</span> <span class="hl kwa">for</span> t <span class="hl kwa">in</span> <span class="hl opt">[</span>self<span class="hl opt">.</span>scoreThresholds<span class="hl opt">,</span> self<span class="hl opt">.</span>nonTimeoutThresholds<span class="hl opt">,</span> self<span class="hl opt">.</span>winsThresholds<span class="hl opt">]])</span>
+
+
+    <span class="hl kwa">def</span> <span class="hl kwd">execute</span><span class="hl opt">(</span>self<span class="hl opt">,</span> grades<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> solutionDict<span class="hl opt">):</span>
+        self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">'Grading agent using command:  python pacman.py %s'</span><span class="hl opt">% (</span>self<span class="hl opt">.</span>pacmanParams<span class="hl opt">,))</span>
+
+        startTime <span class="hl opt">=</span> time<span class="hl opt">.</span><span class="hl kwd">time</span><span class="hl opt">()</span>
+        games <span class="hl opt">=</span> pacman<span class="hl opt">.</span><span class="hl kwd">runGames</span><span class="hl opt">(**</span> pacman<span class="hl opt">.</span><span class="hl kwd">readCommand</span><span class="hl opt">(</span>self<span class="hl opt">.</span>pacmanParams<span class="hl opt">.</span><span class="hl kwd">split</span><span class="hl opt">(</span><span class="hl str">' '</span><span class="hl opt">)))</span>
+        totalTime <span class="hl opt">=</span> time<span class="hl opt">.</span><span class="hl kwd">time</span><span class="hl opt">() -</span> startTime
+        numGames <span class="hl opt">=</span> <span class="hl kwb">len</span><span class="hl opt">(</span>games<span class="hl opt">)</span>
+
+        stats <span class="hl opt">= {</span><span class="hl str">'time'</span><span class="hl opt">:</span> totalTime<span class="hl opt">,</span> <span class="hl str">'wins'</span><span class="hl opt">: [</span>g<span class="hl opt">.</span>state<span class="hl opt">.</span><span class="hl kwd">isWin</span><span class="hl opt">()</span> <span class="hl kwa">for</span> g <span class="hl kwa">in</span> games<span class="hl opt">].</span><span class="hl kwd">count</span><span class="hl opt">(</span><span class="hl kwa">True</span><span class="hl opt">),</span>
+                 <span class="hl str">'games'</span><span class="hl opt">:</span> games<span class="hl opt">,</span> <span class="hl str">'scores'</span><span class="hl opt">: [</span>g<span class="hl opt">.</span>state<span class="hl opt">.</span><span class="hl kwd">getScore</span><span class="hl opt">()</span> <span class="hl kwa">for</span> g <span class="hl kwa">in</span> games<span class="hl opt">],</span>
+                 <span class="hl str">'timeouts'</span><span class="hl opt">: [</span>g<span class="hl opt">.</span>agentTimeout <span class="hl kwa">for</span> g <span class="hl kwa">in</span> games<span class="hl opt">].</span><span class="hl kwd">count</span><span class="hl opt">(</span><span class="hl kwa">True</span><span class="hl opt">),</span> <span class="hl str">'crashes'</span><span class="hl opt">: [</span>g<span class="hl opt">.</span>agentCrashed <span class="hl kwa">for</span> g <span class="hl kwa">in</span> games<span class="hl opt">].</span><span class="hl kwd">count</span><span class="hl opt">(</span><span class="hl kwa">True</span><span class="hl opt">)}</span>
+
+        averageScore <span class="hl opt">=</span> <span class="hl kwb">sum</span><span class="hl opt">(</span>stats<span class="hl opt">[</span><span class="hl str">'scores'</span><span class="hl opt">]) /</span> <span class="hl kwb">float</span><span class="hl opt">(</span><span class="hl kwb">len</span><span class="hl opt">(</span>stats<span class="hl opt">[</span><span class="hl str">'scores'</span><span class="hl opt">]))</span>
+        nonTimeouts <span class="hl opt">=</span> numGames <span class="hl opt">-</span> stats<span class="hl opt">[</span><span class="hl str">'timeouts'</span><span class="hl opt">]</span>
+        wins <span class="hl opt">=</span> stats<span class="hl opt">[</span><span class="hl str">'wins'</span><span class="hl opt">]</span>
+
+        <span class="hl kwa">def</span> <span class="hl kwd">gradeThreshold</span><span class="hl opt">(</span>value<span class="hl opt">,</span> minimum<span class="hl opt">,</span> thresholds<span class="hl opt">,</span> name<span class="hl opt">):</span>
+            points <span class="hl opt">=</span> <span class="hl num">0</span>
+            passed <span class="hl opt">= (</span>minimum <span class="hl opt">==</span> <span class="hl kwa">None</span><span class="hl opt">)</span> <span class="hl kwa">or</span> <span class="hl opt">(</span>value <span class="hl opt">&gt;=</span> minimum<span class="hl opt">)</span>
+            <span class="hl kwa">if</span> passed<span class="hl opt">:</span>
+                <span class="hl kwa">for</span> t <span class="hl kwa">in</span> thresholds<span class="hl opt">:</span>
+                    <span class="hl kwa">if</span> value <span class="hl opt">&gt;=</span> t<span class="hl opt">:</span>
+                        points <span class="hl opt">+=</span> <span class="hl num">1</span>
+            <span class="hl kwa">return</span> <span class="hl opt">(</span>passed<span class="hl opt">,</span> points<span class="hl opt">,</span> value<span class="hl opt">,</span> minimum<span class="hl opt">,</span> thresholds<span class="hl opt">,</span> name<span class="hl opt">)</span>
+
+        results <span class="hl opt">= [</span><span class="hl kwd">gradeThreshold</span><span class="hl opt">(</span>averageScore<span class="hl opt">,</span> self<span class="hl opt">.</span>scoreMinimum<span class="hl opt">,</span> self<span class="hl opt">.</span>scoreThresholds<span class="hl opt">,</span> <span class="hl str">&quot;average score&quot;</span><span class="hl opt">),</span>
+                   <span class="hl kwd">gradeThreshold</span><span class="hl opt">(</span>nonTimeouts<span class="hl opt">,</span> self<span class="hl opt">.</span>nonTimeoutMinimum<span class="hl opt">,</span> self<span class="hl opt">.</span>nonTimeoutThresholds<span class="hl opt">,</span> <span class="hl str">&quot;games not timed out&quot;</span><span class="hl opt">),</span>
+                   <span class="hl kwd">gradeThreshold</span><span class="hl opt">(</span>wins<span class="hl opt">,</span> self<span class="hl opt">.</span>winsMinimum<span class="hl opt">,</span> self<span class="hl opt">.</span>winsThresholds<span class="hl opt">,</span> <span class="hl str">&quot;wins&quot;</span><span class="hl opt">)]</span>
+
+        totalPoints <span class="hl opt">=</span> <span class="hl num">0</span>
+        <span class="hl kwa">for</span> passed<span class="hl opt">,</span> points<span class="hl opt">,</span> value<span class="hl opt">,</span> minimum<span class="hl opt">,</span> thresholds<span class="hl opt">,</span> name <span class="hl kwa">in</span> results<span class="hl opt">:</span>
+            <span class="hl kwa">if</span> minimum <span class="hl opt">==</span> <span class="hl kwa">None and</span> <span class="hl kwb">len</span><span class="hl opt">(</span>thresholds<span class="hl opt">)==</span><span class="hl num">0</span><span class="hl opt">:</span>
+                <span class="hl kwa">continue</span>
+
+            <span class="hl slc"># print passed, points, value, minimum, thresholds, name</span>
+            totalPoints <span class="hl opt">+=</span> points
+            <span class="hl kwa">if not</span> passed<span class="hl opt">:</span>
+                <span class="hl kwa">assert</span> points <span class="hl opt">==</span> <span class="hl num">0</span>
+                self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">&quot;%s %s (fail: below minimum value %s)&quot;</span> <span class="hl opt">% (</span>value<span class="hl opt">,</span> name<span class="hl opt">,</span> minimum<span class="hl opt">))</span>
+            <span class="hl kwa">else</span><span class="hl opt">:</span>
+                self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">&quot;%s %s (%s of %s points)&quot;</span> <span class="hl opt">% (</span>value<span class="hl opt">,</span> name<span class="hl opt">,</span> points<span class="hl opt">,</span> <span class="hl kwb">len</span><span class="hl opt">(</span>thresholds<span class="hl opt">)))</span>
+
+            <span class="hl kwa">if</span> minimum <span class="hl opt">!=</span> <span class="hl kwa">None</span><span class="hl opt">:</span>
+                self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">&quot;    Grading scheme:&quot;</span><span class="hl opt">)</span>
+                self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">&quot;     &lt; %s:  fail&quot;</span> <span class="hl opt">% (</span>minimum<span class="hl opt">,))</span>
+                <span class="hl kwa">if</span> <span class="hl kwb">len</span><span class="hl opt">(</span>thresholds<span class="hl opt">)==</span><span class="hl num">0</span> <span class="hl kwa">or</span> minimum <span class="hl opt">!=</span> thresholds<span class="hl opt">[</span><span class="hl num">0</span><span class="hl opt">]:</span>
+                    self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">&quot;    &gt;= %s:  0 points&quot;</span> <span class="hl opt">% (</span>minimum<span class="hl opt">,))</span>
+                <span class="hl kwa">for</span> idx<span class="hl opt">,</span> threshold <span class="hl kwa">in</span> <span class="hl kwb">enumerate</span><span class="hl opt">(</span>thresholds<span class="hl opt">):</span>
+                    self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">&quot;    &gt;= %s:  %s points&quot;</span> <span class="hl opt">% (</span>threshold<span class="hl opt">,</span> idx<span class="hl opt">+</span><span class="hl num">1</span><span class="hl opt">))</span>
+            <span class="hl kwa">elif</span> <span class="hl kwb">len</span><span class="hl opt">(</span>thresholds<span class="hl opt">) &gt;</span> <span class="hl num">0</span><span class="hl opt">:</span>
+                self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">&quot;    Grading scheme:&quot;</span><span class="hl opt">)</span>
+                self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">&quot;     &lt; %s:  0 points&quot;</span> <span class="hl opt">% (</span>thresholds<span class="hl opt">[</span><span class="hl num">0</span><span class="hl opt">],))</span>
+                <span class="hl kwa">for</span> idx<span class="hl opt">,</span> threshold <span class="hl kwa">in</span> <span class="hl kwb">enumerate</span><span class="hl opt">(</span>thresholds<span class="hl opt">):</span>
+                    self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">&quot;    &gt;= %s:  %s points&quot;</span> <span class="hl opt">% (</span>threshold<span class="hl opt">,</span> idx<span class="hl opt">+</span><span class="hl num">1</span><span class="hl opt">))</span>
+
+        <span class="hl kwa">if</span> <span class="hl kwd">any</span><span class="hl opt">([</span><span class="hl kwa">not</span> passed <span class="hl kwa">for</span> passed<span class="hl opt">,</span> _<span class="hl opt">,</span> _<span class="hl opt">,</span> _<span class="hl opt">,</span> _<span class="hl opt">,</span> _ <span class="hl kwa">in</span> results<span class="hl opt">]):</span>
+            totalPoints <span class="hl opt">=</span> <span class="hl num">0</span>
+
+        <span class="hl kwa">return</span> self<span class="hl opt">.</span><span class="hl kwd">testPartial</span><span class="hl opt">(</span>grades<span class="hl opt">,</span> totalPoints<span class="hl opt">,</span> self<span class="hl opt">.</span>maxPoints<span class="hl opt">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">writeSolution</span><span class="hl opt">(</span>self<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> filePath<span class="hl opt">):</span>
+        with <span class="hl kwb">open</span><span class="hl opt">(</span>filePath<span class="hl opt">,</span> <span class="hl str">'w'</span><span class="hl opt">)</span> <span class="hl kwa">as</span> handle<span class="hl opt">:</span>
+            handle<span class="hl opt">.</span><span class="hl kwd">write</span><span class="hl opt">(</span><span class="hl str">'# This is the solution file for %s.</span><span class="hl esc">\n</span><span class="hl str">'</span> <span class="hl opt">%</span> self<span class="hl opt">.</span>path<span class="hl opt">)</span>
+            handle<span class="hl opt">.</span><span class="hl kwd">write</span><span class="hl opt">(</span><span class="hl str">'# File intentionally blank.</span><span class="hl esc">\n</span><span class="hl str">'</span><span class="hl opt">)</span>
+        <span class="hl kwa">return True</span>
+
+
+
+
+<span class="hl slc">### q2/q3</span>
+<span class="hl slc">### =====</span>
+<span class="hl slc">## For each parameter setting, compute the optimal policy, see if it satisfies some properties</span>
+
+<span class="hl kwa">def</span> <span class="hl kwd">followPath</span><span class="hl opt">(</span>policy<span class="hl opt">,</span> start<span class="hl opt">,</span> numSteps<span class="hl opt">=</span><span class="hl num">100</span><span class="hl opt">):</span>
+    state <span class="hl opt">=</span> start
+    path <span class="hl opt">= []</span>
+    <span class="hl kwa">for</span> i <span class="hl kwa">in</span> <span class="hl kwb">range</span><span class="hl opt">(</span>numSteps<span class="hl opt">):</span>
+        <span class="hl kwa">if</span> state <span class="hl kwa">not in</span> policy<span class="hl opt">:</span>
+            <span class="hl kwa">break</span>
+        action <span class="hl opt">=</span> policy<span class="hl opt">[</span>state<span class="hl opt">]</span>
+        path<span class="hl opt">.</span><span class="hl kwd">append</span><span class="hl opt">(</span><span class="hl str">&quot;(%s,%s)&quot;</span> <span class="hl opt">%</span> state<span class="hl opt">)</span>
+        <span class="hl kwa">if</span> action <span class="hl opt">==</span> <span class="hl str">'north'</span><span class="hl opt">:</span> nextState <span class="hl opt">=</span> state<span class="hl opt">[</span><span class="hl num">0</span><span class="hl opt">],</span>state<span class="hl opt">[</span><span class="hl num">1</span><span class="hl opt">]+</span><span class="hl num">1</span>
+        <span class="hl kwa">if</span> action <span class="hl opt">==</span> <span class="hl str">'south'</span><span class="hl opt">:</span> nextState <span class="hl opt">=</span> state<span class="hl opt">[</span><span class="hl num">0</span><span class="hl opt">],</span>state<span class="hl opt">[</span><span class="hl num">1</span><span class="hl opt">]-</span><span class="hl num">1</span>
+        <span class="hl kwa">if</span> action <span class="hl opt">==</span> <span class="hl str">'east'</span><span class="hl opt">:</span> nextState <span class="hl opt">=</span> state<span class="hl opt">[</span><span class="hl num">0</span><span class="hl opt">]+</span><span class="hl num">1</span><span class="hl opt">,</span>state<span class="hl opt">[</span><span class="hl num">1</span><span class="hl opt">]</span>
+        <span class="hl kwa">if</span> action <span class="hl opt">==</span> <span class="hl str">'west'</span><span class="hl opt">:</span> nextState <span class="hl opt">=</span> state<span class="hl opt">[</span><span class="hl num">0</span><span class="hl opt">]-</span><span class="hl num">1</span><span class="hl opt">,</span>state<span class="hl opt">[</span><span class="hl num">1</span><span class="hl opt">]</span>
+        <span class="hl kwa">if</span> action <span class="hl opt">==</span> <span class="hl str">'exit'</span> <span class="hl kwa">or</span> action <span class="hl opt">==</span> <span class="hl kwa">None</span><span class="hl opt">:</span>
+            path<span class="hl opt">.</span><span class="hl kwd">append</span><span class="hl opt">(</span><span class="hl str">'TERMINAL_STATE'</span><span class="hl opt">)</span>
+            <span class="hl kwa">break</span>
+        state <span class="hl opt">=</span> nextState
+
+    <span class="hl kwa">return</span> path
+
+<span class="hl kwa">def</span> <span class="hl kwd">parseGrid</span><span class="hl opt">(</span>string<span class="hl opt">):</span>
+    grid <span class="hl opt">= [[</span>entry<span class="hl opt">.</span><span class="hl kwd">strip</span><span class="hl opt">()</span> <span class="hl kwa">for</span> entry <span class="hl kwa">in</span> line<span class="hl opt">.</span><span class="hl kwd">split</span><span class="hl opt">()]</span> <span class="hl kwa">for</span> line <span class="hl kwa">in</span> string<span class="hl opt">.</span><span class="hl kwd">split</span><span class="hl opt">(</span><span class="hl str">'</span><span class="hl esc">\n</span><span class="hl str">'</span><span class="hl opt">)]</span>
+    <span class="hl kwa">for</span> row <span class="hl kwa">in</span> grid<span class="hl opt">:</span>
+        <span class="hl kwa">for</span> x<span class="hl opt">,</span> col <span class="hl kwa">in</span> <span class="hl kwb">enumerate</span><span class="hl opt">(</span>row<span class="hl opt">):</span>
+            <span class="hl kwa">try</span><span class="hl opt">:</span>
+                col <span class="hl opt">=</span> <span class="hl kwb">int</span><span class="hl opt">(</span>col<span class="hl opt">)</span>
+            <span class="hl kwa">except</span><span class="hl opt">:</span>
+                <span class="hl kwa">pass</span>
+            <span class="hl kwa">if</span> col <span class="hl opt">==</span> <span class="hl str">&quot;_&quot;</span><span class="hl opt">:</span>
+                col <span class="hl opt">=</span> <span class="hl str">' '</span>
+            row<span class="hl opt">[</span>x<span class="hl opt">] =</span> col
+    <span class="hl kwa">return</span> gridworld<span class="hl opt">.</span><span class="hl kwd">makeGrid</span><span class="hl opt">(</span>grid<span class="hl opt">)</span>
+
+
+<span class="hl kwa">def</span> <span class="hl kwd">computePolicy</span><span class="hl opt">(</span>moduleDict<span class="hl opt">,</span> grid<span class="hl opt">,</span> discount<span class="hl opt">):</span>
+    valueIterator <span class="hl opt">=</span> moduleDict<span class="hl opt">[</span><span class="hl str">'valueIterationAgents'</span><span class="hl opt">].</span><span class="hl kwd">ValueIterationAgent</span><span class="hl opt">(</span>grid<span class="hl opt">,</span> discount<span class="hl opt">=</span>discount<span class="hl opt">)</span>
+    policy <span class="hl opt">= {}</span>
+    <span class="hl kwa">for</span> state <span class="hl kwa">in</span> grid<span class="hl opt">.</span><span class="hl kwd">getStates</span><span class="hl opt">():</span>
+        policy<span class="hl opt">[</span>state<span class="hl opt">] =</span> valueIterator<span class="hl opt">.</span><span class="hl kwd">computeActionFromValues</span><span class="hl opt">(</span>state<span class="hl opt">)</span>
+    <span class="hl kwa">return</span> policy
+
+
+
+<span class="hl kwa">class</span> <span class="hl kwd">GridPolicyTest</span><span class="hl opt">(</span>testClasses<span class="hl opt">.</span>TestCase<span class="hl opt">):</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">__init__</span><span class="hl opt">(</span>self<span class="hl opt">,</span> question<span class="hl opt">,</span> testDict<span class="hl opt">):</span>
+        <span class="hl kwb">super</span><span class="hl opt">(</span>GridPolicyTest<span class="hl opt">,</span> self<span class="hl opt">).</span><span class="hl kwd">__init__</span><span class="hl opt">(</span>question<span class="hl opt">,</span> testDict<span class="hl opt">)</span>
+
+        <span class="hl slc"># Function in module in analysis that returns (discount, noise)</span>
+        self<span class="hl opt">.</span>parameterFn <span class="hl opt">=</span> testDict<span class="hl opt">[</span><span class="hl str">'parameterFn'</span><span class="hl opt">]</span>
+        self<span class="hl opt">.</span>question2 <span class="hl opt">=</span> testDict<span class="hl opt">.</span><span class="hl kwd">get</span><span class="hl opt">(</span><span class="hl str">'question2'</span><span class="hl opt">,</span> <span class="hl str">'false'</span><span class="hl opt">).</span><span class="hl kwd">lower</span><span class="hl opt">() ==</span> <span class="hl str">'true'</span>
+
+        <span class="hl slc"># GridWorld specification</span>
+        <span class="hl slc">#    _ is empty space</span>
+        <span class="hl slc">#    numbers are terminal states with that value</span>
+        <span class="hl slc">#    # is a wall</span>
+        <span class="hl slc">#    S is a start state</span>
+        <span class="hl slc">#</span>
+        self<span class="hl opt">.</span>gridText <span class="hl opt">=</span> testDict<span class="hl opt">[</span><span class="hl str">'grid'</span><span class="hl opt">]</span>
+        self<span class="hl opt">.</span>grid <span class="hl opt">=</span> gridworld<span class="hl opt">.</span><span class="hl kwd">Gridworld</span><span class="hl opt">(</span><span class="hl kwd">parseGrid</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'grid'</span><span class="hl opt">]))</span>
+        self<span class="hl opt">.</span>gridName <span class="hl opt">=</span> testDict<span class="hl opt">[</span><span class="hl str">'gridName'</span><span class="hl opt">]</span>
+
+        <span class="hl slc"># Policy specification</span>
+        <span class="hl slc">#    _                  policy choice not checked</span>
+        <span class="hl slc">#    N, E, S, W policy action must be north, east, south, west</span>
+        <span class="hl slc">#</span>
+        self<span class="hl opt">.</span>policy <span class="hl opt">=</span> <span class="hl kwd">parseGrid</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'policy'</span><span class="hl opt">])</span>
+
+        <span class="hl slc"># State the most probable path must visit</span>
+        <span class="hl slc">#    (x,y) for a particular location; (0,0) is bottom left</span>
+        <span class="hl slc">#    terminal for the terminal state</span>
+        self<span class="hl opt">.</span>pathVisits <span class="hl opt">=</span> testDict<span class="hl opt">.</span><span class="hl kwd">get</span><span class="hl opt">(</span><span class="hl str">'pathVisits'</span><span class="hl opt">,</span> <span class="hl kwa">None</span><span class="hl opt">)</span>
+
+        <span class="hl slc"># State the most probable path must not visit</span>
+        <span class="hl slc">#    (x,y) for a particular location; (0,0) is bottom left</span>
+        <span class="hl slc">#    terminal for the terminal state</span>
+        self<span class="hl opt">.</span>pathNotVisits <span class="hl opt">=</span> testDict<span class="hl opt">.</span><span class="hl kwd">get</span><span class="hl opt">(</span><span class="hl str">'pathNotVisits'</span><span class="hl opt">,</span> <span class="hl kwa">None</span><span class="hl opt">)</span>
+
+
+    <span class="hl kwa">def</span> <span class="hl kwd">execute</span><span class="hl opt">(</span>self<span class="hl opt">,</span> grades<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> solutionDict<span class="hl opt">):</span>
+        <span class="hl kwa">if not</span> <span class="hl kwb">hasattr</span><span class="hl opt">(</span>moduleDict<span class="hl opt">[</span><span class="hl str">'analysis'</span><span class="hl opt">],</span> self<span class="hl opt">.</span>parameterFn<span class="hl opt">):</span>
+            self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">'Method not implemented: analysis.%s'</span> <span class="hl opt">% (</span>self<span class="hl opt">.</span>parameterFn<span class="hl opt">,))</span>
+            <span class="hl kwa">return</span> self<span class="hl opt">.</span><span class="hl kwd">testFail</span><span class="hl opt">(</span>grades<span class="hl opt">)</span>
+
+        result <span class="hl opt">=</span> <span class="hl kwb">getattr</span><span class="hl opt">(</span>moduleDict<span class="hl opt">[</span><span class="hl str">'analysis'</span><span class="hl opt">],</span> self<span class="hl opt">.</span>parameterFn<span class="hl opt">)()</span>
+
+        <span class="hl kwa">if</span> <span class="hl kwb">type</span><span class="hl opt">(</span>result<span class="hl opt">) ==</span> <span class="hl kwb">str</span> <span class="hl kwa">and</span> result<span class="hl opt">.</span><span class="hl kwd">lower</span><span class="hl opt">()[</span><span class="hl num">0</span><span class="hl opt">:</span><span class="hl num">3</span><span class="hl opt">] ==</span> <span class="hl str">&quot;not&quot;</span><span class="hl opt">:</span>
+            self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">'Actually, it is possible!'</span><span class="hl opt">)</span>
+            <span class="hl kwa">return</span> self<span class="hl opt">.</span><span class="hl kwd">testFail</span><span class="hl opt">(</span>grades<span class="hl opt">)</span>
+
+        <span class="hl kwa">if</span> self<span class="hl opt">.</span>question2<span class="hl opt">:</span>
+            livingReward <span class="hl opt">=</span> <span class="hl kwa">None</span>
+            <span class="hl kwa">try</span><span class="hl opt">:</span>
+                discount<span class="hl opt">,</span> noise <span class="hl opt">=</span> result
+                discount <span class="hl opt">=</span> <span class="hl kwb">float</span><span class="hl opt">(</span>discount<span class="hl opt">)</span>
+                noise <span class="hl opt">=</span> <span class="hl kwb">float</span><span class="hl opt">(</span>noise<span class="hl opt">)</span>
+            <span class="hl kwa">except</span><span class="hl opt">:</span>
+                self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">'Did not return a (discount, noise) pair; instead analysis.%s returned: %s'</span> <span class="hl opt">% (</span>self<span class="hl opt">.</span>parameterFn<span class="hl opt">,</span> result<span class="hl opt">))</span>
+                <span class="hl kwa">return</span> self<span class="hl opt">.</span><span class="hl kwd">testFail</span><span class="hl opt">(</span>grades<span class="hl opt">)</span>
+            <span class="hl kwa">if</span> discount <span class="hl opt">!=</span> <span class="hl num">0.9</span> <span class="hl kwa">and</span> noise <span class="hl opt">!=</span> <span class="hl num">0.2</span><span class="hl opt">:</span>
+                self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">'Must change either the discount or the noise, not both. Returned (discount, noise) = %s'</span> <span class="hl opt">% (</span>result<span class="hl opt">,))</span>
+                <span class="hl kwa">return</span> self<span class="hl opt">.</span><span class="hl kwd">testFail</span><span class="hl opt">(</span>grades<span class="hl opt">)</span>
+        <span class="hl kwa">else</span><span class="hl opt">:</span>
+            <span class="hl kwa">try</span><span class="hl opt">:</span>
+                discount<span class="hl opt">,</span> noise<span class="hl opt">,</span> livingReward <span class="hl opt">=</span> result
+                discount <span class="hl opt">=</span> <span class="hl kwb">float</span><span class="hl opt">(</span>discount<span class="hl opt">)</span>
+                noise <span class="hl opt">=</span> <span class="hl kwb">float</span><span class="hl opt">(</span>noise<span class="hl opt">)</span>
+                livingReward <span class="hl opt">=</span> <span class="hl kwb">float</span><span class="hl opt">(</span>livingReward<span class="hl opt">)</span>
+            <span class="hl kwa">except</span><span class="hl opt">:</span>
+                self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">'Did not return a (discount, noise, living reward) triple; instead analysis.%s returned: %s'</span> <span class="hl opt">% (</span>self<span class="hl opt">.</span>parameterFn<span class="hl opt">,</span> result<span class="hl opt">))</span>
+                <span class="hl kwa">return</span> self<span class="hl opt">.</span><span class="hl kwd">testFail</span><span class="hl opt">(</span>grades<span class="hl opt">)</span>
+
+        self<span class="hl opt">.</span>grid<span class="hl opt">.</span><span class="hl kwd">setNoise</span><span class="hl opt">(</span>noise<span class="hl opt">)</span>
+        <span class="hl kwa">if</span> livingReward <span class="hl opt">!=</span> <span class="hl kwa">None</span><span class="hl opt">:</span>
+            self<span class="hl opt">.</span>grid<span class="hl opt">.</span><span class="hl kwd">setLivingReward</span><span class="hl opt">(</span>livingReward<span class="hl opt">)</span>
+
+        start <span class="hl opt">=</span> self<span class="hl opt">.</span>grid<span class="hl opt">.</span><span class="hl kwd">getStartState</span><span class="hl opt">()</span>
+        policy <span class="hl opt">=</span> <span class="hl kwd">computePolicy</span><span class="hl opt">(</span>moduleDict<span class="hl opt">,</span> self<span class="hl opt">.</span>grid<span class="hl opt">,</span> discount<span class="hl opt">)</span>
+
+        <span class="hl slc">## check policy</span>
+        actionMap <span class="hl opt">= {</span><span class="hl str">'N'</span><span class="hl opt">:</span> <span class="hl str">'north'</span><span class="hl opt">,</span> <span class="hl str">'E'</span><span class="hl opt">:</span> <span class="hl str">'east'</span><span class="hl opt">,</span> <span class="hl str">'S'</span><span class="hl opt">:</span> <span class="hl str">'south'</span><span class="hl opt">,</span> <span class="hl str">'W'</span><span class="hl opt">:</span> <span class="hl str">'west'</span><span class="hl opt">,</span> <span class="hl str">'X'</span><span class="hl opt">:</span> <span class="hl str">'exit'</span><span class="hl opt">}</span>
+        width<span class="hl opt">,</span> height <span class="hl opt">=</span> self<span class="hl opt">.</span>policy<span class="hl opt">.</span>width<span class="hl opt">,</span> self<span class="hl opt">.</span>policy<span class="hl opt">.</span>height
+        policyPassed <span class="hl opt">=</span> <span class="hl kwa">True</span>
+        <span class="hl kwa">for</span> x <span class="hl kwa">in</span> <span class="hl kwb">range</span><span class="hl opt">(</span>width<span class="hl opt">):</span>
+            <span class="hl kwa">for</span> y <span class="hl kwa">in</span> <span class="hl kwb">range</span><span class="hl opt">(</span>height<span class="hl opt">):</span>
+                <span class="hl kwa">if</span> self<span class="hl opt">.</span>policy<span class="hl opt">[</span>x<span class="hl opt">][</span>y<span class="hl opt">]</span> <span class="hl kwa">in</span> actionMap <span class="hl kwa">and</span> policy<span class="hl opt">[(</span>x<span class="hl opt">,</span>y<span class="hl opt">)] !=</span> actionMap<span class="hl opt">[</span>self<span class="hl opt">.</span>policy<span class="hl opt">[</span>x<span class="hl opt">][</span>y<span class="hl opt">]]:</span>
+                    differPoint <span class="hl opt">= (</span>x<span class="hl opt">,</span>y<span class="hl opt">)</span>
+                    policyPassed <span class="hl opt">=</span> <span class="hl kwa">False</span>
+
+        <span class="hl kwa">if not</span> policyPassed<span class="hl opt">:</span>
+            self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">'Policy not correct.'</span><span class="hl opt">)</span>
+            self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">'    Student policy at %s: %s'</span> <span class="hl opt">% (</span>differPoint<span class="hl opt">,</span> policy<span class="hl opt">[</span>differPoint<span class="hl opt">]))</span>
+            self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">'    Correct policy at %s: %s'</span> <span class="hl opt">% (</span>differPoint<span class="hl opt">,</span> actionMap<span class="hl opt">[</span>self<span class="hl opt">.</span>policy<span class="hl opt">[</span>differPoint<span class="hl opt">[</span><span class="hl num">0</span><span class="hl opt">]][</span>differPoint<span class="hl opt">[</span><span class="hl num">1</span><span class="hl opt">]]]))</span>
+            self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">'    Student policy:'</span><span class="hl opt">)</span>
+            self<span class="hl opt">.</span><span class="hl kwd">printPolicy</span><span class="hl opt">(</span>policy<span class="hl opt">,</span> <span class="hl kwa">False</span><span class="hl opt">)</span>
+            self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">&quot;        Legend:  N,S,E,W at states which move north etc, X at states which exit,&quot;</span><span class="hl opt">)</span>
+            self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">&quot;                 . at states where the policy is not defined (e.g. walls)&quot;</span><span class="hl opt">)</span>
+            self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">'    Correct policy specification:'</span><span class="hl opt">)</span>
+            self<span class="hl opt">.</span><span class="hl kwd">printPolicy</span><span class="hl opt">(</span>self<span class="hl opt">.</span>policy<span class="hl opt">,</span> <span class="hl kwa">True</span><span class="hl opt">)</span>
+            self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">&quot;        Legend:  N,S,E,W for states in which the student policy must move north etc,&quot;</span><span class="hl opt">)</span>
+            self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">&quot;                 _ for states where it doesn't matter what the student policy does.&quot;</span><span class="hl opt">)</span>
+            self<span class="hl opt">.</span><span class="hl kwd">printGridworld</span><span class="hl opt">()</span>
+            <span class="hl kwa">return</span> self<span class="hl opt">.</span><span class="hl kwd">testFail</span><span class="hl opt">(</span>grades<span class="hl opt">)</span>
+
+        <span class="hl slc">## check path</span>
+        path <span class="hl opt">=</span> <span class="hl kwd">followPath</span><span class="hl opt">(</span>policy<span class="hl opt">,</span> self<span class="hl opt">.</span>grid<span class="hl opt">.</span><span class="hl kwd">getStartState</span><span class="hl opt">())</span>
+
+        <span class="hl kwa">if</span> self<span class="hl opt">.</span>pathVisits <span class="hl opt">!=</span> <span class="hl kwa">None and</span> self<span class="hl opt">.</span>pathVisits <span class="hl kwa">not in</span> path<span class="hl opt">:</span>
+            self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">'Policy does not visit state %s when moving without noise.'</span> <span class="hl opt">% (</span>self<span class="hl opt">.</span>pathVisits<span class="hl opt">,))</span>
+            self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">'    States visited: %s'</span> <span class="hl opt">% (</span>path<span class="hl opt">,))</span>
+            self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">'    Student policy:'</span><span class="hl opt">)</span>
+            self<span class="hl opt">.</span><span class="hl kwd">printPolicy</span><span class="hl opt">(</span>policy<span class="hl opt">,</span> <span class="hl kwa">False</span><span class="hl opt">)</span>
+            self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">&quot;        Legend:  N,S,E,W at states which move north etc, X at states which exit,&quot;</span><span class="hl opt">)</span>
+            self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">&quot;                 . at states where policy not defined&quot;</span><span class="hl opt">)</span>
+            self<span class="hl opt">.</span><span class="hl kwd">printGridworld</span><span class="hl opt">()</span>
+            <span class="hl kwa">return</span> self<span class="hl opt">.</span><span class="hl kwd">testFail</span><span class="hl opt">(</span>grades<span class="hl opt">)</span>
+
+        <span class="hl kwa">if</span> self<span class="hl opt">.</span>pathNotVisits <span class="hl opt">!=</span> <span class="hl kwa">None and</span> self<span class="hl opt">.</span>pathNotVisits <span class="hl kwa">in</span> path<span class="hl opt">:</span>
+            self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">'Policy visits state %s when moving without noise.'</span> <span class="hl opt">% (</span>self<span class="hl opt">.</span>pathNotVisits<span class="hl opt">,))</span>
+            self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">'    States visited: %s'</span> <span class="hl opt">% (</span>path<span class="hl opt">,))</span>
+            self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">'    Student policy:'</span><span class="hl opt">)</span>
+            self<span class="hl opt">.</span><span class="hl kwd">printPolicy</span><span class="hl opt">(</span>policy<span class="hl opt">,</span> <span class="hl kwa">False</span><span class="hl opt">)</span>
+            self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">&quot;        Legend:  N,S,E,W at states which move north etc, X at states which exit,&quot;</span><span class="hl opt">)</span>
+            self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">&quot;                 . at states where policy not defined&quot;</span><span class="hl opt">)</span>
+            self<span class="hl opt">.</span><span class="hl kwd">printGridworld</span><span class="hl opt">()</span>
+            <span class="hl kwa">return</span> self<span class="hl opt">.</span><span class="hl kwd">testFail</span><span class="hl opt">(</span>grades<span class="hl opt">)</span>
+
+        <span class="hl kwa">return</span> self<span class="hl opt">.</span><span class="hl kwd">testPass</span><span class="hl opt">(</span>grades<span class="hl opt">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">printGridworld</span><span class="hl opt">(</span>self<span class="hl opt">):</span>
+        self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">'    Gridworld:'</span><span class="hl opt">)</span>
+        <span class="hl kwa">for</span> line <span class="hl kwa">in</span> self<span class="hl opt">.</span>gridText<span class="hl opt">.</span><span class="hl kwd">split</span><span class="hl opt">(</span><span class="hl str">'</span><span class="hl esc">\n</span><span class="hl str">'</span><span class="hl opt">):</span>
+            self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">'     '</span> <span class="hl opt">+</span> line<span class="hl opt">)</span>
+        self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">'        Legend: # wall, _ empty, S start, numbers terminal states with that reward.'</span><span class="hl opt">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">printPolicy</span><span class="hl opt">(</span>self<span class="hl opt">,</span> policy<span class="hl opt">,</span> policyTypeIsGrid<span class="hl opt">):</span>
+        <span class="hl kwa">if</span> policyTypeIsGrid<span class="hl opt">:</span>
+            legend <span class="hl opt">= {</span><span class="hl str">'N'</span><span class="hl opt">:</span> <span class="hl str">'N'</span><span class="hl opt">,</span> <span class="hl str">'E'</span><span class="hl opt">:</span> <span class="hl str">'E'</span><span class="hl opt">,</span> <span class="hl str">'S'</span><span class="hl opt">:</span> <span class="hl str">'S'</span><span class="hl opt">,</span> <span class="hl str">'W'</span><span class="hl opt">:</span> <span class="hl str">'W'</span><span class="hl opt">,</span> <span class="hl str">' '</span><span class="hl opt">:</span> <span class="hl str">'_'</span><span class="hl opt">}</span>
+        <span class="hl kwa">else</span><span class="hl opt">:</span>
+            legend <span class="hl opt">= {</span><span class="hl str">'north'</span><span class="hl opt">:</span> <span class="hl str">'N'</span><span class="hl opt">,</span> <span class="hl str">'east'</span><span class="hl opt">:</span> <span class="hl str">'E'</span><span class="hl opt">,</span> <span class="hl str">'south'</span><span class="hl opt">:</span> <span class="hl str">'S'</span><span class="hl opt">,</span> <span class="hl str">'west'</span><span class="hl opt">:</span> <span class="hl str">'W'</span><span class="hl opt">,</span> <span class="hl str">'exit'</span><span class="hl opt">:</span> <span class="hl str">'X'</span><span class="hl opt">,</span> <span class="hl str">'.'</span><span class="hl opt">:</span> <span class="hl str">'.'</span><span class="hl opt">,</span> <span class="hl str">' '</span><span class="hl opt">:</span> <span class="hl str">'_'</span><span class="hl opt">}</span>
+
+        <span class="hl kwa">for</span> ybar <span class="hl kwa">in</span> <span class="hl kwb">range</span><span class="hl opt">(</span>self<span class="hl opt">.</span>grid<span class="hl opt">.</span>grid<span class="hl opt">.</span>height<span class="hl opt">):</span>
+            y <span class="hl opt">=</span> self<span class="hl opt">.</span>grid<span class="hl opt">.</span>grid<span class="hl opt">.</span>height<span class="hl opt">-</span><span class="hl num">1</span><span class="hl opt">-</span>ybar
+            <span class="hl kwa">if</span> policyTypeIsGrid<span class="hl opt">:</span>
+                self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">&quot;        %s&quot;</span> <span class="hl opt">% (</span><span class="hl str">&quot;    &quot;</span><span class="hl opt">.</span><span class="hl kwd">join</span><span class="hl opt">([</span>legend<span class="hl opt">[</span>policy<span class="hl opt">[</span>x<span class="hl opt">][</span>y<span class="hl opt">]]</span> <span class="hl kwa">for</span> x <span class="hl kwa">in</span> <span class="hl kwb">range</span><span class="hl opt">(</span>self<span class="hl opt">.</span>grid<span class="hl opt">.</span>grid<span class="hl opt">.</span>width<span class="hl opt">)]),))</span>
+            <span class="hl kwa">else</span><span class="hl opt">:</span>
+                self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">&quot;        %s&quot;</span> <span class="hl opt">% (</span><span class="hl str">&quot;    &quot;</span><span class="hl opt">.</span><span class="hl kwd">join</span><span class="hl opt">([</span>legend<span class="hl opt">[</span>policy<span class="hl opt">.</span><span class="hl kwd">get</span><span class="hl opt">((</span>x<span class="hl opt">,</span>y<span class="hl opt">),</span> <span class="hl str">'.'</span><span class="hl opt">)]</span>  <span class="hl kwa">for</span> x <span class="hl kwa">in</span> <span class="hl kwb">range</span><span class="hl opt">(</span>self<span class="hl opt">.</span>grid<span class="hl opt">.</span>grid<span class="hl opt">.</span>width<span class="hl opt">)]),))</span>
+        <span class="hl slc"># for state in sorted(self.grid.getStates()):</span>
+        <span class="hl slc">#     if state != 'TERMINAL_STATE':</span>
+        <span class="hl slc">#         self.addMessage('      (%s,%s) %s' % (state[0], state[1], policy[state]))</span>
+
+
+    <span class="hl kwa">def</span> <span class="hl kwd">writeSolution</span><span class="hl opt">(</span>self<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> filePath<span class="hl opt">):</span>
+        with <span class="hl kwb">open</span><span class="hl opt">(</span>filePath<span class="hl opt">,</span> <span class="hl str">'w'</span><span class="hl opt">)</span> <span class="hl kwa">as</span> handle<span class="hl opt">:</span>
+            handle<span class="hl opt">.</span><span class="hl kwd">write</span><span class="hl opt">(</span><span class="hl str">'# This is the solution file for %s.</span><span class="hl esc">\n</span><span class="hl str">'</span> <span class="hl opt">%</span> self<span class="hl opt">.</span>path<span class="hl opt">)</span>
+            handle<span class="hl opt">.</span><span class="hl kwd">write</span><span class="hl opt">(</span><span class="hl str">'# File intentionally blank.</span><span class="hl esc">\n</span><span class="hl str">'</span><span class="hl opt">)</span>
+        <span class="hl kwa">return True</span>
+
+</pre>
+</body>
+</html>
+<!--HTML generated by highlight 3.8, http://www.andre-simon.de/-->

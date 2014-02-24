@@ -5,7 +5,6 @@ Email response: write a solution for Exercise 17.10 (a-b); 21.2
 Readings: due Thursday 2/27 (email response due Wed 2/26 by 8 pm)
 ============================================================================
 
-
 17.10 Consider an undiscounted MDP having three states, (1, 2, 3), with
 rewards −1, −2, 0, respectively. State 3 is a terminal state. In states 1 and
 2 there are two possible actions: a and b. The transition model is as follows:
@@ -43,21 +42,18 @@ action b in both states.
     pi_2  b   a 
 
     SECOND ITERATION
-    V_1(s_1) = 
-    V_1(s_2) =  
+    V_0(s_1) = 0
+    V_0(s_2) = 0
     .......
-    V_n(s_1) = 
-    V_n(s_2) =   
-
-    V_3(s_1) = 
-    V_3(s_2) = 
-    pi_4(s_1) = 
-    pi_4(s_2) = 
-
+    V_n(s_1) = -9
+    V_n(s_2) = -7.5 
 
     policy improvement:
-    pi_2(s_1) = argmax(-16.25, -1) = b
-    pi_2(s_2) = argmax(-5, -16) = a
+    pi_3(s_1) = argmax(-9.6, -9) = b
+    pi_3(s_2) = argmax(-7.5, -8.55) = a
+
+    Since the policy does not vary any more, the optimal policy for state 1 is
+    action b, and the optimal policy for state 2 is action a.
 
 ============================================================================
 21.2 Chapter 17 defined a proper policy for an MDP as one that is guaranteed
@@ -67,7 +63,8 @@ proper for the true MDP; with such models, the POLICY-EVALUATION step may fail
 if γ=1. Show that this problem cannot arise if POLICY-EVALUATION is applied to
 the learned model only at the end of a trial.
 
-    
+   ## 
+   
 
 
 ============================================================================

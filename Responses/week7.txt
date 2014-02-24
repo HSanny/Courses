@@ -1,0 +1,81 @@
+Readings: due Tuesday 2/25 (email response due Mon 2/24 by 8 pm)
+Textbook Chapter 21.1-21.3
+[optional] Sections 6.1, 6.2, 6.5 in Sutton and Barto
+Email response: write a solution for Exercise 17.10 (a-b); 21.2
+Readings: due Thursday 2/27 (email response due Wed 2/26 by 8 pm)
+============================================================================
+
+
+17.10 Consider an undiscounted MDP having three states, (1, 2, 3), with
+rewards −1, −2, 0, respectively. State 3 is a terminal state. In states 1 and
+2 there are two possible actions: a and b. The transition model is as follows:
+• In state 1, action a moves the agent to state 2 with probability 0.8 and
+makes the agent stay put with probability 0.2.
+• In state 2, action a moves the agent to state 1 with probability 0.8 and
+makes the agent stay put with probability 0.2.
+• In either state 1 or state 2, action b moves the agent to state 3 with
+probability 0.1 and makes the agent stay put with probability 0.9.
+
+Answer the following questions:
+a. What can be determined qualitatively about the optimal policy in states 1
+and 2?
+
+    Optimal Action in state 1 and 2. 
+
+b. Apply policy iteration, showing each step in full, to determine the optimal
+policy and the values of states 1 and 2. Assume that the initial policy has
+action b in both states.
+    
+    FIRST ITERATION
+    S    S1  S2 
+    pi_1  b   b
+    POLICY EVALUTION:
+    V_1(s_1) = -0.9   
+    V_1(s_2) = -1.8  
+    .......
+    V_n(s_1) = -0.25
+    V_n(s_2) = -18
+
+    POLICY IMPROVEMENT:
+    pi_2(s_1) = argmax(-16.25, -1) = b
+    pi_2(s_2) = argmax(-5, -16) = a
+    S    S1  S2 
+    pi_2  b   a 
+
+    SECOND ITERATION
+    V_1(s_1) = 
+    V_1(s_2) =  
+    .......
+    V_n(s_1) = 
+    V_n(s_2) =   
+
+    V_3(s_1) = 
+    V_3(s_2) = 
+    pi_4(s_1) = 
+    pi_4(s_2) = 
+
+
+    policy improvement:
+    pi_2(s_1) = argmax(-16.25, -1) = b
+    pi_2(s_2) = argmax(-5, -16) = a
+
+============================================================================
+21.2 Chapter 17 defined a proper policy for an MDP as one that is guaranteed
+to reach a terminal state. Show that it is possible for a passive ADP agent to
+learn a transition model for which its policy π is improper even if π is
+proper for the true MDP; with such models, the POLICY-EVALUATION step may fail
+if γ=1. Show that this problem cannot arise if POLICY-EVALUATION is applied to
+the learned model only at the end of a trial.
+
+    
+
+
+============================================================================
+Textbook Chapter 21.4-21.6
+Email response: write a reading response following the syllabus guidelines.  
+
+
+
+
+
+

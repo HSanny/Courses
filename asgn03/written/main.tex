@@ -104,69 +104,24 @@ single item bid in terms of its offer price.
         $\constantTime$. The formula for incremental computation is given as
     follows: }
     $$
-    \wm{k} = \wm{k-1} + (a_{k-1} q_{k-1} + b_{k-1}) 
-        - (a_k q_k + b_k)
+    \wm{k} = \wm{k-1} + (a_{k-1} q' + b_{k-1}) 
+        - (a_k q' + b_k)
     $$
+    where the $q'$ is quality of the item that is matched to the linear bid
+    indexed by $k-1$ and after this incremental step, it is matched to linear
+    bid indexed by $k$. 
+    
+    Note that items matched to single-item bid remained unchanged in this
+    case, the only variation made by incremental computation is caused by
+    changing the unmatched linear bid. Thus, the incremental computation is
+    valid because we have already sorted the linear bids by its slope and the
+    items are sorted by its quality. 
+
 \end{itemize}
  
 Since there are one linear time computation and $k-1$ constant time
 computation. The time complexity of this method is in linear time
 $\linearTime$.
-
-\newpage
-\subsection{Mathematical Proof}
-Since the computation of $\wm{0}$ as MWMCM in $mcm(G', U''-A[0])$ is justified
-in the last assignment, you can reference my solution in the assignment 2 for
-the proof of that part. And in the following, what I am doing is to validate
-the formula for incremental computation. 
-
-\begin{align*}
-    \wm{0} = \Sigma_{n \neq 0} (a_n q_n + b_n) + \Sigma_s m_s \\
-    \wm{1} = \Sigma_{n \neq 1} (a_n q_n + b_n) + \Sigma_s m_s 
-\end{align*}
-$$
-\vdots 
-$$
-\begin{align*}
-    \wm{k} = \Sigma_{n \neq k} (a_n q_n + b_n) + \Sigma_s m_s
-\end{align*}
-
-We observe that the incremental formula is 
-    $$
-    \wm{k} = \wm{k-1} + (\lbw{k-1}) - (\lbw{k})
-    $$
-
-Then, we prove it by mathematical induction. \\[0.5cm]
-\textbf{Base case}: 
-
-for $k = 0$, obviously it does hold.
-\begin{align*}
-    \wm{1} &= \Sigma_{n \neq 1} (\lbw{n}) + \Sigma_s m_s \\
-           &= \Sigma_{n \neq 1} (\lbw{n}) + \Sigma_s m_s 
-    + (\lbw{1}) - (\lbw{0}) - (\lbw{1}) + (\lbw{0}) \\
-    &= \Sigma_{n}(\lbw{n}) + \Sigma_s m_s - (\lbw{0}) - (\lbw{1}) + (\lbw{0})  \\
-    &= \Sigma_{n \neq 0} (\lbw{n}) + \Sigma_s m_s + (\lbw{0}) - (\lbw{1})  \\
-    &= \wm{0} + (\lbw{0}) - (\lbw{1}) 
-\end{align*}
-\textbf{Inductive cases}: 
-
-Assume that the relationship between the case of
-$k-1$ and $k$ holds, now we prove that it also holds for $k$ and $k+1$. ($k+1$
-items in total).  
-
-That is to say, given
-\begin{align*}
-    \wm{k} = \wm{k-1} + (\lbw{k-1}) - (\lbw{k})
-\end{align*}
-
-We need to prove
-\begin{align*}
-    \wm{k+1} = \wm{k} + (\lbw{k}) - (\lbw{k+1})
-\end{align*}
-
-By the definition of $\wm{k+1}$ and $\wm{k}$, it can be easily derived that
-the inductive cases hold. The specific proof procedure is similar to the base
-case. 
 
 \newpage
 \section{Exercise 4}

@@ -47,7 +47,34 @@ class MiraClassifier:
     representing a vector of values.
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    max_accuracy = None
+    nTrainingEntities = len(trainingData)
+    for C in Cgrid:
+        ## training
+        for iteration in range(self.max_iterations):
+            for i in range(nTrainingEntities):
+                entity = trainingData[i]
+                [prediction] = self.classify([entity])
+                if prediction == trainingLabels[i]:
+                    pass
+                else:
+                    diff = self.weights[prediction] - self.weights[trainingLabels[i]]
+                    tao = min (C, 1.0* (diff * entity + 1) / (entity*entity *2))
+                    taoCounter = entity.copy()
+                    for feat in entity.keys():
+                        self.weights[trainingLabels[i]][feat] += tao * entity[feat]
+                        self.weights[prediction][feat] -= tao * entity[feat]
+        ## validation
+        nTestingEntity = len(validationData)
+        predictions = self.classify(validationData)
+        comparisons = [predictions[x] == validationLabels[x] for x in range(nTestingEntity)]
+        accuracy = 1.0 * sum(comparisons) / nTestingEntity
+        if max_accuracy is None or accuracy > max_accuracy:
+            max_accuracy = accuracy
+            bestParameter = [C]
+    
+    [self.C] = [C]
+    return 
 
   def classify(self, data ):
     """
@@ -74,6 +101,16 @@ class MiraClassifier:
     featuresOdds = []
 
     "*** YOUR CODE HERE ***"
+    N = 100
+    tmp_pq = util.PriorityQueue()
+    for feat in self.features:
+        w_label1 = self.weights[feat]
+        w_label2 = self.weights[feat]
+    tmp_pq.push(feat, -(w_label1 - w_label2))
+
+    for i in range(0, N):
+        feat = tmp_pq.pop()
+        featuresOdds.append(feat)
 
     return featuresOdds
 

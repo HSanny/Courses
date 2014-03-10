@@ -51,3 +51,18 @@ Q4.
     that we use negative odds ratio as the priority when (feature) is pushed
     into the queue.
 
+Q5.
+    In this question, we have two phases to evaluate the accuracy led by C,
+    the training phase and validation phase.
+
+    During the training phase, we iterate through the training data for
+    max_iteration times. Each time iteration simulates the operations we apply
+    in Perceptron training. It is online learning (one entity updates model).
+
+    At the phase of validation, we evaluate the accuracy of the model derived
+    in the training phase as we do in naivebayes model.
+
+Q6. 
+    For this part, 
+
+

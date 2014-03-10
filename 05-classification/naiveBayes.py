@@ -51,8 +51,57 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
     """
 
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
-        
+    optimal_accuracy = None
+
+    # use counter to restore common values
+    cPrior = util.Counter()
+    cConditional = util.Counter()
+    cCounts = util.Counter()
+    
+    # figure out the common prior, conditional probability and counts
+    for i in range(0, len(trainingData)):
+        entity = trainingData[i]
+        label = trainingLabels[i]
+        cPrior[label] += 1
+        for feat, value in entity.items():
+            if value > 0: ## binary variable
+                cConditional[(feat, label)] += 1
+
+    max_accuracy = None
+    # computation for each smoothing
+    for k in kgrid:
+        PriorProb = util.Counter()
+        ConditionalProb = util.Counter()
+
+        nTrainingEntities = len(trainingData)
+        ## compute prior probability for the specific k
+        for label, count in cPrior.items():
+            PriorProb[label] = 1.0 * count / nTrainingEntities
+        ## compute conditional probability for the specific k
+        for feat in self.features:
+            for label in self.legalLabels:
+                count = cConditional[(feat, label)]
+                totalCount = cPrior[label]
+                conditional = 1.0 * (count + k) / (totalCount + 2 * k)
+                ConditionalProb[(feat, label)] = conditional
+
+        self.PriorProb = PriorProb
+        self.ConditionalProb = ConditionalProb
+
+        predictions = self.classify(validationData)
+        ## validate the data set
+        nTestItems = len(validationLabels)
+        assert nTestItems == len(predictions)
+
+        comparisions = [predictions[i] == validationLabels[i] for i in range(0, nTestItems)]
+        accuracy = 1.0 * sum(comparisions) / nTestItems
+        if accuracy > max_accuracy or max_accuracy is None:
+            self.k = k
+            opt_setting = (PriorProb, ConditionalProb)
+            max_accuracy = accuracy
+    self.PriorProb, self.ConditionalProb = opt_setting
+
+
   def classify(self, testData):
     """
     Classify the data based on the posterior distribution over labels.
@@ -62,9 +111,9 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
     guesses = []
     self.posteriors = [] # Log posteriors are stored for later data analysis (autograder).
     for datum in testData:
-      posterior = self.calculateLogJointProbabilities(datum)
-      guesses.append(posterior.argMax())
-      self.posteriors.append(posterior)
+        posterior = self.calculateLogJointProbabilities(datum)
+        guesses.append(posterior.argMax())
+        self.posteriors.append(posterior)
     return guesses
       
   def calculateLogJointProbabilities(self, datum):
@@ -76,8 +125,14 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
     logJoint = util.Counter()
     
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
-    
+    for label in self.legalLabels:
+        logJoint[label] = math.log(self.PriorProb[label])
+        for feat, value in datum.items():
+            conditional = self.ConditionalProb[(feat,label)]
+            if value > 0:
+                logJoint[label] += math.log(conditional)
+            else:
+                logJoint[label] += math.log(1-conditional)
     return logJoint
   
   def findHighOddsFeatures(self, label1, label2):
@@ -88,8 +143,14 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
     featuresOdds = []
         
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
-
+    tmp_pq = util.PriorityQueue()
+    for feat in self.features:
+        odds_ratio = self.ConditionalProb[feat, label1] / self.ConditionalProb[feat, label2] 
+        tmp_pq.push((feat, odds_ratio), -odds_ratio) # highest value first out
+    for i in range(0, 100):
+        feat, odds_ratio = tmp_pq.pop()
+        # print odds_ratio
+        featuresOdds.append(feat)
     return featuresOdds
     
 

@@ -40,3 +40,14 @@ Q2.
 
 
 Q3. 
+    For this part, we classify the set of training data one by one and update
+    the weight of involved labels according to the given documentations.
+
+Q4. 
+    In this question, we simply loop through all features in self.features to
+    compute difference of weight for each feature in terms of input label.
+
+    In addition to that, the data structure we use is priority queue. Note
+    that we use negative odds ratio as the priority when (feature) is pushed
+    into the queue.
+

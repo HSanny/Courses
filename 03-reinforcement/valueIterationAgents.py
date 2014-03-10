@@ -44,26 +44,27 @@ class ValueIterationAgent(ValueEstimationAgent):
         self.valueIteration()
 	
     def valueIteration(self):
+        mdp = self.mdp
         #Repeat until convergence or max # of iterations:
         for i in range(self.iterations):
             preValues = self.copyValues()
-            for state in self.mdp.getStates():
-                possibleActions = self.mdp.getPossibleActions(state)
-                if (not self.mdp.isTerminal(state)):
+            for state in mdp.getStates():
+                possibleActions = mdp.getPossibleActions(state)
+                if (not mdp.isTerminal(state)):
                     maxValue = None
                     for action in possibleActions:
                         tempSum = 0
-                        for [nextState, prob] in self.mdp.getTransitionStatesAndProbs(state,action):
-                            tempSum = tempSum + prob*(self.mdp.getReward(state,action,nextState)+self.discount*preValues[nextState])
+                        for [nextState, prob] in mdp.getTransitionStatesAndProbs(state,action):
+                            tempSum += prob*(mdp.getReward(state,action,nextState)+self.discount*preValues[nextState])
                         if maxValue is None or tempSum > maxValue: 
                             maxValue = tempSum
                     self.values[state] = maxValue 
 
     def copyValues(self):
-	preValues = util.Counter()
-	for state in self.values:
-	    preValues[state] = self.values[state]
-	return preValues
+        preValues = util.Counter()
+        for state in self.values:
+            preValues[state] = self.values[state]
+        return preValues
 
     def getValue(self, state):
         """

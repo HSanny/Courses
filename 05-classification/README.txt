@@ -12,7 +12,6 @@ Team members' contribution:
     Aming Ni  50%
 
 ===========================================================
-
 Q1. 
     Besides, we use counter to restore commonly used counts, such as prior count
     and conditional count. Based on these two common counters, we compute for
@@ -38,7 +37,6 @@ Q2.
     that we use negative odds ratio as the priority when (feature, odd_ratio)
     is pushed into the queue.
 
-
 Q3. 
     For this part, we classify the set of training data one by one and update
     the weight of involved labels according to the given documentations.
@@ -63,6 +61,20 @@ Q5.
     in the training phase as we do in naivebayes model.
 
 Q6. 
-    For this part, 
+    In this question, we need to design new featuers in order to improve the
+    accuracy to 84% for testing set. 
 
+    NOTE THAT our feature extraction takes a long time to run. (10-15min)
+    
+    Specifically, what we do is as follows:
+        For each pixel, we compute the gradient from every direction 
+        The gradient is characterized by -1, 0, +1.
+    
+    In summary, the feature we created is described as at a position (x,y),
+    the category of that gradient at direction left, right, up, or down. For
+    example, 
 
+            features[(x, y, 'left', +1)] = 1 or 0
+
+    By doing the feature extraction above, the validation accuracy improves to
+    88% and testing accuracy improves to 84%.

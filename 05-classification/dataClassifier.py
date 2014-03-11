@@ -50,22 +50,60 @@ def basicFeatureExtractorFace(datum):
   return features
 
 def enhancedFeatureExtractorDigit(datum):
-  """
-  Your feature extraction playground.
-  
-  You should return a util.counter() of features
-  for this datum (datum is of type samples.Datum).
-  
-  ## DESCRIBE YOUR ENHANCED FEATURES HERE...
-  
-  ##
-  """
-  features =  basicFeatureExtractorDigit(datum)
+    """
+    Your feature extraction playground.
+    
+    You should return a util.counter() of features
+    for this datum (datum is of type samples.Datum).
 
-  "*** YOUR CODE HERE ***"
-  
-  return features
+    ## DESCRIBE YOUR ENHANCED FEATURES HERE...
 
+    ##
+    """
+    features = basicFeatureExtractorDigit(datum)
+
+    "*** YOUR CODE HERE ***"
+    '''
+    for x in range(DIGIT_DATUM_WIDTH):
+        for y in range(DIGIT_DATUM_HEIGHT):
+    '''
+    for x in range(DIGIT_DATUM_WIDTH):
+        for y in range(DIGIT_DATUM_HEIGHT):
+            center = datum.getPixel(x, y)
+            if x-1 > 0:
+                features[(x, y, 'left', 0)] = 0
+                features[(x, y, 'left', -1)] = 0
+                features[(x, y, 'left', 1)] = 0
+                left = datum.getPixel(x-1, y)
+                features[(x, y, 'left', stepfunction(left - center))] = 1
+            if x+1 < DIGIT_DATUM_WIDTH:
+                features[(x, y, 'right', 0)] = 0
+                features[(x, y, 'right', -1)] = 0
+                features[(x, y, 'right', 1)] = 0
+                right = datum.getPixel(x+1, y)
+                features[(x, y, 'right', stepfunction(right - center))] = 1
+            if y+1 < DIGIT_DATUM_HEIGHT:
+                features[(x, y, 'up', 0)] = 0
+                features[(x, y, 'up', -1)] = 0
+                features[(x, y, 'up', 1)] = 0
+                up = datum.getPixel(x, y+1)
+                features[(x, y, 'up', stepfunction(up - center))] = 1
+            if y-1 > 0:
+                features[(x, y, 'down', 0)] = 0
+                features[(x, y, 'down', -1)] = 0
+                features[(x, y, 'down', 1)] = 0
+                down = datum.getPixel(x, y-1)
+                features[(x, y, 'down', stepfunction(down - center))] = 1
+
+    return features
+
+def stepfunction (value):
+    if value > 0:
+        return 1
+    elif value == 0:
+        return 0
+    else:
+        return -1
 
 def contestFeatureExtractorDigit(datum):
   """

@@ -1,0 +1,119 @@
+===========================================================
+
+Insightful questions;
+
+Clarification questions about ambiguities;
+
+Comments about the relation of the reading to previous readings;
+
+Critiques;
+
+Thoughts on what you would like to learn about in more detail;
+
+Possible extensions or related studies;
+
+Thoughts on the reading's importance; and
+
+Summaries of the most important things you learned.
+
+===========================================================
+Class Reading for 01/21
+Reading Task:  
+    Textbook - Chapter 3 through the end of 3.4 
+    Respond to the readings by email
+    Append to your response a solution to at least one exercise from the end of
+    the chapter.
+===========================================================
+ 
+Search refers to the process of looking for a sequence of actions that reaches
+the goal. The search takes an environment as input and output a solution, that
+is, a sequence of actions. After the solution is figured out, the agent can
+execute the computed solution and apply changes on environment to derive
+expected optimal objective.
+
+An open-loop agent ignores its perception from environment since it knows
+the outcome of each-step behavior in advance. 
+
+Before solving the real-world problem, we can exploit suitable methods on
+corresponding toy problem for experimentation. 
+
+In the area of AI, complete definition of a problem is supposed to include th
+e followings:
+    States, Initial States, Transition Model, Goal Test, Path Cost.
+
+Four problem-solving performance:
+    Completeness, Optimality, Time Complexity, Space Complexity
+
+We already have knowledge about two uninformed search:  the breadth first
+search and depth first search. BFS first considers the completeness of
+searching at each level, whereas DFS first takes depth of searching into
+account. 
+
+Is there any particular search mixing both types of search method, in which
+the degree of mixture can be human-specified? In fact, Uniform-cost search and
+depth-limited search can be regarded as mixed methods, but these two searching
+methods based on different strategies.
+
+Response to exercise 3.1 
+Explain why problem formulation must follow goal formulation.
+
+As we all know, Goal formulation, based on the current situation and the
+agent’s performance measure, is the first step in problem solving.
+Problem formulation is the process of deciding what actions and states to
+consider, given a goal.
+Only when a goal is settled, the problem can be well formulated since the
+actions and states to be considered by that.
+
+===========================================================
+Class Reading for 01/23
+Readings: due Thursday 1/23 (email response due Wed 1/22 by 8 pm)
+
+Textbook - rest of Chapter 3
+Append to your response a solution to at least one exercise from the end of
+the chapter.
+===========================================================
+
+Heuristic search is one of informed searching method, which based itself on an
+evaluation function h(n). 
+
+Ways of informed search: 
+    - best-first search
+    - greedy best-first search
+    - A* search
+    - Recursive best-first search
+Each searching method based itself on different evaluation function and
+searching scheme.
+
+Greedy best-first search trys to expand the node that is
+closest to the goal, since this is the way to lead to a quick solution.
+
+Strategies that know whether one non-goal state is “more promising” than
+another are called informed search or heuristic search strategies.
+
+The tree-search version of A∗ is optimal if h(n) is admissible, while the
+graph-search version is optimal if h(n) is consistent.
+
+A problem with fewer restrictions on the actions is called a relaxed problem.
+The state-space graph of the relaxed problem is a supergraph of the original
+state space because the removal of restrictions creates added edges in the
+graph.
+
+The cost of an optimal solution to a relaxed problem is an admissible
+heuristic for the original problem.
+
+The performance of heuristic search algorithms depends on the quality of the
+heuristic function.
+
+Response to exercise 3.11
+What’s the difference between a world state, a state description, and a search
+node? Why is this distinction useful?
+
+A world state is how reality is. (objective) 
+A state description is an agent’s internal description of a world state.
+(machine's subjective opinion, may be lossy)
+
+Because the agent might want to peceive things that are not true from the
+environment, but it just imagines that it is true. And besides, the agent cares
+about the real state of world but not its internal representation of it.
+
+===========================================================

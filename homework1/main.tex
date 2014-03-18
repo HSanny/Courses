@@ -50,59 +50,68 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Problem 1: Snapshot Protocol}
-To relax the FIFO assumption under the asynchronous system, the problems
-encountered are as follows: 
+\subsection{Problem Analysis}
+If we relax the FIFO assumption under the asynchronous system, the problems
+introduced are as follows: 
 \begin{itemize}
-    \item{Messages in channel will reach destination after the empty message
-            or "take a snapshot" is delivered. In this case, we should delay the
-            report of one process to the snapshot initiator, so as to reserve
-        enough time waiting for the arrival of messages in channel. }
-    \item{Messages sent after the delivery of empty message or "take a
-            snapshot" message may arrive at destination process prior to it.
-            In this case, some messages that are monitored should not be
-            counted as component of channel state.} 
+    \item{Messages in channel will reach destination process after the "take a
+            snapshot" message (the marker message) is delivered to end up
+            channel recording. That is, some messages may stay in
+            channel over the whole snapshot collection period, such that we
+            cannot collect complete channel state. Our strategy to tackle this
+            problem is to delay the reporting of one process to the snapshot
+            initiator, so as to reserve enough time waiting for the arrival of
+            messages in channel. }
+    \item{Messages sent after the delivery of "take a snapshot" message may
+            arrive at destination process prior to it. That is, some redundant
+            messages may be mistaken as component of channel state. Our
+            strategy of dealing with this problem is to use timestamp.} 
 \end{itemize}
 
-Here we choose process $p_0$ as a snapshot initiator.
+\subsection{Algorithm}
+The new snapshot protocol is designed as follows:
+here we choose process $p_0$ as a snapshot initiator.
 \begin{itemize}
-    \item{processor $p_0$ selects Ω}
-    \item{$p_0$ sends “take a snapshot at Ω” to all processes; it waits for all
-            of them to reply and then sets its logical clock to Ω}
-    \item{when clock of $p_i$ read Ω}
+    \item{processor $p_0$ sends "take a snapshot to itself" with timestamp
+            $TS(m)$}
+    \item{if process $p_i$ receives "take a snapshot" \textbf{for first time} from $pj$ }
         \begin{itemize}
             \item{records its local state $\sigma_i$}
-            \item{sends an empty message with timestamp $TS(m)$ along its outgoing channels}
+            \item{sends "take a snapshot" with timestamp $TS(m)$ along its outgoing channels}
             \item{starts recording messages received on each incoming channel}
-            \item{stops recording a channel when $p_i$ read delay time $\tau$}
+            \item{stops recording a channel \textbf{after the delay time
+                        $\tau$}}
         \end{itemize}
-    \item{when $p_i$ receive empty messages with timestamp $TS(m)$ from $p_j$}
+    \item{when $p_i$ receive "take a snapshot" with timestamp $TS(m)$ from
+            \textbf{not for first time}}
         \begin{itemize}
             \item{ignore all received messages with timestamp greater than
                     $TS(m)$. That is, do not report these messages as part of
                     channel state.}
         \end{itemize}
-    \item{when $p_i$ has received empty messages from all incoming channels
-            and reach the delay time $\tau$, it sends collected state to $p_0$ and
-            stops.} 
+    \item{when $p_i$ stops recording all its incoming channel, it sends
+            collected state to $p_0$ and then stops}
 \end{itemize}
 
-Now let us prove the approach above generate the consistent global state.
 
-\textbf{Proof}: 
 
 \newpage
 \section{Problem 2: Property Specification}
+\subsection{Concepts Interpretation}
+%{{{
 Before providing solutions for these statement, we need first clarify the
-semantics of safety and liveness property 
+semantics of safety and liveness property:
 
-(1)\textbf{Liveness}. Even liveness property does not hold now, it will hold
-in one future state.
+\begin{itemize}
+    \item{\textbf{Liveness}. Even liveness property does not hold now, it will hold
+            in one future state.}
 
-(2)\textbf{Safety}. Once saftey property holds, that property holds for all
-prefix state.
-\\
-Solutions: 
-
+    \item{\textbf{Safety}. Once saftey property holds, that property holds for all
+            prefix state.}
+\end{itemize}
+%}}}
+\subsection{Ultimate Answers}
+%{{{
 1. \textbf{Safety}. 
 Once we know that another general will follow the attack decision within five
 minutes, such decision delay will hold in all previous global state. Thus,
@@ -139,10 +148,12 @@ even the general B does send 5 messages now, it may sends at least 5 messages
 in the future. This is not safety property because general will send less
 messages in the past. Thus, the lower bound of number of messages may not be
 satisfied in previous states.
-
+%}}}
 \newpage
+
 \section{Problem 3}
 \subsection{Under Bounded Loss Assumption}
+%{{{
 The algorithm is as follows: 
 \begin{itemize} 
     \item{If one general $g$ are ready to attack, and he does not receive "Yes"
@@ -210,8 +221,10 @@ otherwise, it will decides "not to attack".  Thus, since every general
 eventually make decision as shown above, the termination property for this
 algorithm holds. 
 
-\newpage
+\newpage%}}}
+
 \subsection{Under Eventual Delivery Assumption}
+%{{{
 The difference of this question lies in the fact that each general has no
 prior knowledge about the number of messages that would be lost. We can
 first let two generals send redundant messages to fail the channel until it is
@@ -274,7 +287,8 @@ no matter whether one general is ready or not, he will keep on sending message
 to the other general. The other general will eventually receive one of those
 message and make decision in terms of the recept message and its own readiness.
 
-\newpage
+\newpage%}}}
+
 \section{Problem 4}
 \textbf{Proof}:
 $$ VC (\Sigma_{min}^{\sigma_i^k}) = VC (\sigma_i^k)$$
@@ -287,6 +301,7 @@ $VC(\sigma_{i}^{k})$ represents a consistent global state. On the second part , 
 show that each component in $VC(\sigma_{i}^{k})$ is earliest.
 
 \subsection{$VC(\sigma_i^k)$ is earliest}
+%{{{
 First of all, we prove that 
     \textbf{the global state represented by $VC(\sigma_i^k)$ is consistent}.
     Actually, we can refer to, for convenience, the conclusion made in class
@@ -341,14 +356,11 @@ First of all, we prove that
     that \textbf{the global state represented by $VC(\sigma_i^k)$ is
         consistent}.
 
-It is obvious that this consistency property holds (refer to the class notes),
-out of the simple strong clock condition and concurrency property of Vector
-Clock. And since in the global state, the vector clock is computed according
-to the happen-before relationship on both internal event and external event,
-$\Sigma_{min}(\sigma_i^k)$ is consistent.
-
 \newpage
+%}}}
+
 \subsection{$VC(\sigma_i^k)$ is earliest}
+%{{{
 Then, we prove that 
     \textbf{for arbitrary $\sigma_i^k$, those each local state in
         $VC(\sigma_i^k)$ is earliest among all possible ones consistent with
@@ -413,7 +425,8 @@ Then, we prove that
     newly introduced event. The detailed proof follows the generalization from
     $E = 1$ to $E = 2$, involving the case of two VC update rule and one
     independent case. 
-    
+    %}}}
+
 \subsection{Sum Up}
 Since we have proven that the global state corresponding to $VC(\sigma_i^k)$
 is consistent and also earliest reachable state, it is reasonable to conclude

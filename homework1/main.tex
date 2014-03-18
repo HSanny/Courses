@@ -167,13 +167,14 @@ The algorithm is as follows:
             \item{General $g$ make up its decision "not to attack".}
             \item{If received "Yes" message from the other general, $g$ should
                     send eleven "No" messages to the other general}
-            \item{If received "Yes" message from the other general, $g$ should
+            \item{If received "No" message from the other general, $g$ should
                     send eleven "No" messages to the other general as
-                    acknowledgement}
+                    acknowledgement. }
         \end{itemize}
 \end{itemize}
 
 \textbf{Proof for Agreement}. 
+
 If general A is ready to attack, it should send 11 "Yes" messages to
 the other general. And general B must receive at least one message
 according to the assumption that at most 10 messages are lossy. Then if
@@ -185,9 +186,11 @@ In all other cases, general A and general B will both decide not to attack
 based on the algorithm shown above.
 
 \textbf{Proof for Validity}. 
+
 1. If both generals are not ready, each general will decide "not to attack"
 by himself without communicating with each other. In this case, no one decides
 to attack.
+
 2. If both generals are ready, both of them will send 11 "Yes" messages to the other
 general. And it is guaranteed that each general will at least receive one
 "Yes" message. And since both of them are ready and did not send "No" messages
@@ -197,7 +200,9 @@ In summary, since the point 1 and point 2 hold, the Validity Property
 holds for the provided algorithm.
 
 \textbf{Proof for Termination}. 
+
 If one general are not ready, it will decide "not to attack" at the moment. 
+
 If one general are ready, it will send 11 "Yes" message and these messages
 will be received for sure. The receiver general will respond with 11 messages.
 If these messages are "Yes" , the sender general will decide to "attack",
@@ -276,14 +281,65 @@ $$ VC (\Sigma_{min}^{\sigma_i^k}) = VC (\sigma_i^k)$$
 
 By defintion, 
 $ \Sigma_{min}^{\sigma_{i}^{k}}$ is the earliest consistent state that  $
-\sigma_i^k$ (event $k$ at process $i$) can belong to. Thus, we need to show
-that $VC(\sigma_{i}^{k})$ represents a consistent global state and then we need to show it
-is earliest.
+\sigma_i^k$ (event $k$ at process $i$) can belong to. Thus, we divide the
+entire proof into two parts. For the first part we show that
+$VC(\sigma_{i}^{k})$ represents a consistent global state. On the second part , we 
+show that each component in $VC(\sigma_{i}^{k})$ is earliest.
 
-First of all, we prove that those each local state $\sigma_i^k$ is consistent.
-$$ 
-\forall i,j: 1 \leq i \leq n, 1 \leq j \leq n, VC (e_i^{c_i})[i] \geq VC
-(e_j^{c_{j}})[i]  $$
+\subsection{$VC(\sigma_i^k)$ is earliest}
+First of all, we prove that 
+    \textbf{the global state represented by $VC(\sigma_i^k)$ is consistent}.
+    Actually, we can refer to, for convenience, the conclusion made in class
+    note that a vector clock of one event correspond to a consistent global
+    state. But we still provide detailed proof by contradiction.
+
+    Assume that the global state represented by $VC(\sigma_i^k)$ is
+    \textbf{not} consistent. That is to say,
+
+    \begin{align}
+     \exists \sigma_j^{s^*}, \sigma_j^{s^*} \rightarrow \sigma_i^k, s.t. 
+    \end{align}
+    \begin{align}
+     \sigma_i^k \in C, \sigma_j^{s*} \notin C 
+    \end{align}
+
+    According to the VC property, the happen-before relation above indicates
+    $$ VC(\sigma_j^{s^*}) < VC(\sigma_i^{k})$$
+
+    That is,
+    \begin{align}
+    VC(\sigma_j^{s^*}) \neq VC(\sigma_i^{k}) \ and \ \forall x,
+    VC(\sigma_j^{s^*})[x] \leq VC(\sigma_i^{k})[x]  \label{instan}
+    \end{align}
+
+    However, if we take an event at process $j$ happening before
+    $\sigma_j^{s*}$ and belong to the consistent cut, let's call it
+    $\sigma_j^s$. According the update rule of vector clock, we have
+    \begin{align}
+    VC(\sigma_j^s)[j] < VC(\sigma_j^{s^*})[j]
+    \end{align}
+
+    Instantiate the formula \eqref{instan}, we have
+    \begin{align}
+        (\sigma_j^{s^*})[j] \leq VC(\sigma_i^{k})[j]
+    \end{align}
+
+    Hence, we have 
+    \begin{align} \label{vio1}
+    VC(\sigma_j^s)[j] < VC(\sigma_j^{s^*})[j] \leq VC(\sigma_i^{k})[j]
+    \end{align}
+
+    However, according to the property of consistent cut (see the class note),
+    the event $\sigma_j^s$ and $\sigma_i^{k}$ are in one consistent cut and
+    should satisfy
+    \begin{align} \label{vio2}
+     VC (\sigma_j^s)[j] \geq VC (\sigma_i^{k})[j] 
+    \end{align}
+
+    Obviously, the conflict lies in \eqref{vio1} and \eqref{vio2}. Hence, we
+    should negate the assumption proposed at the very beginning and conclude
+    that \textbf{the global state represented by $VC(\sigma_i^k)$ is
+        consistent}.
 
 It is obvious that this consistency property holds (refer to the class notes),
 out of the simple strong clock condition and concurrency property of Vector
@@ -291,12 +347,80 @@ Clock. And since in the global state, the vector clock is computed according
 to the happen-before relationship on both internal event and external event,
 $\Sigma_{min}(\sigma_i^k)$ is consistent.
 
-Then, we prove that those each local state $\sigma_i^k$ is earliest.
-For each local state $\sigma_i^k$, the event indexed with $k$ on each process
-$i$ is always $\sigma_i^k$. 
+\newpage
+\subsection{$VC(\sigma_i^k)$ is earliest}
+Then, we prove that 
+    \textbf{for arbitrary $\sigma_i^k$, those each local state in
+        $VC(\sigma_i^k)$ is earliest among all possible ones consistent with
+        $\sigma_i^k$}.
 
-Since we have proven that the global state $\Sigma$ with each local state
-$\sigma_i^k$ is consistent and also earliest reachable state.
+    We prove this by mathematical induction on number of events $E$. 
+
+    \textbf{For base case of $E = 1$}, there is only one event (say, at process $i$), the vector
+    clock of that event 
+        
+    \begin{eqnarray}
+        \forall j, 1 \leq j \leq n,\ VC(\sigma_i^1)[j] =
+        \begin{cases}
+        0                   & j \neq i \\
+        1                   & j = i
+        \end{cases}
+    \end{eqnarray}
+    
+    Obviously, the claim to be proven is true for the case of $E = 1$ since all local
+    states are earliest.
+
+    \textbf{For base case of $E = 2$}, we consider two possible derivation according to the update
+    rule of vector clock. One is local update rule, and the other is
+    happen-before update rule. And third possibility is one independent event,
+    regardless of the update rule.
+
+    \begin{itemize}
+
+        \item{For local update rule, we have: }
+    \begin{eqnarray}
+       \forall j, 1 \leq j \leq n,\ VC(\sigma_i^2)[j] = 
+        \begin{cases}
+            0   & j \neq i \\
+            2   & j = i
+        \end{cases}
+    \end{eqnarray}
+
+    Apparently, this vector clock is earliest.
+    
+\item{For happen-before update rule, we introduce a event $e_k^1$ at process
+        $k$, ($k \neq i,\ 1 \leq k \leq n$) s.t. $e_i^1
+        \rightarrow e_k^1$, and have: }
+    \begin{eqnarray}
+       \forall j, 1 \leq j \leq n,\  VC(\sigma_k^1)[j] = 
+        \begin{cases}
+            1   & j = i\ or\ j = k \\
+            0   & otherwise
+        \end{cases}
+    \end{eqnarray}
+
+    By observation, this vector clock is earliest as well.
+
+\item{For introducing an independent event, it is obvious that the vector clock
+        of new event is still earliest. Here we omit the detail for convenience.}
+    \end{itemize}
+
+    Now we can conclude that the claim to be proven is true for $E = 2$.
+
+    \textbf{Generalization cases}. We assume that for $E = k$, all components
+    in $VC(\sigma_i^k)$ is earliest for any $\sigma_i^k$. And prove that for
+    $E = k + 1$, the same property holds. Similarly, we only needs to consider
+    newly introduced event. The detailed proof follows the generalization from
+    $E = 1$ to $E = 2$, involving the case of two VC update rule and one
+    independent case. 
+    
+\subsection{Sum Up}
+Since we have proven that the global state corresponding to $VC(\sigma_i^k)$
+is consistent and also earliest reachable state, it is reasonable to conclude
+that 
+\begin{align}
+ VC (\Sigma_{min}^{\sigma_i^k}) = VC (\sigma_i^k)
+\end{align}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% General Documentation ends

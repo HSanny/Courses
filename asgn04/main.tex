@@ -137,7 +137,7 @@ That is to conclude,
 \begin{minipage}{15cm} 
     \textbf{Exercise 2.} Let $G = (U, V, E)$ be a configuration, let
     $(M, p)$ and $(M', p)$ be stable solutions for $G$, let $(u,v)$ be an edge
-    in $M$, and assume that $w(u,v) > p_v$. Then $u$ is matched to some item
+    in $M$, and assume that $w(u,v) > p_v$. Prove that $u$ is matched to some item
     $v'$ in $M'$, and $w(u,v) - p_v = w(u,v') - p_v'$.
 \end{minipage} } \\
 
@@ -146,6 +146,11 @@ That is to conclude,
     \begin{align}
         w(u,v) - p_v \geq w(u,v') - p_{v'}
     \end{align}
+
+    Since we assume that $w(u,v) > p_v$, it can be avoided that two bids have
+    the same bidding highest price for item $v$ ($p_v$ is the second highest
+    bidding price). Hence, the other MWMCM is not
+    made by the instability as the same highest bidding price.
 
     Similarly for stable solution $(M', p)$, we have
     \begin{align}
@@ -398,6 +403,54 @@ notation reference, you can refer to the representative graph.
     $G$, and let $p$ be a price vector for $G$. Prove that digraph $(G,M,p)$
     does not contain a directed cycle of positive weight.
 \end{minipage} }
+
+\begin{proof} [Proof by Contradiction]
+    Let us assume that $digraph(G,M,p)$ does contain a directed cycle of
+    positive weight. Since in the cycle C, all nodes are matched in $G$, we
+    only need to refer to the first and second rule of provided $G'$
+    formation.
+    And here we represent the cycle C which has positive weight,
+    by indexing involved bid set ${u_0, .., u_n}$, and item set ${v_0, .., v_n}$,
+    such that
+
+    $$ \forall i \in [0,n], (u_i, v_i) \in M $$
+
+    According to the edge formation of $E'$ of $G'(V', E')$, in cycle C, each
+    node must have degree of size 2, one incoming edge and one outgoing edge.
+    For each item node indexed by $i$, the outgoing edges can be explained
+    mathematically as follows,
+
+    \begin{align} \label{e4_eachItem}
+        (u_i, v_i) \in M  
+    \end{align}
+
+    For each bid node indexed by $i$, whose outgoing edge is $(u_i, v_j)$ ($j
+    \neq j$), we
+    can treat it as 
+
+    \begin{align} \label{e4_eachBidNode}
+        w(u_i, v_i) - p_{v_i} \leq w(u_i, v_j) - p_{v_j}
+    \end{align}
+
+    Since all the corresponding edges in \eqref{e4_eachItem} on $E'$ has
+    weight 0, there must be {\bf at least one inequality in \eqref{e4_eachBidNode}
+    having non-equal relationship. Otherwise, the cycle C does have positive
+    weight. }
+    
+    By summing up all inequalities in \eqref{e4_eachBidNode} and cancel out
+    all terms about certain component of price vector, we have
+    \begin{align}
+        \sum_i \big( w(u_i, v_i) \big) < 
+            \sum_i \big( w(u_i, v_j) \big)
+    \end{align}
+
+    The derived inequality indicates that for each $u_i$, the matching $(u_i,
+    v_j) \in M$ rather than $(u_i, v_j)$.
+    Apparently, this contradicts to our encoding scheme of MWMCM $M$ at the very
+    beginning.
+
+    Thus, there does no exist a cycle of positive weight in digraph $(G,M,p)$
+\end{proof}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% General Documentation ends

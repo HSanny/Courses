@@ -27,7 +27,7 @@
 \renewcommand{\TUTOR}{Adarsh Prasad}
 \renewcommand{\TASK}{Homework 03}
 \renewcommand{\RELEASEDATE}{March. 25 2014}
-\renewcommand{\DUEDATE}{April. 27 2014}
+\renewcommand{\DUEDATE}{April. 07 2014}
 \renewcommand{\TIMECONSUME}{7 hours}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% DOCUMENTATION STARTS FROM HERE 
@@ -53,23 +53,30 @@
 %%% GENERAL DOCUMENTATION BEGINS 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\newcommand{\uk}{\ensuremath{U^{(K_i)}}}
+\newcommand{\ukt}{\ensuremath{U^{(K_i) T}}}
+\newcommand{\mk}{\ensuremath{M^{(K_i)}}}
+\newcommand{\mkt}{\ensuremath{M^{(K_i) T}}}
 \section{MF Implementation}
 
 \begin{figure}[h]
     \centering
-    %\includegraphics[width=7in,height=3.5in]{} \\
+    \includegraphics[width=5in,height=3.5in]{./lambda_error.png} \\
     \caption{Errors With Regard to Parameter $\lambda$}
 \end{figure}
 For specific details, see the source code in Appendix \ref{AppdendixA}.
 For debugging, see the Execution logs in Appendix \ref{AppdendixB}.
 
 \section{Report optimal $\lambda$}
+The optimal lambda derived is $\lambda = 1$.
 
-\section{Problems when $\lambda = 0$}
-The problems encountered when $\lambda = 0$ are 
+\section{Problem when $\lambda = 0$}
+The problem encountered when $\lambda = 0$ is that the singularity of
+$\ukt * \uk$ and $\mkt * \mk$.
+
 
 \section{RMSE of Test Set under optimal $\lambda$}
-The RMSE of test set under optimal $\lambda = $ is $..$.
+The RMSE of test set under optimal $\lambda = $ is $1.0835$.
 
 \newpage
 \appendix
@@ -78,7 +85,7 @@ The RMSE of test set under optimal $\lambda = $ is $..$.
 \lstinputlisting{../solution.m}
 \section{Execution Logs}
 \label{AppdendixB}
-
+\lstinputlisting{../logs.txt}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% General Documentation ends

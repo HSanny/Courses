@@ -13,7 +13,7 @@ nMovies = sRatings(2);
 
 %% 
 % PRE-SETTING
-LAMBDAS = 0.05:0.05:1;
+LAMBDAS = 0:0.05:1;
 NITERATIONS = 30;
 K = 10;
 nLambdas = size(LAMBDAS, 2);
@@ -49,9 +49,8 @@ end
     plot(LAMBDAS, avgError, 'x-')
     hold on
     %% pick up the optimal lambda
-    optIdx = find(avgError <= min(avgError) + 1e-3);
+    optIdx = find(avgError <= min(avgError) + 1e-5);
     optLambda = LAMBDAS(optIdx)
-    assert(all(optLambda <= avgError) == 1)
     plot([optLambda], [avgError(optIdx)], 'dr', 'MarkerSize', 10)
     %% training by using optimal lambda
     [U, M] = trainMF (trR, optLambda, NITERATIONS, K);

@@ -13,7 +13,7 @@ nMovies = sRatings(2);
 
 %% 
 % PRE-SETTING
-LAMBDAS = 0:0.05:1;
+LAMBDAS = 0.05:0.05:1;
 NITERATIONS = 30;
 K = 10;
 nLambdas = size(LAMBDAS, 2);
@@ -66,8 +66,8 @@ end
 function [U, M] = trainMF (trainData, lambda, iterations, K)
 nUsers = size(trainData, 1);
 nMovies = size(trainData, 2);
-U = rand(nUsers, K);
-M = rand(nMovies, K);
+U = randn(nUsers, K);
+M = randn(nMovies, K);
 
 for iter = 1:iterations,
     for j = 1:nMovies,

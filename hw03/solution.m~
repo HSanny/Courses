@@ -66,18 +66,20 @@ end
 function [U, M] = trainMF (trainData, lambda, iterations, K)
 nUsers = size(trainData, 1);
 nMovies = size(trainData, 2);
-U = rand(nUsers, K);
-M = rand(nMovies, K);
+U = randn(nUsers, K);
+det(U), det
+M = randn(nMovies, K);
 
 for iter = 1:iterations,
     for j = 1:nMovies,
-        Uk = U(find(trainData(:, j) ~= 0), :);
-        R
-        M(j,:) = inv(Uk' * Uk + lambda * eye(K)) * Uk' * trainData(:,j);
+        idx = find(trainData(:, j) ~= 0);
+        Uk = U(idx, :);
+        M(j,:) = inv(Uk' * Uk + lambda * eye(K)) * Uk' * trainData(idx,j);
     end
     for i = 1:nUsers,
-        Mk = M(find(trainData(i, :) ~= 0), :);
-        U(i,:) = inv(Mk' * Mk + lambda * eye(K)) * Mk' * trainData(i,:)';
+        idx = find(trainData(i, :) ~= 0);
+        Mk = M(idx, :);
+        U(i,:) = inv(Mk' * Mk + lambda * eye(K)) * Mk' * trainData(i,idx)';
     end
 end
 end

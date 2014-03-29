@@ -71,14 +71,13 @@ M = rand(nMovies, K);
 
 for iter = 1:iterations,
     for j = 1:nMovies,
-        idx = find(trainData(:, j) ~= 0);
-        Uk = U(idx, :);
-        M(j,:) = inv(Uk' * Uk + lambda * eye(K)) * Uk' * trainData(idx,j);
+        Uk = U(find(trainData(:, j) ~= 0), :);
+        R
+        M(j,:) = inv(Uk' * Uk + lambda * eye(K)) * Uk' * trainData(:,j);
     end
     for i = 1:nUsers,
-        idx = find(trainData(i, :) ~= 0);
-        Mk = M(idx, :);
-        U(i,:) = inv(Mk' * Mk + lambda * eye(K)) * Mk' * trainData(i,idx)';
+        Mk = M(find(trainData(i, :) ~= 0), :);
+        U(i,:) = inv(Mk' * Mk + lambda * eye(K)) * Mk' * trainData(i,:)';
     end
 end
 end

@@ -1,11 +1,14 @@
 import java.util.Scanner;
+import java.util.ArrayList;
 public class Master {
 
   public static void main(String [] args) {
     Scanner scan = new Scanner(System.in);
     int numNodes, numClients;
-    Client c = new Client();
-    
+
+    ArrayList<Client> allClients = new ArrayList<Client> ();
+    ArrayList<Server> allServers = new ArrayList<Server> ();
+
     while (scan.hasNextLine()) {
       String [] inputLine = scan.nextLine().split(" ");
       int clientIndex, nodeIndex;
@@ -18,6 +21,12 @@ public class Master {
              *  connections to them for sending further commands
              */
             System.out.println("start..");
+            for (int sIdx = 0; sIdx < numNodes; sIdx ++) {
+                allServers.add(new Server());
+            }
+            for (int cIdx = 0; cIdx < numNodes; cIdx ++) {
+                allClients.add(new Client());
+            }
             break;
         case "sendMessage":
             clientIndex = Integer.parseInt(inputLine[1]);
@@ -28,11 +37,11 @@ public class Master {
                 message += " ";
               }
             }
-            System.out.println("sendMessage..");
             /*
              * Instruct the client specified by clientIndex to send the message
              * to the proper paxos node
              */
+            System.out.println("sendMessage..");
             break;
         case "printChatLog":
             clientIndex = Integer.parseInt(inputLine[1]);

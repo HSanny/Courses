@@ -1,0 +1,6 @@
+#!/bin/bash
+if [ $1 -eq 1 ]; then
+    cat tests/simpleTest.test | $(cat COMMAND)
+elif [ $1 -eq 2 ]; then
+    cat tests/threeNodeGap.test | $(cat COMMAND)
+fi

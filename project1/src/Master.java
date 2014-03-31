@@ -1,10 +1,10 @@
 import java.util.Scanner;
-
 public class Master {
 
   public static void main(String [] args) {
     Scanner scan = new Scanner(System.in);
     int numNodes, numClients;
+    Client c = new Client();
     
     while (scan.hasNextLine()) {
       String [] inputLine = scan.nextLine().split(" ");
@@ -17,6 +17,7 @@ public class Master {
              * start up the right number of nodes and clients, and store the 
              *  connections to them for sending further commands
              */
+            System.out.println("start..");
             break;
         case "sendMessage":
             clientIndex = Integer.parseInt(inputLine[1]);
@@ -27,6 +28,7 @@ public class Master {
                 message += " ";
               }
             }
+            System.out.println("sendMessage..");
             /*
              * Instruct the client specified by clientIndex to send the message
              * to the proper paxos node

@@ -37,6 +37,7 @@ interface Protocol {
     final static String P2A_TITLE = "P2A";
     final static String P1B_TITLE = "P1B";
     final static String P2B_TITLE = "P2B";
+    final static String PRINT_CHAT_LOG_TITLE = "PRINT_CHAT_LOG";
 
     // Macros for CONTENT
     final static String COMMAND_SEP = "/c";

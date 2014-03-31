@@ -168,6 +168,11 @@ public class Master extends Util {
                      * Print out the client specified by clientIndex's chat history
                      * in the format described on the handout.	     
                      */
+                    InetAddress host = InetAddress.getLocalHost();
+                    port = CLIENT_PORT_BASE + clientIndex; 
+                    String tmp_message = String.format(MESSAGE, MASTER_TYPE,
+                            0, CLIENT_TYPE, clientIndex, PRINT_CHAT_LOG_TITLE, EMPTY_CONTENT);
+                    send (host, port, tmp_message, MASTER_LOG_HEADER);
                     break;
                 case "allClear":
                     /*
@@ -197,6 +202,7 @@ public class Master extends Util {
                     /*
                      * Instruct the leader to skip slots in the chat message sequence  
                      */ 
+                    
                     break;
                 case "timeBombLeader":
                     int numMessages = Integer.parseInt(inputLine[1]);

@@ -42,22 +42,25 @@ public class Client extends Util implements Protocol {
                 InetAddress.getLocalHost());
         listener.setReuseAddress(true);
         // indicate the listener setup
-        System.out.println(logHeader + "listener setup: " + listener.toString());
-        try {
-            while (true) {
-                Socket socket = listener.accept();
-                try {
-                    BufferedReader in = new BufferedReader(new
-                            InputStreamReader(socket.getInputStream()));
-                    // channel is established
-                   String cmd = in.readLine();
-                   System.out.println(cmd);
-                   if (cmd.equals("exit")) {
-                        listener.close();
+        System.out.println(logHeader + "Listener setup: " + listener.toString());
+        try { while (true) {
+            Socket socket = listener.accept();
+            try {
+                BufferedReader in = new BufferedReader(new
+                        InputStreamReader(socket.getInputStream()));
+                // channel is established
+                String cmd = in.readLine();
+                System.out.println(cmd);
+
+                if (cmd.equals(EXIT_MESSAGE)) {
+                    socket.close();
+                    listener.close();
+                    System.exit(0);
                    }
                 } finally {
                     socket.close();
                 }
+
             }
         } finally {
             listener.close();

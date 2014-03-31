@@ -23,128 +23,137 @@ public class Master extends Util implements Protocol {
     final static String RUN_SERVER_CMD = "java -cp bin/ Server";
     final static String RUN_CLIENT_CMD = "java -cp bin/ Client";
 
-  public static void main(String [] args) throws IOException, InterruptedException {
-    Scanner scan = new Scanner(System.in);
-    int numNodes, numClients;
-    int clientIndex, nodeIndex;
-    Process [] serverProcesses = null;
-    Process [] clientProcesses = null;
+    public static void main(String [] args) throws IOException, InterruptedException {
+        Scanner scan = new Scanner(System.in);
+        int numNodes, numClients;
+        int clientIndex, nodeIndex;
+        Process [] serverProcesses = null;
+        Process [] clientProcesses = null;
 
-    while (scan.hasNextLine()) {
-      String [] inputLine = scan.nextLine().split(" ");
+        while (scan.hasNextLine()) {
+            String input = scan.nextLine();
+            String [] inputLine = input.split(" ");
+            System.out.println("[INPUT] "+input);
 
-      Runtime runtime = Runtime.getRuntime();
-      switch (inputLine[0]) {
-        case "start":
-            numNodes = Integer.parseInt(inputLine[1]);
-            numClients = Integer.parseInt(inputLine[2]);
-            /*
-             * start up the right number of nodes and clients, and store the 
-             *  connections to them for sending further commands
-             */
-            // ============================================================
-            // DRIVEN BY JIMMY LIN STARTS
-            System.out.println("start..");
+            Runtime runtime = Runtime.getRuntime();
+            switch (inputLine[0]) {
+                case "start":
+                    numNodes = Integer.parseInt(inputLine[1]);
+                    numClients = Integer.parseInt(inputLine[2]);
+                    /*
+                     * start up the right number of nodes and clients, and store the 
+                     *  connections to them for sending further commands
+                     */
+                    // ============================================================
+                    // DRIVEN BY JIMMY LIN STARTS
+                    serverProcesses = new Process [numNodes];
+                    clientProcesses = new Process [numClients];
 
-            serverProcesses = new Process [numNodes];
-            clientProcesses = new Process [numClients];
+                    for (clientIndex = 0; clientIndex < numClients; clientIndex ++) {
+                        Integer clientID = new Integer(clientIndex);
+                        String [] arguments = new String [1];
+                        arguments[0] = clientID.toString();
+                        String cmd = RUN_CLIENT_CMD + " " + arguments[0];
+                        System.out.println(MASTER_LOG_HEADER + cmd);
+                        Process pclient = runtime.exec(cmd);
+                        clientProcesses[clientIndex] = pclient;
+                    }
 
-            for (clientIndex = 0; clientIndex < numClients; clientIndex ++) {
-                Integer clientID = new Integer(clientIndex);
-                String [] arguments = new String [1];
-                arguments[0] = clientID.toString();
-                String cmd = RUN_CLIENT_CMD + " " + arguments[0];
-                System.out.println(RUN_CLIENT_CMD + " " + arguments[0]);
-                Process pclient = runtime.exec(cmd);
-                clientProcesses[clientIndex] = pclient;
+                    for (nodeIndex = 0; nodeIndex < numNodes; nodeIndex ++) {
+                        Integer serverID = new Integer(nodeIndex);
+                        String [] arguments = new String [1];
+                        arguments[0] = serverID.toString();
+                        String cmd = RUN_SERVER_CMD + " " + arguments[0];
+                        System.out.println(MASTER_LOG_HEADER + cmd);
+                        Process pserver = runtime.exec(cmd); 
+                        serverProcesses[nodeIndex] = pserver;
+                    }
+                    // TODO: wait for all clients and server to ack
+                    // we can start a thread 
+
+                    // ============================================================
+                    break;
+                case "sendMessage":
+                    Thread.sleep(5000);
+                    clientIndex = Integer.parseInt(inputLine[1]);
+                    String message = "";
+                    for (int i = 2; i < inputLine.length; i++) {
+                        message += inputLine[i];
+                        if (i != inputLine.length - 1) {
+                            message += " ";
+                        }
+                    }
+                    /*
+                     * Instruct the client specified by clientIndex to send the message
+                     * to the proper paxos node
+                     */
+                    InetAddress host = InetAddress.getLocalHost();
+                    int port = CLIENT_PORT_BASE + clientIndex;
+                    send (host, port, message, MASTER_LOG_HEADER);
+                    break;
+                case "printChatLog":
+                    clientIndex = Integer.parseInt(inputLine[1]);
+                    /*
+                     * Print out the client specified by clientIndex's chat history
+                     * in the format described on the handout.	     
+                     */
+                    break;
+                case "allClear":
+                    /*
+                     * Ensure that this blocks until all messages that are going to 
+                     * come to consensus in PAXOS do, and that all clients have heard
+                     * of them 
+                     */
+                    break;
+                case "crashServer":
+                    nodeIndex = Integer.parseInt(inputLine[1]);
+                    /*
+                     * Immediately crash the server specified by nodeIndex
+                     */
+                    // ======================================================
+                    // We directly kill that process
+                    serverProcesses[nodeIndex].destroy();
+                    // ======================================================
+                    break;
+                case "restartServer":
+                    nodeIndex = Integer.parseInt(inputLine[1]);
+                    /*
+                     * Restart the server specified by nodeIndex
+                     */
+                    break;
+                case "skipSlots":
+                    int amountToSkip = Integer.parseInt(inputLine[1]);
+                    /*
+                     * Instruct the leader to skip slots in the chat message sequence  
+                     */ 
+                    break;
+                case "timeBombLeader":
+                    int numMessages = Integer.parseInt(inputLine[1]);
+                    /*
+                     * Instruct the leader to crash after sending the number of paxos
+                     * related messages specified by numMessages
+                     */ 
+                    break;
             }
-
-            for (nodeIndex = 0; nodeIndex < numNodes; nodeIndex ++) {
-                Integer serverID = new Integer(nodeIndex);
-                String [] arguments = new String [1];
-                arguments[0] = serverID.toString();
-                String cmd = RUN_SERVER_CMD + " " + arguments[0];
-                System.out.println(cmd);
-                Process pserver = runtime.exec(cmd); 
-                serverProcesses[nodeIndex] = pserver;
+        }
+        /* Ask all clients and server to terminate */
+        if (clientProcesses != null) {
+            for (clientIndex = 0; clientIndex < clientProcesses.length; clientIndex ++) {
+                if (clientProcesses[clientIndex] != null) {
+                    InetAddress host = InetAddress.getLocalHost();
+                    int port = CLIENT_PORT_BASE + clientIndex;
+                    send(host, port, EXIT_MESSAGE, MASTER_LOG_HEADER);
+                }
             }
-            // ============================================================
-            break;
-        case "sendMessage":
-            Thread.sleep(5000);
-            clientIndex = Integer.parseInt(inputLine[1]);
-            String message = "";
-            for (int i = 2; i < inputLine.length; i++) {
-              message += inputLine[i];
-              if (i != inputLine.length - 1) {
-                message += " ";
-              }
-            }
-            /*
-             * Instruct the client specified by clientIndex to send the message
-             * to the proper paxos node
-             */
-            System.out.println("sendMessage..");
-            InetAddress host = InetAddress.getLocalHost();
-            int port = CLIENT_PORT_BASE + clientIndex;
-            send (host, port, message, MASTER_LOG_HEADER);
-
-            break;
-        case "printChatLog":
-            clientIndex = Integer.parseInt(inputLine[1]);
-            /*
-             * Print out the client specified by clientIndex's chat history
-             * in the format described on the handout.	     
-             */
-            break;
-        case "allClear":
-            /*
-             * Ensure that this blocks until all messages that are going to 
-             * come to consensus in PAXOS do, and that all clients have heard
-             * of them 
-             */
-            break;
-        case "crashServer":
-            nodeIndex = Integer.parseInt(inputLine[1]);
-            /*
-             * Immediately crash the server specified by nodeIndex
-             */
-            break;
-        case "restartServer":
-            nodeIndex = Integer.parseInt(inputLine[1]);
-            /*
-             * Restart the server specified by nodeIndex
-             */
-            break;
-        case "skipSlots":
-            int amountToSkip = Integer.parseInt(inputLine[1]);
-            /*
-             * Instruct the leader to skip slots in the chat message sequence  
-             */ 
-            break;
-        case "timeBombLeader":
-            int numMessages = Integer.parseInt(inputLine[1]);
-            /*
-             * Instruct the leader to crash after sending the number of paxos
-             * related messages specified by numMessages
-             */ 
-            break;
-      }
-    }
-    Thread.sleep(5000);
-    if (clientProcesses != null) {
-        for (clientIndex = 0; clientIndex < clientProcesses.length; clientIndex ++) {
-            if (clientProcesses[clientIndex] != null) {
-                clientProcesses[clientIndex].destroy();    
+        }
+        if (serverProcesses != null) {
+            for (nodeIndex = 0; nodeIndex < serverProcesses.length; nodeIndex ++) {
+                if (serverProcesses[nodeIndex] != null) {
+                    InetAddress host = InetAddress.getLocalHost();
+                    int port = SERVER_PORT_BASE + nodeIndex;
+                    send(host, port, EXIT_MESSAGE, MASTER_LOG_HEADER);
+                }
             }
         }
     }
-    if (serverProcesses != null) {
-        for (nodeIndex = 0; nodeIndex < serverProcesses.length; nodeIndex ++) {
-            if (serverProcesses[nodeIndex] != null) {
-                serverProcesses[nodeIndex].destroy();
-            }
-        }
-    }
-  }
 }

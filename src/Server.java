@@ -43,7 +43,7 @@ class Server extends Util implements Protocol {
                 InetAddress.getLocalHost());
         listener.setReuseAddress(true);
         // indicate the socket listener setup
-        System.out.println(logHeader + "listener setup: " + listener.toString());
+        System.out.println(logHeader + "Listener Setup: " + listener.toString());
         // 
         try {
             while (true) {
@@ -55,8 +55,10 @@ class Server extends Util implements Protocol {
                    // TODO: process received message
                    String cmd = in.readLine();
                    System.out.println(cmd);
-                   if (cmd.equals("exit")) {
+                   if (cmd.equals(EXIT_MESSAGE)) {
+                        socket.close();
                         listener.close();
+                        System.exit(0);
                    }
 
                 } finally {

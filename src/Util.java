@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.InetAddress;
 import java.io.PrintWriter;
+
 class Util {
     /* LOG HEADERS */
     final static String MASTER_LOG_HEADER = "[MASTER] ";
@@ -26,9 +27,15 @@ class Util {
     final static String CLIENT_LOG_FILENAME = "logs/Client%d.txt";
     final static String SERVER_LOG_FILENAME = "logs/Server%d.txt";
 
+    /* get client port given the clientIndex */
+    public static int getClientPort (int clientIndex) { return 0; }
+
+    /* Send util functions */
     public static void send (InetAddress host, int port, String message, 
             String HEADER) throws IOException { 
+        // set null header as empty string
         if (HEADER == null) HEADER = "";
+        // establish temporary socket connection
         Socket socket = new Socket(host, port);
         try {
             PrintWriter out =
@@ -39,4 +46,25 @@ class Util {
             socket.close();
         }
     }
+
+    /* Send all messages */
+    public static void sendAll (InetAddress host, int port, String [] messages,
+            String HEADER) throws IOException {
+        // set null header as empty string
+        if (HEADER == null) HEADER = "";
+        // establish temporary socket connection
+        Socket socket = new Socket(host, port);
+        try {
+            PrintWriter out =
+                new PrintWriter(socket.getOutputStream(), true);
+            for (int i = 0; i < messages.length; i ++) {
+                out.println(messages[i]);
+                System.out.println(HEADER + "Message sent: " + messages[i]);
+            }
+        } finally {
+            socket.close();
+        }
+
+    }
+
 }

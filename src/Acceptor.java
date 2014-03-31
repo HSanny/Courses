@@ -14,27 +14,34 @@
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.HashSet;
+import java.net.UnknownHostException;
+import java.net.InetAddress;
+import java.io.IOException;
 
-class Acceptor implements Runnable {
-        LinkedBlockingQueue<String> queue = null;
+
+class Acceptor extends Util implements Runnable {
+        private LinkedBlockingQueue<String> queue = null;
         // ballotNum: the current adopted ballot number
-        int ballot_num;
+        private int ballot_num;
         // accepted: set of accepted ballots
-        HashSet<String> accepted;
+        private HashSet<String> accepted;
         
-        InetAddress localhost;
-        int serverID;
+        private InetAddress localhost;
+        private int serverID;
+        private String logHeader;
 
-        public Acceptor(LinkedBlockingQueue<String> queue, int id) {
+        public Acceptor (LinkedBlockingQueue<String> queue, int id, InetAddress localhost) {
             this.queue = queue;
+            this.serverID = id;
+            this.logHeader = String.format(ACCEPTOR_LOG_HEADER, id);
+            this.localhost = localhost;
         }
 
         public void run() {
-            localhost = InetAddress.getLocalHost();
             // while true
             while (true) {
                 // STEP ONE: receive messages from queue
-                String msg;
+                String msg = null;
                 try {
                     msg = queue.take();
                 } catch (InterruptedException e) {
@@ -42,6 +49,7 @@ class Acceptor implements Runnable {
                 }
 
                 // STEP TWO: decode
+                if (msg == null) continue;
                 String [] msgParts = msg.split(MESSAGE_SEP);
                 String title = msgParts[TITLE_IDX];
                 String content = msgParts[CONTENT_IDX];
@@ -68,12 +76,20 @@ class Acceptor implements Runnable {
                     String p1b_content = String.format(P1B_CONTENT, serverID, ballot_num, accepted_str);
                     String p1b_response = String.format(MESSAGE, SERVER_TYPE, serverID, LEADER_TYPE, lambda, 
                             P1B_TITLE, p1b_content);
+                    try {
                     send (localhost, port, p1b_response, logHeader);
+                    } catch (IOException e) {
+                         continue;
+                    } finally {}
                 }
                 // if message is a p2a
                 else if (title.equals(P2A_TITLE)) {
                     int lambda = Integer.parseInt(conts[0]); // leader id
                     String pvalue = conts[1];
+                    String [] pvalueParts = pvalue.split(PVALUE_SEP);
+                    int b = Integer.parseInt(pvalueParts[0]);
+                    int s = Integer.parseInt(pvalueParts[1]);
+                    String cmd = pvalueParts[2];
                     // if the given ballot number is greater than or equal to the current one
                     if (b >= ballot_num) {
                         // adopt that ballot number and accept the ballot
@@ -83,9 +99,11 @@ class Acceptor implements Runnable {
                     // send a p2b in response with the current ballot number
                     int port = SERVER_PORT_BASE + lambda;
                     String p2b_content = String.format(P2B_CONTENT, serverID, ballot_num);
-                    String p2b_response = String.format(Message, SERVER_TYPE, serverID, LEADER_TYPE, lambda, 
-                           P2B_TITLE, P2B_content);
+                    String p2b_response = String.format(MESSAGE, SERVER_TYPE, serverID, LEADER_TYPE, lambda, 
+                           P2B_TITLE, p2b_content);
+                    try {
                     send (localhost, port, p2b_response, logHeader);
+                    } catch (IOException e) { }finally {}
                 }
             }
         }

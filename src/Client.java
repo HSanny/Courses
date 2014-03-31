@@ -28,7 +28,7 @@ public class Client extends Util {
     static int clientID;
     static int numServers;
 
-    static InetAddress;
+    static InetAddress localhost;
 
     /* sequence number */
     static int cid; // client-local command sequence number

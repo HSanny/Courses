@@ -14,22 +14,26 @@
 
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.io.PrintWriter;
 
-public class Master {
-    /* Protocol configuration */
-    final static int CLIENT_PORT_BASE = 8000;
-    final static int SERVER_PORT_BASE = 8200; 
+public class Master extends Util implements Protocol {
+    final static String RUN_SERVER_CMD = "java -cp bin/ Server";
+    final static String RUN_CLIENT_CMD = "java -cp bin/ Client";
 
-    final static String RUN_SERVER_CMD = "java Server";
-    final static String RUN_CLIENT_CMD = "java Client";
-
-  public static void main(String [] args) {
+  public static void main(String [] args) throws IOException, InterruptedException {
     Scanner scan = new Scanner(System.in);
     int numNodes, numClients;
+    int clientIndex, nodeIndex;
+    Process [] serverProcesses = null;
+    Process [] clientProcesses = null;
 
     while (scan.hasNextLine()) {
       String [] inputLine = scan.nextLine().split(" ");
-      int clientIndex, nodeIndex;
+
+      Runtime runtime = Runtime.getRuntime();
       switch (inputLine[0]) {
         case "start":
             numNodes = Integer.parseInt(inputLine[1]);
@@ -42,31 +46,32 @@ public class Master {
             // DRIVEN BY JIMMY LIN STARTS
             System.out.println("start..");
 
-            Process [] serverProcesses = new Process [numNodes];
-            Process [] clientProcesses = new Process [numClients];
-
-            Runtime r = Runtime.getRuntime();
+            serverProcesses = new Process [numNodes];
+            clientProcesses = new Process [numClients];
 
             for (clientIndex = 0; clientIndex < numClients; clientIndex ++) {
                 Integer clientID = new Integer(clientIndex);
-                String [] args = new String [2];
-                args[0] = "Client";
-                args[1] = clientID.toString();
-                Process pclient = r.exec(RUN_CLIENT_CMD, args);
+                String [] arguments = new String [1];
+                arguments[0] = clientID.toString();
+                String cmd = RUN_CLIENT_CMD + " " + arguments[0];
+                System.out.println(RUN_CLIENT_CMD + " " + arguments[0]);
+                Process pclient = runtime.exec(cmd);
                 clientProcesses[clientIndex] = pclient;
             }
 
-            for (serverIndex = 0; serverIndex < numNodes; serverIndex ++) {
-                Integer serverID = new Integer(serverIndex);
-                String [] args = new String [2];
-                args[0] = "Server";
-                args[1] = serverID.toString();
-                Process pserver = r.exec(RUN_CLIENT_CMD, args); 
-                serverProcesses[serverIndex] = pserver;
+            for (nodeIndex = 0; nodeIndex < numNodes; nodeIndex ++) {
+                Integer serverID = new Integer(nodeIndex);
+                String [] arguments = new String [1];
+                arguments[0] = serverID.toString();
+                String cmd = RUN_SERVER_CMD + " " + arguments[0];
+                System.out.println(cmd);
+                Process pserver = runtime.exec(cmd); 
+                serverProcesses[nodeIndex] = pserver;
             }
             // ============================================================
             break;
         case "sendMessage":
+            Thread.sleep(5000);
             clientIndex = Integer.parseInt(inputLine[1]);
             String message = "";
             for (int i = 2; i < inputLine.length; i++) {
@@ -80,6 +85,10 @@ public class Master {
              * to the proper paxos node
              */
             System.out.println("sendMessage..");
+            InetAddress host = InetAddress.getLocalHost();
+            int port = CLIENT_PORT_BASE + clientIndex;
+            send (host, port, message, MASTER_LOG_HEADER);
+
             break;
         case "printChatLog":
             clientIndex = Integer.parseInt(inputLine[1]);
@@ -121,6 +130,21 @@ public class Master {
              */ 
             break;
       }
+    }
+    Thread.sleep(5000);
+    if (clientProcesses != null) {
+        for (clientIndex = 0; clientIndex < clientProcesses.length; clientIndex ++) {
+            if (clientProcesses[clientIndex] != null) {
+                clientProcesses[clientIndex].destroy();    
+            }
+        }
+    }
+    if (serverProcesses != null) {
+        for (nodeIndex = 0; nodeIndex < serverProcesses.length; nodeIndex ++) {
+            if (serverProcesses[nodeIndex] != null) {
+                serverProcesses[nodeIndex].destroy();
+            }
+        }
     }
   }
 }

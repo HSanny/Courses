@@ -35,3 +35,17 @@ SENDER_TYPE, SENDER_INDEX, RECEIVER_TYPE, RECEIVER_INDEX, TITLE, CONTENT
 Problems
 ---------------
 
+
+
+
+Implementation Details
+---------------
+0. At very beginning, the master establish its server socket to listen to all
+   requests.
+
+1. To start up all clients and servers, we use runtime.exec to run clients and
+   servers as new processes. The arguments provided to them is clientIndex or
+   serverIndex. After creating all processes, the master program waits for 
+   arrivals of setup acknowledgement of created processe (servers and
+   clients). Master proceeds to read the next instruction only when it
+   collects all acknowledgements. 

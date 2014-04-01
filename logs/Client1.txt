@@ -1,1 +1,1 @@
-[CLIENT #1] listener setup: ServerSocket[addr=rollos/128.83.130.28,localport=8501]
+[CLIENT #1] Listener setup: ServerSocket[addr=puppyplus-ThinkPad-T430/127.0.1.1,localport=8501]

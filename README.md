@@ -21,3 +21,17 @@ The output for the run of the test will also be stored in a file temp_output aft
 RUN USAGE:
     ./RUN 1   - run the simpletest
     ./RUN 2   - run the harder test
+
+
+Protocol Design
+----------------
+
+Message Format: 
+
+SENDER_TYPE, SENDER_INDEX, RECEIVER_TYPE, RECEIVER_INDEX, TITLE, CONTENT
+
+
+
+Problems
+---------------
+

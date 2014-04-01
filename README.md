@@ -1,3 +1,12 @@
+PAXOS Project 
+=============
+
+Contributors
+> Jimmy Lin (xl5224)
+> Calvin Szeto 
+
+USAGE
+-----------------
 To run the sample tests, replace test_name with the name of the test and execute the following command:
 
 cat tests/[test_name].test | $(cat COMMAND)

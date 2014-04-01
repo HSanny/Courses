@@ -1,2 +1,5 @@
-[CLIENT #0] listener setup: ServerSocket[addr=rollos/128.83.130.28,localport=8500]
-helloWorld
+[CLIENT #0] Message sent: CLIENT,0,MASTER,0,STARTUP_ACK,NULL
+[CLIENT #0] ServerSocket[addr=fun-dip/128.83.144.181,localport=8500]
+[CLIENT #0] Message Received: MASTER,0,CLIENT,0,SENT_MESSAGE,helloWorld
+[CLIENT #0] Message Received: MASTER,0,CLIENT,0,EXIT,NULL
+[CLIENT #0] Exit.

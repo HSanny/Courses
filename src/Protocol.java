@@ -21,5 +21,22 @@ interface Protocol {
     final static int MASTER_PORT = 8200;
 
     // Manually specify the format of differnt type of message
-    final static String EXIT_MESSAGE = "EXIT";
+    final static String MESSAGE = "%s,%d,%s,%d,%s,%s";
+    final static String EXIT_TITLE = "EXIT";
+    final static String START_ACK_TITLE = "STARTUP_ACK";
+    final static String SEND_MESSAGE_TITLE = "SENT_MESSAGE";
+    final static String EMPTY_CONTENT = "NULL";
+
+    // message design
+    final static int SENDER_TYPE_IDX = 0;
+    final static int SENDER_INDEX_IDX = 1;
+    final static int RECEIVER_TYPE_IDX = 2;
+    final static int RECEIVER_INDEX_IDX = 3;
+    final static int TITLE_IDX = 4;
+    final static int CONTENT_IDX = 5;
+
+    final static String SERVER_TYPE = "SERVER";
+    final static String CLIENT_TYPE = "CLIENT";
+    final static String MASTER_TYPE = "MASTER";
+
 }

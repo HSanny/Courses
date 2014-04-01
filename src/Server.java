@@ -38,12 +38,17 @@ class Server extends Util implements Protocol {
         System.setOut(log);
         System.setErr(log);
 
+        InetAddress localhost = InetAddress.getLocalHost();
         // construct stable server socket
         ServerSocket listener = new ServerSocket(SERVER_PORT_BASE+serverID, 0,
                 InetAddress.getLocalHost());
         listener.setReuseAddress(true);
+        // send acknowledge to the master
+        String setup_ack = String.format(MESSAGE, SERVER_TYPE, serverID,
+                MASTER_TYPE, 0, START_ACK_TITLE, EMPTY_CONTENT);
+        send(localhost, MASTER_PORT, setup_ack, logHeader);
         // indicate the socket listener setup
-        System.out.println(logHeader + "Listener Setup: " + listener.toString());
+        System.out.println(logHeader + listener.toString());
         // 
         try {
             while (true) {
@@ -53,11 +58,13 @@ class Server extends Util implements Protocol {
                            InputStreamReader(socket.getInputStream()));
                    // channel is established
                    // TODO: process received message
-                   String cmd = in.readLine();
-                   System.out.println(cmd);
-                   if (cmd.equals(EXIT_MESSAGE)) {
+                   String recMessage = in.readLine();
+                   System.out.println(logHeader + "Message Received: " + recMessage);
+                   String [] recInfo = recMessage.split(",");
+                   if (recInfo[TITLE_IDX].equals(EXIT_TITLE)) {
                         socket.close();
                         listener.close();
+                        System.out.println(logHeader + "Exit.");
                         System.exit(0);
                    }
 

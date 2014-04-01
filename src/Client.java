@@ -37,24 +37,31 @@ public class Client extends Util implements Protocol {
         System.setOut(log);
         System.setErr(log);
 
+        InetAddress localhost = InetAddress.getLocalHost();
         // construct stable server socket
         ServerSocket listener = new ServerSocket(CLIENT_PORT_BASE+clientID, 0,
                 InetAddress.getLocalHost());
         listener.setReuseAddress(true);
+        // send acknowledgement to the master
+        String setup_ack = String.format(MESSAGE, CLIENT_TYPE, clientID,
+                MASTER_TYPE, 0, START_ACK_TITLE, EMPTY_CONTENT);
+        send (localhost, MASTER_PORT, setup_ack, logHeader);
         // indicate the listener setup
-        System.out.println(logHeader + "Listener setup: " + listener.toString());
+        System.out.println(logHeader + listener.toString());
         try { while (true) {
             Socket socket = listener.accept();
             try {
                 BufferedReader in = new BufferedReader(new
                         InputStreamReader(socket.getInputStream()));
                 // channel is established
-                String cmd = in.readLine();
-                System.out.println(cmd);
+                String recMessage = in.readLine();
+                System.out.println(logHeader + "Message Received: " + recMessage);
+                String [] recInfo = recMessage.split(",");
 
-                if (cmd.equals(EXIT_MESSAGE)) {
+                if (recInfo[TITLE_IDX].equals(EXIT_TITLE)) {
                     socket.close();
                     listener.close();
+                    System.out.println(logHeader + "Exit.");
                     System.exit(0);
                    }
                 } finally {

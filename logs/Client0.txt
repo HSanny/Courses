@@ -1,1 +1,5 @@
-[CLIENT #0] Listener setup: ServerSocket[addr=puppyplus-ThinkPad-T430/127.0.1.1,localport=8500]
+[CLIENT #0] Message sent: CLIENT,0,MASTER,0,STARTUP_ACK,NULL
+[CLIENT #0] ServerSocket[addr=fun-dip/128.83.144.181,localport=8500]
+[CLIENT #0] Message Received: MASTER,0,CLIENT,0,SENT_MESSAGE,helloWorld
+[CLIENT #0] Message Received: MASTER,0,CLIENT,0,EXIT,NULL
+[CLIENT #0] Exit.

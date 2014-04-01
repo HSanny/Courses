@@ -1,4 +1,0 @@
-[SERVER #0] Message sent: SERVER,0,MASTER,0,STARTUP_ACK,NULL
-[SERVER #0] ServerSocket[addr=fun-dip/128.83.144.181,localport=8400]
-[SERVER #0] Message Received: MASTER,0,SERVER,0,EXIT,NULL
-[SERVER #0] Exit.

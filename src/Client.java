@@ -20,11 +20,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.InetAddress;
 
-public class Client extends Util implements Protocol {
+public class Client extends Util {
 
     static int clientID;
     static String logHeader;
     static String logfilename;
+    static int leaderIdx;
 
     public static void main (String [] args) throws IOException {
         // parse the given id
@@ -58,7 +59,20 @@ public class Client extends Util implements Protocol {
                 System.out.println(logHeader + "Message Received: " + recMessage);
                 String [] recInfo = recMessage.split(",");
 
-                if (recInfo[TITLE_IDX].equals(EXIT_TITLE)) {
+                String sender_type = recInfo[SENDER_TYPE_IDX];
+                int sender_idx = Integer.parseInt(recInfo[SENDER_INDEX_IDX]);
+                String receiver_type = recInfo[RECEIVER_TYPE_IDX];
+                int receiver_idx = Integer.parseInt(recInfo[RECEIVER_INDEX_IDX]);
+                String title = recInfo[TITLE_IDX];
+                String content = recInfo[CONTENT_IDX];
+
+                if (title.equals(SET_LEADER_TITLE)) {
+                    // send the acknowledgement of set new leader
+                    String ack = String.format(MESSAGE, receiver_type,
+                      receiver_idx, sender_type, sender_idx,
+                       SET_LEADER_ACK_TITLE, EMPTY_CONTENT);
+
+                } else if (title.equals(EXIT_TITLE)) {
                     socket.close();
                     listener.close();
                     System.out.println(logHeader + "Exit.");

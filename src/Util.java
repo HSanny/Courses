@@ -17,18 +17,10 @@ import java.net.Socket;
 import java.net.InetAddress;
 import java.io.PrintWriter;
 
-class Util {
-    /* LOG HEADERS */
-    final static String MASTER_LOG_HEADER = "[MASTER] ";
-    final static String SERVER_LOG_HEADER = "[SERVER #%d] ";
-    final static String CLIENT_LOG_HEADER = "[CLIENT #%d] ";
-
-    /* LOG FILENAME */
-    final static String CLIENT_LOG_FILENAME = "logs/Client%d.txt";
-    final static String SERVER_LOG_FILENAME = "logs/Server%d.txt";
-
+class Util implements Protocol, Logging {
     /* get client port given the clientIndex */
     public static int getClientPort (int clientIndex) { return 0; }
+    public static int getServerPort (int clientIndex) { return 0; }
 
     /* Send util functions */
     public static void send (InetAddress host, int port, String message, 

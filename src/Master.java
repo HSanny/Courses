@@ -22,7 +22,7 @@ import java.io.PrintWriter;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-public class Master extends Util implements Protocol {
+public class Master extends Util {
     final static String RUN_SERVER_CMD = "java -cp bin/ Server";
     final static String RUN_CLIENT_CMD = "java -cp bin/ Client";
 
@@ -39,12 +39,11 @@ public class Master extends Util implements Protocol {
         listener.setReuseAddress(true);
 
         while (scan.hasNextLine()) {
+            int port;
             // parse the input instruction
             String input = scan.nextLine();
             String [] inputLine = input.split(" ");
             System.out.println("[INPUT] "+input);
-            
-
             
             // process creator
             Runtime runtime = Runtime.getRuntime();
@@ -67,7 +66,7 @@ public class Master extends Util implements Protocol {
                         clientsSetup.add(false);
                     }
 
-                    Thread t = new Thread (new Runnable() {
+                    Thread collectSetUpAcks = new Thread (new Runnable() {
                         public void run () {
                             try {
                             while (true) {
@@ -92,7 +91,7 @@ public class Master extends Util implements Protocol {
                         } catch (IOException e) {;} finally { ;}
                         }
                     });
-                    t.start();
+                    collectSetUpAcks.start();
 
                     serverProcesses = new Process [numNodes];
                     clientProcesses = new Process [numClients];
@@ -116,8 +115,7 @@ public class Master extends Util implements Protocol {
                         Process pserver = runtime.exec(cmd); 
                         serverProcesses[nodeIndex] = pserver;
                     }
-                    // TODO: wait for all clients and server to ack
-                    // we can start a thread 
+                    // Confirm all clients and servers have set up their listeners
                     while (true) {
                         boolean isSetUpComplete = true;
                         // first check the socket setup of clients
@@ -134,11 +132,22 @@ public class Master extends Util implements Protocol {
                             }
                         }
                         if (isSetUpComplete) {
-                            t.interrupt();
+                            collectSetUpAcks.interrupt();
                             System.out.println(MASTER_LOG_HEADER + "setup Completes..");
                             break;
                         }
                     }
+                    // specify the server with index 0 as leader and leave other as relica.
+                    int initialLeaderIdx = 0;
+                    String leaderMessage = String.format(MESSAGE, MASTER_TYPE,
+                            0, SERVER_TYPE, initialLeaderIdx, UR_LEADER_TITLE, EMPTY_CONTENT);
+                    port = SERVER_PORT_BASE + initialLeaderIdx;
+                    send (localhost, port, leaderMessage, MASTER_LOG_HEADER);
+
+                    // TODO: listen to the ack from leader
+
+                    // TODO: tell all clients to identify the leader server
+
                     // ============================================================
                     break;
                 case "sendMessage":
@@ -155,7 +164,7 @@ public class Master extends Util implements Protocol {
                      * to the proper paxos node
                      */
                     InetAddress host = InetAddress.getLocalHost();
-                    int port = CLIENT_PORT_BASE + clientIndex;
+                    port = CLIENT_PORT_BASE + clientIndex;
                     String pmessage = String.format(MESSAGE, MASTER_TYPE, 0, CLIENT_TYPE, clientIndex, 
                             SEND_MESSAGE_TITLE, message);
                     send (host, port, pmessage, MASTER_LOG_HEADER);

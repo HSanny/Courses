@@ -90,6 +90,7 @@ class Server extends Util { // a.k.a. Replica
                    System.out.println(logHeader + "Message Received: " + recMessage);
                    String [] recInfo = recMessage.split(",");
 
+                   // Decode the incoming message
                    String sender_type = recInfo[SENDER_TYPE_IDX];
                    int sender_idx = Integer.parseInt(recInfo[SENDER_INDEX_IDX]);
                    String receiver_type = recInfo[RECEIVER_TYPE_IDX];
@@ -110,27 +111,39 @@ class Server extends Util { // a.k.a. Replica
 
                    // Check if message is request
                    if (title.equals(REQUEST_TITLE)) {
+                       // STEP ZERO: check if this request has not been decided
                        for (String value: decisions.values()) {
                            if (content.equals(value)) {
                                // ignore this request since decided
                                continue; 
                            }
                        }
-                       // this request has not been decided
-                       // Determine the lowest unused slot number
+                       // STEP ONE: Determine the lowest unused slot number
                        // TODO: verify correctness
                        int s = slot_num + 1;
-                       // put <s, p> to proposals
+                       // STEP TWO: put <s, p> to proposals
                        proposals.put(s, content);
-                       // send <propose, s, p> to all leaders
+                       // STEP THREE: send <propose, s, p> to all leaders
                        for (int serverIndex = 0; serverIndex < numServers; serverIndex++) {
                            String sp = String.format("%d;%s", s, content);
                            String proposeMessage = String.format(MESSAGE,
                                    SERVER_TYPE, serverID, LEADER_TYPE,
                                    serverIndex, PROPOSE_TITLE, sp);
                            int port = SERVER_PORT_BASE + serverIndex;
-                           send (localhost, port, proposeMessage, SERVER_LOG_HEADER);
+                           send (localhost, port, proposeMessage, logHeader);
                        }
+                   } else if (title.equals(DECISION_TITLE)) {
+                       // STEP ONE: add decision message to decisions
+    
+                       // STEP TWO: find ready decision to be executed
+                       // check if exists a decision p' corresponds to
+                       // current slot_num s
+
+                       // STEP THREE: check if it has proposed another command
+                       // p'' in current slot_num, repropose p'' with new s''
+
+                       // STEP FOUR: invoke perform
+
                    }
 
                    // this message is only given by master

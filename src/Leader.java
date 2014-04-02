@@ -14,9 +14,11 @@
 import java.util.concurrent.LinkedBlockingQueue;
 
 class Leader implements Runnable{
-        private LinkedBlockingQueue queue = null;
+        static LinkedBlockingQueue queue = null;
         // ballotNumber: current ballot number
+        static int ballot_num;
         // active: active or passive?
+        static boolean isActive = false;
         // proposals: proposals so far
         
         public Leader(LinkedBlockingQueue queue) {

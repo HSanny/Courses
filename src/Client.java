@@ -34,7 +34,7 @@ public class Client extends Util {
     public static void main (String [] args) throws IOException {
         // parse the given id
         clientID = Integer.parseInt(args[0]);
-        numServers = Integer.parseInt(args[0]);
+        numServers = Integer.parseInt(args[1]);
         // configure the LOG setting
         logHeader = String.format(CLIENT_LOG_HEADER, clientID);
         logfilename = String.format(CLIENT_LOG_FILENAME, clientID);
@@ -80,7 +80,7 @@ public class Client extends Util {
                             clientID, SERVER_TYPE, serverIndex,
                                 REQUEST_TITLE, command);
                         port = SERVER_PORT_BASE + serverIndex;
-                        send (localhost, port, request, CLIENT_LOG_HEADER);
+                        send (localhost, port, request, logHeader);
                     }
                 }
                 if (title.equals(EXIT_TITLE)) {

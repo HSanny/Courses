@@ -21,15 +21,20 @@ import java.net.Socket;
 import java.net.InetAddress;
 
 public class Client extends Util {
-
-    static int clientID;
     static String logHeader;
     static String logfilename;
-    static int leaderIdx;
+
+    /* Knowledge of global scenario */
+    static int clientID;
+    static int numServers;
+
+    /* sequence number */
+    static int cid; // client-local command sequence number
 
     public static void main (String [] args) throws IOException {
         // parse the given id
         clientID = Integer.parseInt(args[0]);
+        numServers = Integer.parseInt(args[0]);
         // configure the LOG setting
         logHeader = String.format(CLIENT_LOG_HEADER, clientID);
         logfilename = String.format(CLIENT_LOG_FILENAME, clientID);
@@ -49,12 +54,13 @@ public class Client extends Util {
         send (localhost, MASTER_PORT, setup_ack, logHeader);
         // indicate the listener setup
         System.out.println(logHeader + listener.toString());
+        int port;
         try { while (true) {
             Socket socket = listener.accept();
             try {
                 BufferedReader in = new BufferedReader(new
                         InputStreamReader(socket.getInputStream()));
-                // channel is established
+                // CHANNEL IS ESTABLISHED
                 String recMessage = in.readLine();
                 System.out.println(logHeader + "Message Received: " + recMessage);
                 String [] recInfo = recMessage.split(",");
@@ -66,6 +72,17 @@ public class Client extends Util {
                 String title = recInfo[TITLE_IDX];
                 String content = recInfo[CONTENT_IDX];
 
+                if (title.equals(SEND_MESSAGE_TITLE)) {
+                    // send chat message (command) to all servers
+                    String command = String.format("%d;%d;%s", clientID, cid, content);
+                    for (int serverIndex = 0; serverIndex < numServers; serverIndex++) {
+                        String request = String.format(MESSAGE, CLIENT_TYPE,
+                            clientID, SERVER_TYPE, serverIndex,
+                                REQUEST_TITLE, command);
+                        port = SERVER_PORT_BASE + serverIndex;
+                        send (localhost, port, request, CLIENT_LOG_HEADER);
+                    }
+                }
                 if (title.equals(EXIT_TITLE)) {
                     socket.close();
                     listener.close();

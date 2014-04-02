@@ -98,9 +98,10 @@ public class Master extends Util {
 
                     for (clientIndex = 0; clientIndex < numClients; clientIndex ++) {
                         Integer clientID = new Integer(clientIndex);
-                        String [] arguments = new String [1];
+                        String [] arguments = new String [2];
                         arguments[0] = clientID.toString();
-                        String cmd = RUN_CLIENT_CMD + " " + arguments[0];
+                        arguments[1] = Integer.toString(numNodes);
+                        String cmd = RUN_CLIENT_CMD + " " + arguments[0] + " " + arguments[1];
                         System.out.println(MASTER_LOG_HEADER + cmd);
                         Process pclient = runtime.exec(cmd);
                         clientProcesses[clientIndex] = pclient;

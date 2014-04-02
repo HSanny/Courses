@@ -25,9 +25,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 class Server extends Util { // a.k.a. Replica
     /* Configuration */
-    static int serverID;
     static String logHeader;
     static String logfilename;
+
+    /* Knowledge of global scenario */
+    static int serverID;
+    static int numServers;
 
     /* Replica's attributes */
     static int slot_num;
@@ -43,7 +46,7 @@ class Server extends Util { // a.k.a. Replica
     public static void main (String [] args) throws IOException, InterruptedException {
         // parse the server id assigned by master
         serverID = Integer.parseInt(args[0]);
-        int numServers = Integer.parseInt(args[1]);
+        numServers = Integer.parseInt(args[1]);
         // configure the LOG setting
         logHeader = String.format(SERVER_LOG_HEADER, serverID);
         logfilename = String.format(SERVER_LOG_FILENAME, serverID);

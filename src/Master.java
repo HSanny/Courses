@@ -14,12 +14,15 @@
 
 import java.util.Scanner;
 import java.util.ArrayList;
-import java.io.IOException;
+import java.net.ServerSocket;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
-public class Master extends Util implements Protocol {
+public class Master extends Util {
     final static String RUN_SERVER_CMD = "java -cp bin/ Server";
     final static String RUN_CLIENT_CMD = "java -cp bin/ Client";
 
@@ -29,12 +32,20 @@ public class Master extends Util implements Protocol {
         int clientIndex, nodeIndex;
         Process [] serverProcesses = null;
         Process [] clientProcesses = null;
+        // server socket of master
+        InetAddress localhost = InetAddress.getLocalHost();
+        final ServerSocket listener = new ServerSocket(MASTER_PORT, 0,
+                localhost);
+        listener.setReuseAddress(true);
 
         while (scan.hasNextLine()) {
+            int port;
+            // parse the input instruction
             String input = scan.nextLine();
             String [] inputLine = input.split(" ");
             System.out.println("[INPUT] "+input);
-
+            
+            // process creator
             Runtime runtime = Runtime.getRuntime();
             switch (inputLine[0]) {
                 case "start":
@@ -46,6 +57,42 @@ public class Master extends Util implements Protocol {
                      */
                     // ============================================================
                     // DRIVEN BY JIMMY LIN STARTS
+                    final ArrayList<Boolean> serversSetup = new ArrayList<Boolean> ();
+                    for (nodeIndex = 0; nodeIndex < numNodes; nodeIndex ++) {
+                        serversSetup.add(false);
+                    }
+                    final ArrayList<Boolean> clientsSetup = new ArrayList<Boolean> ();
+                    for (clientIndex = 0; clientIndex < numClients; clientIndex ++) {
+                        clientsSetup.add(false);
+                    }
+
+                    Thread collectSetUpAcks = new Thread (new Runnable() {
+                        public void run () {
+                            try {
+                            while (true) {
+                            Socket socket = listener.accept();
+                            try { 
+                                BufferedReader in = new BufferedReader(new
+                                        InputStreamReader(socket.getInputStream()));
+                                String recMessage = in.readLine();
+                                String [] recInfo = recMessage.split(",");
+                                if (recInfo[TITLE_IDX].equals(START_ACK_TITLE)) {
+                                    int index = Integer.parseInt(recInfo[SENDER_INDEX_IDX]);
+                                    if (recInfo[SENDER_TYPE_IDX].equals(SERVER_TYPE)) {
+                                        serversSetup.set(index, true);
+                                    } else if (recInfo[SENDER_TYPE_IDX].equals(CLIENT_TYPE)){
+                                        clientsSetup.set(index, true);
+                                    }
+                                } else {
+                                    continue;
+                                }
+                            } finally { socket.close(); }
+                            }
+                        } catch (IOException e) {;} finally { ;}
+                        }
+                    });
+                    collectSetUpAcks.start();
+
                     serverProcesses = new Process [numNodes];
                     clientProcesses = new Process [numClients];
 
@@ -68,13 +115,42 @@ public class Master extends Util implements Protocol {
                         Process pserver = runtime.exec(cmd); 
                         serverProcesses[nodeIndex] = pserver;
                     }
-                    // TODO: wait for all clients and server to ack
-                    // we can start a thread 
+                    // Confirm all clients and servers have set up their listeners
+                    while (true) {
+                        boolean isSetUpComplete = true;
+                        // first check the socket setup of clients
+                        for (clientIndex = 0; clientIndex < numClients; clientIndex ++) {
+                            if (!clientsSetup.get(clientIndex)) { 
+                                isSetUpComplete = false; 
+                                break;
+                            }
+                        }
+                        for (nodeIndex = 0; nodeIndex < numClients; nodeIndex ++) {
+                            if (!serversSetup.get(nodeIndex)) {
+                                isSetUpComplete = false;
+                                break;
+                            }
+                        }
+                        if (isSetUpComplete) {
+                            collectSetUpAcks.interrupt();
+                            System.out.println(MASTER_LOG_HEADER + "setup Completes..");
+                            break;
+                        }
+                    }
+                    // specify the server with index 0 as leader and leave other as relica.
+                    int initialLeaderIdx = 0;
+                    String leaderMessage = String.format(MESSAGE, MASTER_TYPE,
+                            0, SERVER_TYPE, initialLeaderIdx, UR_LEADER_TITLE, EMPTY_CONTENT);
+                    port = SERVER_PORT_BASE + initialLeaderIdx;
+                    send (localhost, port, leaderMessage, MASTER_LOG_HEADER);
+
+                    // TODO: listen to the ack from leader
+
+                    // TODO: tell all clients to identify the leader server
 
                     // ============================================================
                     break;
                 case "sendMessage":
-                    Thread.sleep(5000);
                     clientIndex = Integer.parseInt(inputLine[1]);
                     String message = "";
                     for (int i = 2; i < inputLine.length; i++) {
@@ -88,8 +164,10 @@ public class Master extends Util implements Protocol {
                      * to the proper paxos node
                      */
                     InetAddress host = InetAddress.getLocalHost();
-                    int port = CLIENT_PORT_BASE + clientIndex;
-                    send (host, port, message, MASTER_LOG_HEADER);
+                    port = CLIENT_PORT_BASE + clientIndex;
+                    String pmessage = String.format(MESSAGE, MASTER_TYPE, 0, CLIENT_TYPE, clientIndex, 
+                            SEND_MESSAGE_TITLE, message);
+                    send (host, port, pmessage, MASTER_LOG_HEADER);
                     break;
                 case "printChatLog":
                     clientIndex = Integer.parseInt(inputLine[1]);
@@ -140,9 +218,10 @@ public class Master extends Util implements Protocol {
         if (clientProcesses != null) {
             for (clientIndex = 0; clientIndex < clientProcesses.length; clientIndex ++) {
                 if (clientProcesses[clientIndex] != null) {
-                    InetAddress host = InetAddress.getLocalHost();
                     int port = CLIENT_PORT_BASE + clientIndex;
-                    send(host, port, EXIT_MESSAGE, MASTER_LOG_HEADER);
+                    String exitMessage = String.format(MESSAGE, MASTER_TYPE, 0,
+                       CLIENT_TYPE, clientIndex, EXIT_TITLE, EMPTY_CONTENT);
+                    send(localhost, port, exitMessage, MASTER_LOG_HEADER);
                 }
             }
         }
@@ -151,9 +230,12 @@ public class Master extends Util implements Protocol {
                 if (serverProcesses[nodeIndex] != null) {
                     InetAddress host = InetAddress.getLocalHost();
                     int port = SERVER_PORT_BASE + nodeIndex;
-                    send(host, port, EXIT_MESSAGE, MASTER_LOG_HEADER);
+                    String exitMessage = String.format(MESSAGE, MASTER_TYPE, 0,
+                       SERVER_TYPE, nodeIndex, EXIT_TITLE, EMPTY_CONTENT);
+                    send(localhost, port, exitMessage, MASTER_LOG_HEADER);
                 }
             }
         }
+        listener.close();
     }
 }

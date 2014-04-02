@@ -20,11 +20,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.InetAddress;
 
-public class Client extends Util implements Protocol {
+public class Client extends Util {
 
     static int clientID;
     static String logHeader;
     static String logfilename;
+    static int leaderIdx;
 
     public static void main (String [] args) throws IOException {
         // parse the given id
@@ -37,24 +38,44 @@ public class Client extends Util implements Protocol {
         System.setOut(log);
         System.setErr(log);
 
+        InetAddress localhost = InetAddress.getLocalHost();
         // construct stable server socket
         ServerSocket listener = new ServerSocket(CLIENT_PORT_BASE+clientID, 0,
                 InetAddress.getLocalHost());
         listener.setReuseAddress(true);
+        // send acknowledgement to the master
+        String setup_ack = String.format(MESSAGE, CLIENT_TYPE, clientID,
+                MASTER_TYPE, 0, START_ACK_TITLE, EMPTY_CONTENT);
+        send (localhost, MASTER_PORT, setup_ack, logHeader);
         // indicate the listener setup
-        System.out.println(logHeader + "Listener setup: " + listener.toString());
+        System.out.println(logHeader + listener.toString());
         try { while (true) {
             Socket socket = listener.accept();
             try {
                 BufferedReader in = new BufferedReader(new
                         InputStreamReader(socket.getInputStream()));
                 // channel is established
-                String cmd = in.readLine();
-                System.out.println(cmd);
+                String recMessage = in.readLine();
+                System.out.println(logHeader + "Message Received: " + recMessage);
+                String [] recInfo = recMessage.split(",");
 
-                if (cmd.equals(EXIT_MESSAGE)) {
+                String sender_type = recInfo[SENDER_TYPE_IDX];
+                int sender_idx = Integer.parseInt(recInfo[SENDER_INDEX_IDX]);
+                String receiver_type = recInfo[RECEIVER_TYPE_IDX];
+                int receiver_idx = Integer.parseInt(recInfo[RECEIVER_INDEX_IDX]);
+                String title = recInfo[TITLE_IDX];
+                String content = recInfo[CONTENT_IDX];
+
+                if (title.equals(SET_LEADER_TITLE)) {
+                    // send the acknowledgement of set new leader
+                    String ack = String.format(MESSAGE, receiver_type,
+                      receiver_idx, sender_type, sender_idx,
+                       SET_LEADER_ACK_TITLE, EMPTY_CONTENT);
+
+                } else if (title.equals(EXIT_TITLE)) {
                     socket.close();
                     listener.close();
+                    System.out.println(logHeader + "Exit.");
                     System.exit(0);
                    }
                 } finally {

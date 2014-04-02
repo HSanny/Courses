@@ -137,16 +137,7 @@ public class Master extends Util {
                             break;
                         }
                     }
-                    // specify the server with index 0 as leader and leave other as relica.
-                    int initialLeaderIdx = 0;
-                    String leaderMessage = String.format(MESSAGE, MASTER_TYPE,
-                            0, SERVER_TYPE, initialLeaderIdx, UR_LEADER_TITLE, EMPTY_CONTENT);
-                    port = SERVER_PORT_BASE + initialLeaderIdx;
-                    send (localhost, port, leaderMessage, MASTER_LOG_HEADER);
 
-                    // TODO: listen to the ack from leader
-
-                    // TODO: tell all clients to identify the leader server
 
                     // ============================================================
                     break;

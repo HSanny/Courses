@@ -25,7 +25,6 @@ class Server extends Util {
     static int serverID;
     static String logHeader;
     static String logfilename;
-    static boolean isLeader = false;
 
     public static void main (String [] args) throws IOException {
         // parse the server id assigned by master
@@ -69,14 +68,6 @@ class Server extends Util {
                    String title = recInfo[TITLE_IDX];
                    String content = recInfo[CONTENT_IDX];
 
-                   if (title.equals(UR_LEADER_TITLE)) {
-                        isLeader = true;
-                        // send the acknowledgement of becoming leader
-                        String ack = String.format(MESSAGE, receiver_type,
-                                receiver_idx, sender_type, sender_idx,
-                                UR_LEADER_ACK_TITLE, EMPTY_CONTENT);
-                        send(localhost, MASTER_PORT, ack, SERVER_LOG_HEADER);
-                   }
                    if (title.equals(EXIT_TITLE)) {
                         socket.close();
                         listener.close();

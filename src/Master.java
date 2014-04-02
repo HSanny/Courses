@@ -108,9 +108,10 @@ public class Master extends Util {
 
                     for (nodeIndex = 0; nodeIndex < numNodes; nodeIndex ++) {
                         Integer serverID = new Integer(nodeIndex);
-                        String [] arguments = new String [1];
+                        String [] arguments = new String [2];
                         arguments[0] = serverID.toString();
-                        String cmd = RUN_SERVER_CMD + " " + arguments[0];
+                        arguments[1] = Integer.toString(numNodes);
+                        String cmd = RUN_SERVER_CMD + " " + arguments[0] + " " + arguments[1];
                         System.out.println(MASTER_LOG_HEADER + cmd);
                         Process pserver = runtime.exec(cmd); 
                         serverProcesses[nodeIndex] = pserver;
@@ -137,16 +138,7 @@ public class Master extends Util {
                             break;
                         }
                     }
-                    // specify the server with index 0 as leader and leave other as relica.
-                    int initialLeaderIdx = 0;
-                    String leaderMessage = String.format(MESSAGE, MASTER_TYPE,
-                            0, SERVER_TYPE, initialLeaderIdx, UR_LEADER_TITLE, EMPTY_CONTENT);
-                    port = SERVER_PORT_BASE + initialLeaderIdx;
-                    send (localhost, port, leaderMessage, MASTER_LOG_HEADER);
 
-                    // TODO: listen to the ack from leader
-
-                    // TODO: tell all clients to identify the leader server
 
                     // ============================================================
                     break;

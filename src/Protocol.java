@@ -2,8 +2,7 @@
 ## MODULE: Protocol.java
 ## VERSION: 1.0 
 ## SINCE: 2014-03-31
-## AUTHOR: 
-##         JIMMY LIN (xl5224) - JimmyLin@utexas.edu  
+## AUTHOR: ##         JIMMY LIN (xl5224) - JimmyLin@utexas.edu  
 ##
 ## DESCRIPTION: 
 ##      
@@ -21,15 +20,17 @@ interface Protocol {
 
     // Manually specify the format of differnt type of message
     final static String MESSAGE = "%s,%d,%s,%d,%s,%s";
+    // Macros for TITLE
     final static String EXIT_TITLE = "EXIT";
     final static String START_ACK_TITLE = "STARTUP_ACK";
     final static String SEND_MESSAGE_TITLE = "SENT_MESSAGE";
-    final static String EMPTY_CONTENT = "NULL";
+    final static String REQUEST_TITLE = "REQUEST";
+    final static String PROPOSE_TITLE = "PROPOSAL";
+    final static String P1A_TITLE = "p1a";
+    final static String P2A_TITLE = "p2a";
 
-    final static String UR_LEADER_TITLE = "YOU_ARE_LEADER";
-    final static String UR_LEADER_ACK_TITLE = "ACK_I_AM_LEADER";
-    final static String SET_LEADER_TITLE = "SET_NEW_LEADER";
-    final static String SET_LEADER_ACK_TITLE = "ACK_SET_LEADER";
+    // Macros for CONTENT
+    final static String EMPTY_CONTENT = "NULL";
 
     // message design
     final static int SENDER_TYPE_IDX = 0;
@@ -42,4 +43,6 @@ interface Protocol {
     final static String SERVER_TYPE = "SERVER";
     final static String CLIENT_TYPE = "CLIENT";
     final static String MASTER_TYPE = "MASTER";
+    final static String LEADER_TYPE = "LEADER";
+    final static String ACCEPTOR_TYPE = "ACCEPTOR";
 }

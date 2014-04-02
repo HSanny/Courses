@@ -108,9 +108,10 @@ public class Master extends Util {
 
                     for (nodeIndex = 0; nodeIndex < numNodes; nodeIndex ++) {
                         Integer serverID = new Integer(nodeIndex);
-                        String [] arguments = new String [1];
+                        String [] arguments = new String [2];
                         arguments[0] = serverID.toString();
-                        String cmd = RUN_SERVER_CMD + " " + arguments[0];
+                        arguments[1] = Integer.toString(numNodes);
+                        String cmd = RUN_SERVER_CMD + " " + arguments[0] + " " + arguments[1];
                         System.out.println(MASTER_LOG_HEADER + cmd);
                         Process pserver = runtime.exec(cmd); 
                         serverProcesses[nodeIndex] = pserver;

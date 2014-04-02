@@ -66,13 +66,7 @@ public class Client extends Util {
                 String title = recInfo[TITLE_IDX];
                 String content = recInfo[CONTENT_IDX];
 
-                if (title.equals(SET_LEADER_TITLE)) {
-                    // send the acknowledgement of set new leader
-                    String ack = String.format(MESSAGE, receiver_type,
-                      receiver_idx, sender_type, sender_idx,
-                       SET_LEADER_ACK_TITLE, EMPTY_CONTENT);
-
-                } else if (title.equals(EXIT_TITLE)) {
+                if (title.equals(EXIT_TITLE)) {
                     socket.close();
                     listener.close();
                     System.out.println(logHeader + "Exit.");

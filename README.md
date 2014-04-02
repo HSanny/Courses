@@ -1,8 +1,10 @@
 PAXOS Project 
 =============
 
-Contributors
+##### Contributors
+
 > Jimmy Lin (xl5224)
+> 
 > Calvin Szeto 
 
 USAGE
@@ -19,6 +21,7 @@ If your output matches the solution, NOTHING will be printed. Otherwise the line
 The output for the run of the test will also be stored in a file temp_output after running the second command.
 
 RUN USAGE:
+---------------
     ./RUN 1   - run the simpletest
     ./RUN 2   - run the harder test
 

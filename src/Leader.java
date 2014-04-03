@@ -81,8 +81,7 @@ class Leader extends Util implements Runnable{
                         if(isActive) {
                             // spawn a Commander for this ballot
                             LinkedBlockingQueue<String> queueCommander = new LinkedBlockingQueue<String>();
-                            // TODO: Change commander arguments
-                            (new Thread(new Commander(queueCommander, ballot_num))).start(); 
+                            (new Thread(new Commander(queueCommander, numServers, numServers, String.format(PVALUE_CONTENT, ballot_num, s, p), localhost))).start(); 
                             commanderQueues.put(ballot_num, queueCommander);
                         }
 
@@ -104,8 +103,7 @@ class Leader extends Util implements Runnable{
                         // spawn a Commander for that proposal
                             // spawn a Commander for this ballot
                             LinkedBlockingQueue<String> queueCommander = new LinkedBlockingQueue<String>();
-                            // TODO: Change commander arguments
-                            (new Thread(new Commander(queueCommander, ballot_num))).start(); 
+                            (new Thread(new Commander(queueCommander, numServers, numServers, String.format(PVALUE_CONTENT, ballot_num, tmp_s, proposals.get(tmp_s)), localhost))).start(); 
                             commanderQueues.put(ballot_num, queueCommander);
                             
                         }
@@ -354,6 +352,7 @@ class Leader extends Util implements Runnable{
                             // exit
                             return;
                         }
+                    }
                 }
             }
         }

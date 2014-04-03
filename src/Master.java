@@ -23,8 +23,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 public class Master extends Util {
-    final static String RUN_SERVER_CMD = "java -cp bin/ Server";
-    final static String RUN_CLIENT_CMD = "java -cp bin/ Client";
+    final static String RUN_SERVER_CMD = "java -cp ./bin/ Server";
+    final static String RUN_CLIENT_CMD = "java -cp ./bin/ Client";
 
     public static void main(String [] args) throws IOException, InterruptedException {
         Scanner scan = new Scanner(System.in);
@@ -98,10 +98,15 @@ public class Master extends Util {
 
                     for (clientIndex = 0; clientIndex < numClients; clientIndex ++) {
                         Integer clientID = new Integer(clientIndex);
-                        String [] arguments = new String [2];
-                        arguments[0] = clientID.toString();
-                        arguments[1] = Integer.toString(numNodes);
-                        String cmd = RUN_CLIENT_CMD + " " + arguments[0] + " " + arguments[1];
+                        String [] commandArray = new String [4];
+                        commandArray[0] = RUN_CLIENT_CMD;
+                        commandArray[1] = clientID.toString();
+                        commandArray[2] = Integer.toString(numNodes);
+                        commandArray[3] = Integer.toString(numClients);
+                        String cmd = "";
+                        for (int i = 0; i < commandArray.length; i++) {
+                            cmd += " " + commandArray[i];
+                        }
                         System.out.println(MASTER_LOG_HEADER + cmd);
                         Process pclient = runtime.exec(cmd);
                         clientProcesses[clientIndex] = pclient;
@@ -109,10 +114,15 @@ public class Master extends Util {
 
                     for (nodeIndex = 0; nodeIndex < numNodes; nodeIndex ++) {
                         Integer serverID = new Integer(nodeIndex);
-                        String [] arguments = new String [2];
-                        arguments[0] = serverID.toString();
-                        arguments[1] = Integer.toString(numNodes);
-                        String cmd = RUN_SERVER_CMD + " " + arguments[0] + " " + arguments[1];
+                        String [] commandArray = new String [4];
+                        commandArray[0] = RUN_SERVER_CMD;
+                        commandArray[1] = serverID.toString();
+                        commandArray[2] = Integer.toString(numNodes);
+                        commandArray[3] = Integer.toString(numClients);
+                        String cmd = "";
+                        for (int i = 0; i < commandArray.length; i++) {
+                            cmd += " " + commandArray[i];
+                        }
                         System.out.println(MASTER_LOG_HEADER + cmd);
                         Process pserver = runtime.exec(cmd); 
                         serverProcesses[nodeIndex] = pserver;
@@ -156,11 +166,10 @@ public class Master extends Util {
                      * Instruct the client specified by clientIndex to send the message
                      * to the proper paxos node
                      */
-                    InetAddress host = InetAddress.getLocalHost();
                     port = CLIENT_PORT_BASE + clientIndex;
                     String pmessage = String.format(MESSAGE, MASTER_TYPE, 0, CLIENT_TYPE, clientIndex, 
                             SEND_MESSAGE_TITLE, message);
-                    send (host, port, pmessage, MASTER_LOG_HEADER);
+                    send (localhost, port, pmessage, MASTER_LOG_HEADER);
                     break;
                 case "printChatLog":
                     clientIndex = Integer.parseInt(inputLine[1]);
@@ -168,11 +177,10 @@ public class Master extends Util {
                      * Print out the client specified by clientIndex's chat history
                      * in the format described on the handout.	     
                      */
-                    InetAddress host = InetAddress.getLocalHost();
                     port = CLIENT_PORT_BASE + clientIndex; 
                     String tmp_message = String.format(MESSAGE, MASTER_TYPE,
                             0, CLIENT_TYPE, clientIndex, PRINT_CHAT_LOG_TITLE, EMPTY_CONTENT);
-                    send (host, port, tmp_message, MASTER_LOG_HEADER);
+                    send (localhost, port, tmp_message, MASTER_LOG_HEADER);
                     break;
                 case "allClear":
                     /*

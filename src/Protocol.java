@@ -22,6 +22,8 @@ interface Protocol {
     final static String MESSAGE_SEP = ",";
     final static String MESSAGE = "%s" + MESSAGE_SEP + "%d" + MESSAGE_SEP
         +"%s" + MESSAGE_SEP +"%d" + MESSAGE_SEP +"%s" + MESSAGE_SEP +"%s";
+    final static String OUTPUT_MESSAGE = "%d %d: %s";
+
     // Macros for TITLE
     final static String EXIT_TITLE = "EXIT";
     final static String START_ACK_TITLE = "STARTUP_ACK";
@@ -46,7 +48,8 @@ interface Protocol {
     final static String EMPTY_CONTENT = "NULL";
     final static String CONTENT_SEP = ";";
     final static String PROPOSAL_CONTENT = "%d" + CONTENT_SEP + "%s";
-    final static String RESPONSE_CONTENT = "%d" + CONTENT_SEP + "%s" + CONTENT_SEP + "%d";
+    final static String RESPONSE_CONTENT = "%d" + CONTENT_SEP + "%d" +
+        CONTENT_SEP + "%d"+ CONTENT_SEP + "%s";
     final static String ADOPTED_CONTENT = "%d" + CONTENT_SEP + "%s";
     final static String PREEMPTED_CONTENT = "%d";
     final static String DECISION_CONTENT = "%d" + CONTENT_SEP + "%s";

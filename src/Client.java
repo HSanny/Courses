@@ -74,7 +74,7 @@ public class Client extends Util {
 
                 if (title.equals(SEND_MESSAGE_TITLE)) {
                     // send chat message (command) to all servers
-                    String command = String.format("%d;%d;%s", clientID, cid, content);
+                    String command = String.format(COMMAND, clientID, cid, content);
                     for (int serverIndex = 0; serverIndex < numServers; serverIndex++) {
                         String request = String.format(MESSAGE, CLIENT_TYPE,
                             clientID, SERVER_TYPE, serverIndex,

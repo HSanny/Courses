@@ -196,9 +196,9 @@ class Server extends Util { // a.k.a. Replica
                            if (!pprime.equals(pprimeprime)) {
                                propose (pprimeprime);
                            }
+                           // STEP FOUR: invoke perform
+                           perform(pprime);
                        }
-                       // STEP FOUR: invoke perform
-                       perform(pprime);
                    }
 
                    // this message is only given by master

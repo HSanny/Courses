@@ -38,6 +38,7 @@ SENDER_TYPE, SENDER_INDEX, RECEIVER_TYPE, RECEIVER_INDEX, TITLE, CONTENT
 Problems
 ---------------
 
+Sometimes there are Connection problems
 
 
 

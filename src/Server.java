@@ -123,7 +123,7 @@ class Server extends Util { // a.k.a. Replica
         // Initialization for collocation technique
         queueLeader = new LinkedBlockingQueue<String> ();
         queueAcceptor = new LinkedBlockingQueue<String> ();
-        leader = new Leader(queueLeader,serverID, localhost); 
+        leader = new Leader(queueLeader, serverID, numServers, localhost); 
         new Thread(leader).start();
         acceptor = new Acceptor(queueAcceptor, serverID, localhost);
         new Thread(acceptor).start();

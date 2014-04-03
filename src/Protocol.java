@@ -47,6 +47,8 @@ interface Protocol {
     final static String CONTENT_SEP = ";";
     final static String PROPOSAL_CONTENT = "%d" + CONTENT_SEP + "%s";
     final static String RESPONSE_CONTENT = "%d" + CONTENT_SEP + "%s" + CONTENT_SEP + "%d";
+    final static String ADOPTED_CONTENT = "%d" + CONTENT_SEP + "%s";
+    final static String PREEMPTED_CONTENT = "%d";
 
     final static String ACCEPTED_SEP = "/a";
     final static String PVALUE_SEP = "/p";

@@ -16,6 +16,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.net.InetAddress;
+import java.io.IOException;
 
 class Leader extends Util implements Runnable{
         private LinkedBlockingQueue<String> queue = null;
@@ -27,6 +28,7 @@ class Leader extends Util implements Runnable{
         private HashMap<Integer, String> proposals;
 
         private int serverID;
+        private int numServers;
         private String logHeader;
 
         private InetAddress localhost;
@@ -34,10 +36,11 @@ class Leader extends Util implements Runnable{
         private HashMap<Integer, LinkedBlockingQueue<String>> scoutQueues;
         private HashMap<Integer, LinkedBlockingQueue<String>> commanderQueues;
         
-        public Leader(LinkedBlockingQueue<String> queue, int id, InetAddress localhost) {
+        public Leader(LinkedBlockingQueue<String> queue, int id, int numServers, InetAddress localhost) {
             this.queue = queue;
             this.ballot_num = 0;
             this.serverID = id;
+            this.numServers = numServers;
             this.logHeader = String.format(LEADER_LOG_HEADER, id);
             this.localhost = localhost;
         }
@@ -45,8 +48,7 @@ class Leader extends Util implements Runnable{
         public void run() {
             // Spawn a Scout for the current ballot number
             LinkedBlockingQueue<String> queueScout = new LinkedBlockingQueue<String>();
-            // TODO: Change scout arguments
-            (new Thread(new Scout(queueScout, ballot_num))).start(); 
+            (new Thread(new Scout(queueScout, serverID, numServers, ballot_num, localhost))).start(); 
             scoutQueues.put(ballot_num, queueScout);
             while(true) {
                 // receive messages from queue
@@ -121,9 +123,8 @@ class Leader extends Util implements Runnable{
                             // TODO: Change this to ensure globally unique
                             ++ballot_num;
                             // spawn a scout for the new ballot number
-                            LinkedBlockingQueue<String> queueScout = new LinkedBlockingQueue<String>();
-                            // TODO: Change scout arguments
-                            (new Thread(new Scout(queueScout, ballot_num))).start(); 
+                            queueScout = new LinkedBlockingQueue<String>();
+                            (new Thread(new Scout(queueScout, serverID, numServers, ballot_num, localhost))).start(); 
                             scoutQueues.put(ballot_num, queueScout);
                         }
                     }
@@ -160,7 +161,7 @@ class Leader extends Util implements Runnable{
         }
 
         class Scout implements Runnable { 
-            private LinkedBlockingQueue queue = null;
+            private LinkedBlockingQueue<String> queue = null;
             private int leaderID;
             // waitFor: the acceptors that the scout is still waiting for
             // 0 means still waiting, 1 means received
@@ -171,10 +172,10 @@ class Leader extends Util implements Runnable{
             private InetAddress localhost;
             private String logHeader;
 
-            public Scout (LinkedBlockingQueue queue, int leaderID, int numAcceptors, int ballot_num, InetAddress localhost) {
+            public Scout (LinkedBlockingQueue<String> queue, int leaderID, int numAcceptors, int ballot_num, InetAddress localhost) {
                 this.queue = queue;
                 this.leaderID = leaderID;
-                this.waitFor = int[numAcceptors];
+                this.waitFor = new int[numAcceptors];
                 this.pvalues = new ArrayList<String>();
                 this.logHeader = String.format(SCOUT_LOG_HEADER, ballot_num);
                 this.localhost = localhost;
@@ -182,13 +183,17 @@ class Leader extends Util implements Runnable{
 
             public void run () {
                 // for all acceptors
-                for(int a: waitFor.length) {
+                for(int a=0; a<waitFor.length; a++) {
                     // send <p1a, leader, ballot number>
                     int port = SERVER_PORT_BASE + a;
-                    String p1aContent = String.format(P1ACONTENT, leaderID, ballot_num);
+                    String p1aContent = String.format(P1A_CONTENT, leaderID, ballot_num);
                     String p1aMessage = String.format(MESSAGE, SERVER_TYPE,
                         leaderID, ACCEPTOR_TYPE, a, P1A_TITLE, p1aContent);
-                    send(localhost, port, p1aMessage, logHeader);
+                    try {
+                        send(localhost, port, p1aMessage, logHeader);
+                    } catch (IOException e) {
+                        continue;
+                    }
                 }
                 // while true
                 while(true) {
@@ -210,7 +215,7 @@ class Leader extends Util implements Runnable{
                         // if message is a p1b for the same ballot number
                         if(newBallotNum == ballot_num) {
                             // add pvalues to pValues
-                            pvalues.push(pval); 
+                            pvalues.add(pval); 
                             // remove acceptor from waitFor
                             waitFor[acceptor] = 1;
                             int numReceived = 0;
@@ -220,12 +225,34 @@ class Leader extends Util implements Runnable{
                             // if waiting for fewer than half of all acceptors
                             if(numReceived > waitFor.length/2) {
                                 // send adopted, ballot number, pValues to leader
-                                
+                                int port = SERVER_PORT_BASE + leaderID;
+                                String adopted_str = "";
+                                for (String pvalue : pvalues) {
+                                    adopted_str += pvalue + PVALUE_SEP;
+                                }
+                                adopted_str = adopted_str.substring(0, adopted_str.length()-PVALUE_SEP.length());
+                                String adoptedContent = String.format(ADOPTED_CONTENT, ballot_num, adopted_str);
+                                String adoptedMessage = String.format(MESSAGE, SERVER_TYPE,
+                                    leaderID, LEADER_TYPE, leaderID, ADOPTED_TITLE, adoptedContent);
+                                try {
+                                    send(localhost, port, adoptedMessage, logHeader);
+                                } catch (IOException e) {
+                                    continue;
+                                }
                                 // exit
                                 return; 
                             }
                         } else {
                         // else send preempted and the higher ballot number to leader
+                            int port = SERVER_PORT_BASE + leaderID;
+                            String preemptedContent = String.format(PREEMPTED_CONTENT, newBallotNum);
+                            String preemptedMessage = String.format(MESSAGE, SERVER_TYPE,
+                                leaderID, LEADER_TYPE, leaderID, PREEMPTED_TITLE, preemptedContent);
+                            try {
+                                send(localhost, port, preemptedMessage, logHeader);
+                            } catch (IOException e) {
+                                continue;
+                            }
                             // exit
                             return;
                         }
@@ -235,10 +262,10 @@ class Leader extends Util implements Runnable{
         }
 
         class Commander implements Runnable {
-            private LinkedBlockingQueue queue = null;
+            private LinkedBlockingQueue<String> queue = null;
             // waitFor: the acceptors that the commander is still waiting for
             
-            public Commander(LinkedBlockingQueue queue, int ballot_num) {
+            public Commander(LinkedBlockingQueue<String> queue, int ballot_num) {
                 this.queue = queue;
             }
 

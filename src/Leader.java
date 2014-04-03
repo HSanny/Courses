@@ -48,7 +48,6 @@ class Leader extends Util implements Runnable{
             // TODO: Change scout arguments
             (new Thread(new Scout(queueScout, ballot_num))).start(); 
             scoutQueues.put(ballot_num, queueScout);
-        
             while(true) {
                 // receive messages from queue
                 String msg = null;
@@ -63,9 +62,13 @@ class Leader extends Util implements Runnable{
                 String content = msgParts[CONTENT_IDX];
                 String[] contentParts = content.split(CONTENT_SEP); 
                 // if message is a p1b
+                if(title.equals(P1B_TITLE)) {
+                
                 // if message is a p2b
+                } else if(title.equals(P2B_TITLE)) {
+                
                 // if message is a propose
-                if(title.equals(PROPOSE_TITLE)) {
+                } else if(title.equals(PROPOSE_TITLE)) {
                     int s = Integer.parseInt(contentParts[0]);
                     String p = contentParts[1];
                     // if Leader hasn't proposed something for this slot already
@@ -80,29 +83,60 @@ class Leader extends Util implements Runnable{
                             (new Thread(new Commander(queueCommander, ballot_num))).start(); 
                             commanderQueues.put(ballot_num, queueCommander);
                         }
-                    }
-                // if message is an adopted
-                } else if(title.equals(ADOPTED_TITLE)) {
-                    int b = Integer.parseInt(contentParts[0]);
-                    String[] pvals = contentParts[1].split(ACCEPTED_SEP);
-                    // update proposals so far with highest ballots for each slot returned by the adopted message
-                    for(String newPval:pmax(pvals)) {
-                        //TODO: Continue here 
-                    }
-                    // for all proposals so far
+
+                        // if message is an adopted
+                    } else if(title.equals(ADOPTED_TITLE)) {
+                        int b = Integer.parseInt(contentParts[0]);
+                        String[] pvals = contentParts[1].split(ACCEPTED_SEP);
+                        // update proposals so far with highest ballots for each slot returned by the adopted message
+                        for(String newPval:pmax(pvals)) {
+                            // for each proposal in the pmax
+                            String[] newPvalParts = newPval.split(PVALUE_SEP);
+                            int newS = Integer.parseInt(newPvalParts[1]);
+                            String newP = newPvalParts[2];
+                            // update proposals with that pvalue
+                            proposals.put(s,p);
+                        }
+                        // for all proposals so far
+                        for(int tmp_s: proposals.keySet()) {
                         // spawn a Commander for that proposal
-                    // become Active
-                // if message is a preempted
-                } else if(title.equals(PREEMPTED_TITLE)) {
-                    // if the ballot number in the message is greater than the current ballot number
-                        // become Passive
-                        // update the ballot number
-                        // spawn a scout for the new ballot number
+                            // spawn a Commander for this ballot
+                            LinkedBlockingQueue<String> queueCommander = new LinkedBlockingQueue<String>();
+                            // TODO: Change commander arguments
+                            (new Thread(new Commander(queueCommander, ballot_num))).start(); 
+                            commanderQueues.put(ballot_num, queueCommander);
+                            
+                        }
+                        // become Active
+                        isActive = true; 
+                        // if message is a preempted
+                    } else if(title.equals(PREEMPTED_TITLE)) {
+                        // TODO: Why does the pseudocode show <r', L'> instead of b?
+                        int b = Integer.parseInt(contentParts[0]); 
+                        // if the ballot number in the message is greater than the current ballot number
+                        if(b > ballot_num) {
+                            // become Passive
+                            isActive = false;
+                            // update the ballot number
+                            // TODO: Change this to ensure globally unique
+                            ++ballot_num;
+                            // spawn a scout for the new ballot number
+                            LinkedBlockingQueue<String> queueScout = new LinkedBlockingQueue<String>();
+                            // TODO: Change scout arguments
+                            (new Thread(new Scout(queueScout, ballot_num))).start(); 
+                            scoutQueues.put(ballot_num, queueScout);
+                        }
+                    }
                 }
             }
         }
 
         private String[] pmax (String[] pvals) {
+            /*
+            * pmax takes an array of pvalues and returns an array of pvalues
+            * where for each slot number that exists in the original array,
+            * the pvalue with the highest ballot number is added to the new array
+            */
             // TODO: Edit this so it doesn't look at a given pval more than once
             ArrayList<String> pmax = new ArrayList<String>();
             for(String pval: pvals) {
@@ -127,26 +161,76 @@ class Leader extends Util implements Runnable{
 
         class Scout implements Runnable { 
             private LinkedBlockingQueue queue = null;
+            private int leaderID;
             // waitFor: the acceptors that the scout is still waiting for
+            // 0 means still waiting, 1 means received
+            private int[] waitFor;
             // pValues: the set of pValues received so far
+            ArrayList<String> pvalues;
 
-            public Scout (LinkedBlockingQueue queue, int ballot_num) {
+            private InetAddress localhost;
+            private String logHeader;
+
+            public Scout (LinkedBlockingQueue queue, int leaderID, int numAcceptors, int ballot_num, InetAddress localhost) {
                 this.queue = queue;
+                this.leaderID = leaderID;
+                this.waitFor = int[numAcceptors];
+                this.pvalues = new ArrayList<String>();
+                this.logHeader = String.format(SCOUT_LOG_HEADER, ballot_num);
+                this.localhost = localhost;
             }
 
             public void run () {
                 // for all acceptors
+                for(int a: waitFor.length) {
                     // send <p1a, leader, ballot number>
+                    int port = SERVER_PORT_BASE + a;
+                    String p1aContent = String.format(P1ACONTENT, leaderID, ballot_num);
+                    String p1aMessage = String.format(MESSAGE, SERVER_TYPE,
+                        leaderID, ACCEPTOR_TYPE, a, P1A_TITLE, p1aContent);
+                    send(localhost, port, p1aMessage, logHeader);
+                }
                 // while true
+                while(true) {
                     // receive messages from queue
-                    // if message is a p1b for the same ballot number
-                        // add pvalues to pValues
-                        // remove acceptor from waitFor
-                        // if waiting for fewer than half of all acceptors
-                            // send adopted, ballot number, pValues to leader
+                    String msg = null;
+                    try {
+                        msg = queue.take();
+                    }  catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if (msg == null) continue;
+                    String[] msgParts = msg.split(MESSAGE_SEP);
+                    String title = msgParts[0];
+                    if(title.equals(P1B_TITLE)) {
+                        String[] p1bParts = msgParts[1].split(CONTENT_SEP);
+                        int acceptor = Integer.parseInt(p1bParts[0]);
+                        int newBallotNum = Integer.parseInt(p1bParts[1]);
+                        String pval = p1bParts[2];
+                        // if message is a p1b for the same ballot number
+                        if(newBallotNum == ballot_num) {
+                            // add pvalues to pValues
+                            pvalues.push(pval); 
+                            // remove acceptor from waitFor
+                            waitFor[acceptor] = 1;
+                            int numReceived = 0;
+                            for(int tmp_a: waitFor)
+                                if(tmp_a == 1)
+                                    ++numReceived;
+                            // if waiting for fewer than half of all acceptors
+                            if(numReceived > waitFor.length/2) {
+                                // send adopted, ballot number, pValues to leader
+                                
+                                // exit
+                                return; 
+                            }
+                        } else {
+                        // else send preempted and the higher ballot number to leader
                             // exit
-                    // else send preempted and the higher ballot number to leader
-                    // exit
+                            return;
+                        }
+                    }
+                }
             }
         }
 

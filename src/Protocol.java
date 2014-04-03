@@ -50,6 +50,7 @@ interface Protocol {
 
     final static String ACCEPTED_SEP = "/a";
     final static String PVALUE_SEP = "/p";
+    final static String P1A_CONTENT = "%d" + CONTENT_SEP + "%d";
     final static String P1B_CONTENT = "%d" + CONTENT_SEP + "%d" + CONTENT_SEP + "%s";
     final static String P2B_CONTENT = "%d" + CONTENT_SEP + "%d";
 

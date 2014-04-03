@@ -275,22 +275,22 @@ class Leader extends Util implements Runnable{
 
             private InetAddress localhost;
             
-            public Commander(LinkedBlockingQueue<String> queue, int numAcceptors, int numServers, int ballot_num, int slot_num, String p, InetAddress localhost) {
+            public Commander(LinkedBlockingQueue<String> queue, int numAcceptors, int numServers, String pval, InetAddress localhost) {
                 this.queue = queue;
                 this.waitFor = new int[numAcceptors];
                 this.numServers = numServers;
-                this.ballot_num = ballot_num;
-                this.slot_num = slot_num;
-                this.p = p;
+                String[] pvalParts = pval.split(PVALUE_SEP);
+                this.ballot_num = Integer.parseInt(pvalParts[0]);
+                this.slot_num = Integer.parseInt(pvalParts[1]);
+                this.p = pvalParts[2];
             }
 
             public void run() {
                 // for all acceptors
                 for(int a=0; a<waitFor.length; a++) {
                     // send <p2a, leader, ballot>
-                    // TODO: Fix this
                     int port = SERVER_PORT_BASE + a;
-                    String p2aContent = String.format(P2A_CONTENT, leaderID, ballot_num);
+                    String p2aContent = String.format(P2A_CONTENT, leaderID, String.format(PVALUE_CONTENT, ballot_num, slot_num, p));
                     String p2aMessage = String.format(MESSAGE, LEADER_TYPE,
                             leaderID, ACCEPTOR_TYPE, a, P2A_TITLE, p2aContent);
                     try {

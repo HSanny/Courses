@@ -118,10 +118,12 @@ class Server extends Util { // a.k.a. Replica
         decisions = new HashMap<Integer, String> ();
 
         // Initialization for collocation technique
-        leader = new Leader(queueLeader); 
-        acceptor = new Acceptor(queueAcceptor);
         queueLeader = new LinkedBlockingQueue<String> ();
         queueAcceptor = new LinkedBlockingQueue<String> ();
+        leader = new Leader(queueLeader); 
+        new Thread(leader).start();
+        acceptor = new Acceptor(queueAcceptor);
+        new Thread(acceptor).start();
 
         // construct stable server socket
         ServerSocket listener = new ServerSocket(SERVER_PORT_BASE+serverID, 0,

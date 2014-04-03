@@ -14,37 +14,102 @@
 import java.util.concurrent.LinkedBlockingQueue;
 
 class Leader implements Runnable{
-        static LinkedBlockingQueue queue = null;
+        private LinkedBlockingQueue queue = null;
         // ballotNumber: current ballot number
-        static int ballot_num;
+        private int ballot_num;
         // active: active or passive?
-        static boolean isActive = false;
+        private boolean isActive = false;
         // proposals: proposals so far
+        private HashMap<Integer, String> proposals;
+
+        private HashMap<Integer, LinkedBlockingQueue<String>> scoutQueues;
+        private HashMap<Integer, LinkedBlockingQueue<String>> commanderQueues;
         
         public Leader(LinkedBlockingQueue queue) {
             this.queue = queue;
+            this.ballot_num = 0;
         }
         
         public void run() {
             // Spawn a Scout for the current ballot number
-            // while true
+            LinkedBlockingQueue<String> queueScout = new LinkedBlockingQueue<String>();
+            // TODO: Change scout arguments
+            (new Thread(new Scout(queueScout, ballot_num))).start(); 
+            scoutQueues.put(ballot_num, queueScout);
+        
+            while(true) {
                 // receive messages from queue
+                String msg;
+                try {
+                    msg = queue.take();
+                }  catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                String[] msgParts = msg.split(MESSAGE_SEP);
+                String title = msgParts[TITLE_IDX];
+                String content = msgParts[CONTENT_IDX];
+                String[] contentParts = content.split(CONTENT_SEP); 
+                // if message is a p1b
+                // if message is a p2b
                 // if message is a propose
+                if(title.equals(PROPOSE_TITLE)) {
+                    int s = Integer.parseInt(contentParts[0]);
+                    String p = contentParts[1];
                     // if Leader hasn't proposed something for this slot already
+                    if(proposals.get(s) == null) {
                         // add this proposal to list of proposals so far
+                        proposals.put(s,p);
                         // if the Leader is active
+                        if(isActive) {
                             // spawn a Commander for this ballot
+                            LinkedBlockingQueue<String> queueCommander = new LinkedBlockingQueue<String>();
+                            // TODO: Change commander arguments
+                            (new Thread(new Commander(queueCommander, ballot_num))).start(); 
+                            commanderQueues.put(ballot_num, queueCommander);
+                        }
+                    }
                 // if message is an adopted
+                } else if(title.equals(ADOPTED_TITLE)) {
+                    int b = contentParts[0];
+                    String[] pvals = contentParts[1].split(ACCEPTED_SEP);
                     // update proposals so far with highest ballots for each slot returned by the adopted message
+                    for(String newPval:pmax(pvals)) {
+                        //TODO: Continue here 
+                    }
                     // for all proposals so far
                         // spawn a Commander for that proposal
                     // become Active
                 // if message is a preempted
+                } else if(title.equals(PREEMPTED_TITLE)) {
                     // if the ballot number in the message is greater than the current ballot number
                         // become Passive
                         // update the ballot number
                         // spawn a scout for the new ballot number
+                }
+            }
+        }
 
+        private String[] pmax(String[] pvals) {
+            // TODO: Edit this so it doesn't look at a given pval more than once
+            ArrayList<String> pmax = new ArrayList<String>();
+            for(String pval: pvals) {
+                String[] pvalParts = pval.split(PVALUE_SEP);
+                int s = Integer.parseInt(pvalParts[1]);
+                int maxB = -1;
+                String maxPval;
+                // Pick the pvalue with the largest ballot number for a given slot number
+                for(String tmp_pval: pvals) {
+                    String[] tmp_pvalParts = tmp_pval.split(PVALUE_SEP);
+                    int tmp_b = Integer.parseInt(tmp_pvalParts[0]);
+                    int tmp_s = Integer.parseInt(tmp_pvalParts[1]);
+                    if(tmp_s == s && tmp_b > maxB) {
+                        maxB = tmp_b;
+                        maxPval = pval;
+                    }
+                }
+                pmax.push(maxPval);
+            }
+            return pmax.toArray();
         }
 
         class Scout implements Runnable { 

@@ -54,9 +54,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newcommand{\uk}{\ensuremath{U^{(K_i)}}}
-\newcommand{\ukt}{\ensuremath{U^{(K_i) T}}}
+\newcommand{\ukt}{\ensuremath{U^{(K_i)^T}}}
 \newcommand{\mk}{\ensuremath{M^{(K_i)}}}
-\newcommand{\mkt}{\ensuremath{M^{(K_i) T}}}
+\newcommand{\mkt}{\ensuremath{M^{(K_i)^T}}}
 \section{MF Implementation}
 
 \begin{figure}[h]
@@ -64,6 +64,9 @@
     \includegraphics[width=5in,height=3.5in]{./lambda_error.png} \\
     \caption{Errors With Regard to Parameter $\lambda$}
 \end{figure}
+Note that the horizental axis represents the regularization parameter, and
+vertical axis represents the RMSE on given regularization parameter. 
+
 For specific details, see the source code in Appendix \ref{AppdendixA}.
 For debugging, see the Execution logs in Appendix \ref{AppdendixB}.
 
@@ -71,12 +74,12 @@ For debugging, see the Execution logs in Appendix \ref{AppdendixB}.
 The optimal lambda derived is $\lambda = 1$.
 
 \section{Problem when $\lambda = 0$}
-The problem encountered when $\lambda = 0$ is that the singularity of
+The problem encountered when $\lambda = 0$ is that the non-invertibility of
 $\ukt * \uk$ and $\mkt * \mk$.
 
 
 \section{RMSE of Test Set under optimal $\lambda$}
-The RMSE of test set under optimal $\lambda = $ is $1.0835$.
+The RMSE of test set under optimal $\lambda = 1$ is $1.0835$.
 
 \newpage
 \appendix

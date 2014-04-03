@@ -73,10 +73,15 @@ class Acceptor extends Util implements Runnable {
                     for (String pvalue : accepted) {
                         accepted_str += pvalue + PVALUE_SEP;
                     }
-                    accepted_str = accepted_str.substring(0, accepted_str.length()-PVALUE_SEP.length());
-                    String p1b_content = String.format(P1B_CONTENT, serverID, ballot_num, accepted_str);
-                    String p1b_response = String.format(MESSAGE, SERVER_TYPE, serverID, LEADER_TYPE, lambda, 
-                            P1B_TITLE, p1b_content);
+                    int endIndex = accepted_str.length()-PVALUE_SEP.length();
+                    if (endIndex > 0)
+                        accepted_str = accepted_str.substring(0, endIndex);
+                    String p1b_content = String.format(P1B_CONTENT, serverID,
+                            ballot_num, accepted_str);
+
+                    String p1b_response = String.format(MESSAGE, ACCEPTOR_TYPE,
+                      serverID, LEADER_TYPE, lambda, P1B_TITLE, p1b_content);
+
                     try {
                     send (localhost, port, p1b_response, logHeader);
                     } catch (IOException e) {

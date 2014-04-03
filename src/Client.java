@@ -115,28 +115,27 @@ public class Client extends Util {
                     // TODO: CONSIDER MORE HERE, THERE CAN BE SOME WIERD CASES
                     
                 } else if (title.equals(PRINT_CHAT_LOG_TITLE)){
-                    for (int clientIndex = 0; clientIndex < numClients; clientIndex ++) {
-                        for (int paxosid = 0; ; paxosid ++) {
-                            String message = chatLog.get(clientIndex).get(paxosid);
-                            if (message != null) {
-                                String outMessage = String.format
-                                    (OUTPUT_MESSAGE, paxosid, clientIndex, message);
-                                System.out.println(outMessage);
-                            } else break;
-                        }
+                    int clientIndex = clientID;
+                    for (int paxosid = 0; ; paxosid ++) {
+                        String message = chatLog.get(clientIndex).get(paxosid);
+                        if (message != null) {
+                            String outMessage = String.format
+                                (OUTPUT_MESSAGE, paxosid, clientIndex, message);
+                            System.out.println(outMessage);
+                        } else break;
                     }
-                    
+
                 } else if (title.equals(EXIT_TITLE)) {
                     socket.close();
                     listener.close();
                     System.out.println(logHeader + "Exit.");
                     System.exit(0);
-                   }
-                } finally {
-                    socket.close();
                 }
-
+            } finally {
+                socket.close();
             }
+
+        }
         } finally {
             listener.close();
         }

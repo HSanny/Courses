@@ -35,6 +35,7 @@ class Acceptor extends Util implements Runnable {
             this.serverID = id;
             this.logHeader = String.format(ACCEPTOR_LOG_HEADER, id);
             this.localhost = localhost;
+            accepted = new HashSet<String>();
         }
 
         public void run() {

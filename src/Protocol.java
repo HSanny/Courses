@@ -46,6 +46,11 @@ interface Protocol {
     final static String PROPOSAL_CONTENT = "%d" + CONTENT_SEP + "%s";
     final static String RESPONSE_CONTENT = "%d" + CONTENT_SEP + "%s" + CONTENT_SEP + "%d";
 
+    final static String ACCEPTED_SEP = "/a";
+    final static String PVALUE_SEP = "/p";
+    final static String P1B_CONTENT = "%d" + CONTENT_SEP + "%d" + CONTENT_SEP + "%s";
+    final static String P2B_CONTENT = "%d" + CONTENT_SEP + "%d";
+
     // message design
     final static int SENDER_TYPE_IDX = 0;
     final static int SENDER_INDEX_IDX = 1;

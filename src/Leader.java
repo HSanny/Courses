@@ -81,8 +81,7 @@ class Leader extends Util implements Runnable{
                         if(isActive) {
                             // spawn a Commander for this ballot
                             LinkedBlockingQueue<String> queueCommander = new LinkedBlockingQueue<String>();
-                            // TODO: Change commander arguments
-                            (new Thread(new Commander(queueCommander, ballot_num))).start(); 
+                            (new Thread(new Commander(queueCommander, numServers, numServers, String.format(PVALUE_CONTENT, ballot_num, s, p), localhost))).start(); 
                             commanderQueues.put(ballot_num, queueCommander);
                         }
 
@@ -104,8 +103,7 @@ class Leader extends Util implements Runnable{
                         // spawn a Commander for that proposal
                             // spawn a Commander for this ballot
                             LinkedBlockingQueue<String> queueCommander = new LinkedBlockingQueue<String>();
-                            // TODO: Change commander arguments
-                            (new Thread(new Commander(queueCommander, ballot_num))).start(); 
+                            (new Thread(new Commander(queueCommander, numServers, numServers, String.format(PVALUE_CONTENT, ballot_num, tmp_s, proposals.get(tmp_s)), localhost))).start(); 
                             commanderQueues.put(ballot_num, queueCommander);
                             
                         }
@@ -121,7 +119,7 @@ class Leader extends Util implements Runnable{
                             isActive = false;
                             // update the ballot number
                             // TODO: Change this to ensure globally unique
-                            ++ballot_num;
+                            ballot_num = b + 1;
                             // spawn a scout for the new ballot number
                             queueScout = new LinkedBlockingQueue<String>();
                             (new Thread(new Scout(queueScout, serverID, numServers, ballot_num, localhost))).start(); 
@@ -187,7 +185,7 @@ class Leader extends Util implements Runnable{
                     // send <p1a, leader, ballot number>
                     int port = SERVER_PORT_BASE + a;
                     String p1aContent = String.format(P1A_CONTENT, leaderID, ballot_num);
-                    String p1aMessage = String.format(MESSAGE, SERVER_TYPE,
+                    String p1aMessage = String.format(MESSAGE, LEADER_TYPE,
                         leaderID, ACCEPTOR_TYPE, a, P1A_TITLE, p1aContent);
                     try {
                         send(localhost, port, p1aMessage, logHeader);
@@ -195,7 +193,6 @@ class Leader extends Util implements Runnable{
                         continue;
                     }
                 }
-                // while true
                 while(true) {
                     // receive messages from queue
                     String msg = null;
@@ -232,7 +229,7 @@ class Leader extends Util implements Runnable{
                                 }
                                 adopted_str = adopted_str.substring(0, adopted_str.length()-PVALUE_SEP.length());
                                 String adoptedContent = String.format(ADOPTED_CONTENT, ballot_num, adopted_str);
-                                String adoptedMessage = String.format(MESSAGE, SERVER_TYPE,
+                                String adoptedMessage = String.format(MESSAGE, LEADER_TYPE,
                                     leaderID, LEADER_TYPE, leaderID, ADOPTED_TITLE, adoptedContent);
                                 try {
                                     send(localhost, port, adoptedMessage, logHeader);
@@ -246,7 +243,7 @@ class Leader extends Util implements Runnable{
                         // else send preempted and the higher ballot number to leader
                             int port = SERVER_PORT_BASE + leaderID;
                             String preemptedContent = String.format(PREEMPTED_CONTENT, newBallotNum);
-                            String preemptedMessage = String.format(MESSAGE, SERVER_TYPE,
+                            String preemptedMessage = String.format(MESSAGE, LEADER_TYPE,
                                 leaderID, LEADER_TYPE, leaderID, PREEMPTED_TITLE, preemptedContent);
                             try {
                                 send(localhost, port, preemptedMessage, logHeader);
@@ -264,21 +261,99 @@ class Leader extends Util implements Runnable{
         class Commander implements Runnable {
             private LinkedBlockingQueue<String> queue = null;
             // waitFor: the acceptors that the commander is still waiting for
+            // 0 means still waiting, 1 means received
+            private int[] waitFor;
+            private int numServers;
+
+            private int leaderID;
+
+            private int ballot_num;
+            private int slot_num;
+            private String p;
+
+            private InetAddress localhost;
             
-            public Commander(LinkedBlockingQueue<String> queue, int ballot_num) {
+            public Commander(LinkedBlockingQueue<String> queue, int numAcceptors, int numServers, String pval, InetAddress localhost) {
                 this.queue = queue;
+                this.waitFor = new int[numAcceptors];
+                this.numServers = numServers;
+                String[] pvalParts = pval.split(PVALUE_SEP);
+                this.ballot_num = Integer.parseInt(pvalParts[0]);
+                this.slot_num = Integer.parseInt(pvalParts[1]);
+                this.p = pvalParts[2];
             }
 
             public void run() {
-               // for all acceptors
-                   // send <p2a, leader, ballot>
-               // while true
-                   // receive messages from queue   
-                   // if message is a p2b for the same ballot number
-                       // remove acceptor from waitFor
-                       // if waiting for fewer than half of all acceptors
-                           // send decision to ALL servers
-                   // else send preempted and the higher ballot number to leader
+                // for all acceptors
+                for(int a=0; a<waitFor.length; a++) {
+                    // send <p2a, leader, ballot>
+                    int port = SERVER_PORT_BASE + a;
+                    String p2aContent = String.format(P2A_CONTENT, leaderID, String.format(PVALUE_CONTENT, ballot_num, slot_num, p));
+                    String p2aMessage = String.format(MESSAGE, LEADER_TYPE,
+                            leaderID, ACCEPTOR_TYPE, a, P2A_TITLE, p2aContent);
+                    try {
+                        send(localhost, port, p2aMessage, logHeader);
+                    } catch (IOException e) {
+                        continue;
+                    }
+                }
+                while(true) {
+                    // receive messages from queue   
+                    String msg = null;
+                    try {
+                        msg = queue.take();
+                    }  catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if (msg == null) continue;
+                    String[] msgParts = msg.split(MESSAGE_SEP);
+                    String title = msgParts[0];
+                    if(title.equals(P2B_TITLE)) {
+                        String[] p2bParts = msgParts[1].split(CONTENT_SEP);
+                        int acceptor = Integer.parseInt(p2bParts[0]);
+                        int newBallotNum = Integer.parseInt(p2bParts[1]);
+                        // if message is a p2b for the same ballot number
+                        if(newBallotNum == ballot_num) {
+                            // remove acceptor from waitFor
+                            waitFor[acceptor] = 1;
+                            // remove acceptor from waitFor
+                            waitFor[acceptor] = 1;
+                            int numReceived = 0;
+                            for(int tmp_a: waitFor)
+                                if(tmp_a == 1)
+                                    ++numReceived;
+                            // if waiting for fewer than half of all acceptors
+                            if(numReceived > waitFor.length/2) {
+                                // send decision to ALL servers
+                                for(int r=0; r<numServers; r++) {
+                                    int port = SERVER_PORT_BASE + leaderID;
+                                    String decisionContent = String.format(DECISION_CONTENT, slot_num, p);
+                                    String decisionMessage = String.format(MESSAGE, LEADER_TYPE,
+                                        leaderID, SERVER_TYPE, leaderID, DECISION_TITLE, decisionContent);
+                                    try {
+                                        send(localhost, port, decisionMessage, logHeader);
+                                    } catch (IOException e) {
+                                        continue;
+                                    }
+                                }
+                                return;
+                            }
+                        // else send preempted and the higher ballot number to leader
+                        } else {
+                            int port = SERVER_PORT_BASE + leaderID;
+                            String preemptedContent = String.format(PREEMPTED_CONTENT, newBallotNum);
+                            String preemptedMessage = String.format(MESSAGE, LEADER_TYPE,
+                                leaderID, LEADER_TYPE, leaderID, PREEMPTED_TITLE, preemptedContent);
+                            try {
+                                send(localhost, port, preemptedMessage, logHeader);
+                            } catch (IOException e) {
+                                continue;
+                            }
+                            // exit
+                            return;
+                        }
+                    }
+                }
             }
         }
 }

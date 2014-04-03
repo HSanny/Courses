@@ -42,11 +42,11 @@ interface Protocol {
     final static String PRINT_CHAT_LOG_TITLE = "PRINT_CHAT_LOG";
 
     // Macros for CONTENT
-    final static String COMMAND_SEP = "/c";
+    final static String COMMAND_SEP = "</c>";
     final static String COMMAND = "%d" + COMMAND_SEP + "%d" + COMMAND_SEP + "%s";
 
     final static String EMPTY_CONTENT = "NULL";
-    final static String CONTENT_SEP = ";";
+    final static String CONTENT_SEP = "<;>";
     final static String PROPOSAL_CONTENT = "%d" + CONTENT_SEP + "%s";
     final static String RESPONSE_CONTENT = "%d" + CONTENT_SEP + "%d" +
         CONTENT_SEP + "%d"+ CONTENT_SEP + "%s";
@@ -54,8 +54,8 @@ interface Protocol {
     final static String PREEMPTED_CONTENT = "%d";
     final static String DECISION_CONTENT = "%d" + CONTENT_SEP + "%s";
 
-    final static String ACCEPTED_SEP = "/a";
-    final static String PVALUE_SEP = "/p";
+    final static String ACCEPTED_SEP = "</a>";
+    final static String PVALUE_SEP = "</p>";
     final static String PVALUE_CONTENT = "%d" + PVALUE_SEP + "%d" + PVALUE_SEP + "%s";
     final static String P1A_CONTENT = "%d" + CONTENT_SEP + "%d";
     final static String P1B_CONTENT = "%d" + CONTENT_SEP + "%d" + CONTENT_SEP + "%s";

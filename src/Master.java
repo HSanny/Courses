@@ -188,6 +188,7 @@ public class Master extends Util {
                      * come to consensus in PAXOS do, and that all clients have heard
                      * of them 
                      */
+                    Thread.sleep(10000);
                     break;
                 case "crashServer":
                     nodeIndex = Integer.parseInt(inputLine[1]);

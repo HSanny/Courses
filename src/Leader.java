@@ -68,10 +68,20 @@ class Leader extends Util implements Runnable{
             String[] contentParts = content.split(CONTENT_SEP); 
             // if message is a p1b
             if(title.equals(P1B_TITLE)) {
-
+                try{
+                    int tmp_b = Integer.parseInt(contentParts[1]);
+                    scoutQueues.get(tmp_b).put(msg);
+                }catch(InterruptedException e) {
+                    e.printStackTrace();
+                }
                 // if message is a p2b
             } else if(title.equals(P2B_TITLE)) {
-
+                try{
+                    int tmp_b = Integer.parseInt(contentParts[1]);
+                    commanderQueues.get(tmp_b).put(msg);
+                }catch(InterruptedException e) {
+                    e.printStackTrace();
+                }
                 // if message is a propose
             } else if(title.equals(PROPOSE_TITLE)) {
                 int s = Integer.parseInt(contentParts[0]);

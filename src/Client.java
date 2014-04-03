@@ -28,6 +28,8 @@ public class Client extends Util {
     static int clientID;
     static int numServers;
 
+    static InetAddress;
+
     /* sequence number */
     static int cid; // client-local command sequence number
 
@@ -43,7 +45,7 @@ public class Client extends Util {
         System.setOut(log);
         System.setErr(log);
 
-        InetAddress localhost = InetAddress.getLocalHost();
+        localhost = InetAddress.getLocalHost();
         // construct stable server socket
         ServerSocket listener = new ServerSocket(CLIENT_PORT_BASE+clientID, 0,
                 InetAddress.getLocalHost());

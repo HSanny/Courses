@@ -18,9 +18,9 @@ interface Protocol {
     final static int MASTER_PORT = 8200;
 
     // Manually specify the format of differnt type of message
+    final static String MESSAGE_SEP = ",";
     final static String MESSAGE = "%s" + MESSAGE_SEP + "%d" + MESSAGE_SEP
         +"%s" + MESSAGE_SEP +"%d" + MESSAGE_SEP +"%s" + MESSAGE_SEP +"%s";
-    final static String MESSAGE_SEP = ",";
     // Macros for TITLE
     final static String EXIT_TITLE = "EXIT";
     final static String START_ACK_TITLE = "STARTUP_ACK";

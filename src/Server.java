@@ -146,7 +146,6 @@ class Server extends Util { // a.k.a. Replica
                     BufferedReader in = new BufferedReader(new
                             InputStreamReader(socket.getInputStream()));
                     // channel is established
-                    // TODO: process received message
                     String recMessage = in.readLine();
                     System.out.println(logHeader + "Message Received: " + recMessage);
                     String [] recInfo = recMessage.split(",");

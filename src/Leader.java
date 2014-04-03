@@ -23,7 +23,7 @@ class Leader extends Util implements Runnable{
     // ballotNumber: current ballot number
     private int ballot_num;
     // active: active or passive?
-    private boolean isActive = false;
+    private boolean isActive = true;
     // proposals: proposals so far
     private HashMap<Integer, String> proposals;
 
@@ -290,6 +290,7 @@ class Leader extends Util implements Runnable{
         private int slot_num;
         private String p;
 
+        private String logHeader;
         private InetAddress localhost;
 
         public Commander(LinkedBlockingQueue<String> queue, int numAcceptors, int numServers, String pval, InetAddress localhost) {
@@ -300,6 +301,8 @@ class Leader extends Util implements Runnable{
             this.ballot_num = Integer.parseInt(pvalParts[0]);
             this.slot_num = Integer.parseInt(pvalParts[1]);
             this.p = pvalParts[2];
+            this.logHeader = String.format(COMMANDER_LOG_HEADER, ballot_num);
+            this.localhost = localhost;
         }
 
         public void run() {
@@ -326,9 +329,10 @@ class Leader extends Util implements Runnable{
                 }
                 if (msg == null) continue;
                 String[] msgParts = msg.split(MESSAGE_SEP);
-                String title = msgParts[0];
+                String title = msgParts[TITLE_IDX];
+                String contents = msgParts[CONTENT_IDX];
                 if(title.equals(P2B_TITLE)) {
-                    String[] p2bParts = msgParts[1].split(CONTENT_SEP);
+                    String[] p2bParts = contents.split(CONTENT_SEP);
                     int acceptor = Integer.parseInt(p2bParts[0]);
                     int newBallotNum = Integer.parseInt(p2bParts[1]);
                     // if message is a p2b for the same ballot number

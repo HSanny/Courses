@@ -43,6 +43,8 @@ class Leader extends Util implements Runnable{
         this.numServers = numServers;
         this.logHeader = String.format(LEADER_LOG_HEADER, id);
         this.localhost = localhost;
+        scoutQueues = new HashMap<Integer, LinkedBlockingQueue<String>>();
+        commanderQueues = new HashMap<Integer, LinkedBlockingQueue<String>>();
     }
 
     public void run() {

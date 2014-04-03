@@ -85,7 +85,11 @@ public class Client extends Util {
                         send (localhost, port, request, logHeader);
                     }
                 }
-                if (title.equals(EXIT_TITLE)) {
+                else if (title.equals(RESPONSE_TITLE)) {
+                    // TODO: confirm that the message is accepted by servers
+                    ;
+
+                } else if (title.equals(EXIT_TITLE)) {
                     socket.close();
                     listener.close();
                     System.out.println(logHeader + "Exit.");

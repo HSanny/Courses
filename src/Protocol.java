@@ -18,7 +18,9 @@ interface Protocol {
     final static int MASTER_PORT = 8200;
 
     // Manually specify the format of differnt type of message
-    final static String MESSAGE = "%s,%d,%s,%d,%s,%s";
+    final static String MESSAGE = "%s" + MESSAGE_SEP + "%d" + MESSAGE_SEP
+        +"%s" + MESSAGE_SEP +"%d" + MESSAGE_SEP +"%s" + MESSAGE_SEP +"%s";
+    final static String MESSAGE_SEP = ",";
     // Macros for TITLE
     final static String EXIT_TITLE = "EXIT";
     final static String START_ACK_TITLE = "STARTUP_ACK";
@@ -28,9 +30,12 @@ interface Protocol {
     final static String DECISION_TITLE = "DECISION";
 
     final static String RESPONSE_TITLE = "RESPONSE";
-    final static String P1A_TITLE = "p1a";
-    final static String P2A_TITLE = "p2a";
-
+    final static String ADOPTED_TITLE = "ADPTED";
+    final static String PREEMPTED_TITLE = "PREEMPTED";
+    final static String P1A_TITLE = "P1A";
+    final static String P2A_TITLE = "P2A";
+    final static String P1B_TITLE = "P1B";
+    final static String P2B_TITLE = "P2B";
 
     // Macros for CONTENT
     final static String COMMAND_SEP = "/c";
@@ -40,8 +45,6 @@ interface Protocol {
     final static String CONTENT_SEP = ";";
     final static String PROPOSAL_CONTENT = "%d" + CONTENT_SEP + "%s";
     final static String RESPONSE_CONTENT = "%d" + CONTENT_SEP + "%s" + CONTENT_SEP + "%d";
-
-
 
     // message design
     final static int SENDER_TYPE_IDX = 0;

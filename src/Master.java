@@ -66,6 +66,8 @@ public class Master extends Util {
                         clientsSetup.add(false);
                     }
 
+                    final Integer nServers = numNodes;
+                    final Integer nClients = numClients;
                     Thread collectSetUpAcks = new Thread (new Runnable() {
                         public void run () {
                             try {
@@ -75,6 +77,7 @@ public class Master extends Util {
                                 BufferedReader in = new BufferedReader(new
                                         InputStreamReader(socket.getInputStream()));
                                 String recMessage = in.readLine();
+                                printReceivedMessage(recMessage, MASTER_LOG_HEADER);
                                 String [] recInfo = recMessage.split(",");
                                 if (recInfo[TITLE_IDX].equals(START_ACK_TITLE)) {
                                     int index = Integer.parseInt(recInfo[SENDER_INDEX_IDX]);
@@ -83,12 +86,30 @@ public class Master extends Util {
                                     } else if (recInfo[SENDER_TYPE_IDX].equals(CLIENT_TYPE)){
                                         clientsSetup.set(index, true);
                                     }
+                                    // check if setup is complete
+                                    boolean isSetUpComplete = true;
+                                    for (int cIdx = 0; cIdx < nClients; cIdx ++) {
+                                        if (!clientsSetup.get(cIdx)) { 
+                                            isSetUpComplete = false; 
+                                            break;
+                                        }
+                                    }
+                                    for (int sIdx = 0; sIdx < nServers; sIdx ++) {
+                                        if (!serversSetup.get(sIdx)) {
+                                            isSetUpComplete = false;
+                                            break;
+                                        }
+                                    }
+                                    if (isSetUpComplete) {
+                                        System.out.println(MASTER_LOG_HEADER + "SETUP COMPLETES..");
+                                        break;
+                                    }
                                 } else {
                                     continue;
                                 }
                             } finally { socket.close(); }
                             }
-                        } catch (IOException e) {;} finally { ;}
+                            } catch (IOException e) {;} finally { ;}
                         }
                     });
                     collectSetUpAcks.start();
@@ -128,42 +149,22 @@ public class Master extends Util {
                         serverProcesses[nodeIndex] = pserver;
                     }
                     // Confirm all clients and servers have set up their listeners
-                    while (true) {
-                        boolean isSetUpComplete = true;
-                        // first check the socket setup of clients
-                        for (clientIndex = 0; clientIndex < numClients; clientIndex ++) {
-                            if (!clientsSetup.get(clientIndex)) { 
-                                isSetUpComplete = false; 
-                                break;
-                            }
-                        }
-                        for (nodeIndex = 0; nodeIndex < numClients; nodeIndex ++) {
-                            if (!serversSetup.get(nodeIndex)) {
-                                isSetUpComplete = false;
-                                break;
-                            }
-                        }
-                        if (isSetUpComplete) {
-                            collectSetUpAcks.interrupt();
-                            System.out.println(MASTER_LOG_HEADER + "SETUP COMPLETES..");
-                            break;
-                        }
-                    }
+                    collectSetUpAcks.join();
 
                     // ============================================================
                     break;
                 case "sendMessage":
                     clientIndex = Integer.parseInt(inputLine[1]);
                     assert (numClients > 0): "numClients not initialized.";
-                    assert (numNodes > 0): "numNodes not initialized";
-                    assert (numClients > clientIndex): "clientIndex out of bound.";
-                    String message = "";
-                    for (int i = 2; i < inputLine.length; i++) {
-                        message += inputLine[i];
-                        if (i != inputLine.length - 1) {
-                            message += " ";
-                        }
-                    }
+                        assert (numNodes > 0): "numNodes not initialized";
+                            assert (numClients > clientIndex): "clientIndex out of bound.";
+                                String message = "";
+                                for (int i = 2; i < inputLine.length; i++) {
+                                    message += inputLine[i];
+                                    if (i != inputLine.length - 1) {
+                                        message += " ";
+                                    }
+                                }
                     /*
                      * Instruct the client specified by clientIndex to send the message
                      * to the proper paxos node
@@ -206,6 +207,7 @@ public class Master extends Util {
                         clientsCheckClear.add(false);
                     }
                     // STEP TWO: start a new thread listenning to the ack
+                    final Integer nClients1 = numClients;
                     Thread collectCheckClearAcks = new Thread (new Runnable() {
                         public void run () {
                             try {
@@ -224,12 +226,22 @@ public class Master extends Util {
                                         int cindex = Integer.parseInt(recInfo[SENDER_INDEX_IDX]);
                                         clientsCheckClear.set(cindex, true);
                                     }
+                                    // check if all clients have been clear about this
+                                    boolean isAllClear = true;
+                                    for (int cIdx = 0; cIdx < nClients1; cIdx ++) {
+                                        if (!clientsCheckClear.get(cIdx)) {
+                                            isAllClear = false; 
+                                            break;
+                                        }
+                                    }
+                                    // all clear, end up this thread
+                                    if (isAllClear) break;
                                 } else {
                                     continue;
                                 }
                             } finally { socket.close(); }
                             }
-                        } catch (IOException e) {;} finally { ;}
+                            } catch (IOException e) {;} finally { ;}
                         }
                     });
                     collectCheckClearAcks.start();
@@ -243,18 +255,7 @@ public class Master extends Util {
                     }
 
                     // STEP FOUR: Busy waits until receipt of all clients' ack
-                    while (true) {
-                        boolean isAllClear = true;
-                        // check if all clients have been clear about this
-                        for (clientIndex = 0; clientIndex < numClients; clientIndex ++) {
-                            if (!clientsCheckClear.get(clientIndex)) {
-                                isAllClear = false; 
-                                break;
-                            }
-                        }
-                        // all clear!
-                        if (isAllClear) break;
-                    }
+                    collectCheckClearAcks.join();
                     break;
                 case "crashServer":
                     nodeIndex = Integer.parseInt(inputLine[1]);
@@ -277,7 +278,7 @@ public class Master extends Util {
                     /*
                      * Instruct the leader to skip slots in the chat message sequence  
                      */ 
-                    
+
                     break;
                 case "timeBombLeader":
                     int numMessages = Integer.parseInt(inputLine[1]);
@@ -294,7 +295,7 @@ public class Master extends Util {
                 if (clientProcesses[clientIndex] != null) {
                     int port = CLIENT_PORT_BASE + clientIndex;
                     String exitMessage = String.format(MESSAGE, MASTER_TYPE, 0,
-                       CLIENT_TYPE, clientIndex, EXIT_TITLE, EMPTY_CONTENT);
+                            CLIENT_TYPE, clientIndex, EXIT_TITLE, EMPTY_CONTENT);
                     send(localhost, port, exitMessage, MASTER_LOG_HEADER);
                 }
             }
@@ -305,7 +306,7 @@ public class Master extends Util {
                     InetAddress host = InetAddress.getLocalHost();
                     int port = SERVER_PORT_BASE + nodeIndex;
                     String exitMessage = String.format(MESSAGE, MASTER_TYPE, 0,
-                       SERVER_TYPE, nodeIndex, EXIT_TITLE, EMPTY_CONTENT);
+                            SERVER_TYPE, nodeIndex, EXIT_TITLE, EMPTY_CONTENT);
                     send(localhost, port, exitMessage, MASTER_LOG_HEADER);
                 }
             }

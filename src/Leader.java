@@ -36,13 +36,15 @@ class Leader extends Util implements Runnable{
     private HashMap<Integer, LinkedBlockingQueue<String>> scoutQueues;
     private HashMap<Integer, LinkedBlockingQueue<String>> commanderQueues;
 
-    public Leader(LinkedBlockingQueue<String> queue, int id, int numServers, InetAddress localhost) {
+    public Leader(LinkedBlockingQueue<String> queue, int id, int numServers,
+            InetAddress localhost) { 
         this.queue = queue;
         this.ballot_num = 0;
         this.serverID = id;
         this.numServers = numServers;
         this.logHeader = String.format(LEADER_LOG_HEADER, id);
         this.localhost = localhost;
+
         proposals = new HashMap<Integer, String>();
         scoutQueues = new HashMap<Integer, LinkedBlockingQueue<String>>();
         commanderQueues = new HashMap<Integer, LinkedBlockingQueue<String>>();
@@ -71,7 +73,7 @@ class Leader extends Util implements Runnable{
                 try{
                     int tmp_b = Integer.parseInt(contentParts[1]);
                     scoutQueues.get(tmp_b).put(msg);
-                }catch(InterruptedException e) {
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 // if message is a p2b
@@ -79,7 +81,7 @@ class Leader extends Util implements Runnable{
                 try{
                     int tmp_b = Integer.parseInt(contentParts[1]);
                     commanderQueues.get(tmp_b).put(msg);
-                }catch(InterruptedException e) {
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 // if message is a propose

@@ -1,0 +1,46 @@
+Textbook Chapter 15.1-15.3, 15.5, 15.6 
+========================================================
+
+Chapter 15.1 introduces us to the basic concepts of probabilistic reasoning
+over temporal model. The simplest model of this kind is Markov Chain. The
+Markov Assumption is introduced that the current state depends on only a
+finite fixed number of previous states. Another assumption we need to pose
+here is stationary assumption: a process of change that is governed by laws
+that do not themselves change over time. That is to say, for now we just care
+about the invariant transition distribution. Besides, it deserved being
+mentioned that the complexity of Markov Chain can be furthered by increasing
+the order of the Markov proces and increasing the set of state variables.
+
+
+Chapter 15.2 illustrates us the methods to infer temporal model. The inference
+in temporal model contains several different type of tasks: Filtering,
+Prediction, Smoothing and Most Likely Explanation. In addition to that, the
+more advanced stuff is Learning. Given the result of filtering up to time t,
+the agent needs to compute the result for t + 1 from the new evidence The task
+of prediction can be seen simply as filtering without the addition of new
+evidence. And Viterbi (forward-backward) algorithm is also introduced to
+efficiently solve the most possible sequence of states in a markov chain. 
+
+Chapter 15.3 comes to dicuss about the Hidden Markov Model, a temporal proba-
+bilistic model in which the state of the process is described by a single
+discrete random variable. The first algorithm to consider is simple matrix
+algorithm. The reason we call it matrix algorithm is that the transition
+probability is a square matrix. A second area in which the matrix formulation
+reveals an improvement is in online smoothing with a fixed lag. This is an
+algorithm whose time complexity is independent of the length of the lag. After
+that, the Localization is presented as an paradigm of HMM application.
+
+Dynamic Bayesian Network is discussed in Chapter 15.5. DBN can be regarded as
+temporal model over a clique of variables. Hence, the previous examples like
+Markov Chain and Hidden Markov Model can be viewed as particular instance of DBN. 
+The way to construct a valid DBN is illustrated at the first subsection,
+allowing both existence of discrete variable and continuous variable. In the
+second subsection, the author presents us the typical approach to exactly
+infer the DBN, after which the approximate inference is illustrated.
+
+Chapter 15.6 involves in the problem of keeping track of many objects. The
+uncertainty must be taken into consideration to which observations belongs to
+which objects. This is also called data association problem. The major
+challenge of the problem lies in the intractably large association hypothesis
+space. To solve this, the MCMC and particle filtering algorithm works well in
+practice.

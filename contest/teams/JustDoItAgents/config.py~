@@ -41,8 +41,8 @@ TeamName = 'DiabloSlash'
 # Filename.FactoryClassName (CASE-sensitive)
 AgentFactory = 'justDoItAgents.JustDoItAgents'
 
-Partners = ['Jimmy Lin, Ni A Ming']
+Partners = ['Jimmy Lin', 'Ni A Ming']
 
 AgentArgs = {'first':'offense', 'second':'defense'}
 
-NotifyList = ['jimmylin@utexas.edu , amingniutcs@gmail.com']
+NotifyList = ['jimmylin@utexas.edu', 'amingniutcs@gmail.com']

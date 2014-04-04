@@ -3,7 +3,8 @@
 ##    VERSION:    1.0
 ##    SINCE:      2014-03-28
 ##    AUTHOR: 
-##        Jimmy Lin (xl5224) - JimmyLin@utexas.edu  
+##        Jimmy Lin (xl5224) - JimmyLin@utexas.edu
+##	      Aming Ni(an23366) - amingniutcs@gmail.com
 ##
 ############################################################
 ##    Edited by MacVim
@@ -13,9 +14,16 @@
 
 import distanceCalculator
 import capture
-import captureAgents
+import random
+from captureAgents import CaptureAgent
+from captureAgents import AgentFactory
 
+class JustDoItAgents (AgentFactory):
+    
 
-class JustDoItAgents (captureAgents):
+class DiabloSlashAgentOne (CaptureAgent):
     def chooseAction(self,gameState):
-       return random.choice( gameState.getLegalActions( self.index ) )
+        return random.choice( gameState.getLegalActions( self.index ) )
+class DiabloSlashAgentTwo (CaptureAgent):
+    def chooseAction(self,gameState):
+        return random.choice( gameState.getLegalActions( self.index) )

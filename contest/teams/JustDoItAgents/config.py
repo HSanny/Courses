@@ -39,7 +39,7 @@ Settings:
 TeamName = 'DiabloSlash'
 
 # Filename.FactoryClassName (CASE-sensitive)
-AgentFactory = 'justDoItAgents.JustDoItAgents'
+AgentFactory = 'JustDoItAgents.JustDoItAgents'
 
 Partners = ['Jimmy Lin', 'Ni A Ming']
 

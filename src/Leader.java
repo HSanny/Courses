@@ -23,7 +23,7 @@ class Leader extends Util implements Runnable{
     // ballotNumber: current ballot number
     private int ballot_num;
     // active: active or passive?
-    private boolean isActive = true;
+    private boolean isActive = false;
     // proposals: proposals so far
     private HashMap<Integer, String> proposals;
 
@@ -226,12 +226,13 @@ class Leader extends Util implements Runnable{
                 }
                 if (msg == null) continue;
                 String[] msgParts = msg.split(MESSAGE_SEP);
-                String title = msgParts[0];
+                String title = msgParts[TITLE_IDX];
                 if(title.equals(P1B_TITLE)) {
-                    String[] p1bParts = msgParts[1].split(CONTENT_SEP);
+                    String[] p1bParts = msgParts[CONTENT_IDX].split(CONTENT_SEP);
                     int acceptor = Integer.parseInt(p1bParts[0]);
                     int newBallotNum = Integer.parseInt(p1bParts[1]);
-                    String pval = p1bParts[2];
+                    // Note: there may be no pvals accepted yet
+                    String pval = p1bParts.length == 3 ? p1bParts[2] : "";
                     // if message is a p1b for the same ballot number
                     if(newBallotNum == ballot_num) {
                         // add pvalues to pValues
@@ -349,8 +350,6 @@ class Leader extends Util implements Runnable{
                     if (newBallotNum == ballot_num) {
                         // remove acceptor from waitFor
                         waitFor[acceptor] = 1;
-                        // remove acceptor from waitFor
-                        waitFor[acceptor] = 1;
                         int numReceived = 0;
                         for(int tmp_a: waitFor)
                             if(tmp_a == 1)
@@ -359,10 +358,10 @@ class Leader extends Util implements Runnable{
                         if (numReceived > waitFor.length/2) {
                             // send decision to ALL servers
                             for (int r = 0; r < numServers; r ++) {
-                                int port = SERVER_PORT_BASE + leaderID;
+                                int port = SERVER_PORT_BASE + r;
                                 String decisionContent = String.format(DECISION_CONTENT, slot_num, p);
                                 String decisionMessage = String.format(MESSAGE, LEADER_TYPE,
-                                        leaderID, SERVER_TYPE, leaderID, DECISION_TITLE, decisionContent);
+                                        leaderID, SERVER_TYPE, r, DECISION_TITLE, decisionContent);
                                 try {
                                     send(localhost, port, decisionMessage, logHeader);
                                 } catch (IOException e) {

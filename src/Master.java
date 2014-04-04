@@ -135,11 +135,12 @@ public class Master extends Util {
 
                     for (nodeIndex = 0; nodeIndex < numNodes; nodeIndex ++) {
                         Integer serverID = new Integer(nodeIndex);
-                        String [] commandArray = new String [4];
+                        String [] commandArray = new String [5];
                         commandArray[0] = RUN_SERVER_CMD;
                         commandArray[1] = serverID.toString();
                         commandArray[2] = Integer.toString(numNodes);
                         commandArray[3] = Integer.toString(numClients);
+                        commandArray[4] = Integer.toString(0);   // not for recovery
                         String cmd = "";
                         for (int i = 0; i < commandArray.length; i++) {
                             cmd += " " + commandArray[i];
@@ -265,6 +266,7 @@ public class Master extends Util {
                     // ======================================================
                     // We directly kill that process
                     serverProcesses[nodeIndex].destroy();
+                    serverProcesses[nodeIndex] = null;
                     // ======================================================
                     break;
                 case "restartServer":
@@ -272,6 +274,21 @@ public class Master extends Util {
                     /*
                      * Restart the server specified by nodeIndex
                      */
+                    assert(serverProcesses[nodeIndex] == null): "Do not restart an uncrashed server.";
+                    Integer serverID = new Integer(nodeIndex);
+                    String [] commandArray = new String [5];
+                    commandArray[0] = RUN_SERVER_CMD;
+                    commandArray[1] = serverID.toString();
+                    commandArray[2] = Integer.toString(numNodes);
+                    commandArray[3] = Integer.toString(numClients);
+                    commandArray[4] = Integer.toString(1);   // for recovery
+                    String cmd = "";
+                    for (int i = 0; i < commandArray.length; i++) {
+                        cmd += " " + commandArray[i];
+                    }
+                    print (cmd, MASTER_LOG_HEADER);
+                    Process pserver = runtime.exec(cmd); 
+                    serverProcesses[nodeIndex] = pserver;
                     break;
                 case "skipSlots":
                     int amountToSkip = Integer.parseInt(inputLine[1]);
@@ -281,8 +298,8 @@ public class Master extends Util {
                     for (nodeIndex = 0; nodeIndex < numNodes; nodeIndex++) {
                         port = SERVER_PORT_BASE + nodeIndex;
                         String SkipSlotMessage = String.format(MESSAGE,
-                            MASTER_TYPE, 0, LEADER_TYPE, nodeIndex,
-                            SKIP_SLOT_TITLE, Integer.toString(amountToSkip));
+                                MASTER_TYPE, 0, LEADER_TYPE, nodeIndex,
+                                SKIP_SLOT_TITLE, Integer.toString(amountToSkip));
                         send(localhost, port, SkipSlotMessage, MASTER_LOG_HEADER);
                     }
                     break;

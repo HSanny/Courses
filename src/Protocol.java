@@ -20,20 +20,25 @@ interface Protocol {
     final static int SERVER_PORT_BASE = 8400; 
     final static int MASTER_PORT = 8200;
 
-    // Manually specify the format of differnt type of message
+    /* Manually specify the format of differnt type of message */
     final static String MESSAGE_SEP = ",";
     final static String MESSAGE = "%s" + MESSAGE_SEP + "%d" + MESSAGE_SEP
         +"%s" + MESSAGE_SEP +"%d" + MESSAGE_SEP +"%s" + MESSAGE_SEP +"%s";
     final static String OUTPUT_MESSAGE = "%d %d: %s";
 
-    // Macros for TITLE
+    /* MACROS FOR TITLE */
     final static String EXIT_TITLE = "EXIT";
     final static String START_ACK_TITLE = "STARTUP_ACK";
-    final static String SEND_MESSAGE_TITLE = "SENT_MESSAGE";
     final static String REQUEST_TITLE = "REQUEST";
-    final static String PROPOSE_TITLE = "PROPOSAL";
-    final static String DECISION_TITLE = "DECISION";
+    final static String SEND_MESSAGE_TITLE = "SENT_MESSAGE";
+    final static String PRINT_CHAT_LOG_TITLE = "PRINT_CHAT_LOG";
+    final static String SKIP_SLOT_TITLE = "SKIP_SLOT";
+    final static String CHECK_CLEAR_TITLE = "CHECK_CLEAR";
+    final static String CHECK_CLEAR_ACK_TITLE = "CHECK_CLEAR_ACK";
+    final static String I_WANNA_RECOVER_TITLE = "I_WANNA_RECOVER";
+    final static String HELP_YOU_RECOVER_TITLE = "YOU_CAN_RECOVER";
 
+    /* PAXOS TITLE */
     final static String RESPONSE_TITLE = "RESPONSE";
     final static String ADOPTED_TITLE = "ADPTED";
     final static String PREEMPTED_TITLE = "PREEMPTED";
@@ -41,12 +46,8 @@ interface Protocol {
     final static String P2A_TITLE = "P2A";
     final static String P1B_TITLE = "P1B";
     final static String P2B_TITLE = "P2B";
-    final static String PRINT_CHAT_LOG_TITLE = "PRINT_CHAT_LOG";
-
-    final static String SKIP_SLOT_TITLE = "SKIP_SLOT";
-    
-    final static String CHECK_CLEAR_TITLE = "CHECK_CLEAR";
-    final static String CHECK_CLEAR_ACK_TITLE = "CHECK_CLEAR_ACK";
+    final static String PROPOSE_TITLE = "PROPOSAL";
+    final static String DECISION_TITLE = "DECISION";
 
     // Macros for CONTENT
     final static String COMMAND_SEP = "</c>";

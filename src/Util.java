@@ -18,9 +18,18 @@ import java.net.InetAddress;
 import java.io.PrintWriter;
 
 class Util implements Protocol, Logging {
+    final static boolean PrintingSwitch = true;
     /* get client port given the clientIndex */
     public static int getClientPort (int clientIndex) { return 0; }
     public static int getServerPort (int clientIndex) { return 0; }
+
+    /* Print general stuff */
+    public static void print(String toprint, String logHeader) {
+        String str = "";
+        str += logHeader + " " + toprint;
+        if (PrintingSwitch)
+            System.out.println(str);
+    }
 
     /* Print the received message */
     public static void printReceivedMessage (String recMessage, String logHeader) {
@@ -35,7 +44,8 @@ class Util implements Protocol, Logging {
         str += "{" + sender_type + " #" + sender_index + "}: ";
         str += content;
 
-        System.out.println(str);
+        if (PrintingSwitch)
+            System.out.println(str);
     }
 
     /* Print the sent message */
@@ -51,7 +61,8 @@ class Util implements Protocol, Logging {
         str += "{" + receiver_type + " #" + receiver_idx + "}: ";
         str += content;
 
-        System.out.println(str);
+        if (PrintingSwitch)
+            System.out.println(str);
     }
 
     /* Send util functions */

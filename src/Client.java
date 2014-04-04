@@ -132,8 +132,7 @@ public class Client extends Util {
                     }
                     // add that message to send history
                     requestSet.add(cid);
-                }
-                else if (title.equals(RESPONSE_TITLE)) {
+                } else if (title.equals(RESPONSE_TITLE)) {
                     // STEP ONE: decode the pvalue
                     String [] responseParts = content.split(CONTENT_SEP);
                     int clientIndex = Integer.parseInt(responseParts[0]);

@@ -33,13 +33,15 @@ class Server extends Util { // a.k.a. Replica
     static int serverID;
     static int numServers;
     static int numClients;
-
+    static boolean isRecovery;
     static InetAddress localhost;
 
     /* Replica's attributes */
     static int slot_num;
     static HashMap<Integer, String> proposals;
     static HashMap<Integer, String> decisions;
+
+    static boolean isRecoveryInProgress;
 
     /* Collocation: put leader and acceptor together */
     static Leader leader;
@@ -95,7 +97,7 @@ class Server extends Util { // a.k.a. Replica
             }
         }
         // STEP THREE: not decided yet, operate the state
-        int paxosID = slot_num - 1;
+        int paxosID = slot_num;
         slot_num += 1;
         for (int clientIndex = 0; clientIndex < numClients; clientIndex++) {
             int port = CLIENT_PORT_BASE + clientIndex;
@@ -112,6 +114,7 @@ class Server extends Util { // a.k.a. Replica
         serverID = Integer.parseInt(args[0]);
         numServers = Integer.parseInt(args[1]);
         numClients = Integer.parseInt(args[2]);
+        isRecovery = args[3].equals("1");
         // configure the LOG setting
         logHeader = String.format(SERVER_LOG_HEADER, serverID);
         logfilename = String.format(SERVER_LOG_FILENAME, serverID);
@@ -122,9 +125,10 @@ class Server extends Util { // a.k.a. Replica
         System.setErr(log);
 
         // Initialize replica's attribute
-        slot_num = 1;
+        slot_num = 0;
         proposals = new HashMap<Integer, String> ();
         decisions = new HashMap<Integer, String> ();
+        isRecoveryInProgress = false;
 
         // Initialization for collocation technique
         queueLeader = new LinkedBlockingQueue<String> ();
@@ -141,10 +145,17 @@ class Server extends Util { // a.k.a. Replica
         // send acknowledge to the master
         String setup_ack = String.format(MESSAGE, SERVER_TYPE, serverID,
                 MASTER_TYPE, 0, START_ACK_TITLE, EMPTY_CONTENT);
-        send(localhost, MASTER_PORT, setup_ack, logHeader);
+        send (localhost, MASTER_PORT, setup_ack, logHeader);
         // indicate the socket listener setup
-        System.out.println(logHeader + listener.toString());
-        // 
+        print (listener.toString(), logHeader);
+        // TODO: if this server is crashed before, recovery it
+        if (isRecovery) {
+            //TODO: send message to all replicas, ask for the chat log
+            isRecoveryInProgress = true;
+
+            isRecovery = false;
+        }
+
         try {
             while (true) {
                 Socket socket = listener.accept();

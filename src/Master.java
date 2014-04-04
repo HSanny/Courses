@@ -145,7 +145,7 @@ public class Master extends Util {
                         }
                         if (isSetUpComplete) {
                             collectSetUpAcks.interrupt();
-                            System.out.println(MASTER_LOG_HEADER + "setup Completes..");
+                            System.out.println(MASTER_LOG_HEADER + "SETUP COMPLETES..");
                             break;
                         }
                     }

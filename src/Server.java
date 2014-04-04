@@ -153,7 +153,7 @@ class Server extends Util { // a.k.a. Replica
                             InputStreamReader(socket.getInputStream()));
                     // channel is established
                     String recMessage = in.readLine();
-                    System.out.println(logHeader + "Message Received: " + recMessage);
+                    printReceivedMessage(recMessage, logHeader);
                     String [] recInfo = recMessage.split(",");
 
                     // Decode the incoming message

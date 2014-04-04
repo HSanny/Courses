@@ -22,18 +22,50 @@ class Util implements Protocol, Logging {
     public static int getClientPort (int clientIndex) { return 0; }
     public static int getServerPort (int clientIndex) { return 0; }
 
+    /* Print the received message */
+    public static void printReceivedMessage (String recMessage, String logHeader) {
+        String [] recParts = recMessage.split(MESSAGE_SEP);
+        String sender_type = recParts[SENDER_TYPE_IDX];
+        int sender_index = Integer.parseInt(recParts[SENDER_INDEX_IDX]);
+        String title = recParts[TITLE_IDX];
+        String content = recParts[CONTENT_IDX];
+
+        String str = "";
+        str += logHeader + " Receive *" + title + "* from ";
+        str += "{" + sender_type + " #" + sender_index + "}: ";
+        str += content;
+
+        System.out.println(str);
+    }
+
+    /* Print the sent message */
+    public static void printSentMessage (String sentMessage, String logHeader) {
+        String [] sentParts = sentMessage.split(MESSAGE_SEP);
+        String receiver_type = sentParts[RECEIVER_TYPE_IDX];
+        int receiver_idx = Integer.parseInt(sentParts[RECEIVER_INDEX_IDX]);
+        String title = sentParts[TITLE_IDX];
+        String content = sentParts[CONTENT_IDX];
+
+        String str = "";
+        str += logHeader + "Sent *" + title + "* to ";
+        str += "{" + receiver_type + " #" + receiver_idx + "}: ";
+        str += content;
+
+        System.out.println(str);
+    }
+
     /* Send util functions */
     public static void send (InetAddress host, int port, String message, 
             String HEADER) throws IOException { 
         // set null header as empty string
         if (HEADER == null) HEADER = "";
         // establish temporary socket connection
-        Socket socket = new Socket(host, port);
+        Socket socket = new Socket (host, port);
         try {
             PrintWriter out =
                 new PrintWriter(socket.getOutputStream(), true);
             out.println(message);
-            System.out.println(HEADER + "Message sent: " + message);
+            printSentMessage(message, HEADER);
         } finally {
             socket.close();
         }
@@ -51,12 +83,10 @@ class Util implements Protocol, Logging {
                 new PrintWriter(socket.getOutputStream(), true);
             for (int i = 0; i < messages.length; i ++) {
                 out.println(messages[i]);
-                System.out.println(HEADER + "Message sent: " + messages[i]);
+                printSentMessage(messages[i], HEADER);
             }
         } finally {
             socket.close();
         }
-
     }
-
 }

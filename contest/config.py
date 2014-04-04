@@ -36,13 +36,13 @@ Settings:
 """
 
 # Alpha-Numeric only
-TeamName = 'BaselineAgents'
+TeamName = 'DiabloSlash'
 
 # Filename.FactoryClassName (CASE-sensitive)
 AgentFactory = 'baselineAgents.BaselineAgents'
 
-Partners = ['Berkeley Staff']
+Partners = ['Jimmy Lin', 'Ni A Ming']
 
 AgentArgs = {'first':'offense', 'second':'defense'}
 
-NotifyList = []
+NotifyList = ['jimmylin@utexas.edu', 'amingniutcs@gmail.com']

@@ -64,6 +64,8 @@ class Leader extends Util implements Runnable{
                 e.printStackTrace();
             }
             if (msg == null) continue;
+            printReceivedMessage(msg, logHeader);
+
             String[] msgParts = msg.split(MESSAGE_SEP);
             String title = msgParts[TITLE_IDX];
             String content = msgParts[CONTENT_IDX];
@@ -295,7 +297,9 @@ class Leader extends Util implements Runnable{
         private String logHeader;
         private InetAddress localhost;
 
-        public Commander(LinkedBlockingQueue<String> queue, int numAcceptors, int numServers, String pval, InetAddress localhost) {
+        /* Constructor */
+        public Commander(LinkedBlockingQueue<String> queue, int numAcceptors,
+                int numServers, String pval, InetAddress localhost) {
             this.queue = queue;
             this.waitFor = new int[numAcceptors];
             this.numServers = numServers;
@@ -309,10 +313,11 @@ class Leader extends Util implements Runnable{
 
         public void run() {
             // for all acceptors
-            for(int a=0; a<waitFor.length; a++) {
+            for(int a = 0; a < waitFor.length; a++) {
                 // send <p2a, leader, ballot>
                 int port = SERVER_PORT_BASE + a;
-                String p2aContent = String.format(P2A_CONTENT, leaderID, String.format(PVALUE_CONTENT, ballot_num, slot_num, p));
+                String p2aContent = String.format(P2A_CONTENT, leaderID,
+                     String.format(PVALUE_CONTENT, ballot_num, slot_num, p));
                 String p2aMessage = String.format(MESSAGE, LEADER_TYPE,
                         leaderID, ACCEPTOR_TYPE, a, P2A_TITLE, p2aContent);
                 try {
@@ -321,7 +326,7 @@ class Leader extends Util implements Runnable{
                     continue;
                 }
             }
-            while(true) {
+            while (true) {
                 // receive messages from queue   
                 String msg = null;
                 try {
@@ -333,12 +338,15 @@ class Leader extends Util implements Runnable{
                 String[] msgParts = msg.split(MESSAGE_SEP);
                 String title = msgParts[TITLE_IDX];
                 String contents = msgParts[CONTENT_IDX];
-                if(title.equals(P2B_TITLE)) {
+                if (title.equals(SKIP_SLOT_TITLE)) {
+                    // TODO: ADD CODE FOR SKIP SLOT HERE
+                    
+                } else if (title.equals(P2B_TITLE)) {
                     String[] p2bParts = contents.split(CONTENT_SEP);
                     int acceptor = Integer.parseInt(p2bParts[0]);
                     int newBallotNum = Integer.parseInt(p2bParts[1]);
                     // if message is a p2b for the same ballot number
-                    if(newBallotNum == ballot_num) {
+                    if (newBallotNum == ballot_num) {
                         // remove acceptor from waitFor
                         waitFor[acceptor] = 1;
                         // remove acceptor from waitFor
@@ -348,9 +356,9 @@ class Leader extends Util implements Runnable{
                             if(tmp_a == 1)
                                 ++numReceived;
                         // if waiting for fewer than half of all acceptors
-                        if(numReceived > waitFor.length/2) {
+                        if (numReceived > waitFor.length/2) {
                             // send decision to ALL servers
-                            for(int r=0; r<numServers; r++) {
+                            for (int r = 0; r < numServers; r ++) {
                                 int port = SERVER_PORT_BASE + leaderID;
                                 String decisionContent = String.format(DECISION_CONTENT, slot_num, p);
                                 String decisionMessage = String.format(MESSAGE, LEADER_TYPE,

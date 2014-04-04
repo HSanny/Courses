@@ -42,6 +42,8 @@ interface Protocol {
     final static String P1B_TITLE = "P1B";
     final static String P2B_TITLE = "P2B";
     final static String PRINT_CHAT_LOG_TITLE = "PRINT_CHAT_LOG";
+
+    final static String SKIP_SLOT_TITLE = "SKIP_SLOT";
     
     final static String CHECK_CLEAR_TITLE = "CHECK_CLEAR";
     final static String CHECK_CLEAR_ACK_TITLE = "CHECK_CLEAR_ACK";

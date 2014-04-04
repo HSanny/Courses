@@ -153,7 +153,6 @@ class Server extends Util { // a.k.a. Replica
                             InputStreamReader(socket.getInputStream()));
                     // channel is established
                     String recMessage = in.readLine();
-                    printReceivedMessage(recMessage, logHeader);
                     String [] recInfo = recMessage.split(",");
 
                     // Decode the incoming message
@@ -175,6 +174,7 @@ class Server extends Util { // a.k.a. Replica
                         queueAcceptor.put(recMessage);
                     }
 
+                    printReceivedMessage(recMessage, logHeader);
                     // Check if message is request
                    if (title.equals(REQUEST_TITLE)) {
                        propose (content);

@@ -199,6 +199,7 @@ public class Master extends Util {
                     // STEP ZERO: check the parameters
                     assert (numClients > 0): "numClients not initialized.";
                     assert (numNodes > 0): "numNodes not initialized";
+                    final Integer nClients1 = numClients;
 
                     // STEP ONE: initialize an all false array saying no acks
                     // received at first stage
@@ -207,7 +208,6 @@ public class Master extends Util {
                         clientsCheckClear.add(false);
                     }
                     // STEP TWO: start a new thread listenning to the ack
-                    final Integer nClients1 = numClients;
                     Thread collectCheckClearAcks = new Thread (new Runnable() {
                         public void run () {
                             try {
@@ -278,7 +278,13 @@ public class Master extends Util {
                     /*
                      * Instruct the leader to skip slots in the chat message sequence  
                      */ 
-
+                    for (nodeIndex = 0; nodeIndex < numNodes; nodeIndex++) {
+                        port = SERVER_PORT_BASE + nodeIndex;
+                        String SkipSlotMessage = String.format(MESSAGE,
+                            MASTER_TYPE, 0, LEADER_TYPE, nodeIndex,
+                            SKIP_SLOT_TITLE, Integer.toString(amountToSkip));
+                        send(localhost, port, SkipSlotMessage, MASTER_LOG_HEADER);
+                    }
                     break;
                 case "timeBombLeader":
                     int numMessages = Integer.parseInt(inputLine[1]);

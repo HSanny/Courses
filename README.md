@@ -55,7 +55,11 @@ Protocol Design
 Problems
 ---------------
 
-Sometimes there are Connection problems
+Sometimes there are Connection problems:
+
+1. How to crash a server in practice? Should we use "kill" process by external system call or in the manner of message passing. In latter case, the server may not crash immediately. 
+2. How do we recover from crased server? What information should we make use of?
+3. In the timeBombLeader function, what is the precise definition paxos related messages? 
 
 
 

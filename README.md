@@ -58,8 +58,21 @@ Problems
 Sometimes there are Connection problems:
 
 1. How to crash a server in practice? Should we use "kill" process by external system call or in the manner of message passing. In latter case, the server may not crash immediately. 
+    
+    Answered by TA: In theory, nothing is to be stored to stable storage. So, when we crash a server, it should lose everything. The easiest way to do this is to just kill the process.
+    
 2. How do we recover from crased server? What information should we make use of?
+
+    Answered by TA: When a server is restarted by the Master, it needs to ask every other server about the state of the system. When the server is caught up on the state of the system, it will resume normal leader/acceptor actions.
+
 3. In the timeBombLeader function, what is the precise definition paxos related messages? 
+
+4. There should ideally be only one leader at a time. Every replica should have a leader, but only one is actively doing leader activities. Use heartbeats to determine when a leader fails, and activate the next leader. If there are more than one leaders up at a time, there should be a way to narrow it back down to one (e.g. if a server who is acting as leader receives a leader heartbeat from a server whose index is lower than his, then he will deactivate his leader).
+
+5. Paxos sequence number == slot number. Since the spec needs it to be zero-indexed, just make the slot number zero-indexed, unlike the pseudocode. The function of cid is so that if a replica receives two "hello" messages from a single client, it knows whether that is a repeat message or actually two different messages. 
+
+6. Ballot numbers don't have to necessarily be globally unique; the problem we want to avoid is where two replicas each have a ballot with the same number but different proposals. We can solve this problem by saying, from the point of view of the acceptor, we accept the ballot which came from the server (or client) with the higher index. 
+
 
 
 

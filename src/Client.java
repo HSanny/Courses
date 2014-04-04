@@ -36,7 +36,8 @@ public class Client extends Util {
 
     /* sequence number */
     static int cid; // client-local command sequence number
-    static  HashMap<Integer, String> [] chatLog;
+    static ArrayList<HashMap<Integer, String>> chatLog;
+    static HashSet<String> sendHistory;
 
     public static void main (String [] args) throws IOException {
         // parse the given id
@@ -45,8 +46,8 @@ public class Client extends Util {
         numClients = Integer.parseInt(args[2]);
 
         // initialize local chat log
-        ArrayList< HashMap<Integer, String> > chatLog = new ArrayList<
-            HashMap<Integer, String> > (); 
+        chatLog = new ArrayList< HashMap<Integer, String> > (); 
+        sendHistory = new HashSet<String> ();
         for (int clientIndex = 0; clientIndex < numClients; clientIndex ++) {
             // chatlog for each client
             // each hash map is mapped from paxos id to message content
@@ -102,6 +103,8 @@ public class Client extends Util {
                         port = SERVER_PORT_BASE + serverIndex;
                         send (localhost, port, request, logHeader);
                     }
+                    // TODO: add that message to send history
+                    sendHistory.add(command);
                 }
                 else if (title.equals(RESPONSE_TITLE)) {
                     // STEP ONE: decode the pvalue
@@ -112,9 +115,9 @@ public class Client extends Util {
                     String operation = responseParts[3];
                     // STEP TWO: put received response into local records
                     chatLog.get(clientID).put(paxosId, operation);
-                    // TODO: CONSIDER MORE HERE, THERE CAN BE SOME WIERD CASES
-                    
-                } else if (title.equals(PRINT_CHAT_LOG_TITLE)){
+
+                } else if (title.equals(PRINT_CHAT_LOG_TITLE)) {
+                    // print all local chat log
                     int clientIndex = clientID;
                     for (int paxosid = 0; ; paxosid ++) {
                         String message = chatLog.get(clientIndex).get(paxosid);
@@ -124,7 +127,20 @@ public class Client extends Util {
                             System.out.println(outMessage);
                         } else break;
                     }
-
+                } else if (title.equals(CHECK_CLEAR_TITLE)) {
+                    // STEP ONE: keep on checking if it is clear until it is clear
+                    while (true) {
+                        boolean isClear = true;
+                        for (String cmd : sendHistory) {
+                            // TODO: add send history and chat log comparison
+                            
+                        }
+                        if (isClear) break;
+                    }
+                    // STEP TWO: send CHECK_CLEAR_ACK to Master
+                    String ack = String.format(MESSAGE, CLIENT_TYPE, clientID,
+                       MASTER_TYPE, 0, CHECK_CLEAR_ACK_TITLE, EMPTY_CONTENT); 
+                    send (localhost, MASTER_TYPE, ack, logHeader);
                 } else if (title.equals(EXIT_TITLE)) {
                     socket.close();
                     listener.close();

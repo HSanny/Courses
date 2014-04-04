@@ -1,9 +1,11 @@
 /*##############################################################
 ## MODULE: Protocol.java
-## VERSION: 1.0 
+## VERSION: 2.0 
 ## SINCE: 2014-03-31
-## AUTHOR: ##         JIMMY LIN (xl5224) - JimmyLin@utexas.edu  
-## ## DESCRIPTION: 
+## AUTHOR: 
+##    JIMMY LIN (xl5224) - JimmyLin@utexas.edu  
+## 
+## DESCRIPTION: 
 ##      
 ################################################################# 
 ## Edited by MacVim
@@ -40,6 +42,9 @@ interface Protocol {
     final static String P1B_TITLE = "P1B";
     final static String P2B_TITLE = "P2B";
     final static String PRINT_CHAT_LOG_TITLE = "PRINT_CHAT_LOG";
+    
+    final static String CHECK_CLEAR_TITLE = "CHECK_CLEAR";
+    final static String CHECK_CLEAR_ACK_TITLE = "CHECK_CLEAR_ACK";
 
     // Macros for CONTENT
     final static String COMMAND_SEP = "</c>";

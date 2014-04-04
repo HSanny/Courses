@@ -28,7 +28,7 @@ public class Master extends Util {
 
     public static void main(String [] args) throws IOException, InterruptedException {
         Scanner scan = new Scanner(System.in);
-        int numNodes, numClients;
+        int numNodes = -1, numClients = -1; // initialize to invalid value
         int clientIndex, nodeIndex;
         Process [] serverProcesses = null;
         Process [] clientProcesses = null;
@@ -150,11 +150,13 @@ public class Master extends Util {
                         }
                     }
 
-
                     // ============================================================
                     break;
                 case "sendMessage":
                     clientIndex = Integer.parseInt(inputLine[1]);
+                    assert (numClients > 0): "numClients not initialized.";
+                    assert (numNodes > 0): "numNodes not initialized";
+                    assert (numClients > clientIndex): "clientIndex out of bound.";
                     String message = "";
                     for (int i = 2; i < inputLine.length; i++) {
                         message += inputLine[i];
@@ -173,6 +175,8 @@ public class Master extends Util {
                     break;
                 case "printChatLog":
                     clientIndex = Integer.parseInt(inputLine[1]);
+                    assert (numClients > 0): "numClients not initialized.";
+                    assert (numNodes > 0): "numNodes not initialized";
                     /*
                      * Print out the client specified by clientIndex's chat history
                      * in the format described on the handout.	     
@@ -187,8 +191,69 @@ public class Master extends Util {
                      * Ensure that this blocks until all messages that are going to 
                      * come to consensus in PAXOS do, and that all clients have heard
                      * of them 
+                     *
+                     * NOTE: Our solution is to check whether all clients
+                     * receive all messages they sent.
                      */
-                    Thread.sleep(10000);
+                    // STEP ZERO: check the parameters
+                    assert (numClients > 0): "numClients not initialized.";
+                    assert (numNodes > 0): "numNodes not initialized";
+
+                    // STEP ONE: initialize an all false array saying no acks
+                    // received at first stage
+                    final ArrayList<Boolean> clientsCheckClear = new ArrayList<Boolean> ();
+                    for (clientIndex = 0; clientIndex < numClients; clientIndex ++) {
+                        clientsCheckClear.add(false);
+                    }
+                    // STEP TWO: start a new thread listenning to the ack
+                    Thread collectCheckClearAcks = new Thread (new Runnable() {
+                        public void run () {
+                            try {
+                            while (true) {
+                            Socket socket = listener.accept();
+                            try { 
+                                BufferedReader in = new BufferedReader(new
+                                        InputStreamReader(socket.getInputStream()));
+                                String recMessage = in.readLine();
+                                String [] recInfo = recMessage.split(",");
+                                String title = recInfo[TITLE_IDX];
+                                if (title.equals(CHECK_CLEAR_ACK_TITLE)) {
+                                    String sender_type = recInfo[SENDER_TYPE_IDX];
+                                    if (sender_type.equals(CLIENT_TYPE)){
+                                        int cindex = Integer.parseInt(recInfo[SENDER_INDEX_IDX]);
+                                        clientsCheckClear.set(cindex, true);
+                                    }
+                                } else {
+                                    continue;
+                                }
+                            } finally { socket.close(); }
+                            }
+                        } catch (IOException e) {;} finally { ;}
+                        }
+                    });
+                    collectCheckClearAcks.start();
+
+                    // STEP THREE: send all CHECK_CLEAR message to all clients
+                    for (clientIndex = 0; clientIndex < numClients; clientIndex ++) {
+                        port = CLIENT_PORT_BASE + clientIndex; 
+                        String checkClearMessage = String.format(MESSAGE, MASTER_TYPE,
+                                0, CLIENT_TYPE, clientIndex, CHECK_CLEAR_TITLE, EMPTY_CONTENT);
+                        send (localhost, port, checkClearMessage, MASTER_LOG_HEADER);
+                    }
+
+                    // STEP FOUR: Busy waits until receipt of all clients' ack
+                    while (true) {
+                        boolean isAllClear = true;
+                        // check if all clients have been clear about this
+                        for (clientIndex = 0; clientIndex < numClients; clientIndex ++) {
+                            if (!clientsCheckClear.get(clientIndex)) {
+                                isAllClear = false; 
+                                break;
+                            }
+                        }
+                        // all clear!
+                        if (isAllClear) break;
+                    }
                     break;
                 case "crashServer":
                     nodeIndex = Integer.parseInt(inputLine[1]);

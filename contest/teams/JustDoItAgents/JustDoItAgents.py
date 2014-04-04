@@ -1,5 +1,5 @@
 ############################################################
-##    FILENAME:   justDoItAgents.py    
+##    FILENAME:   JustDoItAgents.py    
 ##    VERSION:    1.0
 ##    SINCE:      2014-03-28
 ##    AUTHOR: 
@@ -14,9 +14,10 @@
 
 import distanceCalculator
 import capture
-import random
+import random, time, util
 from captureAgents import CaptureAgent
 from captureAgents import AgentFactory
+from util import nearestPoint
 
 class JustDoItAgents (AgentFactory):
   def __init__(self, isRed, first='offense', second='defense', rest='offense'):
@@ -43,21 +44,102 @@ class JustDoItAgents (AgentFactory):
       elif agentStr == 'offense':
           return DiabloSlashAgentOne(index)
       elif agentStr == 'defense':
-          return DiabloSlashAgentTwo(index)
+          return DiabloSlashAgentOne(index)#DiabloSlashAgentTwo(index)
       else:
           raise Exception("No staff agent identified by " + agentStr)
 
 
 class DiabloSlashAgentOne (CaptureAgent):
-    def __init__(self, index):
-        CaptureAgent.__init__(self, index)
+   def __init__(self, index):
+       CaptureAgent.__init__(self, index)
+	
+   def chooseAction(self,gameState):
+       actions = gameState.getLegalActions(self.index)
+       values = [self.evaluate(gameState, a) for a in actions]
+       maxValue = max(values)
+       bestActions = [a for a, v in zip(actions, values) if v == maxValue]
+       print bestActions, maxValue
+       threshold = 0.9
+       if(random.random() > threshold): return random.choice(actions)
+       return random.choice(bestActions)
+	
+   def evaluate(self, gameState, action):
+       features = self.getFeatures(gameState, action)
+       weights = self.getWeights(gameState, action)
+       return features * weights
 
-    def chooseAction(self,gameState):
-        return random.choice( gameState.getLegalActions( self.index ) )
+   def getSuccessor(self, gameState, action):
+       successor = gameState.generateSuccessor(self.index, action)
+       pos = successor.getAgentState(self.index).getPosition()
+       if pos != nearestPoint(pos):
+           return successor.generateSuccessor(self.index, action)
+       else:
+           return successor
+
+#---------------need to find some ways to compute features and weights-----
+#--------add more features and change weights as you go......
+#---------don't try to do dynamic update weights yet, find as much features as you can-------
+
+   def getFeatures(self, gameState, action):
+       features = util.Counter()
+       successor = self.getSuccessor(gameState, action)
+
+       #------------feature0: current board score-------------------#
+       features['boardScore'] = self.getFeatureZero(successor)
+       #------------feature1: Distance to the nearest food--------------#
+       features['distanceToFood'] = self.getFeatureOne(successor)
+       #------------feature2: closest ghost---------------#
+       features['closestGhost'] = self.getFeatureTwo(successor)
+
+       return features
+
+   def getWeights(self, gameState, action):
+       weights = util.Counter()
+
+       #------------feature0: current board score-------------------#
+       weights['boardScore'] = self.getFeatureZeroWeight()
+       #------------feature1: Distance to the nearest food---------------#
+       weights['distanceToFood'] = self.getFeatureOneWeight()
+       #------------feature2: closest ghost---------------#
+       weights['closestGhost'] = self.getFeatureTwoWeight()
+
+       return weights
+
+   #----------------------feature 2--------------------------
+   def getFeatureTwo(self, successor):
+       ghosts = []
+       #using particle filter here for inference?
+       #Or opt out for exact inference within 5 distances?
+       return 0.0
+
+   def getFeatureTwoWeight(self):
+       return -1000.0
+   #----------------------feature 0 --------------------------
+   def getFeatureZero(self, successor):
+       return self.getScore(successor)
+
+   def getFeatureZeroWeight(self):
+       return 100.0
+
+   #----------------------feature 1--------------------------
+   def getFeatureOne(self, successor):
+       foodList = self.getFood(successor).asList()
+       myPos = successor.getAgentState(self.index).getPosition()
+       minDistance = min([self.getMazeDistance(myPos,food) for food in foodList])
+       return minDistance
+
+   def getFeatureOneWeight(self):
+       return -1.0
+   
+   #----------------------feature 2-------------------------------
+
+
+#------------------------end---------------------------------------------------
+
 
 class DiabloSlashAgentTwo (CaptureAgent):
     def __init__(self, index):
         CaptureAgent.__init__(self, index)
 
     def chooseAction(self,gameState):
-        return random.choice( gameState.getLegalActions( self.index) )
+		return 'Stop'

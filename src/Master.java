@@ -128,7 +128,7 @@ public class Master extends Util {
                         for (int i = 0; i < commandArray.length; i++) {
                             cmd += " " + commandArray[i];
                         }
-                        System.out.println(MASTER_LOG_HEADER + cmd);
+                        print(cmd, MASTER_LOG_HEADER);
                         Process pclient = runtime.exec(cmd);
                         clientProcesses[clientIndex] = pclient;
                     }
@@ -145,7 +145,7 @@ public class Master extends Util {
                         for (int i = 0; i < commandArray.length; i++) {
                             cmd += " " + commandArray[i];
                         }
-                        System.out.println(MASTER_LOG_HEADER + cmd);
+                        print (cmd, MASTER_LOG_HEADER);
                         Process pserver = runtime.exec(cmd); 
                         serverProcesses[nodeIndex] = pserver;
                     }

@@ -2,7 +2,8 @@
 ## MODULE: Server.java
 ## VERSION: 1.0 
 ## SINCE: 2014-03-30
-## AUTHOR: ##     JIMMY LIN (xl5224) - JimmyLin@utexas.edu  
+## AUTHOR: 
+##     JIMMY LIN (xl5224) - JimmyLin@utexas.edu  
 ##
 ## DESCRIPTION: 
 ##     Server Class of PAXOS consensus algorithm 
@@ -150,9 +151,15 @@ class Server extends Util { // a.k.a. Replica
         print (listener.toString(), logHeader);
         // TODO: if this server is crashed before, recovery it
         if (isRecovery) {
-            //TODO: send message to all replicas, ask for the chat log
-            isRecoveryInProgress = true;
+            // TODO: STEP ONE: create a thread to receive recovery info 
 
+            // TODO: start thread
+
+            //TODO: STEP TWO: send message to all replicas, ask for the chat log
+            isRecoveryInProgress = true;
+            // TODO: STEP THREE: Eat
+
+            // TODO: join thread
             isRecovery = false;
         }
 

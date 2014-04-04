@@ -279,3 +279,7 @@ class TimeoutAgent( Agent ):
     import random, time
     time.sleep(2.0)
     return random.choice( state.getLegalActions( self.index ) )
+
+#-------------------------------added code------------------------------------
+class MyCaptureAgent(CaptureAgent):
+

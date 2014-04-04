@@ -217,6 +217,7 @@ public class Master extends Util {
                                 String recMessage = in.readLine();
                                 String [] recInfo = recMessage.split(",");
                                 String title = recInfo[TITLE_IDX];
+                                printReceivedMessage(recMessage, MASTER_LOG_HEADER);
                                 if (title.equals(CHECK_CLEAR_ACK_TITLE)) {
                                     String sender_type = recInfo[SENDER_TYPE_IDX];
                                     if (sender_type.equals(CLIENT_TYPE)){

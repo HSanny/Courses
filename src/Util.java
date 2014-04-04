@@ -31,7 +31,7 @@ class Util implements Protocol, Logging {
         String content = recParts[CONTENT_IDX];
 
         String str = "";
-        str += logHeader + " Receive *" + title + "* from ";
+        str += logHeader + "|Receive *" + title + "* from ";
         str += "{" + sender_type + " #" + sender_index + "}: ";
         str += content;
 

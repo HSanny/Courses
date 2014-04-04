@@ -41,6 +41,27 @@ public class Client extends Util {
     static HashSet<Integer> requestSet;
     static HashSet<Integer> responseSet;
 
+    /* Functional Field */
+    static boolean needToCheckClear;
+
+    public static boolean check_clear () throws IOException {
+        // STEP ONE: check if it is clear 
+        boolean isClear = true;
+        for (int cid: requestSet) {
+            // add send history and chat log comparison
+            if (!responseSet.contains(cid)) {
+                isClear = false;
+            }
+        }
+        // STEP TWO: send CHECK_CLEAR_ACK to Master
+        if (isClear) {
+            String ack = String.format(MESSAGE, CLIENT_TYPE, clientID,
+                    MASTER_TYPE, 0, CHECK_CLEAR_ACK_TITLE, EMPTY_CONTENT); 
+            send (localhost, MASTER_PORT, ack, logHeader);
+        }
+        return isClear;
+    }
+
     public static void main (String [] args) throws IOException {
         // parse the given id
         clientID = Integer.parseInt(args[0]);
@@ -65,7 +86,10 @@ public class Client extends Util {
         // redirect output to specified file
         System.setOut(log);
         System.setErr(log);
-        
+
+        // functional initialization
+        needToCheckClear = false;
+
         // derive localhost object
         localhost = InetAddress.getLocalHost();
         // construct stable server socket
@@ -86,7 +110,7 @@ public class Client extends Util {
                         InputStreamReader(socket.getInputStream()));
                 // CHANNEL IS ESTABLISHED
                 String recMessage = in.readLine();
-                System.out.println(logHeader + "Message Received: " + recMessage);
+                printReceivedMessage(recMessage, logHeader);
                 String [] recInfo = recMessage.split(",");
 
                 String sender_type = recInfo[SENDER_TYPE_IDX];
@@ -101,7 +125,7 @@ public class Client extends Util {
                     String command = String.format(COMMAND, clientID, cid, content);
                     for (int serverIndex = 0; serverIndex < numServers; serverIndex++) {
                         String request = String.format(MESSAGE, CLIENT_TYPE,
-                            clientID, SERVER_TYPE, serverIndex,
+                                clientID, SERVER_TYPE, serverIndex,
                                 REQUEST_TITLE, command);
                         port = SERVER_PORT_BASE + serverIndex;
                         send (localhost, port, request, logHeader);
@@ -112,14 +136,17 @@ public class Client extends Util {
                 else if (title.equals(RESPONSE_TITLE)) {
                     // STEP ONE: decode the pvalue
                     String [] responseParts = content.split(CONTENT_SEP);
-                    int clientID = Integer.parseInt(responseParts[0]);
+                    int clientIndex = Integer.parseInt(responseParts[0]);
                     int cid = Integer.parseInt(responseParts[1]);
                     int paxosId = Integer.parseInt(responseParts[2]);
                     String operation = responseParts[3];
                     // STEP TWO: put received response into local records
-                    chatLog.get(clientID).put(paxosId, operation);
-                    responseSet.add(cid);
-
+                    chatLog.get(clientIndex).put(paxosId, operation);
+                    if (clientID == clientIndex) {
+                        responseSet.add(cid);
+                        // STEP THREE: check clear since there is a update 
+                        needToCheckClear = !check_clear();
+                    }
                 } else if (title.equals(PRINT_CHAT_LOG_TITLE)) {
                     // print all local chat log
                     int clientIndex = clientID;
@@ -132,21 +159,10 @@ public class Client extends Util {
                         } else break;
                     }
                 } else if (title.equals(CHECK_CLEAR_TITLE)) {
-                    // STEP ONE: keep on checking if it is clear until it is clear
-                    while (true) {
-                        boolean isClear = true;
-                        for (int cid: requestSet) {
-                            // add send history and chat log comparison
-                            if (!responseSet.contains(cid)) {
-                                isClear = false;
-                            }
-                        }
-                        if (isClear) break;
-                    }
-                    // STEP TWO: send CHECK_CLEAR_ACK to Master
-                    String ack = String.format(MESSAGE, CLIENT_TYPE, clientID,
-                       MASTER_TYPE, 0, CHECK_CLEAR_ACK_TITLE, EMPTY_CONTENT); 
-                    send (localhost, MASTER_PORT, ack, logHeader);
+                    boolean success = check_clear();
+                    // if not clear now, need to check after response is
+                    // updated
+                    if (!success) needToCheckClear = true;
                 } else if (title.equals(EXIT_TITLE)) {
                     socket.close();
                     listener.close();

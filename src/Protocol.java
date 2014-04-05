@@ -37,6 +37,7 @@ interface Protocol {
     final static String CHECK_CLEAR_ACK_TITLE = "CHECK_CLEAR_ACK";
     final static String I_WANNA_RECOVER_TITLE = "I_WANNA_RECOVER";
     final static String HELP_YOU_RECOVER_TITLE = "YOU_CAN_RECOVER";
+    final static String HERE_IS_CHAT_LOG_TITLE = "HERE_IS_CHAT_LOG";
 
     /* PAXOS TITLE */
     final static String RESPONSE_TITLE = "RESPONSE";
@@ -73,6 +74,7 @@ interface Protocol {
     final static String MAP_SEP = "</mapto>";
     final static String DECISION_SEP = "</decn>";
     final static String RECOVERY_INFO_SEP = "</recov>";
+    final static String CHAT_PIECE_SEP = "</chatsep>";
 
 
     // message design

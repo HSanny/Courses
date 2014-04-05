@@ -149,14 +149,23 @@ public class Client extends Util {
                 } else if (title.equals(PRINT_CHAT_LOG_TITLE)) {
                     // print all local chat log
                     int clientIndex = clientID;
+                    String allChatMessages = "";
                     for (int paxosid = 0; ; paxosid ++) {
                         String message = chatLog.get(clientIndex).get(paxosid);
                         if (message != null) {
                             String outMessage = String.format
                                 (OUTPUT_MESSAGE, paxosid, clientIndex, message);
-                            System.out.println(outMessage);
+                            allChatMessages += outMessage + CHAT_PIECE_SEP;
                         } else break;
                     }
+                    if (allChatMessages.length() > 0) {
+                        allChatMessages = allChatMessages.substring(0,
+                           allChatMessages.length() - CHAT_PIECE_SEP.length());
+                    }
+                    String toMasterMsg = String.format(MESSAGE, CLIENT_TYPE,
+                          clientID, MASTER_TYPE, 0, HERE_IS_CHAT_LOG_TITLE,
+                          allChatMessages);
+                    send (localhost, MASTER_PORT, toMasterMsg, logHeader);
                 } else if (title.equals(CHECK_CLEAR_TITLE)) {
                     boolean success = check_clear();
                     // if not clear now, need to check after response is

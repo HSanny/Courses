@@ -34,7 +34,7 @@ class Server extends Util { // a.k.a. Replica
     static int serverID;
     static int numServers;
     static int numClients;
-    static boolean isRecovery;
+    static boolean NeedRecovery;
     static InetAddress localhost;
 
     /* Replica's attributes */
@@ -115,7 +115,7 @@ class Server extends Util { // a.k.a. Replica
         serverID = Integer.parseInt(args[0]);
         numServers = Integer.parseInt(args[1]);
         numClients = Integer.parseInt(args[2]);
-        isRecovery = args[3].equals("1");
+        NeedRecovery = args[3].equals("1");
         // configure the LOG setting
         logHeader = String.format(SERVER_LOG_HEADER, serverID);
         logfilename = String.format(SERVER_LOG_FILENAME, serverID);
@@ -140,7 +140,7 @@ class Server extends Util { // a.k.a. Replica
         new Thread(acceptor).start();
 
         // construct stable server socket
-        ServerSocket listener = new ServerSocket(SERVER_PORT_BASE+serverID, 0,
+        final ServerSocket listener = new ServerSocket(SERVER_PORT_BASE+serverID, 0,
                 localhost);
         listener.setReuseAddress(true);
         // send acknowledge to the master
@@ -150,17 +150,61 @@ class Server extends Util { // a.k.a. Replica
         // indicate the socket listener setup
         print (listener.toString(), logHeader);
         // TODO: if this server is crashed before, recovery it
-        if (isRecovery) {
-            // TODO: STEP ONE: create a thread to receive recovery info 
-
-            // TODO: start thread
-
-            //TODO: STEP TWO: send message to all replicas, ask for the chat log
+        final Integer nClients = numClients;
+        if (NeedRecovery) {
+            // STEP ONE: create a thread to receive recovery info 
+            Thread collectRecoveryInfo = new Thread (new Runnable() {
+                public void run () {
+                    try { while (true) {
+                        Socket socket = listener.accept();
+                        try { 
+                            BufferedReader in = new BufferedReader(new
+                                InputStreamReader(socket.getInputStream()));
+                            String recMessage = in.readLine();
+                            printReceivedMessage(recMessage, MASTER_LOG_HEADER);
+                            String [] recInfo = recMessage.split(",");
+                            if (recInfo[TITLE_IDX].equals(HELP_YOU_RECOVER_TITLE)) {
+                                String chatLogs = recInfo[CONTENT_IDX];
+                                // check if setup is complete
+                                boolean isRecoveryInfoReceived = true;
+                                // TODO: decode the content
+                                String [] chatLogsPart = chatLogs.split(RECOVERY_INFO_SEP);
+                                int slot_num = Integer.parseInt(chatLogsPart[0]);
+                                String [] recDecisions = chatLogsPart[1].split(DECISION_SEP);
+                                for (int dIdx = 0; dIdx < recDecisions.length; dIdx ++) {
+                                    String [] oneDecision = recDecisions[dIdx].split(MAP_SEP);
+                                    decisions.put(Integer.parseInt(oneDecision[0]), oneDecision[1]);
+                                }
+                                if (isRecoveryInfoReceived) {
+                                    print("Replica Recovered.", MASTER_LOG_HEADER);
+                                    break;
+                                }
+                            } else {
+                                continue;
+                            }
+                        } finally { socket.close(); }
+                    }
+                    } catch (IOException e) {;} finally { ;}
+                }
+            });
+            collectRecoveryInfo.start();
+            // STEP TWO: send message to all replicas, ask for the chat log
             isRecoveryInProgress = true;
-            // TODO: STEP THREE: Eat
+            for (int serverIndex = 0; serverIndex < numServers; serverIndex++) {
+                if (serverIndex == serverID) continue;  // not to request itself
+                // FIXME: failure detection? no need to request if opposite is
+                // recovered
+                String askForRecovery = String.format(MESSAGE, SERVER_TYPE,
+                        serverID, SERVER_TYPE, serverIndex,
+                        I_WANNA_RECOVER_TITLE, EMPTY_CONTENT);
+                int port = SERVER_PORT_BASE + serverIndex;
+                send (localhost, port, askForRecovery, logHeader);
+            }
 
-            // TODO: join thread
-            isRecovery = false;
+            // STEP THREE: join thread and indicate completion of recovery
+            collectRecoveryInfo.join();
+            isRecoveryInProgress = false;
+            NeedRecovery = false;
         }
 
         try {
@@ -172,6 +216,7 @@ class Server extends Util { // a.k.a. Replica
                     // channel is established
                     String recMessage = in.readLine();
                     String [] recInfo = recMessage.split(",");
+                    int port;
 
                     // Decode the incoming message
                     String sender_type = recInfo[SENDER_TYPE_IDX];
@@ -194,38 +239,61 @@ class Server extends Util { // a.k.a. Replica
 
                     printReceivedMessage(recMessage, logHeader);
                     // Check if message is request
-                   if (title.equals(REQUEST_TITLE)) {
-                       propose (content);
-                   } else if (title.equals(DECISION_TITLE)) {
-                       // STEP ZERO: decode the content
-                       String [] conts = content.split (CONTENT_SEP);
-                       int s = Integer.parseInt(conts[0]);
-                       String p = conts[1];
-                       // STEP ONE: add decision message to decisions
-                       decisions.put(s, p);
-                       // STEP TWO: find ready decision to be executed
-                       // check if exists a decision p' corresponds to
-                       // current slot_num s
-                       String pprime = null;
-                       if ((pprime = decisions.get(slot_num)) != null) {
-                           // STEP THREE: check if it has proposed another command
-                           // p'' in current slot_num, repropose p'' with new s''
-                           String pprimeprime = proposals.get(slot_num);
-                           if (!pprime.equals(pprimeprime)) {
-                               propose (pprimeprime);
-                           }
-                           // STEP FOUR: invoke perform
-                           perform(pprime);
-                       }
-                   }
+                    if (title.equals(REQUEST_TITLE)) {
+                        propose (content);
+                    } else if (title.equals(DECISION_TITLE)) {
+                        // STEP ZERO: decode the content
+                        String [] conts = content.split (CONTENT_SEP);
+                        int s = Integer.parseInt(conts[0]);
+                        String p = conts[1];
+                        // STEP ONE: add decision message to decisions
+                        decisions.put(s, p);
+                        // STEP TWO: find ready decision to be executed
+                        // check if exists a decision p' corresponds to
+                        // current slot_num s
+                        String pprime = null;
+                        if ((pprime = decisions.get(slot_num)) != null) {
+                            // STEP THREE: check if it has proposed another command
+                            // p'' in current slot_num, repropose p'' with new s''
+                            String pprimeprime = proposals.get(slot_num);
+                            if (!pprime.equals(pprimeprime)) {
+                                propose (pprimeprime);
+                            }
+                            // STEP FOUR: invoke perform
+                            perform(pprime);
+                        }
+                    } else if (title.equals(I_WANNA_RECOVER_TITLE)) {
+                        assert (sender_type.equals(SERVER_TYPE)):
+                            "Recover Request should come from server.";
+                        assert (sender_idx != serverID): "Cannot recover from itself.";
+                        String recoverInfo = "";
+                        // STEP ONE: encode slot_num
+                        recoverInfo += Integer.toString(slot_num);
+                        recoverInfo += RECOVERY_INFO_SEP;
+                        // STEP TWO: encode decisions
+                        for (int sn: decisions.keySet()) {
+                            recoverInfo += Integer.toString(sn) + MAP_SEP
+                                + decisions.get(sn) + DECISION_SEP;
+                        }
+                        if (decisions.size() > 0) {
+                            recoverInfo = recoverInfo.substring(0,
+                                    recoverInfo.length()-DECISION_SEP.length());
+                        }
+                        // STEP THREE: send message back
+                        String recoverMsg = String.format(MESSAGE, SERVER_TYPE,
+                           serverID, SERVER_TYPE, sender_idx,
+                           HELP_YOU_RECOVER_TITLE, recoverInfo);
+                        port = SERVER_PORT_BASE + sender_idx;
+                        send (localhost, port, recoverMsg, logHeader);
+                    }
 
-                   // this message is only given by master
-                   if (title.equals(EXIT_TITLE) && sender_type.equals(MASTER_TYPE)) {
-                       socket.close();
-                       listener.close();
-                       System.out.println(logHeader + "Exit.");
-                       System.exit(0);
-                   }
+                    // this message is only given by master
+                    if (title.equals(EXIT_TITLE) && sender_type.equals(MASTER_TYPE)) {
+                        socket.close();
+                        listener.close();
+                        print("Exit.", logHeader);
+                        System.exit(0);
+                    }
 
                 } finally {
                     socket.close();

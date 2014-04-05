@@ -70,6 +70,11 @@ interface Protocol {
     final static String P2A_CONTENT = "%d" + CONTENT_SEP + "%s";
     final static String P2B_CONTENT = "%d" + CONTENT_SEP + "%d";
 
+    final static String MAP_SEP = "</mapto>";
+    final static String DECISION_SEP = "</decn>";
+    final static String RECOVERY_INFO_SEP = "</recov>";
+
+
     // message design
     final static int SENDER_TYPE_IDX = 0;
     final static int SENDER_INDEX_IDX = 1;

@@ -43,7 +43,7 @@ public class Master extends Util {
             // parse the input instruction
             String input = scan.nextLine();
             String [] inputLine = input.split(" ");
-            System.out.println("[INPUT] "+input);
+            print(input, "[INPUT] ");
             
             // process creator
             Runtime runtime = Runtime.getRuntime();

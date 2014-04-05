@@ -62,7 +62,7 @@ class Server extends Util { // a.k.a. Replica
         // Solution: incrementing slot number until we find one
         // that is not proposed yet
         int s = -1; 
-        for (int tmp_s = 1; ; tmp_s ++) {
+        for (int tmp_s = 0; ; tmp_s ++) {
             if (proposals.get(tmp_s) == null) {
                 s = tmp_s;
                 break;
@@ -180,7 +180,6 @@ class Server extends Util { // a.k.a. Replica
                     int receiver_idx = Integer.parseInt(recInfo[RECEIVER_INDEX_IDX]);
                     String title = recInfo[TITLE_IDX];
                     String content = recInfo[CONTENT_IDX];
-
                     // Check if message is propose, p1b, p2b, adopted, or preempted
                     // If so, add to Leader queue
                     if (receiver_type.equals(LEADER_TYPE)) {

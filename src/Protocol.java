@@ -68,7 +68,7 @@ interface Protocol {
     final static String P1A_CONTENT = "%d" + CONTENT_SEP + "%d";
     final static String P1B_CONTENT = "%d" + CONTENT_SEP + "%d" + CONTENT_SEP + "%s";
     final static String P2A_CONTENT = "%d" + CONTENT_SEP + "%s";
-    final static String P2B_CONTENT = "%d" + CONTENT_SEP + "%d";
+    final static String P2B_CONTENT = "%d" + CONTENT_SEP + "%d" + CONTENT_SEP + "%d";
 
     // message design
     final static int SENDER_TYPE_IDX = 0;

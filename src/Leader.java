@@ -34,10 +34,13 @@ class Leader extends Util implements Runnable{
     private InetAddress localhost;
 
     private HashMap<Integer, LinkedBlockingQueue<String>> scoutQueues;
-    private HashMap<Integer, LinkedBlockingQueue<String>> commanderQueues;
+    private HashMap<String, LinkedBlockingQueue<String>> commanderQueues;
 
     public Leader(LinkedBlockingQueue<String> queue, int id, int numServers,
             InetAddress localhost) { 
+        if(id == 0)
+            isActive = true;
+
         this.queue = queue;
         this.ballot_num = 0;
         this.serverID = id;
@@ -47,7 +50,7 @@ class Leader extends Util implements Runnable{
 
         proposals = new HashMap<Integer, String>();
         scoutQueues = new HashMap<Integer, LinkedBlockingQueue<String>>();
-        commanderQueues = new HashMap<Integer, LinkedBlockingQueue<String>>();
+        commanderQueues = new HashMap<String, LinkedBlockingQueue<String>>();
     }
 
     public void run() {
@@ -82,7 +85,9 @@ class Leader extends Util implements Runnable{
             } else if(title.equals(P2B_TITLE)) {
                 try{
                     int tmp_b = Integer.parseInt(contentParts[1]);
-                    commanderQueues.get(tmp_b).put(msg);
+                    int tmp_s = Integer.parseInt(contentParts[2]);
+                    String commanderID = tmp_s + " " + tmp_b;
+                    commanderQueues.get(commanderID).put(msg);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -96,10 +101,11 @@ class Leader extends Util implements Runnable{
                     proposals.put(s,p);
                     // if the Leader is active
                     if(isActive) {
+                        String commanderID = s + " " + ballot_num;
                         // spawn a Commander for this ballot
                         LinkedBlockingQueue<String> queueCommander = new LinkedBlockingQueue<String>();
                         (new Thread(new Commander(queueCommander, numServers, numServers, String.format(PVALUE_CONTENT, ballot_num, s, p), localhost))).start(); 
-                        commanderQueues.put(ballot_num, queueCommander);
+                        commanderQueues.put(commanderID, queueCommander);
                     }
 
                     // if message is an adopted
@@ -120,8 +126,9 @@ class Leader extends Util implements Runnable{
                         // spawn a Commander for that proposal
                         // spawn a Commander for this ballot
                         LinkedBlockingQueue<String> queueCommander = new LinkedBlockingQueue<String>();
+                        String commanderID = tmp_s + " " + ballot_num;
                         (new Thread(new Commander(queueCommander, numServers, numServers, String.format(PVALUE_CONTENT, ballot_num, tmp_s, proposals.get(tmp_s)), localhost))).start(); 
-                        commanderQueues.put(ballot_num, queueCommander);
+                        commanderQueues.put(commanderID, queueCommander);
 
                     }
                     // become Active

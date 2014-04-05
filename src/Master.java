@@ -3,8 +3,8 @@
 ## VERSION: 1.0 
 ## SINCE: 2014-03-31
 ## AUTHOR: 
-##         JIMMY LIN (xl5224) - JimmyLin@utexas.edu  
-##
+##     JIMMY LIN (xl5224) - JimmyLin@utexas.edu  
+##     CALVIN SZETO - Szeto.calvin@gmail.com
 ## DESCRIPTION: 
 ##      
 #################################################################

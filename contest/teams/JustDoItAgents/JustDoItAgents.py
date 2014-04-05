@@ -18,6 +18,7 @@ import random, time, util
 from captureAgents import CaptureAgent
 from captureAgents import AgentFactory
 from util import nearestPoint
+from baselineAgents import DefensiveReflexAgent
 
 class JustDoItAgents (AgentFactory):
   def __init__(self, isRed, first='offense', second='defense', rest='offense'):
@@ -44,7 +45,7 @@ class JustDoItAgents (AgentFactory):
       elif agentStr == 'offense':
           return DiabloSlashAgentOne(index)
       elif agentStr == 'defense':
-          return DiabloSlashAgentOne(index)#DiabloSlashAgentTwo(index)
+          return DefensiveReflexAgent(index)#DiabloSlashAgentTwo(index)
       else:
           raise Exception("No staff agent identified by " + agentStr)
 
@@ -58,9 +59,6 @@ class DiabloSlashAgentOne (CaptureAgent):
        values = [self.evaluate(gameState, a) for a in actions]
        maxValue = max(values)
        bestActions = [a for a, v in zip(actions, values) if v == maxValue]
-       print bestActions, maxValue
-       threshold = 0.9
-       if(random.random() > threshold): return random.choice(actions)
        return random.choice(bestActions)
 	
    def evaluate(self, gameState, action):
@@ -90,6 +88,10 @@ class DiabloSlashAgentOne (CaptureAgent):
        features['distanceToFood'] = self.getFeatureOne(successor)
        #------------feature2: closest ghost---------------#
        features['closestGhost'] = self.getFeatureTwo(successor)
+       #------------feature3: number of opponent food left----------#
+       features['eatableFoodLeft'] = self.getFeatureThree(successor)
+       #------------feature4: force the pacman not to take action "stop"---#
+       features['noStopOnTheOtherSide'] = self.getFeatureFour(successor,action)
 
        return features
 
@@ -102,18 +104,51 @@ class DiabloSlashAgentOne (CaptureAgent):
        weights['distanceToFood'] = self.getFeatureOneWeight()
        #------------feature2: closest ghost---------------#
        weights['closestGhost'] = self.getFeatureTwoWeight()
+       #------------feature3: number of opponent food left-------------#
+       weights['eatableFoodLeft'] = 0#self.getFeatureThreeWeight()
+       #------------feature4: force the pacman not to take action "stop"---#
+       weights['noStopOnTheOtherSide'] = 0#self.getFeatureFourWeight()
 
        return weights
+  
+   #----------------------feature 4------------------------
+   def getFeatureFour(self,successor,action):
+       if(action == 'Stop' and successor.getAgentState(self.index).isPacman):
+           return 1.0
+       return 0.0
+
+   def getFeatureFourWeight(self):
+       return -1000.0
+   #----------------------feature 3-------------------------
+   def getFeatureThree(self,successor):
+       foodList = self.getFood(successor).asList()
+       return len(foodList)
+
+   def getFeatureThreeWeight(self):
+       return -5.0
 
    #----------------------feature 2--------------------------
    def getFeatureTwo(self, successor):
+       # use successor.getAgentDistances(), and successor.getDistanceProb(trueDistance, noisyDistance) for approximate distance
        ghosts = []
-       #using particle filter here for inference?
-       #Or opt out for exact inference within 5 distances?
-       return 0.0
+       hasExact = False
+       ghostDistance = 7
+       myPos = successor.getAgentState(self.index).getPosition()
+       #-------------------Exact positions-------------------
+       indices = self.getOpponents(successor)
+       for index in indices:
+           opponent = successor.getAgentState(index)
+           ghostPos = opponent.getPosition()
+           if(ghostPos != None and not opponent.isPacman):
+               hasExact = True
+               ghostDistance = max(self.getMazeDistance(myPos,ghostPos),ghostDistance)
+       #------------------if exact positions are not available 
+       if(not hasExact):pass
+       return ghostDistance
 
    def getFeatureTwoWeight(self):
-       return -1000.0
+       return 10.0
+
    #----------------------feature 0 --------------------------
    def getFeatureZero(self, successor):
        return self.getScore(successor)
@@ -129,7 +164,7 @@ class DiabloSlashAgentOne (CaptureAgent):
        return minDistance
 
    def getFeatureOneWeight(self):
-       return -1.0
+       return -1.5
    
    #----------------------feature 2-------------------------------
 
@@ -137,9 +172,9 @@ class DiabloSlashAgentOne (CaptureAgent):
 #------------------------end---------------------------------------------------
 
 
-class DiabloSlashAgentTwo (CaptureAgent):
+class DiabloSlashAgentTwo ():
     def __init__(self, index):
         CaptureAgent.__init__(self, index)
 
     def chooseAction(self,gameState):
-		return 'Stop'
+	return 'Stop'

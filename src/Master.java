@@ -101,7 +101,7 @@ public class Master extends Util {
                                         }
                                     }
                                     if (isSetUpComplete) {
-                                        System.out.println(MASTER_LOG_HEADER + "SETUP COMPLETES..");
+                                        print("SETUP COMPLETES", MASTER_LOG_HEADER);
                                         break;
                                     }
                                 } else {
@@ -295,6 +295,7 @@ public class Master extends Util {
                     /*
                      * Instruct the leader to skip slots in the chat message sequence  
                      */ 
+                    // TODO: convert to one-leader version
                     for (nodeIndex = 0; nodeIndex < numNodes; nodeIndex++) {
                         port = SERVER_PORT_BASE + nodeIndex;
                         String SkipSlotMessage = String.format(MESSAGE,
@@ -309,6 +310,7 @@ public class Master extends Util {
                      * Instruct the leader to crash after sending the number of paxos
                      * related messages specified by numMessages
                      */ 
+                    assert(numMessages > 0);
                     break;
             }
         }

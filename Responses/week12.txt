@@ -1,0 +1,25 @@
+Week 12: Learning Probabilistic Models: Classifiers (4/8 and 4/10)
+=========================================================================
+Readings: due Tues 4/8 (email response due Mon 4/7 by 11:59 pm)
+Textbook Chapter 18-18.2, 20-20.2.
+Email response: respond to the reading following the syllabus guidelines.
+=========================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+=========================================================================
+Readings: due Thurs 4/10 
+Textbook Chapter 18.4, 18.6 (except 18.6.2), 18.7 through 18.7.2
+No email response due
+=========================================================================

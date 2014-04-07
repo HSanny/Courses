@@ -51,6 +51,7 @@ class Acceptor extends Util implements Runnable {
 
                 // STEP TWO: decode
                 if (msg == null) continue;
+                printReceivedMessage (msg, logHeader);
                 String [] msgParts = msg.split(MESSAGE_SEP);
                 String title = msgParts[TITLE_IDX];
                 String content = msgParts[CONTENT_IDX];

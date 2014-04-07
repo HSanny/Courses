@@ -43,6 +43,8 @@ class Server extends Util { // a.k.a. Replica
     static HashMap<Integer, String> decisions;
 
     static boolean isRecoveryInProgress;
+    static boolean carryLeader;
+    static int leaderID;
 
     /* Collocation: put leader and acceptor together */
     static Leader leader;
@@ -52,6 +54,7 @@ class Server extends Util { // a.k.a. Replica
 
     public static boolean propose (String command) throws IOException {
         // STEP ZERO: check if this request has not been decided
+        System.out.println(command);
         for (String value: decisions.values()) {
             if (command.equals(value)) {
                 // ignore this request since decided
@@ -71,15 +74,13 @@ class Server extends Util { // a.k.a. Replica
         if (s < 0) return false;
         // STEP TWO: put <s, p> to proposals
         proposals.put(s, command);
-        // STEP THREE: send <propose, s, p> to all leaders
-        for (int serverIndex = 0; serverIndex < numServers; serverIndex++) {
-            String spArgs = String.format(PROPOSAL_CONTENT, s, command);
-            String proposeMessage = String.format(MESSAGE,
-                    SERVER_TYPE, serverID, LEADER_TYPE,
-                    serverIndex, PROPOSE_TITLE, spArgs);
-            int port = SERVER_PORT_BASE + serverIndex;
-            send (localhost, port, proposeMessage, logHeader);
-        }
+        // STEP THREE: send <propose, s, p> to the leader
+        String spArgs = String.format(PROPOSAL_CONTENT, s, command);
+        String proposeMessage = String.format(MESSAGE,
+                SERVER_TYPE, serverID, LEADER_TYPE,
+                leaderID, PROPOSE_TITLE, spArgs);
+        int port = SERVER_PORT_BASE + leaderID;
+        send (localhost, port, proposeMessage, logHeader);
         return true;
     }
 
@@ -130,12 +131,11 @@ class Server extends Util { // a.k.a. Replica
         proposals = new HashMap<Integer, String> ();
         decisions = new HashMap<Integer, String> ();
         isRecoveryInProgress = false;
+        carryLeader = true;
+        leaderID = -1;
 
         // Initialization for collocation technique
-        queueLeader = new LinkedBlockingQueue<String> ();
         queueAcceptor = new LinkedBlockingQueue<String> ();
-        leader = new Leader(queueLeader, serverID, numServers, localhost); 
-        new Thread(leader).start();
         acceptor = new Acceptor(queueAcceptor, serverID, localhost);
         new Thread(acceptor).start();
 
@@ -149,8 +149,9 @@ class Server extends Util { // a.k.a. Replica
         send (localhost, MASTER_PORT, setup_ack, logHeader);
         // indicate the socket listener setup
         print (listener.toString(), logHeader);
-        // TODO: if this server is crashed before, recovery it
+        // if this server is crashed before, recovery it
         final Integer nClients = numClients;
+        // TODO: TEST THIS PART
         if (NeedRecovery) {
             // STEP ONE: create a thread to receive recovery info 
             Thread collectRecoveryInfo = new Thread (new Runnable() {
@@ -167,7 +168,7 @@ class Server extends Util { // a.k.a. Replica
                                 String chatLogs = recInfo[CONTENT_IDX];
                                 // check if setup is complete
                                 boolean isRecoveryInfoReceived = true;
-                                // TODO: decode the content
+                                // decode the content
                                 String [] chatLogsPart = chatLogs.split(RECOVERY_INFO_SEP);
                                 int slot_num = Integer.parseInt(chatLogsPart[0]);
                                 String [] recDecisions = chatLogsPart[1].split(DECISION_SEP);
@@ -229,13 +230,14 @@ class Server extends Util { // a.k.a. Replica
                     // If so, add to Leader queue
                     if (receiver_type.equals(LEADER_TYPE)) {
                         queueLeader.put(recMessage);
+                        continue;
                     }
                     // Check if message is p1a or p2a
                     // If so, add to Acceptor queue
                     if (receiver_type.equals(ACCEPTOR_TYPE)) {
                         queueAcceptor.put(recMessage);
+                        continue;
                     }
-
                     printReceivedMessage(recMessage, logHeader);
                     // Check if message is request
                     if (title.equals(REQUEST_TITLE)) {
@@ -255,7 +257,7 @@ class Server extends Util { // a.k.a. Replica
                             // STEP THREE: check if it has proposed another command
                             // p'' in current slot_num, repropose p'' with new s''
                             String pprimeprime = proposals.get(slot_num);
-                            if (!pprime.equals(pprimeprime)) {
+                            if (!pprime.equals(pprimeprime) && pprimeprime != null) {
                                 propose (pprimeprime);
                             }
                             // STEP FOUR: invoke perform
@@ -284,10 +286,22 @@ class Server extends Util { // a.k.a. Replica
                            HELP_YOU_RECOVER_TITLE, recoverInfo);
                         port = SERVER_PORT_BASE + sender_idx;
                         send (localhost, port, recoverMsg, logHeader);
+                    } else if (title.equals(LEADER_REQUEST_TITLE)) {
+                        leaderID = Integer.parseInt(content);
+                        if (leaderID == serverID) {
+                            carryLeader = true;
+                            queueLeader = new LinkedBlockingQueue<String> ();
+                            leader = new Leader(queueLeader, serverID, numServers, localhost); 
+                            new Thread(leader).start();
+                        }
+                        String ackLeader = String.format(MESSAGE, SERVER_TYPE,
+                                serverID, MASTER_TYPE, 0, LEADER_ACK_TITLE,
+                                EMPTY_CONTENT);
+                        send (localhost, MASTER_PORT, ackLeader, logHeader);
                     }
-
                     // this message is only given by master
-                    if (title.equals(EXIT_TITLE) && sender_type.equals(MASTER_TYPE)) {
+                    else if (title.equals(EXIT_TITLE) && sender_type.equals(MASTER_TYPE)) {
+                        carryLeader = false;
                         socket.close();
                         listener.close();
                         print("Exit.", logHeader);

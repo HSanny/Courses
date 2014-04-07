@@ -38,6 +38,8 @@ interface Protocol {
     final static String I_WANNA_RECOVER_TITLE = "I_WANNA_RECOVER";
     final static String HELP_YOU_RECOVER_TITLE = "YOU_CAN_RECOVER";
     final static String HERE_IS_CHAT_LOG_TITLE = "HERE_IS_CHAT_LOG";
+    final static String LEADER_REQUEST_TITLE = "LEADER COMES OUT";
+    final static String LEADER_ACK_TITLE = "I CONFIRM HE IS LEADER";
 
     /* PAXOS TITLE */
     final static String RESPONSE_TITLE = "RESPONSE";

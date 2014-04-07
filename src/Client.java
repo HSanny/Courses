@@ -43,6 +43,7 @@ public class Client extends Util {
 
     /* Functional Field */
     static boolean needToCheckClear;
+    static int leaderID;
 
     public static boolean check_clear () throws IOException {
         // STEP ONE: check if it is clear 
@@ -123,13 +124,11 @@ public class Client extends Util {
                 if (title.equals(SEND_MESSAGE_TITLE)) {
                     // send chat message (command) to all servers
                     String command = String.format(COMMAND, clientID, cid, content);
-                    for (int serverIndex = 0; serverIndex < numServers; serverIndex++) {
-                        String request = String.format(MESSAGE, CLIENT_TYPE,
-                                clientID, SERVER_TYPE, serverIndex,
-                                REQUEST_TITLE, command);
-                        port = SERVER_PORT_BASE + serverIndex;
-                        send (localhost, port, request, logHeader);
-                    }
+                    String request = String.format(MESSAGE, CLIENT_TYPE,
+                            clientID, SERVER_TYPE, leaderID,
+                            REQUEST_TITLE, command);
+                    port = SERVER_PORT_BASE + leaderID;
+                    send (localhost, port, request, logHeader);
                     // add that message to send history
                     requestSet.add(cid);
                 } else if (title.equals(RESPONSE_TITLE)) {
@@ -171,6 +170,12 @@ public class Client extends Util {
                     // if not clear now, need to check after response is
                     // updated
                     if (!success) needToCheckClear = true;
+                } else if (title.equals(LEADER_REQUEST_TITLE)) {
+                    leaderID = Integer.parseInt(content);
+                    String ackLeaderMsg = String.format (MESSAGE, CLIENT_TYPE,
+                            clientID, MASTER_TYPE, 0, LEADER_ACK_TITLE,
+                            EMPTY_CONTENT); 
+                    send (localhost, MASTER_PORT, ackLeaderMsg, logHeader);
                 } else if (title.equals(EXIT_TITLE)) {
                     socket.close();
                     listener.close();

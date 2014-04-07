@@ -26,6 +26,8 @@ public class Master extends Util {
     final static String RUN_SERVER_CMD = "java -cp ./bin/ Server";
     final static String RUN_CLIENT_CMD = "java -cp ./bin/ Client";
 
+    static int leaderID;
+
     public static void main(String [] args) throws IOException, InterruptedException {
         Scanner scan = new Scanner(System.in);
         int numNodes = -1, numClients = -1; // initialize to invalid value
@@ -57,6 +59,7 @@ public class Master extends Util {
                      */
                     // ============================================================
                     // DRIVEN BY JIMMY LIN STARTS
+                    // STEP ONE: SET UP SERVERS AND CLIENTS
                     final ArrayList<Boolean> serversSetup = new ArrayList<Boolean> ();
                     for (nodeIndex = 0; nodeIndex < numNodes; nodeIndex ++) {
                         serversSetup.add(false);
@@ -152,170 +155,251 @@ public class Master extends Util {
                     // Confirm all clients and servers have set up their listeners
                     collectSetUpAcks.join();
 
+                    // STEP TWO: ELECT A NEW LEADER
+                    // we use server 0 to carry leader
+                    leaderID = 0;
+                    final ArrayList<Boolean> serversLeaderACK = new ArrayList<Boolean> ();
+                    for (nodeIndex = 0; nodeIndex < numNodes; nodeIndex ++) {
+                        serversLeaderACK.add(false);
+                    }
+                    final ArrayList<Boolean> clientsLeaderACK = new ArrayList<Boolean> ();
+                    for (clientIndex = 0; clientIndex < numClients; clientIndex ++) {
+                        clientsLeaderACK.add(false);
+                    }
+                    // Create new thread to accept the leader response
+                    Thread CollectLeaderResponse = new Thread (new Runnable () {
+                        public void run () {
+                            try {
+                            while (true) {
+                            Socket socket = listener.accept();
+                            try { 
+                                BufferedReader in = new BufferedReader(new
+                                        InputStreamReader(socket.getInputStream()));
+                                String recMessage = in.readLine();
+                                printReceivedMessage(recMessage, MASTER_LOG_HEADER);
+                                String [] recInfo = recMessage.split(",");
+                                String title = recInfo[TITLE_IDX];
+                                String sender_type = recInfo[SENDER_TYPE_IDX];
+                                int sender_idx = Integer.parseInt(recInfo[SENDER_INDEX_IDX]);
+                                if (title.equals(LEADER_ACK_TITLE)) {
+                                    if (sender_type.equals(SERVER_TYPE)) {
+                                        serversLeaderACK.set(sender_idx, true);
+                                    } else if (sender_type.equals(CLIENT_TYPE)) {
+                                        clientsLeaderACK.set(sender_idx, true);
+                                    }
+                                }
+                                // check if setup is complete
+                                boolean isACKComplete = true;
+                                for (int cIdx = 0; cIdx < nClients; cIdx ++) {
+                                    if (!clientsLeaderACK.get(cIdx)) { 
+                                        isACKComplete = false; 
+                                        break;
+                                    }
+                                }
+                                for (int sIdx = 0; sIdx < nServers; sIdx ++) {
+                                    if (!serversLeaderACK.get(sIdx)) {
+                                        isACKComplete = false;
+                                        break;
+                                    }
+                                }
+                                if (isACKComplete) {
+                                    print("LEADER ACK COLLECTION COMPLETE with LEADER " + leaderID,
+                                            MASTER_LOG_HEADER); 
+                                    break;
+                                } else {
+                                    continue;
+                                }
+                            } finally { socket.close(); }
+                            }
+                            } catch (IOException e) {;} finally { ;}
+                        }
+                    });
+                    CollectLeaderResponse.start();
+                    // Send message to tell the result of election
+                    String eLeaderMsg;
+                    String leaderStr = Integer.toString(leaderID);
+                    for (nodeIndex = 0; nodeIndex < numNodes; nodeIndex ++) {
+                        eLeaderMsg = String.format(MESSAGE, MASTER_TYPE, 0,
+                                SERVER_TYPE, nodeIndex, LEADER_REQUEST_TITLE,
+                                leaderStr);
+                        port = SERVER_PORT_BASE + nodeIndex;
+                        send (localhost, port, eLeaderMsg, MASTER_LOG_HEADER);
+                    }
+                    for (clientIndex = 0; clientIndex < numClients; clientIndex++) {
+                        eLeaderMsg = String.format(MESSAGE, MASTER_TYPE, 0,
+                                CLIENT_TYPE, clientIndex, LEADER_REQUEST_TITLE,
+                                leaderStr);
+                        port = CLIENT_PORT_BASE + clientIndex;
+                        send (localhost, port, eLeaderMsg, MASTER_LOG_HEADER);
+                    }
+                    // Wait for the leader response
+                    CollectLeaderResponse.join();
+
+
                     // ============================================================
                     break;
                 case "sendMessage":
                     clientIndex = Integer.parseInt(inputLine[1]);
                     assert (numClients > 0): "numClients not initialized.";
-                    assert (numNodes > 0): "numNodes not initialized";
-                    assert (numClients > clientIndex): "clientIndex out of bound.";
-                    String message = "";
-                    for (int i = 2; i < inputLine.length; i++) {
-                        message += inputLine[i];
-                        if (i != inputLine.length - 1) {
-                            message += " ";
-                        }
-                    }
-                    /*
-                     * Instruct the client specified by clientIndex to send the message
-                     * to the proper paxos node
-                     */
-                    port = CLIENT_PORT_BASE + clientIndex;
-                    String pmessage = String.format(MESSAGE, MASTER_TYPE, 0, CLIENT_TYPE, clientIndex, 
-                            SEND_MESSAGE_TITLE, message);
-                    send (localhost, port, pmessage, MASTER_LOG_HEADER);
-                    break;
+                        assert (numNodes > 0): "numNodes not initialized";
+                            assert (numClients > clientIndex): "clientIndex out of bound.";
+                                String message = "";
+                                for (int i = 2; i < inputLine.length; i++) {
+                                    message += inputLine[i];
+                                    if (i != inputLine.length - 1) {
+                                        message += " ";
+                                    }
+                                }
+                                /*
+                                 * Instruct the client specified by clientIndex to send the message
+                                 * to the proper paxos node
+                                 */
+                                port = CLIENT_PORT_BASE + clientIndex;
+                                String pmessage = String.format(MESSAGE, MASTER_TYPE, 0, CLIENT_TYPE, clientIndex, 
+                                        SEND_MESSAGE_TITLE, message);
+                                send (localhost, port, pmessage, MASTER_LOG_HEADER);
+                                break;
                 case "printChatLog":
-                    clientIndex = Integer.parseInt(inputLine[1]);
-                    assert (numClients > 0): "numClients not initialized.";
-                   assert (numNodes > 0): "numNodes not initialized";
-                       /*
-                        * Print out the client specified by clientIndex's chat history
-                        * in the format described on the handout.	     
-                        *
-                        * NOTE that the chat log should be printed by master
-                        */
-                       Thread collectChatLog = new Thread (new Runnable() {
-                           public void run () {
-                               try { while (true) {
-                                   Socket socket = listener.accept();
-                                   try { 
-                                       BufferedReader in = new BufferedReader(new
-                                           InputStreamReader(socket.getInputStream()));
-                                       String recMessage = in.readLine();
-                                       printReceivedMessage(recMessage, MASTER_LOG_HEADER);
-                                       String [] recInfo = recMessage.split(",");
-                                       if (recInfo[TITLE_IDX].equals(HERE_IS_CHAT_LOG_TITLE)) {
-                                           String chatLogs = recInfo[CONTENT_IDX];
-                                           // check if setup is complete
-                                           boolean isChatLogReceived = true;
-                                           // decode the content
-                                           String [] chatLogsPart = chatLogs.split(CHAT_PIECE_SEP);
-                                           for (int clIdx = 0; clIdx < chatLogsPart.length; clIdx ++) {
-                                               // print out the received chat log
-                                               System.out.println(chatLogsPart[clIdx]);
-                                           }
-                                           if (isChatLogReceived) {
-                                               break;
-                                           }
-                                       } else {
-                                           continue;
-                                       }
-                                   } finally { socket.close(); }
-                               }
-                               } catch (IOException e) {;} finally { ;}
-                           }
-                       });
-                       collectChatLog.start();
-                       // STEP TWO: send message to client asking for chat log
-                       port = CLIENT_PORT_BASE + clientIndex; 
-                       String tmp_message = String.format(MESSAGE, MASTER_TYPE,
-                               0, CLIENT_TYPE, clientIndex, PRINT_CHAT_LOG_TITLE, EMPTY_CONTENT);
-                       send (localhost, port, tmp_message, MASTER_LOG_HEADER);
-                       // STEP THREE: wait until the chat log is received
-                       collectChatLog.join();
-                       break;
+                                clientIndex = Integer.parseInt(inputLine[1]);
+                                assert (numClients > 0): "numClients not initialized.";
+                                    assert (numNodes > 0): "numNodes not initialized";
+                                        /*
+                                         * Print out the client specified by clientIndex's chat history
+                                         * in the format described on the handout.	     
+                                         *
+                                         * NOTE that the chat log should be printed by master
+                                         */
+                                        Thread collectChatLog = new Thread (new Runnable() {
+                                            public void run () {
+                                                try { while (true) {
+                                                    Socket socket = listener.accept();
+                                                    try { 
+                                                        BufferedReader in = new BufferedReader(new
+                                                            InputStreamReader(socket.getInputStream()));
+                                                        String recMessage = in.readLine();
+                                                        printReceivedMessage(recMessage, MASTER_LOG_HEADER);
+                                                        String [] recInfo = recMessage.split(",");
+                                                        if (recInfo[TITLE_IDX].equals(HERE_IS_CHAT_LOG_TITLE)) {
+                                                            String chatLogs = recInfo[CONTENT_IDX];
+                                                            // check if setup is complete
+                                                            boolean isChatLogReceived = true;
+                                                            // decode the content
+                                                            String [] chatLogsPart = chatLogs.split(CHAT_PIECE_SEP);
+                                                            for (int clIdx = 0; clIdx < chatLogsPart.length; clIdx ++) {
+                                                                // print out the received chat log
+                                                                System.out.println(chatLogsPart[clIdx]);
+                                                            }
+                                                            if (isChatLogReceived) {
+                                                                break;
+                                                            }
+                                                        } else {
+                                                            continue;
+                                                        }
+                                                    } finally { socket.close(); }
+                                                }
+                                                } catch (IOException e) {;} finally { ;}
+                                            }
+                                        });
+                                        collectChatLog.start();
+                                        // STEP TWO: send message to client asking for chat log
+                                        port = CLIENT_PORT_BASE + clientIndex; 
+                                        String tmp_message = String.format(MESSAGE, MASTER_TYPE,
+                                                0, CLIENT_TYPE, clientIndex, PRINT_CHAT_LOG_TITLE, EMPTY_CONTENT);
+                                        send (localhost, port, tmp_message, MASTER_LOG_HEADER);
+                                        // STEP THREE: wait until the chat log is received
+                                        collectChatLog.join();
+                                        break;
                 case "allClear":
-                       /*
-                        * Ensure that this blocks until all messages that are going to 
-                        * come to consensus in PAXOS do, and that all clients have heard
-                        * of them 
-                        *
-                        * NOTE: Our solution is to check whether all clients
-                        * receive all messages they sent.
-                        */
-                       // STEP ZERO: check the parameters
-                       assert (numClients > 0): "numClients not initialized.";
-                       assert (numNodes > 0): "numNodes not initialized";
-                       final Integer nClients1 = numClients;
+                                        /*
+                                         * Ensure that this blocks until all messages that are going to 
+                                         * come to consensus in PAXOS do, and that all clients have heard
+                                         * of them 
+                                         *
+                                         * NOTE: Our solution is to check whether all clients
+                                         * receive all messages they sent.
+                                         */
+                                        // STEP ZERO: check the parameters
+                                        assert (numClients > 0): "numClients not initialized.";
+                                            assert (numNodes > 0): "numNodes not initialized";
+                                                final Integer nClients1 = numClients;
 
-                       // STEP ONE: initialize an all false array saying no acks
-                       // received at first stage
-                       final ArrayList<Boolean> clientsCheckClear = new ArrayList<Boolean> ();
-                       for (clientIndex = 0; clientIndex < numClients; clientIndex ++) {
-                           clientsCheckClear.add(false);
-                       }
-                       // STEP TWO: start a new thread listenning to the ack
-                       Thread collectCheckClearAcks = new Thread (new Runnable() {
-                           public void run () {
-                               try {
-                                   while (true) {
-                                       Socket socket = listener.accept();
-                                       try { 
-                                           BufferedReader in = new BufferedReader(new
-                                               InputStreamReader(socket.getInputStream()));
-                                           String recMessage = in.readLine();
-                                           String [] recInfo = recMessage.split(",");
-                                           String title = recInfo[TITLE_IDX];
-                                           printReceivedMessage(recMessage, MASTER_LOG_HEADER);
-                                           if (title.equals(CHECK_CLEAR_ACK_TITLE)) {
-                                               String sender_type = recInfo[SENDER_TYPE_IDX];
-                                               if (sender_type.equals(CLIENT_TYPE)){
-                                                   int cindex = Integer.parseInt(recInfo[SENDER_INDEX_IDX]);
-                                                   clientsCheckClear.set(cindex, true);
-                                               }
-                                               // check if all clients have been clear about this
-                                               boolean isAllClear = true;
-                                               for (int cIdx = 0; cIdx < nClients1; cIdx ++) {
-                                                   if (!clientsCheckClear.get(cIdx)) {
-                                                       isAllClear = false; 
-                                                       break;
-                                                   }
-                                               }
-                                               // all clear, end up this thread
-                                               if (isAllClear) break;
-                                           } else {
-                                               continue;
-                                           }
-                                       } finally { socket.close(); }
-                                   }
-                               } catch (IOException e) {;} finally { ;}
-                           }
-                       });
-                       collectCheckClearAcks.start();
+                                                // STEP ONE: initialize an all false array saying no acks
+                                                // received at first stage
+                                                final ArrayList<Boolean> clientsCheckClear = new ArrayList<Boolean> ();
+                                                for (clientIndex = 0; clientIndex < numClients; clientIndex ++) {
+                                                    clientsCheckClear.add(false);
+                                                }
+                                                // STEP TWO: start a new thread listenning to the ack
+                                                Thread collectCheckClearAcks = new Thread (new Runnable() {
+                                                    public void run () {
+                                                        try {
+                                                            while (true) {
+                                                                Socket socket = listener.accept();
+                                                                try { 
+                                                                    BufferedReader in = new BufferedReader(new
+                                                                        InputStreamReader(socket.getInputStream()));
+                                                                    String recMessage = in.readLine();
+                                                                    String [] recInfo = recMessage.split(",");
+                                                                    String title = recInfo[TITLE_IDX];
+                                                                    printReceivedMessage(recMessage, MASTER_LOG_HEADER);
+                                                                    if (title.equals(CHECK_CLEAR_ACK_TITLE)) {
+                                                                        String sender_type = recInfo[SENDER_TYPE_IDX];
+                                                                        if (sender_type.equals(CLIENT_TYPE)){
+                                                                            int cindex = Integer.parseInt(recInfo[SENDER_INDEX_IDX]);
+                                                                            clientsCheckClear.set(cindex, true);
+                                                                        }
+                                                                        // check if all clients have been clear about this
+                                                                        boolean isAllClear = true;
+                                                                        for (int cIdx = 0; cIdx < nClients1; cIdx ++) {
+                                                                            if (!clientsCheckClear.get(cIdx)) {
+                                                                                isAllClear = false; 
+                                                                                break;
+                                                                            }
+                                                                        }
+                                                                        // all clear, end up this thread
+                                                                        if (isAllClear) break;
+                                                                    } else {
+                                                                        continue;
+                                                                    }
+                                                                } finally { socket.close(); }
+                                                            }
+                                                        } catch (IOException e) {;} finally { ;}
+                                                    }
+                                                });
+                                                collectCheckClearAcks.start();
 
-                       // STEP THREE: send all CHECK_CLEAR message to all clients
-                       for (clientIndex = 0; clientIndex < numClients; clientIndex ++) {
-                           port = CLIENT_PORT_BASE + clientIndex; 
-                           String checkClearMessage = String.format(MESSAGE, MASTER_TYPE,
-                                   0, CLIENT_TYPE, clientIndex, CHECK_CLEAR_TITLE, EMPTY_CONTENT);
-                           send (localhost, port, checkClearMessage, MASTER_LOG_HEADER);
-                       }
+                                                // STEP THREE: send all CHECK_CLEAR message to all clients
+                                                for (clientIndex = 0; clientIndex < numClients; clientIndex ++) {
+                                                    port = CLIENT_PORT_BASE + clientIndex; 
+                                                    String checkClearMessage = String.format(MESSAGE, MASTER_TYPE,
+                                                            0, CLIENT_TYPE, clientIndex, CHECK_CLEAR_TITLE, EMPTY_CONTENT);
+                                                    send (localhost, port, checkClearMessage, MASTER_LOG_HEADER);
+                                                }
 
-                       // STEP FOUR: Busy waits until receipt of all clients' ack
-                       collectCheckClearAcks.join();
-                       break;
+                                                // STEP FOUR: Busy waits until receipt of all clients' ack
+                                                collectCheckClearAcks.join();
+                                                break;
                 case "crashServer":
-                       nodeIndex = Integer.parseInt(inputLine[1]);
-                       /*
-                        * Immediately crash the server specified by nodeIndex
-                        */
-                       // ======================================================
-                       // We directly kill that process
-                       serverProcesses[nodeIndex].destroy();
-                       serverProcesses[nodeIndex] = null;
-                       // ======================================================
-                       break;
+                                                nodeIndex = Integer.parseInt(inputLine[1]);
+                                                /*
+                                                 * Immediately crash the server specified by nodeIndex
+                                                 */
+                                                // ======================================================
+                                                // We directly kill that process
+                                                serverProcesses[nodeIndex].destroy();
+                                                serverProcesses[nodeIndex] = null;
+                                                // ======================================================
+                                                break;
                 case "restartServer":
-                       nodeIndex = Integer.parseInt(inputLine[1]);
-                       /*
-                        * Restart the server specified by nodeIndex
-                        */
-                       assert(serverProcesses[nodeIndex] == null): "Do not restart an uncrashed server.";
-                           Integer serverID = new Integer(nodeIndex);
-                           String [] commandArray = new String [5];
-                           commandArray[0] = RUN_SERVER_CMD;
-                           commandArray[1] = serverID.toString();
+                                                nodeIndex = Integer.parseInt(inputLine[1]);
+                                                /*
+                                                 * Restart the server specified by nodeIndex
+                                                 */
+                                                assert(serverProcesses[nodeIndex] == null): "Do not restart an uncrashed server.";
+                                                    Integer serverID = new Integer(nodeIndex);
+                                                    String [] commandArray = new String [5];
+                                                    commandArray[0] = RUN_SERVER_CMD;
+                                                    commandArray[1] = serverID.toString();
                            commandArray[2] = Integer.toString(numNodes);
                            commandArray[3] = Integer.toString(numClients);
                            commandArray[4] = Integer.toString(1);   // for recovery

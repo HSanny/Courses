@@ -15,6 +15,7 @@
 import java.io.IOException;
 import java.net.Socket;
 import java.net.InetAddress;
+import java.net.ConnectException;
 import java.io.PrintWriter;
 
 class Util implements Protocol, Logging {
@@ -66,29 +67,42 @@ class Util implements Protocol, Logging {
     }
 
     /* Send util functions */
-    public static void send (InetAddress host, int port, String message, 
+    public static boolean send (InetAddress host, int port, String message, 
             String HEADER) throws IOException { 
         // set null header as empty string
         if (HEADER == null) HEADER = "";
-        // establish temporary socket connection
-        Socket socket = new Socket (host, port);
+        Socket socket;
+        try {
+            // establish temporary socket connection
+            socket = new Socket (host, port);
+        } catch (ConnectException e) {
+            return false;
+        }
         try {
             PrintWriter out =
                 new PrintWriter(socket.getOutputStream(), true);
             out.println(message);
             printSentMessage(message, HEADER);
+        } catch(Exception e) {
+            return false;
         } finally {
             socket.close();
         }
+        return true;
     }
 
     /* Send all messages */
-    public static void sendAll (InetAddress host, int port, String [] messages,
+    public static boolean sendAll (InetAddress host, int port, String [] messages,
             String HEADER) throws IOException {
         // set null header as empty string
         if (HEADER == null) HEADER = "";
+        Socket socket;
         // establish temporary socket connection
-        Socket socket = new Socket(host, port);
+        try {
+            socket = new Socket(host, port);
+        } catch (ConnectException e) {
+            return false;
+        }
         try {
             PrintWriter out =
                 new PrintWriter(socket.getOutputStream(), true);
@@ -96,8 +110,11 @@ class Util implements Protocol, Logging {
                 out.println(messages[i]);
                 printSentMessage(messages[i], HEADER);
             }
+        } catch(Exception e) {
+            return false;
         } finally {
             socket.close();
         }
+        return true;
     }
 }

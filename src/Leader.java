@@ -110,11 +110,11 @@ class Leader extends Util implements Runnable{
                     }
 
                     // if message is an adopted
-                } else if(title.equals(ADOPTED_TITLE)) {
+                } else if (title.equals(ADOPTED_TITLE)) {
                     int b = Integer.parseInt(contentParts[0]);
                     String[] pvals = contentParts[1].split(ACCEPTED_SEP);
                     // update proposals so far with highest ballots for each slot returned by the adopted message
-                    for(String newPval:pmax(pvals)) {
+                    for (String newPval:pmax(pvals)) {
                         // for each proposal in the pmax
                         String[] newPvalParts = newPval.split(PVALUE_SEP);
                         int newS = Integer.parseInt(newPvalParts[1]);
@@ -123,7 +123,7 @@ class Leader extends Util implements Runnable{
                         proposals.put(s,p);
                     }
                     // for all proposals so far
-                    for(int tmp_s: proposals.keySet()) {
+                    for (int tmp_s: proposals.keySet()) {
                         // spawn a Commander for that proposal
                         // spawn a Commander for this ballot
                         LinkedBlockingQueue<String> queueCommander = new LinkedBlockingQueue<String>();
@@ -135,11 +135,11 @@ class Leader extends Util implements Runnable{
                     // become Active
                     isActive = true; 
                     // if message is a preempted
-                } else if(title.equals(PREEMPTED_TITLE)) {
+                } else if (title.equals(PREEMPTED_TITLE)) {
                     // TODO: Why does the pseudocode show <r', L'> instead of b?
                     int b = Integer.parseInt(contentParts[0]); 
                     // if the ballot number in the message is greater than the current ballot number
-                    if(b > ballot_num) {
+                    if (b > ballot_num) {
                         // become Passive
                         isActive = false;
                         // update the ballot number

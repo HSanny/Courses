@@ -298,7 +298,28 @@ class Server extends Util { // a.k.a. Replica
                                 serverID, MASTER_TYPE, 0, LEADER_ACK_TITLE,
                                 EMPTY_CONTENT);
                         send (localhost, MASTER_PORT, ackLeader, logHeader);
-                    } 
+                    } else if (title.equals(SKIP_SLOT_TITLE)) {
+                        int amountToSkip = Integer.parseInt(content);
+                        System.out.println(slot_num);
+                        // STEP ONE: update the proposals
+                        for (int i = slot_num; i < slot_num + amountToSkip; i++) {
+                            assert(!proposals.containsKey(i));
+                            proposals.put(i, SKIPPED_MARKER);
+                        }
+                        // STEP TWO: update the decisions
+                        for (int i = slot_num; i < slot_num + amountToSkip; i++) {
+                            assert(!decisions.containsKey(i));
+                            decisions.put(i, SKIPPED_MARKER);
+                        }
+                        // STEP THREE: update the slot_num
+                        slot_num += amountToSkip;
+                        System.out.println(slot_num);
+                        // STEP FOUR: send ack message back to master
+                        String ackSkipSlot = String.format(MESSAGE,
+                                SERVER_TYPE, serverID, MASTER_TYPE, 0,
+                                SKIP_SLOT_ACK_TITLE, EMPTY_CONTENT);
+                        send (localhost, MASTER_PORT, ackSkipSlot, logHeader);
+                    }
                     // this message is only given by master
                     else if (title.equals(EXIT_TITLE) && sender_type.equals(MASTER_TYPE)) {
                         carryLeader = false;

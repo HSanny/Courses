@@ -33,6 +33,7 @@ interface Protocol {
     final static String SEND_MESSAGE_TITLE = "SENT_MESSAGE";
     final static String PRINT_CHAT_LOG_TITLE = "PRINT_CHAT_LOG";
     final static String SKIP_SLOT_TITLE = "SKIP_SLOT";
+    final static String SKIP_SLOT_ACK_TITLE = "SKIP_SLOT_ACK";
     final static String CHECK_CLEAR_TITLE = "CHECK_CLEAR";
     final static String CHECK_CLEAR_ACK_TITLE = "CHECK_CLEAR_ACK";
     final static String I_WANNA_RECOVER_TITLE = "I_WANNA_RECOVER";
@@ -78,6 +79,7 @@ interface Protocol {
     final static String RECOVERY_INFO_SEP = "</recov>";
     final static String CHAT_PIECE_SEP = "</chatsep>";
 
+    final static String SKIPPED_MARKER = "</skiped>";
 
     // message design
     final static int SENDER_TYPE_IDX = 0;

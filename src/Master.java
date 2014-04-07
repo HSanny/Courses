@@ -394,8 +394,8 @@ public class Master extends Util {
                      */
                     // ======================================================
                     // We directly kill that process
-                    serverProcesses[nodeIndex].destroy();
-                    serverProcesses[nodeIndex] = null;
+                    // serverProcesses[nodeIndex].destroy();
+                    // serverProcesses[nodeIndex] = null;
                     // ======================================================
                     break;
                 case "restartServer":
@@ -424,17 +424,63 @@ public class Master extends Util {
                     /*
                      * Instruct the leader to skip slots in the chat message sequence  
                      */ 
-                    // STEP ONE: check if all clients are clear
+                    // STEP ZERO: check if all clients are clear
                     checkAllClear(listener);
+                    // STEP ONE: create a thread and start to collect ack
+                    final ArrayList<Boolean> serversSkipSlotACK = new ArrayList<Boolean> ();
+                    for (nodeIndex = 0; nodeIndex < numNodes; nodeIndex ++) {
+                        serversSkipSlotACK.add(false);
+                    }
+                    final Integer nServers2 = numNodes;
+                    Thread collectSkipSlotsAcks = new Thread (new Runnable () {
+                        public void run () {
+                            try {
+                            while (true) {
+                            Socket socket = listener.accept();
+                            try { 
+                                BufferedReader in = new BufferedReader(new
+                                        InputStreamReader(socket.getInputStream()));
+                                String recMessage = in.readLine();
+                                printReceivedMessage(recMessage, MASTER_LOG_HEADER);
+                                String [] recInfo = recMessage.split(",");
+                                String title = recInfo[TITLE_IDX];
+                                String sender_type = recInfo[SENDER_TYPE_IDX];
+                                int sender_idx = Integer.parseInt(recInfo[SENDER_INDEX_IDX]);
+                                if (title.equals(SKIP_SLOT_ACK_TITLE)) {
+                                    if (sender_type.equals(SERVER_TYPE)) {
+                                        serversSkipSlotACK.set(sender_idx, true);
+                                    } 
+                                }
+                                // check if all acks come
+                                boolean isACKComplete = true;
+                                for (int sIdx = 0; sIdx < nServers2; sIdx ++) {
+                                    if (!serversSkipSlotACK.get(sIdx)) {
+                                        isACKComplete = false;
+                                        break;
+                                    }
+                                }
+                                if (isACKComplete) {
+                                    print("Skip Slots Completes.", MASTER_LOG_HEADER); 
+                                    break;
+                                } else {
+                                    continue;
+                                }
+                            } finally { socket.close(); }
+                            }
+                            } catch (IOException e) {;} finally { ;}
+                        }
+                    });
+                    collectSkipSlotsAcks.start();
                     // STEP TWO: send skipSlots instruction to all replicas
                     for (nodeIndex = 0; nodeIndex < numNodes; nodeIndex ++) {
-                        port = SERVER_PORT_BASE + leaderID;
+                        port = SERVER_PORT_BASE + nodeIndex;
                         String SkipSlotMessage = String.format(MESSAGE,
                                 MASTER_TYPE, 0, SERVER_TYPE, nodeIndex,
                                 SKIP_SLOT_TITLE, Integer.toString(amountToSkip));
                         send(localhost, port, SkipSlotMessage, MASTER_LOG_HEADER);
                     }
-                    // STEP THREE: 
+                    // STEP THREE: wait the collection thread to join
+                    collectSkipSlotsAcks.join();
                     break;
                 case "timeBombLeader":
                     int numMessages = Integer.parseInt(inputLine[1]);

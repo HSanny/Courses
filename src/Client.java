@@ -44,6 +44,7 @@ public class Client extends Util {
     /* Functional Field */
     static boolean needToCheckClear;
     static int leaderID;
+    static int max_paxosid;
 
     public static boolean check_clear () throws IOException {
         // STEP ONE: check if it is clear 
@@ -86,6 +87,7 @@ public class Client extends Util {
 
         // functional initialization
         needToCheckClear = false;
+        max_paxosid = -1;
 
         // derive localhost object
         localhost = InetAddress.getLocalHost();
@@ -136,6 +138,7 @@ public class Client extends Util {
                     String operation = responseParts[3];
                     // STEP TWO: put received response into local records
                     chatLog.put(paxosId, operation);
+                    if (paxosId > max_paxosid) max_paxosid = paxosId;
                     if (clientID == clientIndex) {
                         responseSet.add(cid);
                         // STEP THREE: check clear since there is a update 
@@ -145,13 +148,13 @@ public class Client extends Util {
                 } else if (title.equals(PRINT_CHAT_LOG_TITLE)) {
                     // print all local chat log
                     String allChatMessages = "";
-                    for (int paxosid = 0; ; paxosid ++) {
+                    for (int paxosid = 0; paxosid <= max_paxosid; paxosid ++) {
                         String message = chatLog.get(paxosid);
                         if (message != null) {
                             String outMessage = String.format
                                 (OUTPUT_MESSAGE, paxosid, clientID, message);
                             allChatMessages += outMessage + CHAT_PIECE_SEP;
-                        } else break;
+                        } 
                     }
                     if (allChatMessages.length() > 0) {
                         allChatMessages = allChatMessages.substring(0,

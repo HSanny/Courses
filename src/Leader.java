@@ -36,7 +36,7 @@ class Leader extends Util implements Runnable{
     private HashMap<Integer, LinkedBlockingQueue<String>> scoutQueues;
     private HashMap<String, LinkedBlockingQueue<String>> commanderQueues;
 
-    public Leader(LinkedBlockingQueue<String> queue, int id, int numServers,
+    public Leader (LinkedBlockingQueue<String> queue, int id, int numServers,
             InetAddress localhost) { 
         if(id == 0)
             isActive = true;
@@ -74,7 +74,7 @@ class Leader extends Util implements Runnable{
             String content = msgParts[CONTENT_IDX];
             String[] contentParts = content.split(CONTENT_SEP); 
             // if message is a p1b
-            if(title.equals(P1B_TITLE)) {
+            if (title.equals(P1B_TITLE)) {
                 try{
                     int tmp_b = Integer.parseInt(contentParts[1]);
                     scoutQueues.get(tmp_b).put(msg);
@@ -82,7 +82,7 @@ class Leader extends Util implements Runnable{
                     e.printStackTrace();
                 }
                 // if message is a p2b
-            } else if(title.equals(P2B_TITLE)) {
+            } else if (title.equals(P2B_TITLE)) {
                 try{
                     int tmp_b = Integer.parseInt(contentParts[1]);
                     int tmp_s = Integer.parseInt(contentParts[2]);
@@ -92,7 +92,7 @@ class Leader extends Util implements Runnable{
                     e.printStackTrace();
                 }
                 // if message is a propose
-            } else if(title.equals(PROPOSE_TITLE)) {
+            } else if (title.equals(PROPOSE_TITLE)) {
                 int s = Integer.parseInt(contentParts[0]);
                 String p = contentParts[1];
                 // if Leader hasn't proposed something for this slot already
@@ -105,6 +105,7 @@ class Leader extends Util implements Runnable{
                         // spawn a Commander for this ballot
                         LinkedBlockingQueue<String> queueCommander = new LinkedBlockingQueue<String>();
                         (new Thread(new Commander(queueCommander, numServers, numServers, String.format(PVALUE_CONTENT, ballot_num, s, p), localhost))).start(); 
+
                         commanderQueues.put(commanderID, queueCommander);
                     }
 

@@ -1,6 +1,28 @@
 #!/bin/bash
+logs="logs/"
+simpleTest_dir="simpleTest/"
+hardTest_dir="threeNodeGapTest/"
 if [ $1 -eq 1 ]; then
     cat tests/simpleTest.test | $(cat COMMAND)
 elif [ $1 -eq 2 ]; then
     cat tests/threeNodeGap.test | $(cat COMMAND)
+elif [ $1 -eq 3 ]; then
+    mkdir $logs$simpleTest_dir
+    for iteration in $(seq $2)
+    do 
+        outdir=$logs$simpleTest_dir$iteration
+        mkdir $outdir
+        cat tests/simpleTest.test | $(cat COMMAND) > $logs/Master.txt
+        mv $logs/*.txt $outdir/
+    done
+elif [ $1 -eq 4 ]; then
+    mkdir $logs$hardTest_dir
+    for iteration in $(seq $2)
+    do 
+        outdir=$logs$hardTest_dir$iteration
+        mkdir $outdir
+        cat tests/threeNodeGap.test | $(cat COMMAND) > $logs/Master.txt
+        mv $logs/*.txt $outdir/
+    done
 fi
+

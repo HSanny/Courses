@@ -37,7 +37,7 @@ public class Client extends Util {
 
     /* sequence number */
     static int cid; // client-local command sequence number
-    static ArrayList<HashMap<Integer, String>> chatLog;
+    static HashMap<Integer, String> chatLog;
     static HashSet<Integer> requestSet;
     static HashSet<Integer> responseSet;
 
@@ -70,14 +70,9 @@ public class Client extends Util {
         numClients = Integer.parseInt(args[2]);
 
         // initialize local chat log
-        chatLog = new ArrayList< HashMap<Integer, String> > (); 
+        chatLog = new HashMap<Integer, String> (); 
         requestSet = new HashSet<Integer> ();
         responseSet = new HashSet<Integer> ();
-        for (int clientIndex = 0; clientIndex < numClients; clientIndex ++) {
-            // chatlog for each client
-            // each hash map is mapped from paxos id to message content
-            chatLog.add(new HashMap<Integer, String> ());
-        }
 
         // configure the LOG setting
         logHeader = String.format(CLIENT_LOG_HEADER, clientID);
@@ -139,21 +134,21 @@ public class Client extends Util {
                     int paxosId = Integer.parseInt(responseParts[2]);
                     String operation = responseParts[3];
                     // STEP TWO: put received response into local records
-                    chatLog.get(clientIndex).put(paxosId, operation);
+                    chatLog.put(paxosId, operation);
                     if (clientID == clientIndex) {
                         responseSet.add(cid);
                         // STEP THREE: check clear since there is a update 
-                        needToCheckClear = !check_clear();
+                        if (needToCheckClear)
+                            needToCheckClear = !check_clear();
                     }
                 } else if (title.equals(PRINT_CHAT_LOG_TITLE)) {
                     // print all local chat log
-                    int clientIndex = clientID;
                     String allChatMessages = "";
                     for (int paxosid = 0; ; paxosid ++) {
-                        String message = chatLog.get(clientIndex).get(paxosid);
+                        String message = chatLog.get(paxosid);
                         if (message != null) {
                             String outMessage = String.format
-                                (OUTPUT_MESSAGE, paxosid, clientIndex, message);
+                                (OUTPUT_MESSAGE, paxosid, clientID, message);
                             allChatMessages += outMessage + CHAT_PIECE_SEP;
                         } else break;
                     }

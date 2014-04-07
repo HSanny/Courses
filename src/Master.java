@@ -417,13 +417,11 @@ public class Master extends Util {
                             * Instruct the leader to skip slots in the chat message sequence  
                             */ 
                            // TODO: convert to one-leader version
-                           for (nodeIndex = 0; nodeIndex < numNodes; nodeIndex++) {
-                               port = SERVER_PORT_BASE + nodeIndex;
-                               String SkipSlotMessage = String.format(MESSAGE,
-                                       MASTER_TYPE, 0, LEADER_TYPE, nodeIndex,
-                                       SKIP_SLOT_TITLE, Integer.toString(amountToSkip));
-                               send(localhost, port, SkipSlotMessage, MASTER_LOG_HEADER);
-                           }
+                           port = SERVER_PORT_BASE + leaderID;
+                           String SkipSlotMessage = String.format(MESSAGE,
+                                   MASTER_TYPE, 0, LEADER_TYPE, leaderID,
+                                   SKIP_SLOT_TITLE, Integer.toString(amountToSkip));
+                           send(localhost, port, SkipSlotMessage, MASTER_LOG_HEADER);
                            break;
                 case "timeBombLeader":
                     int numMessages = Integer.parseInt(inputLine[1]);

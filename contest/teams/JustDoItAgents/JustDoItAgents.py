@@ -91,9 +91,11 @@ class DiabloSlashAgentOne (CaptureAgent):
        #------------feature3: number of opponent food left----------#
        features['eatableFoodLeft'] = self.getFeatureThree(successor)
        #------------feature4: force the pacman not to take action "stop"---#
-       features['noStopOnTheOtherSide'] = self.getFeatureFour(successor,action)
+       features['noStop'] = self.getFeatureFour(successor,action)
        #------------feature5: penalize the ghost to go back on its own size---#
        features['goBackToOwnSide'] = self.getFeatureFive(successor)
+       #------------feature6: has walls-------------------------
+       features['hasWall'] = self.getFeatureSix(successor)
 
        return features
 
@@ -109,31 +111,48 @@ class DiabloSlashAgentOne (CaptureAgent):
        #------------feature3: number of opponent food left-------------#
        weights['eatableFoodLeft'] = self.getFeatureThreeWeight()
        #------------feature4: force the pacman not to take action "stop"---#
-       weights['noStopOnTheOtherSide'] = self.getFeatureFourWeight()
+       weights['noStop'] = self.getFeatureFourWeight()
        #------------feature5: penalize the ghost to go back on its own side---#
-       weights['goBackToOwnSide'] = 0#self.getFeatureFiveWeight()
+       weights['goBackToOwnSide'] = self.getFeatureFiveWeight()
+       #------------feature6: has walls----------------------------
+       weights['hasWall'] = self.getFeatureSixWeight()
 
        return weights
 
 
-   def getFeatureFiveWeight(self):
-       return 1.0 
+   #----------------------feature 6------------------------
+   def getFeatureSix(self, successor):
+       value = 0
+       (x,y) = successor.getAgentState(self.index).getPosition()
+       walls = []
+       walls.append(successor.hasWall(int(x+1),int(y)))
+       walls.append(successor.hasWall(int(x),int(y+1)))
+       walls.append(successor.hasWall(int(x-1),int(y)))
+       walls.append(successor.hasWall(int(x),int(y-1)))
+       for wall in walls:
+           if(wall): value = value + 1
+       if(value != 3): value = 0.0
+       return value
+
+   def getFeatureSixWeight(self):
+       return -5.0
+ 
    #----------------------feature 5------------------------
    def getFeatureFive(self,successor):
-       if(successor.getAgentState(self.index).isPacman): return 1.0
+       if(successor.getAgentState(self.index).isPacman): return -1.0
        return 0.0       
 
    def getFeatureFiveWeight(self):
-       return -1.0
+       return -10.0
  
    #----------------------feature 4------------------------
    def getFeatureFour(self,successor,action):
-       if(action == 'Stop' and successor.getAgentState(self.index).isPacman):
+       if(action == 'Stop'):
            return 1.0
        return 0.0
 
    def getFeatureFourWeight(self):
-       return -1000.0
+       return -100.0
    #----------------------feature 3-------------------------
    def getFeatureThree(self,successor):
        foodList = self.getFood(successor).asList()
@@ -221,8 +240,14 @@ class DiabloSlashAgentTwo (CaptureAgent):
        features['closestGhost'] = self.getFeatureZero(successor)
        #------------feature1: penalize reverse action-----#
        features['reverseAction'] = self.getFeatureOne(gameState, action)
-       #------------feature2: penalize stop when ghost is far away----#
-       features['stopWhenFar'] = self.getFeatureTwo(successor,action)
+       #------------feature2: on defense-----------------------------#
+       features['onDefense'] = self.getFeatureTwo(successor)
+       #------------feature3: eat ghost-------#
+       features['eatGhost'] = self.getFeatureThree(successor)
+       #------------feature4: has wall--------#
+       features['hasWalls'] = self.getFeatureFour(successor)
+       #------------feature5: food left---------#
+       features['foodLeft'] = self.getFeatureFive(successor)
 
        return features
 
@@ -233,21 +258,67 @@ class DiabloSlashAgentTwo (CaptureAgent):
        weights['closestGhost'] = self.getFeatureZeroWeight()
        #------------feature1: penalize reverse action-----#
        weights['reverseAction'] = self.getFeatureOneWeight()
-       #------------feature2: penalize stop when ghost is far away-----#
-       weights['stopWhenFar'] = self.getFeatureTwoWeight()
+       #------------feature2: onDefense-----#
+       weights['onDefense'] = self.getFeatureTwoWeight()
+       #------------feature3: eat ghost-----#
+       weights['eatGhost'] = self.getFeatureThreeWeight()
+       #------------feature4: has wall------#
+       weights['hasWalls'] = self.getFeatureFourWeight()
+       #------------feature5: food left-------#
+       weights['foodLeft'] = self.getFeatureFiveWeight()
 
        return weights
-
-   #----------------------feature 2--------------------------
-   def getFeatureTwo(self, successor, action):
-       if action == 'Stop':
+ 
+   #----------------------feature 5------------------------
+   def getFeatureFive(self,successor):
+       foodLeft = 0
+       foodList = []
+       if( successor.isOnRedTeam(self.index) ):
+           foodList = successor.getRedFood().asList()
+       else:
+           foodList = successor.getBlueFood().asList()
+       foodLeft = len(foodList)
+       if( foodLeft < 5 ):
            myPos = successor.getAgentState(self.index).getPosition()
-           opponentIndices = self.getOpponents(successor)
-           for opponentIndex in opponentIndices:
-               opponent = successor.getAgentState(opponentIndex)
-               ghostPos = opponent.getPosition()
-               if(ghostPos != None and self.getMazeDistance(myPos,ghostPos) == 1): return 0.0
-       return 1.0       
+           minDistance = min([self.getMazeDistance(myPos,food) for food in foodList])
+           return minDistance
+       return 0
+
+   def getFeatureFiveWeight(self):
+       return -100.0
+
+   #----------------------feature 4------------------------
+   def getFeatureFour(self, successor):
+       value = 0
+       (x,y) = successor.getAgentState(self.index).getPosition()
+       walls = []
+       walls.append(successor.hasWall(int(x+1),int(y)))
+       walls.append(successor.hasWall(int(x),int(y+1)))
+       walls.append(successor.hasWall(int(x-1),int(y)))
+       walls.append(successor.hasWall(int(x),int(y-1)))
+       for wall in walls:
+           if(wall): value = value + 1
+       if(value != 3): value = 0.0
+       return value
+
+   def getFeatureFourWeight(self):
+       return -5.0
+   #----------------------feature 3-------------------------
+   def getFeatureThree(self, successor):
+       value = 0
+       opponentIndices = self.getOpponents(successor)
+       for opponentIndex in opponentIndices:
+           opponent = successor.getAgentState(opponentIndex)
+           if (opponent.isPacman): value = value + 1
+       return value
+
+   def getFeatureThreeWeight(self):
+       return -1000
+
+   #----------------------feature 2-------------------------
+   def getFeatureTwo(self, successor):
+       if(successor.getAgentState(self.index).isPacman): return 1.0
+       else: return 0.0
 
    def getFeatureTwoWeight(self):
        return -100
@@ -271,9 +342,10 @@ class DiabloSlashAgentTwo (CaptureAgent):
        for opponentIndex in opponentIndices:
            opponent = successor.getAgentState(opponentIndex)
            ghostPos = opponent.getPosition()
+           distance = 10000
            if(ghostPos != None):
                distance = self.getMazeDistance(myPos,ghostPos)
-           else:
+           elif(opponent.isPacman):
                distance = abs(noisyDistances[opponentIndex])
 	   ghostDistance.append(distance)
        return min(ghostDistance)

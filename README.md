@@ -12,6 +12,8 @@ TO run the provide test, you can use
 
     ./RUN 1   - run the simple test
     ./RUN 2   - run the threenode test
+    ./RUN 3 times  - run the simple test for $times iterations
+    ./RUN 4 tiems  - run the threenode test for $times iterations
 
 To run the sample tests, replace test_name with the name of the test and execute the following command:
 
@@ -52,6 +54,13 @@ Protocol Design
 	CONTENT
 
 
+TODO
+----------------
+1. Crash instruction: kill a server and then re-elect a new leader if that server carries current leader.
+2. Recover instruction: test the correctness of recovery
+3. SkipSlot instruction: use empty maker to occupy that skipped slot. 
+4. timerBomb instruction: take care about the precise catogorization of paxos and non-paxos message.
+
 Problems
 ---------------
 
@@ -72,7 +81,6 @@ Sometimes there are Connection problems:
 5. Paxos sequence number == slot number. Since the spec needs it to be zero-indexed, just make the slot number zero-indexed, unlike the pseudocode. The function of cid is so that if a replica receives two "hello" messages from a single client, it knows whether that is a repeat message or actually two different messages. 
 
 6. Ballot numbers don't have to necessarily be globally unique; the problem we want to avoid is where two replicas each have a ballot with the same number but different proposals. We can solve this problem by saying, from the point of view of the acceptor, we accept the ballot which came from the server (or client) with the higher index. 
-
 
 
 

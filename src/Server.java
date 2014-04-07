@@ -253,7 +253,7 @@ class Server extends Util { // a.k.a. Replica
                         // check if exists a decision p' corresponds to
                         // current slot_num s
                         String pprime = null;
-                        if ((pprime = decisions.get(slot_num)) != null) {
+                        while ((pprime = decisions.get(slot_num)) != null) {
                             // STEP THREE: check if it has proposed another command
                             // p'' in current slot_num, repropose p'' with new s''
                             String pprimeprime = proposals.get(slot_num);

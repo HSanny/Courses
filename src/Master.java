@@ -27,15 +27,83 @@ public class Master extends Util {
     final static String RUN_CLIENT_CMD = "java -cp ./bin/ Client";
 
     static int leaderID;
+    static int numNodes = -1, numClients = -1; // initialize to invalid value
+
+    static InetAddress localhost;
+
+    public static void checkAllClear (final ServerSocket listener) throws IOException, InterruptedException {
+        // STEP ZERO: check the parameters
+        assert (numClients > 0): "numClients not initialized.";
+        assert (numNodes > 0): "numNodes not initialized";
+        final Integer nClients1 = numClients;
+        int clientIndex, nodeIndex;
+
+        // STEP ONE: initialize an all false array saying no acks
+        // received at first stage
+        final ArrayList<Boolean> clientsCheckClear = new ArrayList<Boolean> ();
+        for (clientIndex = 0; clientIndex < numClients; clientIndex ++) {
+            clientsCheckClear.add(false);
+        }
+        // STEP TWO: start a new thread listenning to the ack
+        Thread collectCheckClearAcks = new Thread (new Runnable() {
+            public void run () {
+                try {
+                    while (true) {
+                        Socket socket = listener.accept();
+                        try { 
+                            BufferedReader in = new BufferedReader(new
+                                InputStreamReader(socket.getInputStream()));
+                            String recMessage = in.readLine();
+                            String [] recInfo = recMessage.split(",");
+                            String title = recInfo[TITLE_IDX];
+                            printReceivedMessage(recMessage, MASTER_LOG_HEADER);
+                            if (title.equals(CHECK_CLEAR_ACK_TITLE)) {
+                                String sender_type = recInfo[SENDER_TYPE_IDX];
+                                if (sender_type.equals(CLIENT_TYPE)){
+                                    int cindex = Integer.parseInt(recInfo[SENDER_INDEX_IDX]);
+                                    clientsCheckClear.set(cindex, true);
+                                }
+                                // check if all clients have been clear about this
+                                boolean isAllClear = true;
+                                for (int cIdx = 0; cIdx < nClients1; cIdx ++) {
+                                    if (!clientsCheckClear.get(cIdx)) {
+                                        isAllClear = false; 
+                                        break;
+                                    }
+                                }
+                                // all clear, end up this thread
+                                if (isAllClear) break;
+                            } else {
+                                continue;
+                            }
+                        } finally { socket.close(); }
+                    }
+                } catch (IOException e) {;} finally { ;}
+            }
+        });
+        collectCheckClearAcks.start();
+
+        // STEP THREE: send all CHECK_CLEAR message to all clients
+        int port;
+        for (clientIndex = 0; clientIndex < numClients; clientIndex ++) {
+            port = CLIENT_PORT_BASE + clientIndex; 
+            String checkClearMessage = String.format(MESSAGE, MASTER_TYPE,
+                    0, CLIENT_TYPE, clientIndex, CHECK_CLEAR_TITLE, EMPTY_CONTENT);
+            send (localhost, port, checkClearMessage, MASTER_LOG_HEADER);
+        }
+
+        // STEP FOUR: Busy waits until receipt of all clients' ack
+        collectCheckClearAcks.join();
+        return ;
+    }
 
     public static void main(String [] args) throws IOException, InterruptedException {
         Scanner scan = new Scanner(System.in);
-        int numNodes = -1, numClients = -1; // initialize to invalid value
         int clientIndex, nodeIndex;
         Process [] serverProcesses = null;
         Process [] clientProcesses = null;
         // server socket of master
-        InetAddress localhost = InetAddress.getLocalHost();
+        localhost = InetAddress.getLocalHost();
         final ServerSocket listener = new ServerSocket(MASTER_PORT, 0,
                 localhost);
         listener.setReuseAddress(true);
@@ -235,7 +303,6 @@ public class Master extends Util {
                     // Wait for the leader response
                     CollectLeaderResponse.join();
 
-
                     // ============================================================
                     break;
                 case "sendMessage":
@@ -318,66 +385,7 @@ public class Master extends Util {
                      * NOTE: Our solution is to check whether all clients
                      * receive all messages they sent.
                      */
-                    // STEP ZERO: check the parameters
-                    assert (numClients > 0): "numClients not initialized.";
-                    assert (numNodes > 0): "numNodes not initialized";
-                    final Integer nClients1 = numClients;
-
-                    // STEP ONE: initialize an all false array saying no acks
-                    // received at first stage
-                    final ArrayList<Boolean> clientsCheckClear = new ArrayList<Boolean> ();
-                    for (clientIndex = 0; clientIndex < numClients; clientIndex ++) {
-                        clientsCheckClear.add(false);
-                    }
-                    // STEP TWO: start a new thread listenning to the ack
-                    Thread collectCheckClearAcks = new Thread (new Runnable() {
-                        public void run () {
-                            try {
-                                while (true) {
-                                    Socket socket = listener.accept();
-                                    try { 
-                                        BufferedReader in = new BufferedReader(new
-                                            InputStreamReader(socket.getInputStream()));
-                                        String recMessage = in.readLine();
-                                        String [] recInfo = recMessage.split(",");
-                                        String title = recInfo[TITLE_IDX];
-                                        printReceivedMessage(recMessage, MASTER_LOG_HEADER);
-                                        if (title.equals(CHECK_CLEAR_ACK_TITLE)) {
-                                            String sender_type = recInfo[SENDER_TYPE_IDX];
-                                            if (sender_type.equals(CLIENT_TYPE)){
-                                                int cindex = Integer.parseInt(recInfo[SENDER_INDEX_IDX]);
-                                                clientsCheckClear.set(cindex, true);
-                                            }
-                                            // check if all clients have been clear about this
-                                            boolean isAllClear = true;
-                                            for (int cIdx = 0; cIdx < nClients1; cIdx ++) {
-                                                if (!clientsCheckClear.get(cIdx)) {
-                                                    isAllClear = false; 
-                                                    break;
-                                                }
-                                            }
-                                            // all clear, end up this thread
-                                            if (isAllClear) break;
-                                        } else {
-                                            continue;
-                                        }
-                                    } finally { socket.close(); }
-                                }
-                            } catch (IOException e) {;} finally { ;}
-                        }
-                    });
-                    collectCheckClearAcks.start();
-
-                    // STEP THREE: send all CHECK_CLEAR message to all clients
-                    for (clientIndex = 0; clientIndex < numClients; clientIndex ++) {
-                        port = CLIENT_PORT_BASE + clientIndex; 
-                        String checkClearMessage = String.format(MESSAGE, MASTER_TYPE,
-                                0, CLIENT_TYPE, clientIndex, CHECK_CLEAR_TITLE, EMPTY_CONTENT);
-                        send (localhost, port, checkClearMessage, MASTER_LOG_HEADER);
-                    }
-
-                    // STEP FOUR: Busy waits until receipt of all clients' ack
-                    collectCheckClearAcks.join();
+                    checkAllClear(listener);
                     break;
                 case "crashServer":
                     nodeIndex = Integer.parseInt(inputLine[1]);
@@ -416,12 +424,17 @@ public class Master extends Util {
                     /*
                      * Instruct the leader to skip slots in the chat message sequence  
                      */ 
-                    // TODO: convert to one-leader version
-                    port = SERVER_PORT_BASE + leaderID;
-                    String SkipSlotMessage = String.format(MESSAGE,
-                            MASTER_TYPE, 0, LEADER_TYPE, leaderID,
-                            SKIP_SLOT_TITLE, Integer.toString(amountToSkip));
-                    send(localhost, port, SkipSlotMessage, MASTER_LOG_HEADER);
+                    // STEP ONE: check if all clients are clear
+                    checkAllClear(listener);
+                    // STEP TWO: send skipSlots instruction to all replicas
+                    for (nodeIndex = 0; nodeIndex < numNodes; nodeIndex ++) {
+                        port = SERVER_PORT_BASE + leaderID;
+                        String SkipSlotMessage = String.format(MESSAGE,
+                                MASTER_TYPE, 0, SERVER_TYPE, nodeIndex,
+                                SKIP_SLOT_TITLE, Integer.toString(amountToSkip));
+                        send(localhost, port, SkipSlotMessage, MASTER_LOG_HEADER);
+                    }
+                    // STEP THREE: 
                     break;
                 case "timeBombLeader":
                     int numMessages = Integer.parseInt(inputLine[1]);
@@ -434,6 +447,7 @@ public class Master extends Util {
             }
         }
         /* Ask all clients and server to terminate */
+        checkAllClear();
         if (clientProcesses != null) {
             for (clientIndex = 0; clientIndex < clientProcesses.length; clientIndex ++) {
                 if (clientProcesses[clientIndex] != null) {

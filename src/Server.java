@@ -298,7 +298,7 @@ class Server extends Util { // a.k.a. Replica
                                 serverID, MASTER_TYPE, 0, LEADER_ACK_TITLE,
                                 EMPTY_CONTENT);
                         send (localhost, MASTER_PORT, ackLeader, logHeader);
-                    }
+                    } 
                     // this message is only given by master
                     else if (title.equals(EXIT_TITLE) && sender_type.equals(MASTER_TYPE)) {
                         carryLeader = false;

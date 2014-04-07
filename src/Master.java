@@ -447,7 +447,7 @@ public class Master extends Util {
             }
         }
         /* Ask all clients and server to terminate */
-        checkAllClear();
+        checkAllClear(listener);
         if (clientProcesses != null) {
             for (clientIndex = 0; clientIndex < clientProcesses.length; clientIndex ++) {
                 if (clientProcesses[clientIndex] != null) {

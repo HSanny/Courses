@@ -53,6 +53,7 @@ public class Client extends Util {
             if (!responseSet.contains(cid)) {
                 isClear = false;
             }
+            // System.out.println(cid);
         }
         // STEP TWO: send CHECK_CLEAR_ACK to Master
         if (isClear) {
@@ -125,7 +126,7 @@ public class Client extends Util {
                     port = SERVER_PORT_BASE + leaderID;
                     send (localhost, port, request, logHeader);
                     // add that message to send history
-                    requestSet.add(cid);
+                    requestSet.add(cid++);
                 } else if (title.equals(RESPONSE_TITLE)) {
                     // STEP ONE: decode the pvalue
                     String [] responseParts = content.split(CONTENT_SEP);

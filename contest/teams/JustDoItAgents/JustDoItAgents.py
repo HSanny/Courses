@@ -18,7 +18,7 @@ import random, time, util
 from captureAgents import CaptureAgent
 from captureAgents import AgentFactory
 from util import nearestPoint
-from baselineAgents import DefensiveReflexAgent
+from game import Directions
 
 class JustDoItAgents (AgentFactory):
   def __init__(self, isRed, first='offense', second='defense', rest='offense'):
@@ -115,6 +115,7 @@ class DiabloSlashAgentOne (CaptureAgent):
 
        return weights
 
+
    def getFeatureFiveWeight(self):
        return 1.0 
    #----------------------feature 5------------------------
@@ -158,7 +159,7 @@ class DiabloSlashAgentOne (CaptureAgent):
                    ghostDistance.append(abs(noisyDistances[opponentIndex]))
        #reward the state there isn't any ghosts
        if(len(ghostDistance) == 0): return 1000.0
-       return min(ghostDistance)+1
+       return min(ghostDistance)
 
    def getFeatureTwoWeight(self):
        return 10.0
@@ -179,13 +180,103 @@ class DiabloSlashAgentOne (CaptureAgent):
 
    def getFeatureOneWeight(self):
        return -1.5
-   
-   #----------------------feature 2-------------------------------
 
 
 #------------------------end---------------------------------------------------
 
 
-class DiabloSlashAgentTwo (DefensiveReflexAgent):
-    def __init__(self, index):
-        CaptureAgent.__init__(self, index)
+class DiabloSlashAgentTwo (CaptureAgent):
+   def __init__(self, index):
+       CaptureAgent.__init__(self, index)
+	
+   def chooseAction(self,gameState):
+       actions = gameState.getLegalActions(self.index)
+       values = [self.evaluate(gameState, a) for a in actions]
+       maxValue = max(values)
+       bestActions = [a for a, v in zip(actions, values) if v == maxValue]
+       return random.choice(bestActions)
+	
+   def evaluate(self, gameState, action):
+       features = self.getFeatures(gameState, action)
+       weights = self.getWeights(gameState, action)
+       return features * weights
+
+   def getSuccessor(self, gameState, action):
+       successor = gameState.generateSuccessor(self.index, action)
+       pos = successor.getAgentState(self.index).getPosition()
+       if pos != nearestPoint(pos):
+           return successor.generateSuccessor(self.index, action)
+       else:
+           return successor
+
+#---------------need to find some ways to compute features and weights-----
+#--------add more features and change weights as you go......
+#---------don't try to do dynamic update weights yet, find as much features as you can-------
+
+   def getFeatures(self, gameState, action):
+       features = util.Counter()
+       successor = self.getSuccessor(gameState, action)
+
+       #------------feature0: closest ghost---------------#
+       features['closestGhost'] = self.getFeatureZero(successor)
+       #------------feature1: penalize reverse action-----#
+       features['reverseAction'] = self.getFeatureOne(gameState, action)
+       #------------feature2: penalize stop when ghost is far away----#
+       features['stopWhenFar'] = self.getFeatureTwo(successor,action)
+
+       return features
+
+   def getWeights(self, gameState, action):
+       weights = util.Counter()
+
+       #------------feature0: closest ghost---------------#
+       weights['closestGhost'] = self.getFeatureZeroWeight()
+       #------------feature1: penalize reverse action-----#
+       weights['reverseAction'] = self.getFeatureOneWeight()
+       #------------feature2: penalize stop when ghost is far away-----#
+       weights['stopWhenFar'] = self.getFeatureTwoWeight()
+
+       return weights
+
+   #----------------------feature 2--------------------------
+   def getFeatureTwo(self, successor, action):
+       if action == 'Stop':
+           myPos = successor.getAgentState(self.index).getPosition()
+           opponentIndices = self.getOpponents(successor)
+           for opponentIndex in opponentIndices:
+               opponent = successor.getAgentState(opponentIndex)
+               ghostPos = opponent.getPosition()
+               if(ghostPos != None and self.getMazeDistance(myPos,ghostPos) == 1): return 0.0
+       return 1.0       
+
+   def getFeatureTwoWeight(self):
+       return -100
+
+   #----------------------feature 1--------------------------
+   def getFeatureOne(self, gameState, action):
+       rev = Directions.REVERSE[gameState.getAgentState(self.index).configuration.direction]
+       if action == rev: return 1
+       return 0
+
+   def getFeatureOneWeight(self):
+       return -5.0
+
+   #----------------------feature 0--------------------------
+   def getFeatureZero(self, successor):
+       selfAgent = successor.getAgentState(self.index)
+       myPos = selfAgent.getPosition()
+       ghostDistance = []
+       opponentIndices = self.getOpponents(successor)
+       noisyDistances = successor.getAgentDistances()
+       for opponentIndex in opponentIndices:
+           opponent = successor.getAgentState(opponentIndex)
+           ghostPos = opponent.getPosition()
+           if(ghostPos != None):
+               distance = self.getMazeDistance(myPos,ghostPos)
+           else:
+               distance = abs(noisyDistances[opponentIndex])
+	   ghostDistance.append(distance)
+       return min(ghostDistance)
+
+   def getFeatureZeroWeight(self):
+       return -10.0

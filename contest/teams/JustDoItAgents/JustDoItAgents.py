@@ -45,7 +45,7 @@ class JustDoItAgents (AgentFactory):
       elif agentStr == 'offense':
           return DiabloSlashAgentOne(index)
       elif agentStr == 'defense':
-          return DefensiveReflexAgent(index)#DiabloSlashAgentTwo(index)
+          return DiabloSlashAgentTwo(index)
       else:
           raise Exception("No staff agent identified by " + agentStr)
 
@@ -92,6 +92,8 @@ class DiabloSlashAgentOne (CaptureAgent):
        features['eatableFoodLeft'] = self.getFeatureThree(successor)
        #------------feature4: force the pacman not to take action "stop"---#
        features['noStopOnTheOtherSide'] = self.getFeatureFour(successor,action)
+       #------------feature5: penalize the ghost to go back on its own size---#
+       features['goBackToOwnSide'] = self.getFeatureFive(successor)
 
        return features
 
@@ -105,12 +107,24 @@ class DiabloSlashAgentOne (CaptureAgent):
        #------------feature2: closest ghost---------------#
        weights['closestGhost'] = self.getFeatureTwoWeight()
        #------------feature3: number of opponent food left-------------#
-       weights['eatableFoodLeft'] = 0#self.getFeatureThreeWeight()
+       weights['eatableFoodLeft'] = self.getFeatureThreeWeight()
        #------------feature4: force the pacman not to take action "stop"---#
-       weights['noStopOnTheOtherSide'] = 0#self.getFeatureFourWeight()
+       weights['noStopOnTheOtherSide'] = self.getFeatureFourWeight()
+       #------------feature5: penalize the ghost to go back on its own side---#
+       weights['goBackToOwnSide'] = 0#self.getFeatureFiveWeight()
 
        return weights
-  
+
+   def getFeatureFiveWeight(self):
+       return 1.0 
+   #----------------------feature 5------------------------
+   def getFeatureFive(self,successor):
+       if(successor.getAgentState(self.index).isPacman): return 1.0
+       return 0.0       
+
+   def getFeatureFiveWeight(self):
+       return -1.0
+ 
    #----------------------feature 4------------------------
    def getFeatureFour(self,successor,action):
        if(action == 'Stop' and successor.getAgentState(self.index).isPacman):
@@ -125,26 +139,26 @@ class DiabloSlashAgentOne (CaptureAgent):
        return len(foodList)
 
    def getFeatureThreeWeight(self):
-       return -5.0
+       return -10.0
 
    #----------------------feature 2--------------------------
    def getFeatureTwo(self, successor):
-       # use successor.getAgentDistances(), and successor.getDistanceProb(trueDistance, noisyDistance) for approximate distance
-       ghosts = []
-       hasExact = False
-       ghostDistance = 7
-       myPos = successor.getAgentState(self.index).getPosition()
-       #-------------------Exact positions-------------------
-       indices = self.getOpponents(successor)
-       for index in indices:
-           opponent = successor.getAgentState(index)
+       selfAgent = successor.getAgentState(self.index)
+       myPos = selfAgent.getPosition()
+       ghostDistance = []
+       opponentIndices = self.getOpponents(successor)
+       noisyDistances = successor.getAgentDistances()
+       for opponentIndex in opponentIndices:
+           opponent = successor.getAgentState(opponentIndex)
            ghostPos = opponent.getPosition()
-           if(ghostPos != None and not opponent.isPacman):
-               hasExact = True
-               ghostDistance = max(self.getMazeDistance(myPos,ghostPos),ghostDistance)
-       #------------------if exact positions are not available 
-       if(not hasExact):pass
-       return ghostDistance
+           if(not opponent.isPacman and opponent.scaredTimer == 0):
+               if(ghostPos != None):
+                   ghostDistance.append(self.getMazeDistance(myPos,ghostPos))
+               else:
+                   ghostDistance.append(abs(noisyDistances[opponentIndex]))
+       #reward the state there isn't any ghosts
+       if(len(ghostDistance) == 0): return 1000.0
+       return min(ghostDistance)+1
 
    def getFeatureTwoWeight(self):
        return 10.0
@@ -172,9 +186,6 @@ class DiabloSlashAgentOne (CaptureAgent):
 #------------------------end---------------------------------------------------
 
 
-class DiabloSlashAgentTwo ():
+class DiabloSlashAgentTwo (DefensiveReflexAgent):
     def __init__(self, index):
         CaptureAgent.__init__(self, index)
-
-    def chooseAction(self,gameState):
-	return 'Stop'

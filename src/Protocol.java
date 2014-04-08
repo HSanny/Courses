@@ -95,4 +95,8 @@ interface Protocol {
     final static String MASTER_TYPE = "MASTER";
     final static String LEADER_TYPE = "LEADER";
     final static String ACCEPTOR_TYPE = "ACCEPTOR";
+
+    // heartbeat constant
+    final static int HB_INTERVAL = 1;
+    final static int HB_TIMEOUT = 3;
 }

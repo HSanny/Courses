@@ -42,6 +42,7 @@ class Server extends Util { // a.k.a. Replica
     static HashMap<Integer, String> proposals;
     static HashMap<Integer, String> decisions;
 
+    static boolean electionInProgress;
     static boolean isRecoveryInProgress;
     static boolean carryLeader;
     static int leaderID;
@@ -80,7 +81,9 @@ class Server extends Util { // a.k.a. Replica
                 SERVER_TYPE, serverID, LEADER_TYPE,
                 leaderID, PROPOSE_TITLE, spArgs);
         int port = SERVER_PORT_BASE + leaderID;
-        send (localhost, port, proposeMessage, logHeader);
+        boolean success = send(localhost, port, proposeMessage, logHeader) == false;
+        if(!success)
+            Thread.currentThread().interrupt(); 
         return true;
     }
 
@@ -130,6 +133,7 @@ class Server extends Util { // a.k.a. Replica
         slot_num = 0;
         proposals = new HashMap<Integer, String> ();
         decisions = new HashMap<Integer, String> ();
+        electionInProgress = false;
         isRecoveryInProgress = false;
         carryLeader = true;
         leaderID = -1;
@@ -226,6 +230,7 @@ class Server extends Util { // a.k.a. Replica
                     int receiver_idx = Integer.parseInt(recInfo[RECEIVER_INDEX_IDX]);
                     String title = recInfo[TITLE_IDX];
                     String content = recInfo[CONTENT_IDX];
+
                     // Check if message is propose, p1b, p2b, adopted, or preempted
                     // If so, add to Leader queue
                     if (receiver_type.equals(LEADER_TYPE)) {
@@ -329,17 +334,23 @@ class Server extends Util { // a.k.a. Replica
                         print("Exit.", logHeader);
                         System.exit(0);
                     }
-                } catch (InterruptedException e) {
-                    // Leader interrupts when it exits, signalling a crash
-                    socket.close();
-                    listener.close();
-                    print("Crashing.", logHeader);
-                    System.exit(0);
                 } finally {
                     socket.close();
                 }
             }
-        }  finally {
+        } catch (InterruptedException ie) {
+            if(ie.getMessage().equals("timeBomb")) {
+                // Leader interrupts when it exits, signalling a crash
+                listener.close();
+                print("Crashing.", logHeader);
+                System.exit(0);
+            } else if(ie.getMessage().equals("leaderFailure")) {
+                electionInProgress = true;
+                // TODO: Propose self as leader
+            } else {
+                e.printStackTrace();
+            }
+        } finally {
             listener.close();
         }
     }

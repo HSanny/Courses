@@ -271,32 +271,34 @@ class Server extends Util { // a.k.a. Replica
                 } else if (title.equals(I_WANNA_RECOVER_TITLE)) {
                     assert (sender_type.equals(SERVER_TYPE)):
                         "Recover Request should come from server.";
-                            assert (sender_idx != serverID): "Cannot recover from itself.";
-                                String recoverInfo = "";
-                                // STEP ONE: encode slot_num
-                                recoverInfo += Integer.toString(slot_num);
-                                recoverInfo += RECOVERY_INFO_SEP;
-                                // STEP TWO: encode decisions
-                                for (int sn: decisions.keySet()) {
-                                    recoverInfo += Integer.toString(sn) + MAP_SEP
-                                        + decisions.get(sn) + DECISION_SEP;
-                                }
-                                if (decisions.size() > 0) {
-                                    recoverInfo = recoverInfo.substring(0,
-                                            recoverInfo.length()-DECISION_SEP.length());
-                                }
-                                // STEP THREE: send message back
-                                String recoverMsg = String.format(MESSAGE, SERVER_TYPE,
-                                        serverID, SERVER_TYPE, sender_idx,
-                                        HELP_YOU_RECOVER_TITLE, recoverInfo);
-                                port = SERVER_PORT_BASE + sender_idx;
-                                send (localhost, port, recoverMsg, logHeader);
+                    assert (sender_idx != serverID): "Cannot recover from itself.";
+                    String recoverInfo = "";
+                    // STEP ONE: encode slot_num
+                    recoverInfo += Integer.toString(slot_num);
+                    recoverInfo += RECOVERY_INFO_SEP;
+                    // STEP TWO: encode decisions
+                    for (int sn: decisions.keySet()) {
+                        recoverInfo += Integer.toString(sn) + MAP_SEP
+                            + decisions.get(sn) + DECISION_SEP;
+                    }
+                    if (decisions.size() > 0) {
+                        recoverInfo = recoverInfo.substring(0,
+                                recoverInfo.length()-DECISION_SEP.length());
+                    }
+                    // STEP THREE: send message back
+                    String recoverMsg = String.format(MESSAGE, SERVER_TYPE,
+                            serverID, SERVER_TYPE, sender_idx,
+                            HELP_YOU_RECOVER_TITLE, recoverInfo);
+                    port = SERVER_PORT_BASE + sender_idx;
+                    send (localhost, port, recoverMsg, logHeader);
                 } else if (title.equals(LEADER_REQUEST_TITLE)) {
                     leaderID = Integer.parseInt(content);
                     if (leaderID == serverID) {
                         carryLeader = true;
                         queueLeader = new LinkedBlockingQueue<String> ();
-                        leader = new Thread(new Leader(queueLeader, serverID, numServers, localhost, Thread.currentThread())); 
+                        leader = new Thread(new Leader(queueLeader, serverID,
+                                    numServers, localhost,
+                                    Thread.currentThread())); 
                         leader.start();
                     }
                     String ackLeader = String.format(MESSAGE, SERVER_TYPE,
@@ -327,6 +329,14 @@ class Server extends Util { // a.k.a. Replica
                     // Pass the time bomb message to Leader
                     queueLeader.put(recMessage); 
                     // this message is only given by master
+                } else if (title.equals(LEADER_PROPOSAL_TITLE)) {
+                    if (sender_idx < serverID) {
+                        // Accept this proposal
+                        
+                    } else {
+                        // ignore, and propose it self if not propsed yet
+
+                    }
                 } else if (title.equals(EXIT_TITLE) && sender_type.equals(MASTER_TYPE)) {
                     carryLeader = false;
                     socket.close();

@@ -78,7 +78,6 @@ TODO
     
 
 2. timerBomb instruction: take care about the precise catogorization of paxos and non-paxos message.
-3. Fix Client chatlog clientID problem
 4. Write tests for recover and crash
 
 Problems

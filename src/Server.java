@@ -230,146 +230,156 @@ class Server extends Util { // a.k.a. Replica
             NeedRecovery = false;
         }
 
-        try {
-            while (true) {
-                Socket socket = listener.accept();
-                try {
-                    BufferedReader in = new BufferedReader(new
-                            InputStreamReader(socket.getInputStream()));
-                    // channel is established
-                    String recMessage = in.readLine();
-                    String [] recInfo = recMessage.split(",");
-                    int port;
+        Socket socket = null;
+        while (true) {
+            try {
+                socket = listener.accept();
+                BufferedReader in = new BufferedReader(new
+                        InputStreamReader(socket.getInputStream()));
+                // channel is established
+                String recMessage = in.readLine();
+                String [] recInfo = recMessage.split(",");
+                int port;
 
-                    // Decode the incoming message
-                    String sender_type = recInfo[SENDER_TYPE_IDX];
-                    int sender_idx = Integer.parseInt(recInfo[SENDER_INDEX_IDX]);
-                    String receiver_type = recInfo[RECEIVER_TYPE_IDX];
-                    int receiver_idx = Integer.parseInt(recInfo[RECEIVER_INDEX_IDX]);
-                    String title = recInfo[TITLE_IDX];
-                    String content = recInfo[CONTENT_IDX];
+                // Decode the incoming message
+                String sender_type = recInfo[SENDER_TYPE_IDX];
+                int sender_idx = Integer.parseInt(recInfo[SENDER_INDEX_IDX]);
+                String receiver_type = recInfo[RECEIVER_TYPE_IDX];
+                int receiver_idx = Integer.parseInt(recInfo[RECEIVER_INDEX_IDX]);
+                String title = recInfo[TITLE_IDX];
+                String content = recInfo[CONTENT_IDX];
 
-                    // Check if message is propose, p1b, p2b, adopted, or preempted
-                    // If so, add to Leader queue
-                    if (receiver_type.equals(LEADER_TYPE)) {
-                        queueLeader.put(recMessage);
-                        continue;
-                    }
-                    // Check if message is p1a or p2a
-                    // If so, add to Acceptor queue
-                    if (receiver_type.equals(ACCEPTOR_TYPE)) {
-                        queueAcceptor.put(recMessage);
-                        continue;
-                    }
-                    printReceivedMessage(recMessage, logHeader);
-                    // Check if message is request
-                    if (title.equals(REQUEST_TITLE)) {
-                        propose (content);
-                    } else if (title.equals(DECISION_TITLE)) {
-                        // STEP ZERO: decode the content
-                        String [] conts = content.split (CONTENT_SEP);
-                        int s = Integer.parseInt(conts[0]);
-                        String p = conts[1];
-                        // STEP ONE: add decision message to decisions
-                        decisions.put(s, p);
-                        // STEP TWO: find ready decision to be executed
-                        // check if exists a decision p' corresponds to
-                        // current slot_num s
-                        String pprime = null;
-                        while ((pprime = decisions.get(slot_num)) != null) {
-                            // STEP THREE: check if it has proposed another command
-                            // p'' in current slot_num, repropose p'' with new s''
-                            String pprimeprime = proposals.get(slot_num);
-                            if (!pprime.equals(pprimeprime) && pprimeprime != null) {
-                                propose (pprimeprime);
-                            }
-                            // STEP FOUR: invoke perform
-                            perform(pprime);
-                        }
-                    } else if (title.equals(I_WANNA_RECOVER_TITLE)) {
-                        assert (sender_type.equals(SERVER_TYPE)):
-                            "Recover Request should come from server.";
-                        assert (sender_idx != serverID): "Cannot recover from itself.";
-                        String recoverInfo = "";
-                        // STEP ONE: encode slot_num
-                        recoverInfo += Integer.toString(slot_num);
-                        recoverInfo += RECOVERY_INFO_SEP;
-                        // STEP TWO: encode decisions
-                        for (int sn: decisions.keySet()) {
-                            recoverInfo += Integer.toString(sn) + MAP_SEP
-                                + decisions.get(sn) + DECISION_SEP;
-                        }
-                        if (decisions.size() > 0) {
-                            recoverInfo = recoverInfo.substring(0,
-                                    recoverInfo.length()-DECISION_SEP.length());
-                        }
-                        // STEP THREE: send message back
-                        String recoverMsg = String.format(MESSAGE, SERVER_TYPE,
-                           serverID, SERVER_TYPE, sender_idx,
-                           HELP_YOU_RECOVER_TITLE, recoverInfo);
-                        port = SERVER_PORT_BASE + sender_idx;
-                        send (localhost, port, recoverMsg, logHeader);
-                    } else if (title.equals(LEADER_REQUEST_TITLE)) {
-                        leaderID = Integer.parseInt(content);
-                        if (leaderID == serverID) {
-                            carryLeader = true;
-                            queueLeader = new LinkedBlockingQueue<String> ();
-                            leader = new Thread(new Leader(queueLeader, serverID, numServers, localhost, Thread.currentThread())); 
-                            leader.start();
-                        }
-                        String ackLeader = String.format(MESSAGE, SERVER_TYPE,
-                                serverID, MASTER_TYPE, 0, LEADER_ACK_TITLE,
-                                EMPTY_CONTENT);
-                        send (localhost, MASTER_PORT, ackLeader, logHeader);
-                    } else if (title.equals(SKIP_SLOT_TITLE)) {
-                        int amountToSkip = Integer.parseInt(content);
-                        // STEP ONE: update the proposals
-                        for (int i = slot_num; i < slot_num + amountToSkip; i++) {
-                            assert(!proposals.containsKey(i));
-                            proposals.put(i, SKIPPED_MARKER);
-                        }
-                        // STEP TWO: update the decisions
-                        for (int i = slot_num; i < slot_num + amountToSkip; i++) {
-                            assert(!decisions.containsKey(i));
-                            decisions.put(i, SKIPPED_MARKER);
-                        }
-                        // STEP THREE: update the slot_num
-                        slot_num += amountToSkip;
-                        // STEP FOUR: send ack message back to master
-                        String ackSkipSlot = String.format(MESSAGE,
-                                SERVER_TYPE, serverID, MASTER_TYPE, 0,
-                                SKIP_SLOT_ACK_TITLE, EMPTY_CONTENT);
-                        send (localhost, MASTER_PORT, ackSkipSlot, logHeader);
-                    } else if (title.equals(TIME_BOMB_TITLE)) {
-                        int numMessages = Integer.parseInt(content);
-                        // Pass the time bomb message to Leader
-                        queueLeader.put(recMessage); 
-                    // this message is only given by master
-                    } else if (title.equals(EXIT_TITLE) && sender_type.equals(MASTER_TYPE)) {
-                        carryLeader = false;
-                        socket.close();
-                        listener.close();
-                        print("Exit.", logHeader);
-                        System.exit(0);
-                    }
-                } finally {
-                    socket.close();
+                // Check if message is propose, p1b, p2b, adopted, or preempted
+                // If so, add to Leader queue
+                if (receiver_type.equals(LEADER_TYPE)) {
+                    queueLeader.put(recMessage);
+                    continue;
                 }
+                // Check if message is p1a or p2a
+                // If so, add to Acceptor queue
+                if (receiver_type.equals(ACCEPTOR_TYPE)) {
+                    queueAcceptor.put(recMessage);
+                    continue;
+                }
+                printReceivedMessage(recMessage, logHeader);
+                // Check if message is request
+                if (title.equals(REQUEST_TITLE)) {
+                    propose (content);
+                } else if (title.equals(DECISION_TITLE)) {
+                    // STEP ZERO: decode the content
+                    String [] conts = content.split (CONTENT_SEP);
+                    int s = Integer.parseInt(conts[0]);
+                    String p = conts[1];
+                    // STEP ONE: add decision message to decisions
+                    decisions.put(s, p);
+                    // STEP TWO: find ready decision to be executed
+                    // check if exists a decision p' corresponds to
+                    // current slot_num s
+                    String pprime = null;
+                    while ((pprime = decisions.get(slot_num)) != null) {
+                        // STEP THREE: check if it has proposed another command
+                        // p'' in current slot_num, repropose p'' with new s''
+                        String pprimeprime = proposals.get(slot_num);
+                        if (!pprime.equals(pprimeprime) && pprimeprime != null) {
+                            propose (pprimeprime);
+                        }
+                        // STEP FOUR: invoke perform
+                        perform(pprime);
+                    }
+                } else if (title.equals(I_WANNA_RECOVER_TITLE)) {
+                    assert (sender_type.equals(SERVER_TYPE)):
+                        "Recover Request should come from server.";
+                            assert (sender_idx != serverID): "Cannot recover from itself.";
+                                String recoverInfo = "";
+                                // STEP ONE: encode slot_num
+                                recoverInfo += Integer.toString(slot_num);
+                                recoverInfo += RECOVERY_INFO_SEP;
+                                // STEP TWO: encode decisions
+                                for (int sn: decisions.keySet()) {
+                                    recoverInfo += Integer.toString(sn) + MAP_SEP
+                                        + decisions.get(sn) + DECISION_SEP;
+                                }
+                                if (decisions.size() > 0) {
+                                    recoverInfo = recoverInfo.substring(0,
+                                            recoverInfo.length()-DECISION_SEP.length());
+                                }
+                                // STEP THREE: send message back
+                                String recoverMsg = String.format(MESSAGE, SERVER_TYPE,
+                                        serverID, SERVER_TYPE, sender_idx,
+                                        HELP_YOU_RECOVER_TITLE, recoverInfo);
+                                port = SERVER_PORT_BASE + sender_idx;
+                                send (localhost, port, recoverMsg, logHeader);
+                } else if (title.equals(LEADER_REQUEST_TITLE)) {
+                    leaderID = Integer.parseInt(content);
+                    if (leaderID == serverID) {
+                        carryLeader = true;
+                        queueLeader = new LinkedBlockingQueue<String> ();
+                        leader = new Thread(new Leader(queueLeader, serverID, numServers, localhost, Thread.currentThread())); 
+                        leader.start();
+                    }
+                    String ackLeader = String.format(MESSAGE, SERVER_TYPE,
+                            serverID, MASTER_TYPE, 0, LEADER_ACK_TITLE,
+                            EMPTY_CONTENT);
+                    send (localhost, MASTER_PORT, ackLeader, logHeader);
+                } else if (title.equals(SKIP_SLOT_TITLE)) {
+                    int amountToSkip = Integer.parseInt(content);
+                    // STEP ONE: update the proposals
+                    for (int i = slot_num; i < slot_num + amountToSkip; i++) {
+                        assert(!proposals.containsKey(i));
+                        proposals.put(i, SKIPPED_MARKER);
+                    }
+                    // STEP TWO: update the decisions
+                    for (int i = slot_num; i < slot_num + amountToSkip; i++) {
+                        assert(!decisions.containsKey(i));
+                        decisions.put(i, SKIPPED_MARKER);
+                    }
+                    // STEP THREE: update the slot_num
+                    slot_num += amountToSkip;
+                    // STEP FOUR: send ack message back to master
+                    String ackSkipSlot = String.format(MESSAGE,
+                            SERVER_TYPE, serverID, MASTER_TYPE, 0,
+                            SKIP_SLOT_ACK_TITLE, EMPTY_CONTENT);
+                    send (localhost, MASTER_PORT, ackSkipSlot, logHeader);
+                } else if (title.equals(TIME_BOMB_TITLE)) {
+                    int numMessages = Integer.parseInt(content);
+                    // Pass the time bomb message to Leader
+                    queueLeader.put(recMessage); 
+                    // this message is only given by master
+                } else if (title.equals(EXIT_TITLE) && sender_type.equals(MASTER_TYPE)) {
+                    carryLeader = false;
+                    socket.close();
+                    listener.close();
+                    print("Exit.", logHeader);
+                    System.exit(0);
+                }
+            } catch (InterruptedException ie) {
+                if (interruptReason.equals("timeBomb")) {
+                    // Leader interrupts when it exits, signalling a crash
+                    listener.close();
+                    print("Crashing.", logHeader);
+                    System.exit(0);
+                } else if (interruptReason.equals("leaderFailure")) {
+                    electionInProgress = true;
+                    // TODO: add the code for electing new leader 
+                    // STEP ONE: propose itself as new leader
+                    for (int serverIndex = 0; serverIndex < numServers; serverIndex++) {
+                        if (serverIndex == leaderID || serverIndex == serverID) continue; 
+                        int port = SERVER_PORT_BASE + serverIndex;
+                        String leaderProposeMsg = String.format(MESSAGE,
+                                SERVER_TYPE, serverIndex, SERVER_TYPE,
+                                serverID, LEADER_PROPOSAL_TITLE, EMPTY_CONTENT);
+                        send (localhost, port, leaderProposeMsg, logHeader);
+                    }
+                } else {
+                    ie.printStackTrace();
+                } 
+            } catch (IOException e) {
+                break;
+            } finally {
+                if (socket != null)
+                    socket.close();
             }
-        } catch (InterruptedException ie) {
-            if(interruptReason.equals("timeBomb")) {
-                // Leader interrupts when it exits, signalling a crash
-                listener.close();
-                print("Crashing.", logHeader);
-                System.exit(0);
-            } else if(interruptReason.equals("leaderFailure")) {
-                electionInProgress = true;
-                // TODO: Propose self as leader
-            } else {
-                ie.printStackTrace();
-            }
-        } finally {
-            listener.close();
-        }
+        } 
+        listener.close();
     }
 }

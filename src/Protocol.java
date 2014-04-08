@@ -96,7 +96,8 @@ interface Protocol {
     final static String LEADER_TYPE = "LEADER";
     final static String ACCEPTOR_TYPE = "ACCEPTOR";
 
-    // heartbeat constant
-    final static int HB_INTERVAL = 1;
-    final static int HB_TIMEOUT = 3;
+    // HEARTBEAT CONFIGURATION
+    final static int HB_INTERVAL = 1000; // unit: milli-seconds
+    final static int HB_TIMEOUT = 3000; // unit: milli-seconds
+    final static String HEARTBEAT_TITLE = "THIS IS A HEART BEAT!";
 }

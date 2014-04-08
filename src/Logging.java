@@ -26,5 +26,4 @@ interface Logging {
     final static String CLIENT_LOG_FILENAME = "logs/Client%d.txt";
     final static String SERVER_LOG_FILENAME = "logs/Server%d.txt";
 
-
 }

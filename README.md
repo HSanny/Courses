@@ -101,7 +101,7 @@ Sometimes there are Connection problems:
 
 6. Ballot numbers don't have to necessarily be globally unique; the problem we want to avoid is where two replicas each have a ballot with the same number but different proposals. We can solve this problem by saying, from the point of view of the acceptor, we accept the ballot which came from the server (or client) with the higher index. 
 
-
+7. Why does the pseudocode show <r', L'> instead of b? For commander.
 
 Implementation Details
 ---------------

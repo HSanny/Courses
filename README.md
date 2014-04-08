@@ -57,9 +57,29 @@ Protocol Design
 TODO
 ----------------
 1. Crash instruction: kill a server and then re-elect a new leader if that server carries current leader.
+
+    Idea for Leader Election:
+        Use Heartbeats for detecting failure.
+        Non-leader servers use the following algorithm:
+        <pre><code>
+            if detect_time_out:
+                if self_has_not_proposed:
+                    propose self as leader
+            if receive_leader_proposal:
+                if sender_idx_is_lower:
+                    accept proposal
+                    if self_has_proposed:
+                        cancel proposal
+                else:
+                    ignore proposal
+                    if self_has_not_proposed:
+                        propose
+        </pre></code>
+    
+
 2. Recover instruction: test the correctness of recovery
-3. SkipSlot instruction: use empty maker to occupy that skipped slot. 
-4. timerBomb instruction: take care about the precise catogorization of paxos and non-paxos message.
+3. timerBomb instruction: take care about the precise catogorization of paxos and non-paxos message.
+4. Fix Client chatlog clientID problem
 
 Problems
 ---------------

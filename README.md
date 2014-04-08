@@ -57,6 +57,16 @@ Protocol Design
 TODO
 ----------------
 1. Crash instruction: kill a server and then re-elect a new leader if that server carries current leader.
+    
+    Leader creates heartbeat thread that sends timed heartbeat to every other replica
+    Replica holds global variable for lastHeartbeatReceived
+    Replica creates thread for counting timeout
+    On receipt of a heartbeat message, Replica updates lastHeartbeatReceived with currentTime(or attached time?)
+    What happens when counter reaches timeout?
+        Interrupt replica
+        replica enters leader election
+        if receive message not related to election:
+            cache message in queue
 
     Idea for Leader Election:
         Use Heartbeats for detecting failure.
@@ -75,6 +85,15 @@ TODO
                     if self_has_not_proposed:
                         propose
         </pre></code>
+        Election-related messages:
+            leader_proposal
+            leader_proposal_ack
+        New variables for the replica:
+            hasProposed
+
+    After election (when you receive all leader_proposal_acks):
+        execute all proposals which have not been decided
+        execute all queued messages
     
 
 2. Write tests for recover and crash

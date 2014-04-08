@@ -77,9 +77,8 @@ TODO
         </pre></code>
     
 
-2. timerBomb instruction: take care about the precise catogorization of paxos and non-paxos message.
-4. Write tests for recover and crash
-5. FIXME: should commander care about skip slot instruction. see code.
+2. Write tests for recover and crash
+3. FIXME: should commander care about skip slot instruction. see code.
 
 Problems
 ---------------

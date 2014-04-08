@@ -488,7 +488,12 @@ public class Master extends Util {
                      * Instruct the leader to crash after sending the number of paxos
                      * related messages specified by numMessages
                      */ 
-                    assert(numMessages > 0);
+                    // Send timeBomb instruction to server with leaderID
+                    port = SERVER_PORT_BASE + leaderID;
+                    String timeBombMessage = String.format(MESSAGE,
+                        MASTER_TYPE, 0, SERVER_TYPE, leaderID,
+                        TIME_BOMB_TITLE, Integer.toString(numMessages));
+                    send(localhost, port, timeBombMessage, MASTER_LOG_HEADER);
                     break;
             }
         }

@@ -27,7 +27,10 @@ class Leader extends Util implements Runnable{
     // proposals: proposals so far
     private HashMap<Integer, String> proposals;
 
+    private int timeBombMessages;
+
     private int serverID;
+    private Thread replica;
     private int numServers;
     private String logHeader;
 
@@ -37,7 +40,7 @@ class Leader extends Util implements Runnable{
     private HashMap<String, LinkedBlockingQueue<String>> commanderQueues;
 
     public Leader (LinkedBlockingQueue<String> queue, int id, int numServers,
-            InetAddress localhost) { 
+            InetAddress localhost, Thread replica) { 
         if(id == 0)
             isActive = true;
 
@@ -47,6 +50,8 @@ class Leader extends Util implements Runnable{
         this.numServers = numServers;
         this.logHeader = String.format(LEADER_LOG_HEADER, id);
         this.localhost = localhost;
+        this.timeBombMessages = -1;
+        this.replica = replica;
 
         proposals = new HashMap<Integer, String>();
         scoutQueues = new HashMap<Integer, LinkedBlockingQueue<String>>();
@@ -56,7 +61,7 @@ class Leader extends Util implements Runnable{
     public void run() {
         // Spawn a Scout for the current ballot number
         LinkedBlockingQueue<String> queueScout = new LinkedBlockingQueue<String>();
-        (new Thread(new Scout(queueScout, serverID, numServers, ballot_num, localhost))).start(); 
+        (new Thread(new Scout(queueScout, serverID, numServers, ballot_num, localhost, 0))).start(); 
         scoutQueues.put(ballot_num, queueScout);
         while(true) {
             // receive messages from queue
@@ -73,7 +78,6 @@ class Leader extends Util implements Runnable{
             String title = msgParts[TITLE_IDX];
             String content = msgParts[CONTENT_IDX];
             String[] contentParts = content.split(CONTENT_SEP); 
-            // if message is a p1b
             if (title.equals(P1B_TITLE)) {
                 try{
                     int tmp_b = Integer.parseInt(contentParts[1]);
@@ -81,7 +85,6 @@ class Leader extends Util implements Runnable{
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                // if message is a p2b
             } else if (title.equals(P2B_TITLE)) {
                 try{
                     int tmp_b = Integer.parseInt(contentParts[1]);
@@ -91,7 +94,6 @@ class Leader extends Util implements Runnable{
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                // if message is a propose
             } else if (title.equals(PROPOSE_TITLE)) {
                 int s = Integer.parseInt(contentParts[0]);
                 String p = contentParts[1];
@@ -103,53 +105,92 @@ class Leader extends Util implements Runnable{
                     if(isActive) {
                         String commanderID = s + " " + ballot_num;
                         // spawn a Commander for this ballot
+                        int messagesUntilCrash = checkTimeBomb();
                         LinkedBlockingQueue<String> queueCommander = new LinkedBlockingQueue<String>();
-                        (new Thread(new Commander(queueCommander, numServers, numServers, String.format(PVALUE_CONTENT, ballot_num, s, p), localhost))).start(); 
-
+                        Thread thread = new Thread(new Commander(queueCommander, numServers, numServers, String.format(PVALUE_CONTENT, ballot_num, s, p), localhost, messagesUntilCrash));
+                        thread.start();
+                        if(messagesUntilCrash > 0) {
+                            try {
+                                thread.join();
+                            }  catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            // Inform the replica
+                            replica.interrupt();
+                            return;
+                        }
                         commanderQueues.put(commanderID, queueCommander);
                     }
-
-                    // if message is an adopted
-                } else if (title.equals(ADOPTED_TITLE)) {
-                    int b = Integer.parseInt(contentParts[0]);
-                    String[] pvals = contentParts[1].split(ACCEPTED_SEP);
-                    // update proposals so far with highest ballots for each slot returned by the adopted message
-                    for (String newPval:pmax(pvals)) {
-                        // for each proposal in the pmax
-                        String[] newPvalParts = newPval.split(PVALUE_SEP);
-                        int newS = Integer.parseInt(newPvalParts[1]);
-                        String newP = newPvalParts[2];
-                        // update proposals with that pvalue
-                        proposals.put(s,p);
+                }
+            } else if (title.equals(ADOPTED_TITLE)) {
+                int b = Integer.parseInt(contentParts[0]);
+                String[] pvals = contentParts[1].split(ACCEPTED_SEP);
+                // update proposals so far with highest ballots for each slot returned by the adopted message
+                for (String newPval:pmax(pvals)) {
+                    // for each proposal in the pmax
+                    String[] newPvalParts = newPval.split(PVALUE_SEP);
+                    int newS = Integer.parseInt(newPvalParts[1]);
+                    String newP = newPvalParts[2];
+                    // update proposals with that pvalue
+                    proposals.put(newS, newP);
+                }
+                // for all proposals so far
+                for (int tmp_s: proposals.keySet()) {
+                    // spawn a Commander for that proposal
+                    int messagesUntilCrash = checkTimeBomb();
+                    LinkedBlockingQueue<String> queueCommander = new LinkedBlockingQueue<String>();
+                    String commanderID = tmp_s + " " + ballot_num;
+                    Thread thread = new Thread(new Commander(queueCommander, numServers, numServers, String.format(PVALUE_CONTENT, ballot_num, tmp_s, proposals.get(tmp_s)), localhost, messagesUntilCrash)); 
+                    thread.start();
+                    if(messagesUntilCrash > 0) {
+                        try {
+                            thread.join();
+                        }  catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        // Inform the replica
+                        replica.interrupt();
+                        return;
                     }
-                    // for all proposals so far
-                    for (int tmp_s: proposals.keySet()) {
-                        // spawn a Commander for that proposal
-                        // spawn a Commander for this ballot
-                        LinkedBlockingQueue<String> queueCommander = new LinkedBlockingQueue<String>();
-                        String commanderID = tmp_s + " " + ballot_num;
-                        (new Thread(new Commander(queueCommander, numServers, numServers, String.format(PVALUE_CONTENT, ballot_num, tmp_s, proposals.get(tmp_s)), localhost))).start(); 
-                        commanderQueues.put(commanderID, queueCommander);
-
+                    commanderQueues.put(commanderID, queueCommander);
+                }
+                // become Active
+                isActive = true; 
+            } else if (title.equals(PREEMPTED_TITLE)) {
+                // TODO: Why does the pseudocode show <r', L'> instead of b?
+                int b = Integer.parseInt(contentParts[0]); 
+                // if the ballot number in the message is greater than the current ballot number
+                if (b > ballot_num) {
+                    // become Passive
+                    isActive = false;
+                    // update the ballot number
+                    // TODO: Change this to ensure globally unique
+                    ballot_num = b + 1;
+                    // spawn a scout for the new ballot number
+                    int messagesUntilCrash = checkTimeBomb();
+                    queueScout = new LinkedBlockingQueue<String>();
+                    Thread thread = new Thread(new Scout(queueScout, serverID, numServers, ballot_num, localhost, messagesUntilCrash)); 
+                    thread.start();
+                    if(messagesUntilCrash > 0) {
+                        try {
+                            thread.join();
+                        }  catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        // Inform the replica
+                        replica.interrupt();
+                        return;
                     }
-                    // become Active
-                    isActive = true; 
-                    // if message is a preempted
-                } else if (title.equals(PREEMPTED_TITLE)) {
-                    // TODO: Why does the pseudocode show <r', L'> instead of b?
-                    int b = Integer.parseInt(contentParts[0]); 
-                    // if the ballot number in the message is greater than the current ballot number
-                    if (b > ballot_num) {
-                        // become Passive
-                        isActive = false;
-                        // update the ballot number
-                        // TODO: Change this to ensure globally unique
-                        ballot_num = b + 1;
-                        // spawn a scout for the new ballot number
-                        queueScout = new LinkedBlockingQueue<String>();
-                        (new Thread(new Scout(queueScout, serverID, numServers, ballot_num, localhost))).start(); 
-                        scoutQueues.put(ballot_num, queueScout);
-                    }
+                    scoutQueues.put(ballot_num, queueScout);
+                }
+            } else if (title.equals(TIME_BOMB_TITLE)) {
+                // Set message count
+                timeBombMessages = Integer.parseInt(contentParts[0]);
+                // If message count is 0, exit immediately
+                if(timeBombMessages == 0) {
+                    // Inform the replica
+                    replica.interrupt();
+                    return;
                 }
             }
         }
@@ -161,6 +202,8 @@ class Leader extends Util implements Runnable{
          * where for each slot number that exists in the original array,
          * the pvalue with the highest ballot number is added to the new array
          */
+        if(pvals.length == 0)
+            return new String[0];
         ArrayList<String> pmax = new ArrayList<String>();
         for(int i=0; i<pvals.length; i++) {
             String pval = pvals[i];
@@ -189,6 +232,22 @@ class Leader extends Util implements Runnable{
         return (String []) pmax.toArray();
     }
 
+    private int checkTimeBomb () {
+        /* returns the number of messages for the scout/commander to send before crashing */
+        if(timeBombMessages < 0) {
+            // don't crash
+            return 0;
+        } else if(timeBombMessages > numServers ){
+            // decrement time bomb
+            timeBombMessages -= numServers;
+            // don't crash
+            return 0;
+        } else {
+            // crash after timeBomb expires
+            return timeBombMessages;
+        }
+    }
+
     class Scout implements Runnable { 
         private LinkedBlockingQueue<String> queue = null;
         private int leaderID;
@@ -200,15 +259,18 @@ class Leader extends Util implements Runnable{
 
         private InetAddress localhost;
         private String logHeader;
+        private int messagesUntilCrash;
 
         public Scout (LinkedBlockingQueue<String> queue, int leaderID, int
-                numAcceptors, int ballot_num, InetAddress localhost) {
+                numAcceptors, int ballot_num, InetAddress localhost, int
+                messagesUntilCrash) {
             this.queue = queue;
             this.leaderID = leaderID;
             this.waitFor = new int[numAcceptors];
             this.pvalues = new ArrayList<String>();
             this.logHeader = String.format(SCOUT_LOG_HEADER, ballot_num);
             this.localhost = localhost;
+            this.messagesUntilCrash = messagesUntilCrash;
         }
 
         public void run () {
@@ -224,6 +286,9 @@ class Leader extends Util implements Runnable{
                 } catch (IOException e) {
                     continue;
                 }
+                messagesUntilCrash--;
+                if(messagesUntilCrash == 0) 
+                    return;
             }
             while(true) {
                 // receive messages from queue
@@ -258,9 +323,11 @@ class Leader extends Util implements Runnable{
                             int port = SERVER_PORT_BASE + leaderID;
                             String adopted_str = "";
                             for (String pvalue : pvalues) {
-                                adopted_str += pvalue + PVALUE_SEP;
+                                adopted_str += pvalue + ACCEPTED_SEP;
                             }
-                            adopted_str = adopted_str.substring(0, adopted_str.length()-PVALUE_SEP.length());
+                            int endIndex = adopted_str.length()-ACCEPTED_SEP.length();
+                            if (endIndex > 0)
+                                adopted_str = adopted_str.substring(0, endIndex);
                             String adoptedContent = String.format(ADOPTED_CONTENT, ballot_num, adopted_str);
                             String adoptedMessage = String.format(MESSAGE, LEADER_TYPE,
                                     leaderID, LEADER_TYPE, leaderID, ADOPTED_TITLE, adoptedContent);
@@ -306,10 +373,11 @@ class Leader extends Util implements Runnable{
 
         private String logHeader;
         private InetAddress localhost;
+        private int messagesUntilCrash;
 
         /* Constructor */
         public Commander(LinkedBlockingQueue<String> queue, int numAcceptors,
-                int numServers, String pval, InetAddress localhost) {
+                int numServers, String pval, InetAddress localhost, int messagesUntilCrash) {
             this.queue = queue;
             this.waitFor = new int[numAcceptors];
             this.numServers = numServers;
@@ -319,6 +387,7 @@ class Leader extends Util implements Runnable{
             this.p = pvalParts[2];
             this.logHeader = String.format(COMMANDER_LOG_HEADER, ballot_num);
             this.localhost = localhost;
+            this.messagesUntilCrash = messagesUntilCrash;
         }
 
         public void run() {
@@ -335,6 +404,9 @@ class Leader extends Util implements Runnable{
                 } catch (IOException e) {
                     continue;
                 }
+                messagesUntilCrash--;
+                if(messagesUntilCrash == 0) 
+                    return;
             }
             while (true) {
                 // receive messages from queue   

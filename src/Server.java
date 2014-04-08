@@ -47,7 +47,7 @@ class Server extends Util { // a.k.a. Replica
     static int leaderID;
 
     /* Collocation: put leader and acceptor together */
-    static Leader leader;
+    static Thread leader;
     static Acceptor acceptor;
     static LinkedBlockingQueue<String> queueLeader;
     static LinkedBlockingQueue<String> queueAcceptor;
@@ -291,8 +291,8 @@ class Server extends Util { // a.k.a. Replica
                         if (leaderID == serverID) {
                             carryLeader = true;
                             queueLeader = new LinkedBlockingQueue<String> ();
-                            leader = new Leader(queueLeader, serverID, numServers, localhost); 
-                            new Thread(leader).start();
+                            leader = new Thread(new Leader(queueLeader, serverID, numServers, localhost, Thread.currentThread())); 
+                            leader.start();
                         }
                         String ackLeader = String.format(MESSAGE, SERVER_TYPE,
                                 serverID, MASTER_TYPE, 0, LEADER_ACK_TITLE,
@@ -300,7 +300,6 @@ class Server extends Util { // a.k.a. Replica
                         send (localhost, MASTER_PORT, ackLeader, logHeader);
                     } else if (title.equals(SKIP_SLOT_TITLE)) {
                         int amountToSkip = Integer.parseInt(content);
-                        System.out.println(slot_num);
                         // STEP ONE: update the proposals
                         for (int i = slot_num; i < slot_num + amountToSkip; i++) {
                             assert(!proposals.containsKey(i));
@@ -313,27 +312,34 @@ class Server extends Util { // a.k.a. Replica
                         }
                         // STEP THREE: update the slot_num
                         slot_num += amountToSkip;
-                        System.out.println(slot_num);
                         // STEP FOUR: send ack message back to master
                         String ackSkipSlot = String.format(MESSAGE,
                                 SERVER_TYPE, serverID, MASTER_TYPE, 0,
                                 SKIP_SLOT_ACK_TITLE, EMPTY_CONTENT);
                         send (localhost, MASTER_PORT, ackSkipSlot, logHeader);
-                    }
+                    } else if (title.equals(TIME_BOMB_TITLE)) {
+                        int numMessages = Integer.parseInt(content);
+                        // Pass the time bomb message to Leader
+                        queueLeader.put(recMessage); 
                     // this message is only given by master
-                    else if (title.equals(EXIT_TITLE) && sender_type.equals(MASTER_TYPE)) {
+                    } else if (title.equals(EXIT_TITLE) && sender_type.equals(MASTER_TYPE)) {
                         carryLeader = false;
                         socket.close();
                         listener.close();
                         print("Exit.", logHeader);
                         System.exit(0);
                     }
-
+                } catch (InterruptedException e) {
+                    // Leader interrupts when it exits, signalling a crash
+                    socket.close();
+                    listener.close();
+                    print("Crashing.", logHeader);
+                    System.exit(0);
                 } finally {
                     socket.close();
                 }
             }
-        } finally {
+        }  finally {
             listener.close();
         }
     }

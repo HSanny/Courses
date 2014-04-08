@@ -70,9 +70,9 @@ class Acceptor extends Util implements Runnable {
                     int port = SERVER_PORT_BASE + lambda;
                     String accepted_str = "";
                     for (String pvalue : accepted) {
-                        accepted_str += pvalue + PVALUE_SEP;
+                        accepted_str += pvalue + ACCEPTED_SEP;
                     }
-                    int endIndex = accepted_str.length()-PVALUE_SEP.length();
+                    int endIndex = accepted_str.length()-ACCEPTED_SEP.length();
                     if (endIndex > 0)
                         accepted_str = accepted_str.substring(0, endIndex);
 

@@ -47,7 +47,7 @@ class Server extends Util { // a.k.a. Replica
     static int leaderID;
 
     /* Collocation: put leader and acceptor together */
-    static Leader leader;
+    static Thread leader;
     static Acceptor acceptor;
     static LinkedBlockingQueue<String> queueLeader;
     static LinkedBlockingQueue<String> queueAcceptor;
@@ -291,8 +291,8 @@ class Server extends Util { // a.k.a. Replica
                         if (leaderID == serverID) {
                             carryLeader = true;
                             queueLeader = new LinkedBlockingQueue<String> ();
-                            leader = new Leader(queueLeader, serverID, numServers, localhost); 
-                            new Thread(leader).start();
+                            leader = new Thread(new Leader(queueLeader, serverID, numServers, localhost)); 
+                            leader.start();
                         }
                         String ackLeader = String.format(MESSAGE, SERVER_TYPE,
                                 serverID, MASTER_TYPE, 0, LEADER_ACK_TITLE,

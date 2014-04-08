@@ -34,6 +34,7 @@ interface Protocol {
     final static String PRINT_CHAT_LOG_TITLE = "PRINT_CHAT_LOG";
     final static String SKIP_SLOT_TITLE = "SKIP_SLOT";
     final static String SKIP_SLOT_ACK_TITLE = "SKIP_SLOT_ACK";
+    final static String TIME_BOMB_TITLE = "TIME_BOMB";
     final static String CHECK_CLEAR_TITLE = "CHECK_CLEAR";
     final static String CHECK_CLEAR_ACK_TITLE = "CHECK_CLEAR_ACK";
     final static String I_WANNA_RECOVER_TITLE = "I_WANNA_RECOVER";

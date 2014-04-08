@@ -78,6 +78,13 @@ TODO
     
 
 2. timerBomb instruction: take care about the precise catogorization of paxos and non-paxos message.
+    Master sends timeBomb to replica
+    Replica puts a timeBomb message in leader queue
+    Leader holds a count
+    Leader decrements count for each scout/commander generated, and on the remainder, it sends a timebomb to the scout/commander
+    Scout/Commander reads timebomb, sends that many messages, and exits
+    Leader blocks on the last Scout/Commander and exits
+    Replica blocks on the leader and kills itself
 4. Write tests for recover and crash
 
 Problems

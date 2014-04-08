@@ -244,7 +244,7 @@ class Leader extends Util implements Runnable{
             return 0;
         } else {
             // crash after timeBomb expires
-            return timeBombMessages - numServers;
+            return timeBombMessages;
         }
     }
 
@@ -284,6 +284,9 @@ class Leader extends Util implements Runnable{
                 } catch (IOException e) {
                     continue;
                 }
+                messagesUntilCrash--;
+                if(messagesUntilCrash == 0) 
+                    return;
             }
             while(true) {
                 // receive messages from queue
@@ -399,6 +402,9 @@ class Leader extends Util implements Runnable{
                 } catch (IOException e) {
                     continue;
                 }
+                messagesUntilCrash--;
+                if(messagesUntilCrash == 0) 
+                    return;
             }
             while (true) {
                 // receive messages from queue   

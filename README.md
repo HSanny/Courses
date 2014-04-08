@@ -77,9 +77,7 @@ TODO
         </pre></code>
     
 
-2. timerBomb instruction: take care about the precise catogorization of paxos and non-paxos message.
-    Scout/Commander reads timebomb, sends that many messages, and exits
-4. Write tests for recover and crash
+2. Write tests for recover and crash
 
 Problems
 ---------------

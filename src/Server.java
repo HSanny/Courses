@@ -63,7 +63,10 @@ class Server extends Util { // a.k.a. Replica
 
         public void run() {
             // Periodically check the lastHeartbeatReceived variable
+            
             // If last heartbeat is too old, then interrupt replica
+            replica.interrupt();
+            return;
         }
     }
 

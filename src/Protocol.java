@@ -95,4 +95,9 @@ interface Protocol {
     final static String MASTER_TYPE = "MASTER";
     final static String LEADER_TYPE = "LEADER";
     final static String ACCEPTOR_TYPE = "ACCEPTOR";
+
+    // HEARTBEAT CONFIGURATION
+    final static int HB_INTERVAL = 1000; // unit: milli-seconds
+    final static int HB_TIMEOUT = 3000; // unit: milli-seconds
+    final static String HEARTBEAT_TITLE = "THIS IS A HEART BEAT!";
 }

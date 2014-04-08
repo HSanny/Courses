@@ -34,6 +34,9 @@ class Leader extends Util implements Runnable{
     private int numServers;
     private String logHeader;
 
+    // for heartbeat implementation
+    private Thread heartbeat;
+
     private InetAddress localhost;
 
     private HashMap<Integer, LinkedBlockingQueue<String>> scoutQueues;
@@ -41,7 +44,7 @@ class Leader extends Util implements Runnable{
 
     public Leader (LinkedBlockingQueue<String> queue, int id, int numServers,
             InetAddress localhost, Thread replica) { 
-        if(id == 0)
+        if (id == 0)
             isActive = true;
 
         this.queue = queue;
@@ -56,14 +59,34 @@ class Leader extends Util implements Runnable{
         proposals = new HashMap<Integer, String>();
         scoutQueues = new HashMap<Integer, LinkedBlockingQueue<String>>();
         commanderQueues = new HashMap<String, LinkedBlockingQueue<String>>();
+
+        heartbeat = new Thread (new Runnable (){
+            public void run () {
+                while (true) {
+                    for (int serverIndex = 0; serverIndex < this.numServers; serverIndex++) {
+                        // ignore sending heartbeat to the server carrying it,
+                        // avoid wastage
+                        if (serverIndex == serverID) continue; 
+                        String hbMsg = String.format(MESSAGE, LEADER_TYPE,
+                            this.serverID, SERVER_TYPE, serverIndex,
+                            HEARTBEAT_TITLE, EMPTY_CONTENT);
+                        int port = SERVER_PORT_BASE + serverIndex;
+                        send (localhost, port, hbMsg, logHeader);
+                    }
+                    Thread.sleep(HB_INTERVAL);
+                }
+
+            }
+        });
     }
 
     public void run() {
+        heartbeat.start();
         // Spawn a Scout for the current ballot number
         LinkedBlockingQueue<String> queueScout = new LinkedBlockingQueue<String>();
         (new Thread(new Scout(queueScout, serverID, numServers, ballot_num, localhost, 0))).start(); 
         scoutQueues.put(ballot_num, queueScout);
-        while(true) {
+        while (true) {
             // receive messages from queue
             String msg = null;
             try {

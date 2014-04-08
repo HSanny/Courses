@@ -42,6 +42,7 @@ class Server extends Util { // a.k.a. Replica
     static HashMap<Integer, String> proposals;
     static HashMap<Integer, String> decisions;
 
+    public static volatile String interruptReason = "";
     static boolean electionInProgress;
     static boolean isRecoveryInProgress;
     static boolean carryLeader;
@@ -52,6 +53,22 @@ class Server extends Util { // a.k.a. Replica
     static Acceptor acceptor;
     static LinkedBlockingQueue<String> queueLeader;
     static LinkedBlockingQueue<String> queueAcceptor;
+
+    class HeartbeatTimer implements Runnable {
+        Thread replica;
+
+        public HeartbeatTimer(Thread replica) {
+            this.replica = replica; 
+        }
+
+        public void run() {
+            // Periodically check the lastHeartbeatReceived variable
+            
+            // If last heartbeat is too old, then interrupt replica
+            replica.interrupt();
+            return;
+        }
+    }
 
     public static boolean propose (String command) throws IOException {
         // STEP ZERO: check if this request has not been decided
@@ -133,6 +150,7 @@ class Server extends Util { // a.k.a. Replica
         slot_num = 0;
         proposals = new HashMap<Integer, String> ();
         decisions = new HashMap<Integer, String> ();
+        interruptReason = "";
         electionInProgress = false;
         isRecoveryInProgress = false;
         carryLeader = true;
@@ -345,12 +363,12 @@ class Server extends Util { // a.k.a. Replica
                     System.exit(0);
                 }
             } catch (InterruptedException ie) {
-                if (ie.getMessage().equals("timeBomb")) {
+                if (interruptReason.equals("timeBomb")) {
                     // Leader interrupts when it exits, signalling a crash
                     listener.close();
                     print("Crashing.", logHeader);
                     System.exit(0);
-                } else if (ie.getMessage().equals("leaderFailure")) {
+                } else if (interruptReason.equals("leaderFailure")) {
                     electionInProgress = true;
                     // TODO: add the code for electing new leader 
                     // STEP ONE: propose itself as new leader

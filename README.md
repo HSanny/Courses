@@ -64,6 +64,7 @@ TODO
     On receipt of a heartbeat message, Replica updates lastHeartbeatReceived with currentTime(or attached time?)
     What happens when counter reaches timeout?
         Interrupt replica
+        End counter
         replica enters leader election
         if receive message not related to election:
             cache message in queue
@@ -91,10 +92,13 @@ TODO
         New variables for the replica:
             hasProposed
 
-    After election (when you receive all leader_proposal_acks):
+    After election-New Leader (when you receive all leader_proposal_acks):
+        start leader thread
         execute all proposals which have not been decided
         execute all queued messages
     
+    After election-Other Replicas
+        On receipt of new heartbeat, start a new counter
 
 2. Write tests for recover and crash
 3. FIXME: should commander care about skip slot instruction. see code.

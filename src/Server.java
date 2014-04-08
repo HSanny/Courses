@@ -291,7 +291,7 @@ class Server extends Util { // a.k.a. Replica
                         if (leaderID == serverID) {
                             carryLeader = true;
                             queueLeader = new LinkedBlockingQueue<String> ();
-                            leader = new Thread(new Leader(queueLeader, serverID, numServers, localhost)); 
+                            leader = new Thread(new Leader(queueLeader, serverID, numServers, localhost, Thread.currentThread())); 
                             leader.start();
                         }
                         String ackLeader = String.format(MESSAGE, SERVER_TYPE,
@@ -300,7 +300,6 @@ class Server extends Util { // a.k.a. Replica
                         send (localhost, MASTER_PORT, ackLeader, logHeader);
                     } else if (title.equals(SKIP_SLOT_TITLE)) {
                         int amountToSkip = Integer.parseInt(content);
-                        System.out.println(slot_num);
                         // STEP ONE: update the proposals
                         for (int i = slot_num; i < slot_num + amountToSkip; i++) {
                             assert(!proposals.containsKey(i));
@@ -313,7 +312,6 @@ class Server extends Util { // a.k.a. Replica
                         }
                         // STEP THREE: update the slot_num
                         slot_num += amountToSkip;
-                        System.out.println(slot_num);
                         // STEP FOUR: send ack message back to master
                         String ackSkipSlot = String.format(MESSAGE,
                                 SERVER_TYPE, serverID, MASTER_TYPE, 0,
@@ -331,7 +329,6 @@ class Server extends Util { // a.k.a. Replica
                         print("Exit.", logHeader);
                         System.exit(0);
                     }
-
                 } catch (InterruptedException e) {
                     // Leader interrupts when it exits, signalling a crash
                     socket.close();

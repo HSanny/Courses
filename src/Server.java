@@ -319,9 +319,19 @@ class Server extends Util { // a.k.a. Replica
                                 SERVER_TYPE, serverID, MASTER_TYPE, 0,
                                 SKIP_SLOT_ACK_TITLE, EMPTY_CONTENT);
                         send (localhost, MASTER_PORT, ackSkipSlot, logHeader);
-                    }
+                    } else if (title.equals(TIME_BOMB_TITLE)) {
+                        int numMessages = Integer.parseInt(content);
+                        // Pass the time bomb message to Leader
+                        queueLeader.put(recMessage); 
+                        // Wait for Leader to exit
+                        leader.join();
+                        // Exit
+                        socket.close();
+                        listener.close();
+                        print("Crashing by Time Bomb.", logHeader);
+                        System.exit(0);
                     // this message is only given by master
-                    else if (title.equals(EXIT_TITLE) && sender_type.equals(MASTER_TYPE)) {
+                    } else if (title.equals(EXIT_TITLE) && sender_type.equals(MASTER_TYPE)) {
                         carryLeader = false;
                         socket.close();
                         listener.close();

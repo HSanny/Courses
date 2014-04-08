@@ -60,22 +60,36 @@ class Leader extends Util implements Runnable{
         scoutQueues = new HashMap<Integer, LinkedBlockingQueue<String>>();
         commanderQueues = new HashMap<String, LinkedBlockingQueue<String>>();
 
-        heartbeat = new Thread (new Runnable (){
+        /* Definition of heartbeat thread */
+        final Integer ServerID = serverID;
+        final Integer NumServers = numServers;
+        final InetAddress Localhost = localhost;
+        heartbeat = new Thread (new Runnable () {
+            // change the alive indicator to stop the heartbeat, that is, kill
+            // this thread
+            public boolean alive = true;
             public void run () {
-                while (true) {
-                    for (int serverIndex = 0; serverIndex < this.numServers; serverIndex++) {
+                while (this.alive) {
+                    for (int serverIndex = 0; serverIndex < NumServers; serverIndex++) {
                         // ignore sending heartbeat to the server carrying it,
                         // avoid wastage
                         if (serverIndex == serverID) continue; 
                         String hbMsg = String.format(MESSAGE, LEADER_TYPE,
-                            this.serverID, SERVER_TYPE, serverIndex,
+                            ServerID, SERVER_TYPE, serverIndex,
                             HEARTBEAT_TITLE, EMPTY_CONTENT);
                         int port = SERVER_PORT_BASE + serverIndex;
-                        send (localhost, port, hbMsg, logHeader);
+                        try {
+                        send (Localhost, port, hbMsg, logHeader);
+                        } catch (IOException e) {
+                            ;
+                        }
                     }
-                    Thread.sleep(HB_INTERVAL);
+                    try {
+                        Thread.sleep(HB_INTERVAL);
+                    } catch (InterruptedException e) {
+                        ;
+                    }
                 }
-
             }
         });
     }
@@ -102,7 +116,7 @@ class Leader extends Util implements Runnable{
             String content = msgParts[CONTENT_IDX];
             String[] contentParts = content.split(CONTENT_SEP); 
             if (title.equals(P1B_TITLE)) {
-                try{
+                try {
                     int tmp_b = Integer.parseInt(contentParts[1]);
                     scoutQueues.get(tmp_b).put(msg);
                 } catch (InterruptedException e) {

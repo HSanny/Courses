@@ -153,7 +153,8 @@ class Leader extends Util implements Runnable{
                                 e.printStackTrace();
                             }
                             // Inform the replica
-                            replica.interrupt("timeBomb");
+                            Server.interruptReason= "timeBomb";
+                            replica.interrupt();
                             return;
                         }
                         commanderQueues.put(commanderID, queueCommander);
@@ -186,7 +187,8 @@ class Leader extends Util implements Runnable{
                             e.printStackTrace();
                         }
                         // Inform the replica
-                        replica.interrupt("timeBomb");
+                        Server.interruptReason = "timeBomb";
+                        replica.interrupt();
                         return;
                     }
                     commanderQueues.put(commanderID, queueCommander);
@@ -214,7 +216,8 @@ class Leader extends Util implements Runnable{
                             e.printStackTrace();
                         }
                         // Inform the replica
-                        replica.interrupt("timeBomb");
+                        Server.interruptReason = "timeBomb";
+                        replica.interrupt();
                         return;
                     }
                     scoutQueues.put(ballot_num, queueScout);
@@ -225,7 +228,8 @@ class Leader extends Util implements Runnable{
                 // If message count is 0, exit immediately
                 if(timeBombMessages == 0) {
                     // Inform the replica
-                    replica.interrupt("timeBomb");
+                    Server.interruptReason = "timeBomb";
+                    replica.interrupt();
                     return;
                 }
             }

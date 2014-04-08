@@ -266,9 +266,10 @@ class DiabloSlashAgentTwo (CaptureAgent):
        weights['hasWalls'] = self.getFeatureFourWeight()
        #------------feature5: food left-------#
        weights['foodLeft'] = self.getFeatureFiveWeight()
+       #------------feature6: exact ghost position-----#
 
        return weights
- 
+
    #----------------------feature 5------------------------
    def getFeatureFive(self,successor):
        foodLeft = 0
@@ -285,7 +286,7 @@ class DiabloSlashAgentTwo (CaptureAgent):
        return 0
 
    def getFeatureFiveWeight(self):
-       return -100.0
+       return -50.0
 
    #----------------------feature 4------------------------
    def getFeatureFour(self, successor):

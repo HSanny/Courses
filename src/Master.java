@@ -482,7 +482,7 @@ public class Master extends Util {
                     // STEP THREE: wait the collection thread to join
                     collectSkipSlotsAcks.join();
                     break;
-                case "timeBombLeader":
+                case "timeBombLeader": // death within protocol
                     int numMessages = Integer.parseInt(inputLine[1]);
                     /*
                      * Instruct the leader to crash after sending the number of paxos

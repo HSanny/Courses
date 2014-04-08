@@ -201,7 +201,8 @@ class Leader extends Util implements Runnable{
         private InetAddress localhost;
         private String logHeader;
 
-        public Scout (LinkedBlockingQueue<String> queue, int leaderID, int numAcceptors, int ballot_num, InetAddress localhost) {
+        public Scout (LinkedBlockingQueue<String> queue, int leaderID, int
+                numAcceptors, int ballot_num, InetAddress localhost) {
             this.queue = queue;
             this.leaderID = leaderID;
             this.waitFor = new int[numAcceptors];
@@ -212,7 +213,7 @@ class Leader extends Util implements Runnable{
 
         public void run () {
             // for all acceptors
-            for(int a=0; a<waitFor.length; a++) {
+            for(int a = 0; a < waitFor.length; a++) {
                 // send <p1a, leader, ballot number>
                 int port = SERVER_PORT_BASE + a;
                 String p1aContent = String.format(P1A_CONTENT, leaderID, ballot_num);
@@ -349,7 +350,7 @@ class Leader extends Util implements Runnable{
                 String contents = msgParts[CONTENT_IDX];
                 if (title.equals(SKIP_SLOT_TITLE)) {
                     // TODO: ADD CODE FOR SKIP SLOT HERE
-                    
+                    // FIXME: do we need to care about skip slot for commander
                 } else if (title.equals(P2B_TITLE)) {
                     String[] p2bParts = contents.split(CONTENT_SEP);
                     int acceptor = Integer.parseInt(p2bParts[0]);

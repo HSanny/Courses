@@ -164,7 +164,6 @@ class Leader extends Util implements Runnable{
                     // become Passive
                     isActive = false;
                     // update the ballot number
-                    // TODO: Change this to ensure globally unique
                     ballot_num = b + 1;
                     // spawn a scout for the new ballot number
                     int messagesUntilCrash = checkTimeBomb();

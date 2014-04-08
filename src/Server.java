@@ -323,13 +323,6 @@ class Server extends Util { // a.k.a. Replica
                         int numMessages = Integer.parseInt(content);
                         // Pass the time bomb message to Leader
                         queueLeader.put(recMessage); 
-                        // Wait for Leader to exit
-                        leader.join();
-                        // Exit
-                        socket.close();
-                        listener.close();
-                        print("Crashing by Time Bomb.", logHeader);
-                        System.exit(0);
                     // this message is only given by master
                     } else if (title.equals(EXIT_TITLE) && sender_type.equals(MASTER_TYPE)) {
                         carryLeader = false;
@@ -339,11 +332,17 @@ class Server extends Util { // a.k.a. Replica
                         System.exit(0);
                     }
 
+                } catch (InterruptedException e) {
+                    // Leader interrupts when it exits, signalling a crash
+                    socket.close();
+                    listener.close();
+                    print("Crashing.", logHeader);
+                    System.exit(0);
                 } finally {
                     socket.close();
                 }
             }
-        } finally {
+        }  finally {
             listener.close();
         }
     }

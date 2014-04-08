@@ -27,6 +27,8 @@ class Leader extends Util implements Runnable{
     // proposals: proposals so far
     private HashMap<Integer, String> proposals;
 
+    private int timeBombMessages;
+
     private int serverID;
     private int numServers;
     private String logHeader;
@@ -47,6 +49,7 @@ class Leader extends Util implements Runnable{
         this.numServers = numServers;
         this.logHeader = String.format(LEADER_LOG_HEADER, id);
         this.localhost = localhost;
+        this.timeBombMessages = -1;
 
         proposals = new HashMap<Integer, String>();
         scoutQueues = new HashMap<Integer, LinkedBlockingQueue<String>>();
@@ -108,48 +111,54 @@ class Leader extends Util implements Runnable{
 
                         commanderQueues.put(commanderID, queueCommander);
                     }
-
+                }
                     // if message is an adopted
-                } else if (title.equals(ADOPTED_TITLE)) {
-                    int b = Integer.parseInt(contentParts[0]);
-                    String[] pvals = contentParts[1].split(ACCEPTED_SEP);
-                    // update proposals so far with highest ballots for each slot returned by the adopted message
-                    for (String newPval:pmax(pvals)) {
-                        // for each proposal in the pmax
-                        String[] newPvalParts = newPval.split(PVALUE_SEP);
-                        int newS = Integer.parseInt(newPvalParts[1]);
-                        String newP = newPvalParts[2];
-                        // update proposals with that pvalue
-                        proposals.put(s,p);
-                    }
-                    // for all proposals so far
-                    for (int tmp_s: proposals.keySet()) {
-                        // spawn a Commander for that proposal
-                        // spawn a Commander for this ballot
-                        LinkedBlockingQueue<String> queueCommander = new LinkedBlockingQueue<String>();
-                        String commanderID = tmp_s + " " + ballot_num;
-                        (new Thread(new Commander(queueCommander, numServers, numServers, String.format(PVALUE_CONTENT, ballot_num, tmp_s, proposals.get(tmp_s)), localhost))).start(); 
-                        commanderQueues.put(commanderID, queueCommander);
-
-                    }
-                    // become Active
-                    isActive = true; 
-                    // if message is a preempted
-                } else if (title.equals(PREEMPTED_TITLE)) {
-                    // TODO: Why does the pseudocode show <r', L'> instead of b?
-                    int b = Integer.parseInt(contentParts[0]); 
-                    // if the ballot number in the message is greater than the current ballot number
-                    if (b > ballot_num) {
-                        // become Passive
-                        isActive = false;
-                        // update the ballot number
-                        // TODO: Change this to ensure globally unique
-                        ballot_num = b + 1;
-                        // spawn a scout for the new ballot number
-                        queueScout = new LinkedBlockingQueue<String>();
-                        (new Thread(new Scout(queueScout, serverID, numServers, ballot_num, localhost))).start(); 
-                        scoutQueues.put(ballot_num, queueScout);
-                    }
+            } else if (title.equals(ADOPTED_TITLE)) {
+                int b = Integer.parseInt(contentParts[0]);
+                String[] pvals = contentParts[1].split(ACCEPTED_SEP);
+                // update proposals so far with highest ballots for each slot returned by the adopted message
+                for (String newPval:pmax(pvals)) {
+                    // for each proposal in the pmax
+                    String[] newPvalParts = newPval.split(PVALUE_SEP);
+                    int newS = Integer.parseInt(newPvalParts[1]);
+                    String newP = newPvalParts[2];
+                    // update proposals with that pvalue
+                    proposals.put(newS, newP);
+                }
+                // for all proposals so far
+                for (int tmp_s: proposals.keySet()) {
+                    // spawn a Commander for that proposal
+                    // spawn a Commander for this ballot
+                    LinkedBlockingQueue<String> queueCommander = new LinkedBlockingQueue<String>();
+                    String commanderID = tmp_s + " " + ballot_num;
+                    (new Thread(new Commander(queueCommander, numServers, numServers, String.format(PVALUE_CONTENT, ballot_num, tmp_s, proposals.get(tmp_s)), localhost))).start(); 
+                    commanderQueues.put(commanderID, queueCommander);
+                }
+                // become Active
+                isActive = true; 
+                // if message is a preempted
+            } else if (title.equals(PREEMPTED_TITLE)) {
+                // TODO: Why does the pseudocode show <r', L'> instead of b?
+                int b = Integer.parseInt(contentParts[0]); 
+                // if the ballot number in the message is greater than the current ballot number
+                if (b > ballot_num) {
+                    // become Passive
+                    isActive = false;
+                    // update the ballot number
+                    // TODO: Change this to ensure globally unique
+                    ballot_num = b + 1;
+                    // spawn a scout for the new ballot number
+                    queueScout = new LinkedBlockingQueue<String>();
+                    (new Thread(new Scout(queueScout, serverID, numServers, ballot_num, localhost))).start(); 
+                    scoutQueues.put(ballot_num, queueScout);
+                }
+            } else if (title.equals(TIME_BOMB_TITLE)) {
+                // Set message count
+                timeBombMessages = Integer.parseInt(contentParts[0]);
+                // If message count is 0, exit immediately
+                if(timeBombMessages == 0) {
+                    Thread.currentThread().interrupt();
+                    return;
                 }
             }
         }
@@ -161,6 +170,8 @@ class Leader extends Util implements Runnable{
          * where for each slot number that exists in the original array,
          * the pvalue with the highest ballot number is added to the new array
          */
+        if(pvals.length == 0)
+            return new String[0];
         ArrayList<String> pmax = new ArrayList<String>();
         for(int i=0; i<pvals.length; i++) {
             String pval = pvals[i];
@@ -257,9 +268,11 @@ class Leader extends Util implements Runnable{
                             int port = SERVER_PORT_BASE + leaderID;
                             String adopted_str = "";
                             for (String pvalue : pvalues) {
-                                adopted_str += pvalue + PVALUE_SEP;
+                                adopted_str += pvalue + ACCEPTED_SEP;
                             }
-                            adopted_str = adopted_str.substring(0, adopted_str.length()-PVALUE_SEP.length());
+                            int endIndex = adopted_str.length()-ACCEPTED_SEP.length();
+                            if (endIndex > 0)
+                                adopted_str = adopted_str.substring(0, endIndex);
                             String adoptedContent = String.format(ADOPTED_CONTENT, ballot_num, adopted_str);
                             String adoptedMessage = String.format(MESSAGE, LEADER_TYPE,
                                     leaderID, LEADER_TYPE, leaderID, ADOPTED_TITLE, adoptedContent);

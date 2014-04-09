@@ -64,23 +64,26 @@
 
 \section{Exercise 2}
 \ovalbox{
-\begin{minipage}{15cm} 
+\begin{minipage}{16cm} 
 Consider an iteration of Algorithm A on a configuration $G = (U,V,E)$ that
 increments the price of an item due to a violation of Stability Condition 2.
 Assume that the MCM M of G associated with this execution of Algorithm A is an
 MWMCM of $G$. Let $p (resp., p_0)$ denote the price vector of G maintained by
 Algorithm A just before (resp., after) this iteration. Prove that if $P_0(G,p)$
 holds, then so does $P_0(G,p_0)$. Hint: Make use of Lemma 1 of Assignment 4.
-\end{minipage} } \\
-
-In order to prove that if $\Pzero$ holds, then $P_0{G, p'}$ holds after one
+\end{minipage} } \\[0.5cm]
+\noindent
+In order to prove that if $\Pzero$ holds, then $P_0(G, p')$ holds after one
 iteration of algorithm A, we should prove it for all three possible violation
-cases of algorithm A.
+cases of algorithm A. Let $p$ be the price vector that violates certain
+stability condition and $q$ be one arbitrary stable price vector.
 
 \begin{proof}[Stability Condition 1 is violated]
+
     In this case, the algorithm A will halts "unsuccessfully". Hence, there is
     no change for price vector after the iteration. That is, we have $p = p'$.
     And obviously, it is true that if $\Pzero$ holds, then $P_0(G, p')$ holds.
+
 \end{proof}
 
 \begin{proof}[Stability Condition 2 is violated]
@@ -103,7 +106,7 @@ cases of algorithm A.
         w(u, v_0) - p_{v_0} \leq w(u, v_1) - p'_{v_1}
     \end{align}
 
-    that is,
+    That is,
 
     \begin{align} \label{ex2:p_v_1leqbala}
          p'_{v_1} \leq w(u, v_1) - w(u, v_0) + p_{v_0}
@@ -128,13 +131,20 @@ cases of algorithm A.
         w(u, v_1) - w(u, v_0) + q_{v_0} \leq q_{v_1}
     \end{align}
 
-    Since $p_{v_0} \leq q_{v_0}$ holds,
+    Since $p_{v_0} \leq q_{v_0}$ holds, we have 
+    
+    \begin{align}
+     w(u, v_1) - w(u, v_0) + p_{v_0} \leq w(u, v_1) - w(u, v_0) + q_{v_0}
+    \end{align}
+
+    And then we have
 
     \begin{align}
         w(u, v_1) - w(u, v_0) + p_{v_0} \leq q_{v_1}
     \end{align}
 
-    Combined with \eqref{ex2:p_v_1leqbala}, we have
+    Combined with \eqref{ex2:p_v_1leqbala}, we reach the destiniation as
+    follows
 
     \begin{align}
         p'_{v_1} \leq q_{v_1}
@@ -154,7 +164,7 @@ cases of algorithm A.
     In the violation of stability condition 3, we have
 
     \begin{align}
-        \exists v^{*},\ (u^{*}, v^{*}) \in E,\ u^{*} is unmatched in M,\ p_{v^{*}} < w(u^{*}, v^{*})
+        \exists v^{*},\ (u^{*}, v^{*}) \in E,\ u^{*} \text{ is unmatched in } M,\ p_{v^{*}} < w(u^{*}, v^{*})
     \end{align}
 
     Let $u_0$ to be a unmatched bid in $M$, and $(u_0, v_0) \in E$. 
@@ -176,10 +186,11 @@ cases of algorithm A.
     have
 
     \begin{align}
-        \forall u^{*} \in U,\ u^{*} is unmatched in M,\ w(u^{*}, v_0) \leq q_{v_0}
+        \forall u^{*} \in U,\ u^{*}\text{ is unmatched in } M,\ w(u^{*}, v_0) \leq q_{v_0}
     \end{align}
 
-    We instantiate $u^{*}$ to $u_0$, which is reasonable because $u_0$ Then we have
+    We instantiate $u^{*}$ to $u_0$, which is reasonable because $u_0$ is
+    unmatched in $M$. Then we have
 
     \begin{align}
         w(u_0, v_0) \leq q_{v_0}
@@ -205,7 +216,7 @@ cases of algorithm A.
     \newpage
 \section{Exercise 5}
 \ovalbox{
-\begin{minipage}{15cm}
+\begin{minipage}{17cm}
     Consider an execution of Algorithm A on a configuration $G = (U,V,E)$.
     Assume that the associated MCM $M$ of $G$ is an MWMCM of $G$, and that the
     initial price vector $p$ for $G$ is such that $\Pt$ holds. Prove that
@@ -234,7 +245,7 @@ cases of algorithm A.
 
     Combined with \eqref{ex5:p1bab}, it can be easily seen that 
     \begin{align} \label{ex5:wederive}
-        \exists (u,v) \in M,\ q_v < p_v
+        \exists (u,v) \in M,\ q_v \leq w(u,v) < p_v
     \end{align}
 
     However, we already know that $\Pt$ holds and if $\Pt$, then $\Pone$ must

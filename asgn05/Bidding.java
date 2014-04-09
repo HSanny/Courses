@@ -6,7 +6,7 @@
 ##         JIMMY LIN (xl5224) - JimmyLin@utexas.edu  
 ##
 ## DESCRIPTION: 
-##    Algorithm Assignment #3: BIDDING SYSTEM
+##    Algorithm Assignment #4: BIDDING SYSTEM by Algorithm A
 ##    We incrementally implement the bidding-item stable matching.
 ## 
 #################################################################

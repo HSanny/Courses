@@ -1,7 +1,7 @@
 /*##############################################################
 ## MODULE: Bidding.java
-## VERSION: 1.0 
-## SINCE: 2014-01-14
+## VERSION: 1.3 
+## SINCE: 2014-02-24
 ## AUTHOR: 
 ##         JIMMY LIN (xl5224) - JimmyLin@utexas.edu  
 ##

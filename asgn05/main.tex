@@ -60,62 +60,8 @@
 \newcommand{\Pzero}{\ensuremath{P_0(G, p)}}
 \newcommand{\Pone}{\ensuremath{P_1(G, M, p)}}
 \newcommand{\Ptwo}{\ensuremath{P_2(G, M, p)}}
-\section{Exercise 1}
-\ovalbox{
-\begin{minipage}{15cm}
-    Let $G = (U,V,E)$ be a configuration and let $p$ be the price vector for $G$
-    such that $p_v$ is equal to the start price of $v$ for all items $v$ in $V$ .
-    Assume that the MCM $M$ of $G$ associated with this execution of Algorithm A
-    is an MWMCM of $G$. Prove that $\Pt$ holds. Hint: Make use of
-    Exercise 1 from Assignment 4.
 
-\end{minipage} } \\[0.5cm]
-To prove the $\Pt$ holds, we need to correctly provide the proof for all of
-three predicates holds: $\Pzero$, $\Pone$ and $\Ptwo$. 
 
-\begin{proof} [Proof for $\Pzero$]
-From the exercise 1 of assignment 4, we know that for any stable price vector
-$q$, all its components $q_v$ must be at least the start price of item $v$,
-that is $p_v$ in this case.
-Hence, $\Pzero$ holds.
-\end{proof}
-
-\begin{proof} [Proof for $\Pone$]
-    Proof for the .
-\end{proof}
-
-\begin{proof} [Proof for $\Ptwo$ by Contradiction]
-    Let us assume that \Ptwo does not holds. That is to say, there exists a
-    item $v$ whose start price $p_v$ is larger than weight of one edge
-    $(u,v)$ in $M$. Formally, 
-
-    \begin{align} \label{ex1:p3:1}
-        \exists (u,v) \in M,\ p_v > w(u,v) 
-    \end{align}
-    
-    However, we have that the given $M$ is an MWMCM.
-    Hence, weight of any edge must be larger than or equal to the reserve
-    price of the associated item. Otherwise, item $v$ will remained unmatched
-    in $M$. (Here we do not presume the existence of dummy bid, which is just
-    for programming part.) And since we already know that the start
-    price is at most reserve price. Formally,
-    
-    \begin{align} \label{ex1:p3:2}
-        \forall (u,v) \in M,\ p_v \leq \text{reserve price of item } v \leq
-        w(u,v)
-    \end{align}
-
-    That is,
-    \begin{align} \label{ex1:p3:3}
-        \forall (u,v) \in M,\ p_v \leq w(u,v)
-    \end{align}
-
-    Note that \eqref{ex1:p3:1} contradicts the \eqref{ex1:p3:3}. Therefore, we
-    should negate the assumption at the very beginning and conclude that
-    $\Ptwo$ does holds.
-\end{proof}
-
-\newpage
 \section{Exercise 2}
 \ovalbox{
 \begin{minipage}{15cm} 
@@ -256,6 +202,56 @@ cases of algorithm A.
     P_0(G, p') $ holds for that iteration, it can be concluded that if $\Pone$
     holds, then so does $P_1(G, M, p')$.
 
+    \newpage
+\section{Exercise 5}
+\ovalbox{
+\begin{minipage}{15cm}
+    Consider an execution of Algorithm A on a configuration $G = (U,V,E)$.
+    Assume that the associated MCM $M$ of $G$ is an MWMCM of $G$, and that the
+    initial price vector $p$ for $G$ is such that $\Pt$ holds. Prove that
+    Algorithm $A$ is guaranteed to halt successfully within a finite number of
+    iterations. Hint: Make use of Lemma 3.
+\end{minipage} } \\[0.5cm]
+
+\begin{proof}[Proof by Contradiction]
+    First assume that Algorithm A is {\bf not necessarily} guaranteed to halt
+    successfully within a finite number of iterations. That is to say, it is
+    possible for Algorithm A to unsuccessfully halt at certain iteration. Let
+    us say the halting iteration to be iteration $k$. Since the algorithm A
+    halts at iteration $k$, the only possibility comes from the violation of stability
+    condition 1 for price vector $p$. That is,
+    
+    \begin{align}  \label{ex5:p1bab}
+        \exists (u,v) \in M,\ w(u,v) < p_v
+    \end{align}
+
+    Let us see how the above formula contradicts the known condition $\Pt$.
+
+    For an stable price vector $q$, and an MWMCM $M$, we have
+    \begin{align} \label{ex5:forfixedp}
+        \forall v,\ q_v \leq w(u,v)
+    \end{align}
+
+    Combined with \eqref{ex5:p1bab}, it can be easily seen that 
+    \begin{align} \label{ex5:wederive}
+        \exists (u,v) \in M,\ q_v < p_v
+    \end{align}
+
+    However, we already know that $\Pt$ holds and if $\Pt$, then $\Pone$ must
+    hold.  Hence, $\Pone$ holds. That is,
+
+    \begin{align} \label{ex5:tocontra}
+        \forall v,\ p_v < q_v
+    \end{align}
+    where $q$ can be arbitrary stable price vector, but here we just
+    instantiate it to be the same stable price vector in \eqref{ex5:forfixedp} for convenience.
+
+    Now we can see that there is a contradiction between \eqref{ex5:wederive}
+    and \eqref{ex5:tocontra}. Hence, we should negate the initial assumption
+    and conclude that Algorithm $A$ is guaranteed to halt successfully within
+    a finite number of iterations. 
+
+\end{proof}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% General Documentation ends
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

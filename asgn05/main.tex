@@ -55,24 +55,206 @@
 \newcommand{\linearTime}{\ensuremath{\mathcal{O}(n)}}
 \newcommand{\lbw}[1]{\ensuremath{a_{#1} q_{#1} + b_{#1}}}  %% linear bid weight
 \newcommand{\sbw}[1]{\ensuremath{m_{#1}}}
+
+\newcommand{\Pt}{\ensuremath{P(G, M, p)}}
+\newcommand{\Pzero}{\ensuremath{P_0(G, p)}}
+\newcommand{\Pone}{\ensuremath{P_1(G, M, p)}}
+\newcommand{\Ptwo}{\ensuremath{P_2(G, M, p)}}
 \section{Exercise 1}
 \ovalbox{
 \begin{minipage}{15cm}
+    Let $G = (U,V,E)$ be a configuration and let $p$ be the price vector for $G$
+    such that $p_v$ is equal to the start price of $v$ for all items $v$ in $V$ .
+    Assume that the MCM $M$ of $G$ associated with this execution of Algorithm A
+    is an MWMCM of $G$. Prove that $\Pt$ holds. Hint: Make use of
+    Exercise 1 from Assignment 4.
+
 \end{minipage} } \\[0.5cm]
+To prove the $\Pt$ holds, we need to correctly provide the proof for all of
+three predicates holds: $\Pzero$, $\Pone$ and $\Ptwo$. 
+
+\begin{proof} [Proof for $\Pzero$]
+From the exercise 1 of assignment 4, we know that for any stable price vector
+$q$, all its components $q_v$ must be at least the start price of item $v$,
+that is $p_v$ in this case.
+Hence, $\Pzero$ holds.
+\end{proof}
+
+\begin{proof} [Proof for $\Pone$]
+    Proof for the .
+\end{proof}
+
+\begin{proof} [Proof for $\Ptwo$ by Contradiction]
+    Let us assume that \Ptwo does not holds. That is to say, there exists a
+    item $v$ whose start price $p_v$ is larger than weight of one edge
+    $(u,v)$ in $M$. Formally, 
+
+    \begin{align} \label{ex1:p3:1}
+        \exists (u,v) \in M,\ p_v > w(u,v) 
+    \end{align}
+    
+    However, we have that the given $M$ is an MWMCM.
+    Hence, weight of any edge must be larger than or equal to the reserve
+    price of the associated item. Otherwise, item $v$ will remained unmatched
+    in $M$. (Here we do not presume the existence of dummy bid, which is just
+    for programming part.) And since we already know that the start
+    price is at most reserve price. Formally,
+    
+    \begin{align} \label{ex1:p3:2}
+        \forall (u,v) \in M,\ p_v \leq \text{reserve price of item } v \leq
+        w(u,v)
+    \end{align}
+
+    That is,
+    \begin{align} \label{ex1:p3:3}
+        \forall (u,v) \in M,\ p_v \leq w(u,v)
+    \end{align}
+
+    Note that \eqref{ex1:p3:1} contradicts the \eqref{ex1:p3:3}. Therefore, we
+    should negate the assumption at the very beginning and conclude that
+    $\Ptwo$ does holds.
+\end{proof}
 
 \newpage
 \section{Exercise 2}
 \ovalbox{
 \begin{minipage}{15cm} 
-a
+Consider an iteration of Algorithm A on a configuration $G = (U,V,E)$ that
+increments the price of an item due to a violation of Stability Condition 2.
+Assume that the MCM M of G associated with this execution of Algorithm A is an
+MWMCM of $G$. Let $p (resp., p_0)$ denote the price vector of G maintained by
+Algorithm A just before (resp., after) this iteration. Prove that if $P_0(G,p)$
+holds, then so does $P_0(G,p_0)$. Hint: Make use of Lemma 1 of Assignment 4.
 \end{minipage} } \\
 
-\newpage
-\section{Exercise 3}
-\ovalbox{
-\begin{minipage}{15cm} 
-a
-\end{minipage} } \\
+In order to prove that if $\Pzero$ holds, then $P_0{G, p'}$ holds after one
+iteration of algorithm A, we should prove it for all three possible violation
+cases of algorithm A.
+
+\begin{proof}[Stability Condition 1 is violated]
+    In this case, the algorithm A will halts "unsuccessfully". Hence, there is
+    no change for price vector after the iteration. That is, we have $p = p'$.
+    And obviously, it is true that if $\Pzero$ holds, then $P_0(G, p')$ holds.
+\end{proof}
+
+\begin{proof}[Stability Condition 2 is violated]
+    Since the violation of stability condition 2 causes the iteration of
+    algorithm A, it is true that 
+    
+    \begin{align}
+        \exists u,\ (u, v) \in M,\ (u, v^*) \in E,\ s.t.\ 
+        w(u, v) - p_{v} < w(u, v^*) - p_{v^*}
+    \end{align}
+    
+    Let us instantiate the $v$ to $v_0$ and $v^*$ to $v_1$, and have
+    
+    \begin{align}
+        w(u, v_0) - p_{v_0} < w(u, v_1) - p_{v_1}
+    \end{align}
+
+    In this case, the $p'_{v_1}$ will increments by 1, it is true that
+    \begin{align}
+        w(u, v_0) - p_{v_0} \leq w(u, v_1) - p'_{v_1}
+    \end{align}
+
+    that is,
+
+    \begin{align} \label{ex2:p_v_1leqbala}
+         p'_{v_1} \leq w(u, v_1) - w(u, v_0) + p_{v_0}
+    \end{align}
+
+    For the stable price vector $q$, according the stability condition 2, we
+    have 
+
+    \begin{align}
+        \forall v^{*},\ w(u, v^{*}) - q_{v^{*}} \leq w(u, v_0) - q_{v_0}    
+    \end{align}
+
+    Let us instantiate the $v^{*}$ to $v_1$ and have
+
+    \begin{align}
+        w(u, v_1) - q_{v_1} \leq w(u, v_0) - q_{v_0}
+    \end{align}
+
+    That is, 
+
+    \begin{align}
+        w(u, v_1) - w(u, v_0) + q_{v_0} \leq q_{v_1}
+    \end{align}
+
+    Since $p_{v_0} \leq q_{v_0}$ holds,
+
+    \begin{align}
+        w(u, v_1) - w(u, v_0) + p_{v_0} \leq q_{v_1}
+    \end{align}
+
+    Combined with \eqref{ex2:p_v_1leqbala}, we have
+
+    \begin{align}
+        p'_{v_1} \leq q_{v_1}
+    \end{align}
+
+    Since $p'_{v_1}$ is the only item whose price is changed in this
+    iteration, $\forall v \neq v_1,\ p'_{v} \leq q_{v_1}$ holds. Hence, we can
+    conclude that after the iteration of algorithm A with the cause of
+    stability violation 2, Predicate 0 still holds.
+    That is, $ \Pzero \Rightarrow P_0(G, p') $ holds if one iteration is
+    caused by stability violation 2.
+
+\end{proof}
+
+\begin{proof}[Stability Condition 3 is violated]
+
+    In the violation of stability condition 3, we have
+
+    \begin{align}
+        \exists v^{*},\ (u^{*}, v^{*}) \in E,\ u^{*} is unmatched in M,\ p_{v^{*}} < w(u^{*}, v^{*})
+    \end{align}
+
+    Let $u_0$ to be a unmatched bid in $M$, and $(u_0, v_0) \in E$. 
+    Hence, we can instantiate $v^{*}$ to $v_0$, and $u^{*}$ to $u_0$
+
+    \begin{align}
+        (u_0, v_0) \in E,\ p_{v_0} < w(u_0, v_0)
+    \end{align}
+    
+    Since the algorithm A in this case will increment $p_{v_0}$ by one and other
+    price component remains unchanged, we have
+
+    \begin{align} \label{ex2:p3:babbaa}
+        p_{v_0} \leq w(u, v_0)
+    \end{align}
+
+    Since M is already MWMCM, and $q$ is stable price vector, then $(M, q)$ is
+    stable solution. According to the third property of stable solution, we
+    have
+
+    \begin{align}
+        \forall u^{*} \in U,\ u^{*} is unmatched in M,\ w(u^{*}, v_0) \leq q_{v_0}
+    \end{align}
+
+    We instantiate $u^{*}$ to $u_0$, which is reasonable because $u_0$ Then we have
+
+    \begin{align}
+        w(u_0, v_0) \leq q_{v_0}
+    \end{align}
+
+    Combined with \eqref{ex2:p3:babbaa}, it is true that
+
+    \begin{align}
+        p_{v_0} \leq q_{v_0}
+    \end{align}
+
+    Since other price component does not vary at that iteration, we can
+    conclude that $p \leq q$ holds in this case. That is, $ \Pzero \Rightarrow
+    P_0(G, p') $ holds if one iteration is caused by stability violation 3.
+
+\end{proof}
+
+    Since one iteration in algorithm A will only be caused by one of three
+    cases, and in all of these three cases, $ \Pzero \Rightarrow
+    P_0(G, p') $ holds for that iteration, it can be concluded that if $\Pone$
+    holds, then so does $P_1(G, M, p')$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% General Documentation ends

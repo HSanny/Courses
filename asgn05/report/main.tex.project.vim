@@ -21,6 +21,6 @@ let b:atp_StarEnvDefault = ''
 let b:atp_StarMathEnvDefault = ''
 let b:atp_updatetime_insert = 4000
 let b:atp_updatetime_normal = 2000
-let b:atp_LocalCommands = ['\wm{', '\wmp{', '\wmi', '\wmip', '\constantTime', '\linearTime', '\lbw{', '\sbw{']
+let b:atp_LocalCommands = ['\wm{', '\wmp{', '\wmi', '\wmip', '\constantTime', '\linearTime', '\lbw{', '\sbw{', '\Pt', '\Pzero', '\Pone', '\Ptwo']
 let b:atp_LocalEnvironments = []
 let b:atp_LocalColors = []

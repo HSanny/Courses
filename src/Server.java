@@ -24,6 +24,7 @@ import java.net.InetAddress;
 import java.util.HashSet;
 import java.util.HashMap; 
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.locks.Lock;
 
 class Server extends Util { // a.k.a. Replica
     /* Configuration */
@@ -42,7 +43,7 @@ class Server extends Util { // a.k.a. Replica
     static HashMap<Integer, String> proposals;
     static HashMap<Integer, String> decisions;
 
-    public static volatile String interruptReason = "";
+    public static volatile String interruptReason = ""; // TODO: use Integer to represent reason
     static boolean electionInProgress;
     static boolean isRecoveryInProgress;
     static boolean carryLeader;
@@ -50,6 +51,8 @@ class Server extends Util { // a.k.a. Replica
     
     static boolean proposeAsLeader;
     static HeartbeatTimer heartbeatTimer;
+    static Long lastHeartbeatReceived;
+    static Lock timerLock;
 
     /* Collocation: put leader and acceptor together */
     static Thread leader;
@@ -59,18 +62,25 @@ class Server extends Util { // a.k.a. Replica
 
     class HeartbeatTimer implements Runnable {
         Thread replica;
+        Lock timerLock;
 
-        public HeartbeatTimer(Thread replica) {
+        public HeartbeatTimer(Thread replica, Lock lock) {
+            // TODO: more argument in, e.g. lastHeartbeatReceived object!
             this.replica = replica; 
+            this.timerLock = lock;
         }
 
         public void run() {
+            int diff = 0;
             while (true) {
                 try {
                     // Periodically check the lastHeartbeatReceived variable
-
+                    timerLock.tryLock();
+                    diff = System.currentTimeMillis() - lastHeartbeatReceived;
+                    timerLock.unlock();
                     // If last heartbeat is too old, then interrupt replica
                     if (period > HB_TIMEOUT) {
+                        // TODO: change the interruptReason
                         replica.interrupt();
                         return ;
                     }
@@ -167,6 +177,9 @@ class Server extends Util { // a.k.a. Replica
         carryLeader = true;
         leaderID = -1;
         proposeAsLeader = false;
+
+        lastHeartbeatReceived = System.currentTimeMillis();
+        timerLock = new Lock();
 
         // Initialization for collocation technique
         queueAcceptor = new LinkedBlockingQueue<String> ();
@@ -325,25 +338,7 @@ class Server extends Util { // a.k.a. Replica
                             HELP_YOU_RECOVER_TITLE, recoverInfo);
                     port = SERVER_PORT_BASE + sender_idx;
                     send (localhost, port, recoverMsg, logHeader);
-                } else if (title.equals(LEADER_REQUEST_TITLE)) {
-                    leaderID = Integer.parseInt(content);
-                    if (leaderID == serverID) {
-                        // remove heartbeatTimer
-                        heartbeatTimer.interrupt();
-                        // create Leader instance
-                        carryLeader = true;
-                        queueLeader = new LinkedBlockingQueue<String> ();
-                        leader = new Thread(new Leader(queueLeader, serverID,
-                                    numServers, localhost,
-                                    Thread.currentThread())); 
-                        leader.start();
-                        
-                    }
-                    String ackLeader = String.format(MESSAGE, SERVER_TYPE,
-                            serverID, sender_type, sender_idx, LEADER_ACK_TITLE,
-                            EMPTY_CONTENT);
-                    send (localhost, MASTER_PORT, ackLeader, logHeader);
-                } else if (title.equals(SKIP_SLOT_TITLE)) {
+                }  else if (title.equals(SKIP_SLOT_TITLE)) {
                     int amountToSkip = Integer.parseInt(content);
                     // STEP ONE: update the proposals
                     for (int i = slot_num; i < slot_num + amountToSkip; i++) {
@@ -367,6 +362,27 @@ class Server extends Util { // a.k.a. Replica
                     // Pass the time bomb message to Leader
                     queueLeader.put(recMessage); 
                     // This message is only given by master
+                }
+                // =============================================================
+                // THE FOLLOWING IS ABOUT LEADER
+                else if (title.equals(LEADER_REQUEST_TITLE)) {
+                    leaderID = Integer.parseInt(content);
+                    if (leaderID == serverID) {
+                        // remove heartbeatTimer
+                        heartbeatTimer.interrupt();
+                        // create Leader instance
+                        carryLeader = true;
+                        queueLeader = new LinkedBlockingQueue<String> ();
+                        leader = new Thread(new Leader(queueLeader, serverID,
+                                    numServers, localhost,
+                                    Thread.currentThread())); 
+                        leader.start();
+                    }
+                    heartbeatTimer = new HeartbeatTimer(Thread.currentThread(), timerLock);
+                    String ackLeader = String.format(MESSAGE, SERVER_TYPE,
+                            serverID, sender_type, sender_idx, LEADER_ACK_TITLE,
+                            EMPTY_CONTENT);
+                    send (localhost, MASTER_PORT, ackLeader, logHeader);
                 } else if (title.equals(LEADER_PROPOSAL_TITLE)) {
                     if (sender_idx < serverID) {
                         // Accept this proposal only when prior 
@@ -391,9 +407,13 @@ class Server extends Util { // a.k.a. Replica
                     // once ge the leader ack from other server, it will get
                     // set the proposal ack to true
                     leaderProposalAcks[sender_idx] = false;
-                } else if (title.equals(HEARTBEAT_TITLE)) {
-                    // set the heartbeat timer variable to zero
-                    heartbeatTime = 0;
+                } 
+                // =============================================================
+                else if (title.equals(HEARTBEAT_TITLE)) {
+                    // TODO: update the current time with mututal exclusion
+                    lock.acquire();
+                    lastHeartbeatReceived = System.currentTimeMillis();
+                    lock.release();
                 } else if (title.equals(EXIT_TITLE) &&
                         sender_type.equals(MASTER_TYPE)) {
                     carryLeader = false;

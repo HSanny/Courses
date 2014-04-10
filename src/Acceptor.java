@@ -86,6 +86,7 @@ class Acceptor extends Util implements Runnable {
                 }
                 // ACCEPTANCE: if incoming message is a p2a
                 else if (title.equals(P2A_TITLE)) {
+                    System.out.println(content);
                     int lambda = Integer.parseInt(conts[0]); // leader id
                     String pvalue = conts[1];
                     String [] pvalueParts = pvalue.split(PVALUE_SEP);
@@ -104,7 +105,7 @@ class Acceptor extends Util implements Runnable {
                     String p2b_response = String.format(MESSAGE,
                             ACCEPTOR_TYPE, serverID, LEADER_TYPE, lambda,
                             P2B_TITLE, p2b_content);
-                    send (localhost, port, p2b_response, logHeader);
+                    boolean success = send (localhost, port, p2b_response, logHeader);
                 }
             }
         }

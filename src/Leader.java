@@ -140,7 +140,7 @@ class Leader extends Util implements Runnable{
                         // spawn a Commander for this ballot
                         int messagesUntilCrash = checkTimeBomb();
                         LinkedBlockingQueue<String> queueCommander = new LinkedBlockingQueue<String>();
-                        Thread thread = new Thread(new Commander(queueCommander, numServers, numServers, String.format(PVALUE_CONTENT, ballot_num, s, p), localhost, messagesUntilCrash));
+                        Thread thread = new Thread(new Commander(queueCommander, serverID,  numServers, numServers, String.format(PVALUE_CONTENT, ballot_num, s, p), localhost, messagesUntilCrash));
                         thread.start();
                         if(messagesUntilCrash > 0) {
                             try {
@@ -174,7 +174,7 @@ class Leader extends Util implements Runnable{
                     int messagesUntilCrash = checkTimeBomb();
                     LinkedBlockingQueue<String> queueCommander = new LinkedBlockingQueue<String>();
                     String commanderID = tmp_s + " " + ballot_num;
-                    Thread thread = new Thread(new Commander(queueCommander, numServers, numServers, String.format(PVALUE_CONTENT, ballot_num, tmp_s, proposals.get(tmp_s)), localhost, messagesUntilCrash)); 
+                    Thread thread = new Thread(new Commander(queueCommander, serverID, numServers, numServers, String.format(PVALUE_CONTENT, ballot_num, tmp_s, proposals.get(tmp_s)), localhost, messagesUntilCrash)); 
                     thread.start();
                     if(messagesUntilCrash > 0) {
                         try {
@@ -405,10 +405,11 @@ class Leader extends Util implements Runnable{
         private int messagesUntilCrash;
 
         /* Constructor */
-        public Commander(LinkedBlockingQueue<String> queue, int numAcceptors,
+        public Commander(LinkedBlockingQueue<String> queue, int leaderID, int numAcceptors,
                 int numServers, String pval, InetAddress localhost, int messagesUntilCrash) {
             this.queue = queue;
             this.waitFor = new int[numAcceptors];
+            this.leaderID = leaderID;
             this.numServers = numServers;
             String[] pvalParts = pval.split(PVALUE_SEP);
             this.ballot_num = Integer.parseInt(pvalParts[0]);

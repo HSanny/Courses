@@ -110,6 +110,7 @@ interface Protocol {
     final static int LEADER_PROPOSAL_TIMEOUT = 3000;
 
     // Interrupt type
+    final static int NO_REASON = -1;
     final static int TIMEBOMB_INTERRUPT = 0;
     final static int LEADER_FAILURE_INTERRUPT = 1;
     final static int LEADER_CHECK_INTERRUPT = 2;

@@ -44,7 +44,7 @@ class Server extends Util { // a.k.a. Replica
     static HashMap<Integer, String> proposals;
     static HashMap<Integer, String> decisions;
 
-    public static volatile String interruptReason = ""; // TODO: use Integer to represent reason
+    public static volatile Integer interruptReason; 
     static boolean electionInProgress;
     static boolean isRecoveryInProgress;
     static boolean carryLeader;
@@ -61,7 +61,7 @@ class Server extends Util { // a.k.a. Replica
     static LinkedBlockingQueue<String> queueLeader;
     static LinkedBlockingQueue<String> queueAcceptor;
 
-    class HeartbeatTimer extends Thread implements Runnable {
+    static class HeartbeatTimer extends Thread implements Runnable {
         Thread replica;
         Lock timerLock;
         Long lastHeartbeatReceived;
@@ -83,7 +83,7 @@ class Server extends Util { // a.k.a. Replica
                     timerLock.unlock();
                     // If last heartbeat is too old, then interrupt replica
                     if (diff > HB_TIMEOUT) {
-                        // TODO: change the interruptReason
+                        interruptReason = LEADER_FAILURE_INTERRUPT;
                         replica.interrupt();
                         return ;
                     }
@@ -176,12 +176,12 @@ class Server extends Util { // a.k.a. Replica
         slot_num = 0;
         proposals = new HashMap<Integer, String> ();
         decisions = new HashMap<Integer, String> ();
-        interruptReason = "";
         electionInProgress = false;
         isRecoveryInProgress = false;
         carryLeader = true;
         leaderID = -1;
         proposeAsLeader = false;
+        interruptReason = NO_REASON;
 
         lastHeartbeatReceived = System.currentTimeMillis();
         timerLock = new ReentrantLock();
@@ -429,12 +429,12 @@ class Server extends Util { // a.k.a. Replica
                     System.exit(0);
                 }
             } catch (InterruptedException ie) {
-                if (interruptReason.equals("timeBomb")) {
+                if (interruptReason == TIMEBOMB_INTERRUPT) {
                     // Leader interrupts when it exits, signalling a crash
                     listener.close();
                     print("Crashing.", logHeader);
                     System.exit(0);
-                } else if (interruptReason.equals("leaderFailure")) {
+                } else if (interruptReason == LEADER_FAILURE_INTERRUPT) {
                     electionInProgress = true;
                     // STEP ZERO: add the code for electing new leader 
                     Thread electNewLeader = new Thread (new Runnable () {
@@ -468,12 +468,12 @@ class Server extends Util { // a.k.a. Replica
                             ;
                         }
                         // interrupt main thread
-                        interruptReason = "leaderCheck";
+                        interruptReason = LEADER_CHECK_INTERRUPT;
                         mainThread.interrupt();
                     }
                     });
                     electNewLeader.start();
-                } else if (interruptReason.equals("leaderCheck")) {
+                } else if (interruptReason == LEADER_CHECK_INTERRUPT) {
                     // check the acks of its proposal
                     boolean amILeader = true;
                     for (int serverIndex = 0; serverIndex < numServers; serverIndex++) {

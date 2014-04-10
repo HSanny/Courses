@@ -488,6 +488,33 @@ public class Master extends Util {
                      * Instruct the leader to crash after sending the number of paxos
                      * related messages specified by numMessages
                      */ 
+                    Thread collectLeaderResponse = new Thread ( new Runnable () {
+                        public void run () {
+                            try {
+                            while (true) {
+                            Socket socket = listener.accept();
+                            try { 
+                                BufferedReader in = new BufferedReader(new
+                                        InputStreamReader(socket.getInputStream()));
+                                String recMessage = in.readLine();
+                                printReceivedMessage(recMessage, MASTER_LOG_HEADER);
+                                String [] recInfo = recMessage.split(MESSAGE_SEP);
+                                String title = recInfo[TITLE_IDX];
+                                String sender_index = recInfo[SENDER_INDEX_IDX];
+                                int sender_idx = Integer.parseInt(recInfo[SENDER_INDEX_IDX]);
+                                if (title.equals(LEADER_REQUEST_TITLE)) {
+                                    print ("I know that Server " + sender_idx
+                                    + " is new leader." , MASTER_LOG_HEADER);
+                                    leaderID = sender_idx;
+                                    break;
+                                }
+
+                            } finally { socket.close(); }
+                            }
+                            } catch (IOException e) {;} finally { ;}
+                        }
+                    });
+                    collectLeaderResponse.start();
                     // Send timeBomb instruction to server with leaderID
                     port = SERVER_PORT_BASE + leaderID;
                     String timeBombMessage = String.format(MESSAGE,

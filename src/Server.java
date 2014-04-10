@@ -397,13 +397,7 @@ class Server extends Util { // a.k.a. Replica
                         heartbeatTimer = new HeartbeatTimer ();
                         heartbeatTimer.start();
                     }
-                    int portBase;
-                    if(sender_type.equals(SERVER_TYPE)) {
-                        portBase = SERVER_PORT_BASE;
-                    } else {
-                        portBase = MASTER_PORT;
-                    }
-                    port = portBase + sender_idx;
+                    port = getPort(sender_type, sender_idx);
                     String ackLeader = String.format(MESSAGE, SERVER_TYPE,
                             serverID, sender_type, sender_idx, LEADER_ACK_TITLE,
                             EMPTY_CONTENT);
@@ -450,10 +444,10 @@ class Server extends Util { // a.k.a. Replica
                 if (interruptReason == TIMEBOMB_INTERRUPT) {
                     // Leader interrupts when it exits, signalling a crash
                     listener.close();
-                    print("Crashing.", logHeader);
+                    print("I get Crashed.", logHeader);
                     System.exit(0);
                 } else if (interruptReason == LEADER_FAILURE_INTERRUPT) {
-                    print ("Elect new leader start..",logHeader);
+                    print ("Elect new leader start..", logHeader);
                     electionInProgress = true;
                     // STEP ZERO: add the code for electing new leader 
                     Thread electNewLeader = new Thread (new Runnable () {
@@ -502,9 +496,15 @@ class Server extends Util { // a.k.a. Replica
                         }
                     }
                     if (amILeader) {
+                        // report to master 
+                        String IamLeaderMsg = String.format(MESSAGE,
+                                    SERVER_TYPE, serverID, MASTER_TYPE, 0,
+                                    LEADER_REQUEST_TITLE,
+                                    Integer.toString(serverID));
+                            send (localhost, MASTER_PORT, IamLeaderMsg, logHeader);
                         // broadcast I am leader to clients and wait for acks
                         for (int clientIndex = 0; clientIndex < numClients; clientIndex ++) {
-                            String IamLeaderMsg = String.format(MESSAGE,
+                            IamLeaderMsg = String.format(MESSAGE,
                                     SERVER_TYPE, serverID, CLIENT_TYPE,
                                     clientIndex, LEADER_REQUEST_TITLE,
                                     Integer.toString(serverID));
@@ -514,7 +514,7 @@ class Server extends Util { // a.k.a. Replica
                         // broadcast I am leader to all servers, including
                         // itself to construct leader object
                         for (int serverIndex = 0; serverIndex < numServers; serverIndex ++) {
-                            String IamLeaderMsg = String.format(MESSAGE,
+                            IamLeaderMsg = String.format(MESSAGE,
                                     SERVER_TYPE, serverID, SERVER_TYPE,
                                     serverIndex, LEADER_REQUEST_TITLE,
                                     Integer.toString(serverID));

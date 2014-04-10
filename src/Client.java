@@ -176,9 +176,10 @@ public class Client extends Util {
                 } else if (title.equals(LEADER_REQUEST_TITLE)) {
                     leaderID = Integer.parseInt(content);
                     String ackLeaderMsg = String.format (MESSAGE, CLIENT_TYPE,
-                            clientID, MASTER_TYPE, 0, LEADER_ACK_TITLE,
+                            clientID, sender_type, sender_idx, LEADER_ACK_TITLE,
                             EMPTY_CONTENT); 
-                    send (localhost, MASTER_PORT, ackLeaderMsg, logHeader);
+                    port = getPort(sender_type, sender_idx);
+                    send (localhost, port, ackLeaderMsg, logHeader);
                 } else if (title.equals(EXIT_TITLE)) {
                     socket.close();
                     listener.close();

@@ -28,9 +28,9 @@ class Util implements Protocol, Logging {
         int portBase = -1;
         if (type.equals(MASTER_TYPE)) {
             portBase = MASTER_PORT;
-        } else if (types.equals(SERVER_TYPE)) {
+        } else if (type.equals(SERVER_TYPE)) {
             portBase = SERVER_PORT_BASE;
-        } else if (types.equals(CLIENT_TYPE)) {
+        } else if (type.equals(CLIENT_TYPE)) {
             portBase = CLIENT_PORT_BASE;
         } else {
             System.out.println("Exception: unrecognized type");
@@ -41,7 +41,7 @@ class Util implements Protocol, Logging {
 
     public static int getPort (String type, int index) {
         int portBase = getPortBase(type);
-        int port = portBase + index
+        int port = portBase + index;
         return port;
     }
     /* Print general stuff */

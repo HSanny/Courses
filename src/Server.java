@@ -439,38 +439,38 @@ class Server extends Util { // a.k.a. Replica
                     // STEP ZERO: add the code for electing new leader 
                     Thread electNewLeader = new Thread (new Runnable () {
                         public void run () {
-                        // STEP ONE: propose itself as new leader
-                        for (int serverIndex = 0; serverIndex < numServers; serverIndex++) {
-                            if (serverIndex == serverID) { // ack for itself
-                                leaderProposalAcks[serverIndex] = true;
-                            } else { // not ack yet for others
-                                leaderProposalAcks[serverIndex] = false;
+                            // STEP ONE: propose itself as new leader
+                            for (int serverIndex = 0; serverIndex < numServers; serverIndex++) {
+                                if (serverIndex == serverID) { // ack for itself
+                                    leaderProposalAcks[serverIndex] = true;
+                                } else { // not ack yet for others
+                                    leaderProposalAcks[serverIndex] = false;
+                                }
                             }
-                        }
-                        // send message to ask for ack
-                        for (int serverIndex = 0; serverIndex < numServers; serverIndex++) {
-                            if (serverIndex == leaderID || serverIndex == serverID) continue; 
-                            int port = SERVER_PORT_BASE + serverIndex;
-                            String leaderProposeMsg = String.format(MESSAGE,
-                                SERVER_TYPE, serverIndex, SERVER_TYPE,
-                                serverID, LEADER_PROPOSAL_TITLE, EMPTY_CONTENT);
+                            // send message to ask for ack
+                            for (int serverIndex = 0; serverIndex < numServers; serverIndex++) {
+                                if (serverIndex == leaderID || serverIndex == serverID) continue; 
+                                int port = SERVER_PORT_BASE + serverIndex;
+                                String leaderProposeMsg = String.format(MESSAGE,
+                                    SERVER_TYPE, serverIndex, SERVER_TYPE,
+                                    serverID, LEADER_PROPOSAL_TITLE, EMPTY_CONTENT);
+                                try {
+                                    send (localhost, port, leaderProposeMsg, logHeader);
+                                } catch (IOException e) {
+                                    // the destination server is dead
+                                    leaderProposalAcks[serverIndex] = null;
+                                }
+                            }
                             try {
-                                send (localhost, port, leaderProposeMsg, logHeader);
-                            } catch (IOException e) {
-                                // the destination server is dead
-                                leaderProposalAcks[serverIndex] = null;
+                                Thread.sleep(LEADER_PROPOSAL_TIMEOUT);
+                            } catch (InterruptedException ie) {
+                                // ignore
+                                ;
                             }
+                            // interrupt main thread
+                            interruptReason = LEADER_CHECK_INTERRUPT;
+                            mainThread.interrupt();
                         }
-                        try {
-                        Thread.sleep(LEADER_PROPOSAL_TIMEOUT);
-                        } catch (InterruptedException ie) {
-                            // ignore
-                            ;
-                        }
-                        // interrupt main thread
-                        interruptReason = LEADER_CHECK_INTERRUPT;
-                        mainThread.interrupt();
-                    }
                     });
                     electNewLeader.start();
                 } else if (interruptReason == LEADER_CHECK_INTERRUPT) {

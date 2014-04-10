@@ -100,6 +100,9 @@ interface Protocol {
 
     // HEARTBEAT CONFIGURATION
     final static int HB_INTERVAL = 1000; // unit: milli-seconds
-    final static int HB_TIMEOUT = 3000; // unit: milli-seconds
+    final static int HB_TIMEOUT = 2000; // unit: milli-seconds
     final static String HEARTBEAT_TITLE = "THIS IS A HEART BEAT!";
+
+    // LEADE ELECTION CONFIGURATION
+    final static int LEADER_PROPOSAL_TIMEOUT = 3000;
 }

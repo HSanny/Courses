@@ -251,15 +251,17 @@ class Leader extends Util implements Runnable{
                 String maxPval = null;
                 // Pick the pvalue with the largest ballot number for a given slot number
                 for(String tmp_pval: pvals) {
-                    String[] tmp_pvalParts = tmp_pval.split(PVALUE_SEP);
-                    int tmp_b = Integer.parseInt(tmp_pvalParts[0]);
-                    int tmp_s = Integer.parseInt(tmp_pvalParts[1]);
-                    if(tmp_s == s) {
-                        if(tmp_b > maxB) {
-                            maxB = tmp_b;
-                            maxPval = pval;
+                    if(tmp_pval != null) {
+                        String[] tmp_pvalParts = tmp_pval.split(PVALUE_SEP);
+                        int tmp_b = Integer.parseInt(tmp_pvalParts[0]);
+                        int tmp_s = Integer.parseInt(tmp_pvalParts[1]);
+                        if(tmp_s == s) {
+                            if(tmp_b > maxB) {
+                                maxB = tmp_b;
+                                maxPval = pval;
+                            }
+                            pvals[i] = null;
                         }
-                        pvals[i] = null;
                     }
                 }
                 if (pmax != null) pmax.add (maxPval);

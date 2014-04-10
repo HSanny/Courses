@@ -44,10 +44,12 @@ interface Protocol {
     final static String LEADER_REQUEST_TITLE = "LEADER COMES OUT";
     final static String LEADER_ACK_TITLE = "I CONFIRM HE IS LEADER";
     final static String LEADER_PROPOSAL_TITLE = "I WANNA BE THE LEADER";
+    final static String LEADER_PROPOSAL_ACCEPT_TITLE = "ACCEPT LEADER PROPOSAL";
+    final static String LEADER_PROPOSAL_REJECT_TITLE = "REJECT LEADER PROPOSAL";
 
     /* PAXOS TITLE */
     final static String RESPONSE_TITLE = "RESPONSE";
-    final static String ADOPTED_TITLE = "ADPTED";
+    final static String ADOPTED_TITLE = "ADOPTED";
     final static String PREEMPTED_TITLE = "PREEMPTED";
     final static String P1A_TITLE = "P1A";
     final static String P2A_TITLE = "P2A";

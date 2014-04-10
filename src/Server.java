@@ -48,6 +48,8 @@ class Server extends Util { // a.k.a. Replica
     static boolean carryLeader;
     static int leaderID;
 
+    static boolean proposeAsLeader;
+
     /* Collocation: put leader and acceptor together */
     static Thread leader;
     static Acceptor acceptor;
@@ -155,6 +157,7 @@ class Server extends Util { // a.k.a. Replica
         isRecoveryInProgress = false;
         carryLeader = true;
         leaderID = -1;
+        proposeAsLeader = false;
 
         // Initialization for collocation technique
         queueAcceptor = new LinkedBlockingQueue<String> ();
@@ -324,7 +327,7 @@ class Server extends Util { // a.k.a. Replica
                         leader.start();
                     }
                     String ackLeader = String.format(MESSAGE, SERVER_TYPE,
-                            serverID, MASTER_TYPE, 0, LEADER_ACK_TITLE,
+                            serverID, sender_type, sender_idx, LEADER_ACK_TITLE,
                             EMPTY_CONTENT);
                     send (localhost, MASTER_PORT, ackLeader, logHeader);
                 } else if (title.equals(SKIP_SLOT_TITLE)) {
@@ -350,25 +353,33 @@ class Server extends Util { // a.k.a. Replica
                     int numMessages = Integer.parseInt(content);
                     // Pass the time bomb message to Leader
                     queueLeader.put(recMessage); 
-                    // this message is only given by master
+                    // This message is only given by master
                 } else if (title.equals(LEADER_PROPOSAL_TITLE)) {
                     if (sender_idx < serverID) {
-                        // Accept this proposal
+                        // Accept this proposal only when prior 
                         port = SERVER_PORT_BASE + serverID;
-                        String acceptMsg = String.format(MESSAGE, SERVER_TYPE,
+                        String acceptMsg = String.format (MESSAGE, SERVER_TYPE,
                                 sender_idx, SERVER_TYPE, serverID,
-                                LEADER_ACK_TITLE, EMPTY_CONTENT);
-                        send (localhost, port, acceptMsg, EMPTY_CONTENT);
+                                LEADER_PROPOSAL_ACCEPT_TITLE, EMPTY_CONTENT);
+                        send (localhost, port, acceptMsg, logHeader);
                     } else {
-                        // TODO: Ignore, and propose it self if not propsed yet
-                        ;
+                        // reject it, propose itself as leader if not proposed
+                        port = SERVER_PORT_BASE + serverID;
+                        String acceptMsg = String.format (MESSAGE, SERVER_TYPE,
+                                sender_idx, SERVER_TYPE, serverID,
+                                LEADER_PROPOSAL_REJECT_TITLE, EMPTY_CONTENT);
+                        send (localhost, port, acceptMsg, logHeader);
                     }
-                } else if (title.equals(LEADER_ACK_TITLE)) {
+                } else if (title.equals(LEADER_PROPOSAL_ACCEPT_TITLE)) {
                     // once ge the leader ack from other server, it will get
                     // set the proposal ack to true
                     leaderProposalAcks[sender_idx] = true;
-                    
-                } else if (title.equals(EXIT_TITLE) && sender_type.equals(MASTER_TYPE)) {
+                } else if (title.equals(LEADER_PROPOSAL_REJECT_TITLE)) {
+                    // once ge the leader ack from other server, it will get
+                    // set the proposal ack to true
+                    leaderProposalAcks[sender_idx] = false;
+                } else if (title.equals(EXIT_TITLE) &&
+                        sender_type.equals(MASTER_TYPE)) {
                     carryLeader = false;
                     socket.close();
                     listener.close();
@@ -404,10 +415,16 @@ class Server extends Util { // a.k.a. Replica
                             try {
                                 send (localhost, port, leaderProposeMsg, logHeader);
                             } catch (IOException e) {
+                                // the destination server is dead
                                 leaderProposalAcks[serverIndex] = null;
                             }
                         }
+                        try {
                         Thread.sleep(LEADER_PROPOSAL_TIMEOUT);
+                        } catch (InterruptedException ie) {
+                            // ignore
+                            ;
+                        }
                         // interrupt main thread
                         interruptReason = "leaderCheck";
                         mainThread.interrupt();
@@ -415,7 +432,7 @@ class Server extends Util { // a.k.a. Replica
                     });
                     electNewLeader.start();
                 } else if (interruptReason.equals("leaderCheck")) {
-                    // TODO: check the acks of its proposal
+                    // check the acks of its proposal
                     boolean amILeader = true;
                     for (int serverIndex = 0; serverIndex < numServers; serverIndex++) {
                         if (leaderProposalAcks[serverIndex] == null) continue;
@@ -425,8 +442,27 @@ class Server extends Util { // a.k.a. Replica
                         }
                     }
                     if (amILeader) {
-                        // TODO: broadcast I am leader and change state
-                         
+                        // TODO: how to collect the acks of leader result
+
+                        // broadcast I am leader to clients and wait for acks
+                        for (int clientIndex = 0; clientIndex < numClients; clientIndex ++) {
+                            String IamLeaderMsg = String.format(MESSAGE,
+                                    SERVER_TYPE, serverID, CLIENT_TYPE,
+                                    clientIndex, LEADER_REQUEST_TITLE,
+                                    Integer.toString(clientIndex));
+                            int port = CLIENT_PORT_BASE + clientIndex;
+                            send (localhost, port, IamLeaderMsg, logHeader);
+                        } 
+                        // broadcast I am leader to all servers, including
+                        // itself to construct leader object
+                        for (int serverIndex = 0; serverIndex < numServers; serverIndex ++) {
+                            String IamLeaderMsg = String.format(MESSAGE,
+                                    SERVER_TYPE, serverID, SERVER_TYPE,
+                                    serverIndex, LEADER_REQUEST_TITLE,
+                                    Integer.toString(serverIndex));
+                            int port = SERVER_PORT_BASE + serverIndex;
+                            send (localhost, port, IamLeaderMsg, logHeader);
+                        }
                     } else {
                         // do nothing because I am not the new elected leader
 

@@ -382,7 +382,6 @@ class Server extends Util { // a.k.a. Replica
                 else if (title.equals(LEADER_REQUEST_TITLE)) {
                     leaderID = Integer.parseInt(content);
                     if (leaderID == serverID) {
-                        System.out.println(serverID + " thinks he is leader.");
                         // remove heartbeatTimer
                         if (heartbeatTimer != null)
                             heartbeatTimer.interrupt();

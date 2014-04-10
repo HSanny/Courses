@@ -264,10 +264,10 @@ class Leader extends Util implements Runnable{
                         }
                     }
                 }
-                if (pmax != null) pmax.add (maxPval);
+                if (maxPval != null) pmax.add (maxPval);
             }
         }
-        return (String []) pmax.toArray();
+        return (String []) pmax.toArray(new String[0]);
     }
 
     private int checkTimeBomb () {

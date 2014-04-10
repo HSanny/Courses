@@ -68,6 +68,11 @@ class Server extends Util { // a.k.a. Replica
         public void run() {
             long diff = 0;
             long current = 0;
+            try {
+                Thread.sleep(HB_INITIAL_WAIT);
+            } catch (InterruptedException ie) {
+                ;
+            }
             while (true) {
                 try {
                     // Periodically check the lastHeartbeatReceived variable
@@ -195,6 +200,7 @@ class Server extends Util { // a.k.a. Replica
         // construct stable server socket
         final ServerSocket listener = new ServerSocket(SERVER_PORT_BASE+serverID, 0,
                 localhost);
+        listener.setSoTimeout(20);
         listener.setReuseAddress(true);
         // send acknowledge to the master
         String setup_ack = String.format(MESSAGE, SERVER_TYPE, serverID,
@@ -265,7 +271,14 @@ class Server extends Util { // a.k.a. Replica
         Socket socket = null;
         while (true) {
             try {
-                socket = listener.accept();
+                try {
+                    socket = listener.accept();
+                } catch (IOException e ){
+                    if(Thread.currentThread().isInterrupted()) {
+                        throw new InterruptedException();
+                    }
+                    continue;
+                }
                 BufferedReader in = new BufferedReader(new
                         InputStreamReader(socket.getInputStream()));
                 // channel is established
@@ -364,7 +377,6 @@ class Server extends Util { // a.k.a. Replica
                     int numMessages = Integer.parseInt(content);
                     // Pass the time bomb message to Leader
                     queueLeader.put(recMessage); 
-                    // This message is only given by master
                 }
                 // =============================================================
                 // THE FOLLOWING IS ABOUT LEADER
@@ -381,9 +393,10 @@ class Server extends Util { // a.k.a. Replica
                                     numServers, localhost,
                                     Thread.currentThread())); 
                         leader.start();
+                    } else {
+                        heartbeatTimer = new HeartbeatTimer ();
+                        heartbeatTimer.start();
                     }
-                    heartbeatTimer = new HeartbeatTimer ();
-                    heartbeatTimer.start();
                     String ackLeader = String.format(MESSAGE, SERVER_TYPE,
                             serverID, sender_type, sender_idx, LEADER_ACK_TITLE,
                             EMPTY_CONTENT);
@@ -427,7 +440,6 @@ class Server extends Util { // a.k.a. Replica
                     System.exit(0);
                 }
             } catch (InterruptedException ie) {
-                System.out.println("get interrupted!");
                 if (interruptReason == TIMEBOMB_INTERRUPT) {
                     // Leader interrupts when it exits, signalling a crash
                     listener.close();

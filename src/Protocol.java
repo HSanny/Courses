@@ -101,9 +101,10 @@ interface Protocol {
     final static String ACCEPTOR_TYPE = "ACCEPTOR";
 
     // HEARTBEAT CONFIGURATION
-    final static int HB_INTERVAL = 200; // unit: milli-seconds
-    final static int HB_TIMEOUT = 500; // unit: milli-seconds
-    final static int HB_CHECK_INTERVAL = 50;
+    final static int HB_INTERVAL = 20; // unit: milli-seconds
+    final static int HB_TIMEOUT = 50; // unit: milli-seconds
+    final static int HB_CHECK_INTERVAL = 10;
+    final static int HB_INITIAL_WAIT = 50;
     final static String HEARTBEAT_TITLE = "THIS IS A HEART BEAT!";
 
     // LEADE ELECTION CONFIGURATION

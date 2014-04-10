@@ -108,12 +108,23 @@ Sometimes there are Connection problems:
 
 Implementation Details
 ---------------
-0. At very beginning, the master establish its server socket to listen to all
-   requests.
 
-1. To start up all clients and servers, we use runtime.exec to run clients and
-   servers as new processes. The arguments provided to them is clientIndex or
+1. **Basics**: To start up all clients and servers, we use runtime.exec to **run clients and
+   servers as new processes**. The arguments provided to them is clientIndex or
    serverIndex. After creating all processes, the master program waits for 
    arrivals of setup acknowledgement of created processe (servers and
    clients). Master proceeds to read the next instruction only when it
    collects all acknowledgements. 
+
+2. **Leader Failure Detection**: **Heartbeat** is implemented. For
+   the specific heartbeat configuration, see the source script
+   src/Protocol.java.  Every server that does not carry the leader will create
+   a **heartbeatTimer to count whether it lose the heartbeat signal for a long
+   time**. If it has a long time not get the heartbeat message, it will deduce
+   that the current leader has failed and propose itself to be a new leader.
+
+3. **Leader Re-election**: **the server with lower index number possesses the
+   priority**. If a server with lower index received a leader proposal from
+   higher-index server, it will reject this leader proposal. Otherwise, it will accept that proposal. 
+   
+

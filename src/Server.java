@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.HashMap; 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 class Server extends Util { // a.k.a. Replica
     /* Configuration */
@@ -60,18 +61,20 @@ class Server extends Util { // a.k.a. Replica
     static LinkedBlockingQueue<String> queueLeader;
     static LinkedBlockingQueue<String> queueAcceptor;
 
-    class HeartbeatTimer implements Runnable {
+    class HeartbeatTimer extends Thread implements Runnable {
         Thread replica;
         Lock timerLock;
+        Long lastHeartbeatReceived;
 
-        public HeartbeatTimer(Thread replica, Lock lock) {
+        public HeartbeatTimer(Thread replica, Lock lock, Long lastHeartbeatReceived) {
             // TODO: more argument in, e.g. lastHeartbeatReceived object!
             this.replica = replica; 
             this.timerLock = lock;
+            this.lastHeartbeatReceived = lastHeartbeatReceived;
         }
 
         public void run() {
-            int diff = 0;
+            long diff = 0;
             while (true) {
                 try {
                     // Periodically check the lastHeartbeatReceived variable
@@ -79,11 +82,13 @@ class Server extends Util { // a.k.a. Replica
                     diff = System.currentTimeMillis() - lastHeartbeatReceived;
                     timerLock.unlock();
                     // If last heartbeat is too old, then interrupt replica
-                    if (period > HB_TIMEOUT) {
+                    if (diff > HB_TIMEOUT) {
                         // TODO: change the interruptReason
                         replica.interrupt();
                         return ;
                     }
+                    // take a rest and re-check after sleep!
+                    Thread.sleep(HB_CHECK_INTERVAL);
                 } catch (InterruptedException ie) {
                     return ;
                 }
@@ -179,7 +184,7 @@ class Server extends Util { // a.k.a. Replica
         proposeAsLeader = false;
 
         lastHeartbeatReceived = System.currentTimeMillis();
-        timerLock = new Lock();
+        timerLock = new ReentrantLock();
 
         // Initialization for collocation technique
         queueAcceptor = new LinkedBlockingQueue<String> ();
@@ -369,7 +374,8 @@ class Server extends Util { // a.k.a. Replica
                     leaderID = Integer.parseInt(content);
                     if (leaderID == serverID) {
                         // remove heartbeatTimer
-                        heartbeatTimer.interrupt();
+                        if (heartbeatTimer != null)
+                            heartbeatTimer.interrupt();
                         // create Leader instance
                         carryLeader = true;
                         queueLeader = new LinkedBlockingQueue<String> ();
@@ -378,7 +384,8 @@ class Server extends Util { // a.k.a. Replica
                                     Thread.currentThread())); 
                         leader.start();
                     }
-                    heartbeatTimer = new HeartbeatTimer(Thread.currentThread(), timerLock);
+                    heartbeatTimer = new HeartbeatTimer
+                      (Thread.currentThread(), timerLock, lastHeartbeatReceived);
                     String ackLeader = String.format(MESSAGE, SERVER_TYPE,
                             serverID, sender_type, sender_idx, LEADER_ACK_TITLE,
                             EMPTY_CONTENT);
@@ -410,10 +417,9 @@ class Server extends Util { // a.k.a. Replica
                 } 
                 // =============================================================
                 else if (title.equals(HEARTBEAT_TITLE)) {
-                    // TODO: update the current time with mututal exclusion
-                    lock.acquire();
+                    timerLock.tryLock();
                     lastHeartbeatReceived = System.currentTimeMillis();
-                    lock.release();
+                    timerLock.unlock();
                 } else if (title.equals(EXIT_TITLE) &&
                         sender_type.equals(MASTER_TYPE)) {
                     carryLeader = false;

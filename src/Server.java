@@ -402,11 +402,13 @@ class Server extends Util { // a.k.a. Replica
                                     Thread.currentThread())); 
                         leader.start();
                         // TODO: repropose all undecided proposals
+                        /*
                         for(Integer s: proposals.keySet()) {
                             if(decisions.get(s) == null) {
                                 propose (proposals.get(s), s);
                             }
                         }
+                        */
                         // TODO: execute cached messages
                     } else {
                         heartbeatTimer = new HeartbeatTimer ();

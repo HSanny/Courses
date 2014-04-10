@@ -98,7 +98,7 @@ class Server extends Util { // a.k.a. Replica
                 SERVER_TYPE, serverID, LEADER_TYPE,
                 leaderID, PROPOSE_TITLE, spArgs);
         int port = SERVER_PORT_BASE + leaderID;
-        boolean success = send(localhost, port, proposeMessage, logHeader) == false;
+        boolean success = send(localhost, port, proposeMessage, logHeader);
         if(!success)
             Thread.currentThread().interrupt(); 
         return true;

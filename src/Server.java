@@ -396,11 +396,11 @@ class Server extends Util { // a.k.a. Replica
                     } else {
                         heartbeatTimer = new HeartbeatTimer ();
                         heartbeatTimer.start();
-                        String ackLeader = String.format(MESSAGE, SERVER_TYPE,
-                                serverID, sender_type, sender_idx, LEADER_ACK_TITLE,
-                                EMPTY_CONTENT);
-                        send (localhost, MASTER_PORT, ackLeader, logHeader);
                     }
+                    String ackLeader = String.format(MESSAGE, SERVER_TYPE,
+                            serverID, sender_type, sender_idx, LEADER_ACK_TITLE,
+                            EMPTY_CONTENT);
+                    send (localhost, MASTER_PORT, ackLeader, logHeader);
                 } else if (title.equals(LEADER_PROPOSAL_TITLE)) {
                     if (sender_idx < serverID) {
                         // Accept this proposal only when prior 

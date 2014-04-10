@@ -53,7 +53,6 @@ Protocol Design
 	TITLE
 	CONTENT
 
-
 TODO
 ----------------
 1. Crash instruction: kill a server and then re-elect a new leader if that server carries current leader.

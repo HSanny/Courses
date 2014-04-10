@@ -101,13 +101,13 @@ interface Protocol {
     final static String ACCEPTOR_TYPE = "ACCEPTOR";
 
     // HEARTBEAT CONFIGURATION
-    final static int HB_INTERVAL = 1000; // unit: milli-seconds
-    final static int HB_TIMEOUT = 2000; // unit: milli-seconds
-    final static int HB_CHECK_INTERVAL = 100;
+    final static int HB_INTERVAL = 200; // unit: milli-seconds
+    final static int HB_TIMEOUT = 500; // unit: milli-seconds
+    final static int HB_CHECK_INTERVAL = 50;
     final static String HEARTBEAT_TITLE = "THIS IS A HEART BEAT!";
 
     // LEADE ELECTION CONFIGURATION
-    final static int LEADER_PROPOSAL_TIMEOUT = 3000;
+    final static int LEADER_PROPOSAL_TIMEOUT = 1000;
 
     // Interrupt type
     final static int TIMEBOMB_INTERRUPT = 0;

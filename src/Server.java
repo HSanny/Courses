@@ -44,7 +44,8 @@ class Server extends Util { // a.k.a. Replica
     static HashMap<Integer, String> proposals;
     static HashMap<Integer, String> decisions;
 
-    public static volatile String interruptReason = ""; // TODO: use Integer to represent reason
+    // TODO: use Integer to represent reason
+    public static volatile String interruptReason = ""; 
     static boolean electionInProgress;
     static boolean isRecoveryInProgress;
     static boolean carryLeader;
@@ -54,6 +55,7 @@ class Server extends Util { // a.k.a. Replica
     static HeartbeatTimer heartbeatTimer;
     static Long lastHeartbeatReceived;
     static Lock timerLock;
+    static Thread replica;
 
     /* Collocation: put leader and acceptor together */
     static Thread leader;
@@ -61,29 +63,24 @@ class Server extends Util { // a.k.a. Replica
     static LinkedBlockingQueue<String> queueLeader;
     static LinkedBlockingQueue<String> queueAcceptor;
 
-    class HeartbeatTimer extends Thread implements Runnable {
-        Thread replica;
-        Lock timerLock;
-        Long lastHeartbeatReceived;
-
-        public HeartbeatTimer(Thread replica, Lock lock, Long lastHeartbeatReceived) {
-            // TODO: more argument in, e.g. lastHeartbeatReceived object!
-            this.replica = replica; 
-            this.timerLock = lock;
-            this.lastHeartbeatReceived = lastHeartbeatReceived;
-        }
+    static class HeartbeatTimer extends Thread implements Runnable {
 
         public void run() {
             long diff = 0;
+            long current = 0;
             while (true) {
                 try {
                     // Periodically check the lastHeartbeatReceived variable
                     timerLock.tryLock();
-                    diff = System.currentTimeMillis() - lastHeartbeatReceived;
+                    current = System.currentTimeMillis();
+                    diff = current - lastHeartbeatReceived;
+                    // System.out.println("check heartbeat: " + lastHeartbeatReceived + " " + current);
                     timerLock.unlock();
                     // If last heartbeat is too old, then interrupt replica
                     if (diff > HB_TIMEOUT) {
-                        // TODO: change the interruptReason
+                        print ("DETECT LEADER CRASH.", logHeader);
+                        // FIXME: cannot interrupt the main thread
+                        interruptReason = "leaderFailure";
                         replica.interrupt();
                         return ;
                     }
@@ -125,7 +122,7 @@ class Server extends Util { // a.k.a. Replica
                 leaderID, PROPOSE_TITLE, spArgs);
         int port = SERVER_PORT_BASE + leaderID;
         boolean success = send(localhost, port, proposeMessage, logHeader);
-        if(!success)
+        if (!success)
             Thread.currentThread().interrupt(); 
         return true;
     }
@@ -182,6 +179,7 @@ class Server extends Util { // a.k.a. Replica
         carryLeader = true;
         leaderID = -1;
         proposeAsLeader = false;
+        replica = Thread.currentThread();
 
         lastHeartbeatReceived = System.currentTimeMillis();
         timerLock = new ReentrantLock();
@@ -384,8 +382,8 @@ class Server extends Util { // a.k.a. Replica
                                     Thread.currentThread())); 
                         leader.start();
                     }
-                    heartbeatTimer = new HeartbeatTimer
-                      (Thread.currentThread(), timerLock, lastHeartbeatReceived);
+                    heartbeatTimer = new HeartbeatTimer ();
+                    heartbeatTimer.start();
                     String ackLeader = String.format(MESSAGE, SERVER_TYPE,
                             serverID, sender_type, sender_idx, LEADER_ACK_TITLE,
                             EMPTY_CONTENT);
@@ -429,12 +427,14 @@ class Server extends Util { // a.k.a. Replica
                     System.exit(0);
                 }
             } catch (InterruptedException ie) {
+                System.out.println("get interrupted!");
                 if (interruptReason.equals("timeBomb")) {
                     // Leader interrupts when it exits, signalling a crash
                     listener.close();
                     print("Crashing.", logHeader);
                     System.exit(0);
                 } else if (interruptReason.equals("leaderFailure")) {
+                    print ("Elect new leader start..",logHeader);
                     electionInProgress = true;
                     // STEP ZERO: add the code for electing new leader 
                     Thread electNewLeader = new Thread (new Runnable () {
@@ -513,6 +513,7 @@ class Server extends Util { // a.k.a. Replica
                     ie.printStackTrace();
                 } 
             } catch (IOException e) {
+                print ("IOException catched", logHeader);
                 break;
             } finally {
                 if (socket != null)

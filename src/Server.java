@@ -76,11 +76,15 @@ class Server extends Util { // a.k.a. Replica
             while (true) {
                 try {
                     // Periodically check the lastHeartbeatReceived variable
-                    timerLock.tryLock();
-                    current = System.currentTimeMillis();
-                    diff = current - lastHeartbeatReceived;
-                    // System.out.println("check heartbeat: " + lastHeartbeatReceived + " " + current);
-                    timerLock.unlock();
+                    if(timerLock.tryLock()) {
+                        try {
+                            current = System.currentTimeMillis();
+                            diff = current - lastHeartbeatReceived;
+                            // System.out.println("check heartbeat: " + lastHeartbeatReceived + " " + current);
+                        } finally {
+                            timerLock.unlock();
+                        }
+                    }
                     // If last heartbeat is too old, then interrupt replica
                     if (diff > HB_TIMEOUT) {
                         print ("DETECT LEADER CRASH.", logHeader);
@@ -98,14 +102,6 @@ class Server extends Util { // a.k.a. Replica
     }
 
     public static boolean propose (String command) throws IOException {
-        // STEP ZERO: check if this request has not been decided
-        System.out.println(command);
-        for (String value: decisions.values()) {
-            if (command.equals(value)) {
-                // ignore this request since decided
-                continue; 
-            }
-        }
         // STEP ONE: Determine the lowest unused slot number
         // Solution: incrementing slot number until we find one
         // that is not proposed yet
@@ -117,6 +113,18 @@ class Server extends Util { // a.k.a. Replica
             }
         }
         if (s < 0) return false;
+        return propose(command, s); 
+    }
+
+    public static boolean propose (String command, int s) throws IOException {
+        // STEP ONE: check if this request has not been decided
+        System.out.println(command);
+        for (String value: decisions.values()) {
+            if (command.equals(value)) {
+                // ignore this request since decided
+                continue; 
+            }
+        }
         // STEP TWO: put <s, p> to proposals
         proposals.put(s, command);
         // STEP THREE: send <propose, s, p> to the leader
@@ -392,6 +400,13 @@ class Server extends Util { // a.k.a. Replica
                                     numServers, localhost,
                                     Thread.currentThread())); 
                         leader.start();
+                        // TODO: repropose all undecided proposals
+                        for(Integer s: proposals.keySet()) {
+                            if(decisions.get(s) == null) {
+                                propose (proposals.get(s), s);
+                            }
+                        }
+                        // TODO: execute cached messages
                     } else {
                         heartbeatTimer = new HeartbeatTimer ();
                         heartbeatTimer.start();
@@ -437,9 +452,13 @@ class Server extends Util { // a.k.a. Replica
                 } 
                 // =============================================================
                 else if (title.equals(HEARTBEAT_TITLE)) {
-                    timerLock.tryLock();
-                    lastHeartbeatReceived = System.currentTimeMillis();
-                    timerLock.unlock();
+                    if(timerLock.tryLock()) {
+                        try {
+                            lastHeartbeatReceived = System.currentTimeMillis();
+                        } finally {
+                            timerLock.unlock();
+                        }
+                    }
                 } else if (title.equals(EXIT_TITLE) &&
                         sender_type.equals(MASTER_TYPE)) {
                     carryLeader = false;

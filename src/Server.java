@@ -47,8 +47,9 @@ class Server extends Util { // a.k.a. Replica
     static boolean isRecoveryInProgress;
     static boolean carryLeader;
     static int leaderID;
-
+    
     static boolean proposeAsLeader;
+    static HeartbeatTimer heartbeatTimer;
 
     /* Collocation: put leader and acceptor together */
     static Thread leader;
@@ -64,11 +65,19 @@ class Server extends Util { // a.k.a. Replica
         }
 
         public void run() {
-            // Periodically check the lastHeartbeatReceived variable
-            
-            // If last heartbeat is too old, then interrupt replica
-            replica.interrupt();
-            return;
+            while (true) {
+                try {
+                    // Periodically check the lastHeartbeatReceived variable
+
+                    // If last heartbeat is too old, then interrupt replica
+                    if (period > HB_TIMEOUT) {
+                        replica.interrupt();
+                        return ;
+                    }
+                } catch (InterruptedException ie) {
+                    return ;
+                }
+            }
         }
     }
 
@@ -319,12 +328,16 @@ class Server extends Util { // a.k.a. Replica
                 } else if (title.equals(LEADER_REQUEST_TITLE)) {
                     leaderID = Integer.parseInt(content);
                     if (leaderID == serverID) {
+                        // remove heartbeatTimer
+                        heartbeatTimer.interrupt();
+                        // create Leader instance
                         carryLeader = true;
                         queueLeader = new LinkedBlockingQueue<String> ();
                         leader = new Thread(new Leader(queueLeader, serverID,
                                     numServers, localhost,
                                     Thread.currentThread())); 
                         leader.start();
+                        
                     }
                     String ackLeader = String.format(MESSAGE, SERVER_TYPE,
                             serverID, sender_type, sender_idx, LEADER_ACK_TITLE,
@@ -378,6 +391,9 @@ class Server extends Util { // a.k.a. Replica
                     // once ge the leader ack from other server, it will get
                     // set the proposal ack to true
                     leaderProposalAcks[sender_idx] = false;
+                } else if (title.equals(HEARTBEAT_TITLE)) {
+                    // set the heartbeat timer variable to zero
+                    heartbeatTime = 0;
                 } else if (title.equals(EXIT_TITLE) &&
                         sender_type.equals(MASTER_TYPE)) {
                     carryLeader = false;

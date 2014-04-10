@@ -217,7 +217,7 @@ class Server extends Util { // a.k.a. Replica
                                 InputStreamReader(socket.getInputStream()));
                             String recMessage = in.readLine();
                             printReceivedMessage(recMessage, MASTER_LOG_HEADER);
-                            String [] recInfo = recMessage.split(",");
+                            String [] recInfo = recMessage.split(MESSAGE_SEP);
                             if (recInfo[TITLE_IDX].equals(HELP_YOU_RECOVER_TITLE)) {
                                 String chatLogs = recInfo[CONTENT_IDX];
                                 // check if setup is complete
@@ -381,13 +381,14 @@ class Server extends Util { // a.k.a. Replica
                                     numServers, localhost,
                                     Thread.currentThread())); 
                         leader.start();
+                    } else {
+                        heartbeatTimer = new HeartbeatTimer ();
+                        heartbeatTimer.start();
+                        String ackLeader = String.format(MESSAGE, SERVER_TYPE,
+                                serverID, sender_type, sender_idx, LEADER_ACK_TITLE,
+                                EMPTY_CONTENT);
+                        send (localhost, MASTER_PORT, ackLeader, logHeader);
                     }
-                    heartbeatTimer = new HeartbeatTimer ();
-                    heartbeatTimer.start();
-                    String ackLeader = String.format(MESSAGE, SERVER_TYPE,
-                            serverID, sender_type, sender_idx, LEADER_ACK_TITLE,
-                            EMPTY_CONTENT);
-                    send (localhost, MASTER_PORT, ackLeader, logHeader);
                 } else if (title.equals(LEADER_PROPOSAL_TITLE)) {
                     if (sender_idx < serverID) {
                         // Accept this proposal only when prior 
@@ -484,8 +485,6 @@ class Server extends Util { // a.k.a. Replica
                         }
                     }
                     if (amILeader) {
-                        // TODO: how to collect the acks of leader result
-
                         // broadcast I am leader to clients and wait for acks
                         for (int clientIndex = 0; clientIndex < numClients; clientIndex ++) {
                             String IamLeaderMsg = String.format(MESSAGE,

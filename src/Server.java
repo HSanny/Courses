@@ -273,7 +273,7 @@ class Server extends Util { // a.k.a. Replica
                 try {
                     socket = listener.accept();
                 } catch (IOException e ){
-                    if(Thread.currentThread().isInterrupted()) {
+                    if(Thread.currentThread().interrupted()) {
                         throw new InterruptedException();
                     }
                     continue;
@@ -282,7 +282,7 @@ class Server extends Util { // a.k.a. Replica
                         InputStreamReader(socket.getInputStream()));
                 // channel is established
                 String recMessage = in.readLine();
-                String [] recInfo = recMessage.split(",");
+                String [] recInfo = recMessage.equals(EMPTY_CONTENT) ? null : recMessage.split(",");
                 int port;
 
                 // Decode the incoming message
@@ -396,10 +396,20 @@ class Server extends Util { // a.k.a. Replica
                         heartbeatTimer = new HeartbeatTimer ();
                         heartbeatTimer.start();
                     }
+                    int portBase;
+                    if(sender_type.equals(SERVER_TYPE)) {
+                        portBase = SERVER_PORT_BASE;
+                    } else if(sender_type.equals(MASTER_TYPE)){
+                        portBase = MASTER_PORT;
+                    } else {
+                        portBase = 0;
+                        System.out.println("Exception.");
+                    }
+                    port = portBase + sender_idx;
                     String ackLeader = String.format(MESSAGE, SERVER_TYPE,
                             serverID, sender_type, sender_idx, LEADER_ACK_TITLE,
                             EMPTY_CONTENT);
-                    send (localhost, MASTER_PORT, ackLeader, logHeader);
+                    send (localhost, port, ackLeader, logHeader);
                 } else if (title.equals(LEADER_PROPOSAL_TITLE)) {
                     if (sender_idx < serverID) {
                         // Accept this proposal only when prior 
@@ -489,7 +499,6 @@ class Server extends Util { // a.k.a. Replica
                     for (int serverIndex = 0; serverIndex < numServers; serverIndex++) {
                         if (leaderProposalAcks[serverIndex] == null) continue;
                         if (!leaderProposalAcks[serverIndex]) {
-                            System.out.println("Value from " + serverIndex + " was " + leaderProposalAcks[serverIndex]);
                             amILeader = false;
                             break;
                         }

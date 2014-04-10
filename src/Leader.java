@@ -153,7 +153,7 @@ class Leader extends Util implements Runnable{
                                 e.printStackTrace();
                             }
                             // Inform the replica
-                            Server.interruptReason= "timeBomb";
+                            Server.interruptReason = TIMEBOMB_INTERRUPT;
                             replica.interrupt();
                             return;
                         }
@@ -187,7 +187,7 @@ class Leader extends Util implements Runnable{
                             e.printStackTrace();
                         }
                         // Inform the replica
-                        Server.interruptReason = "timeBomb";
+                        Server.interruptReason = TIMEBOMB_INTERRUPT;
                         replica.interrupt();
                         return;
                     }
@@ -216,7 +216,7 @@ class Leader extends Util implements Runnable{
                             e.printStackTrace();
                         }
                         // Inform the replica
-                        Server.interruptReason = "timeBomb";
+                        Server.interruptReason = TIMEBOMB_INTERRUPT;
                         replica.interrupt();
                         return;
                     }
@@ -228,7 +228,7 @@ class Leader extends Util implements Runnable{
                 // If message count is 0, exit immediately
                 if(timeBombMessages == 0) {
                     // Inform the replica
-                    Server.interruptReason = "timeBomb";
+                    Server.interruptReason = TIMEBOMB_INTERRUPT;
                     replica.interrupt();
                     return;
                 }

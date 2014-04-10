@@ -65,31 +65,12 @@ TODO
         Interrupt replica
         End counter
         replica enters leader election
-        if receive message not related to election:
+        *if receive message not related to election:
             cache message in queue
 
     Idea for Leader Election:
         Use Heartbeats for detecting failure.
-        Non-leader servers use the following algorithm:
-        <pre><code>
-            if detect_time_out:
-                if self_has_not_proposed:
-                    propose self as leader
-            if receive_leader_proposal:
-                if sender_idx_is_lower:
-                    accept proposal
-                    if self_has_proposed:
-                        cancel proposal
-                else:
-                    ignore proposal
-                    if self_has_not_proposed:
-                        propose
-        </pre></code>
-        Election-related messages:
-            leader_proposal
-            leader_proposal_ack
-        New variables for the replica:
-            hasProposed
+        Non-leader servers use the Bully algorithm
 
     After election-New Leader (when you receive all leader_proposal_acks):
         start leader thread

@@ -24,6 +24,26 @@ class Util implements Protocol, Logging {
     public static int getClientPort (int clientIndex) { return 0; }
     public static int getServerPort (int clientIndex) { return 0; }
 
+    public static int getPortBase (String type) {
+        int portBase = -1;
+        if (type.equals(MASTER_TYPE)) {
+            portBase = MASTER_PORT;
+        } else if (types.equals(SERVER_TYPE)) {
+            portBase = SERVER_PORT_BASE;
+        } else if (types.equals(CLIENT_TYPE)) {
+            portBase = CLIENT_PORT_BASE;
+        } else {
+            System.out.println("Exception: unrecognized type");
+        }
+
+        return portBase;
+    }
+
+    public static int getPort (String type, int index) {
+        int portBase = getPortBase(type);
+        int port = portBase + index
+        return port;
+    }
     /* Print general stuff */
     public static void print(String toprint, String logHeader) {
         String str = "";

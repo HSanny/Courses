@@ -390,6 +390,7 @@ class Server extends Util { // a.k.a. Replica
                 else if (title.equals(LEADER_REQUEST_TITLE)) {
                     leaderID = Integer.parseInt(content);
                     if (leaderID == serverID) {
+                        print ("I think I am leader.", logHeader);
                         // remove heartbeatTimer
                         if (heartbeatTimer != null)
                             heartbeatTimer.interrupt();
@@ -414,11 +415,8 @@ class Server extends Util { // a.k.a. Replica
                     int portBase;
                     if(sender_type.equals(SERVER_TYPE)) {
                         portBase = SERVER_PORT_BASE;
-                    } else if(sender_type.equals(MASTER_TYPE)){
-                        portBase = MASTER_PORT;
                     } else {
-                        portBase = 0;
-                        System.out.println("Exception.");
+                        portBase = MASTER_PORT;
                     }
                     port = portBase + sender_idx;
                     String ackLeader = String.format(MESSAGE, SERVER_TYPE,

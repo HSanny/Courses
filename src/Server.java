@@ -382,6 +382,7 @@ class Server extends Util { // a.k.a. Replica
                 else if (title.equals(LEADER_REQUEST_TITLE)) {
                     leaderID = Integer.parseInt(content);
                     if (leaderID == serverID) {
+                        System.out.println(serverID + " thinks he is leader.");
                         // remove heartbeatTimer
                         if (heartbeatTimer != null)
                             heartbeatTimer.interrupt();
@@ -509,7 +510,7 @@ class Server extends Util { // a.k.a. Replica
                             String IamLeaderMsg = String.format(MESSAGE,
                                     SERVER_TYPE, serverID, CLIENT_TYPE,
                                     clientIndex, LEADER_REQUEST_TITLE,
-                                    Integer.toString(clientIndex));
+                                    Integer.toString(serverID));
                             int port = CLIENT_PORT_BASE + clientIndex;
                             send (localhost, port, IamLeaderMsg, logHeader);
                         } 
@@ -519,7 +520,7 @@ class Server extends Util { // a.k.a. Replica
                             String IamLeaderMsg = String.format(MESSAGE,
                                     SERVER_TYPE, serverID, SERVER_TYPE,
                                     serverIndex, LEADER_REQUEST_TITLE,
-                                    Integer.toString(serverIndex));
+                                    Integer.toString(serverID));
                             int port = SERVER_PORT_BASE + serverIndex;
                             send (localhost, port, IamLeaderMsg, logHeader);
                         }

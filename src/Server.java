@@ -161,6 +161,9 @@ class Server extends Util { // a.k.a. Replica
         acceptor = new Acceptor(queueAcceptor, serverID, localhost);
         new Thread(acceptor).start();
 
+        final Boolean [] leaderProposalAcks = new Boolean [numServers];
+        final Thread mainThread = Thread.currentThread();
+
         // construct stable server socket
         final ServerSocket listener = new ServerSocket(SERVER_PORT_BASE+serverID, 0,
                 localhost);
@@ -169,6 +172,7 @@ class Server extends Util { // a.k.a. Replica
         String setup_ack = String.format(MESSAGE, SERVER_TYPE, serverID,
                 MASTER_TYPE, 0, START_ACK_TITLE, EMPTY_CONTENT);
         send (localhost, MASTER_PORT, setup_ack, logHeader);
+
         // indicate the socket listener setup
         print (listener.toString(), logHeader);
         // if this server is crashed before, recovery it
@@ -350,11 +354,20 @@ class Server extends Util { // a.k.a. Replica
                 } else if (title.equals(LEADER_PROPOSAL_TITLE)) {
                     if (sender_idx < serverID) {
                         // Accept this proposal
-                        
+                        port = SERVER_PORT_BASE + serverID;
+                        String acceptMsg = String.format(MESSAGE, SERVER_TYPE,
+                                sender_idx, SERVER_TYPE, serverID,
+                                LEADER_ACK_TITLE, EMPTY_CONTENT);
+                        send (localhost, port, acceptMsg, EMPTY_CONTENT);
                     } else {
-                        // ignore, and propose it self if not propsed yet
-
+                        // TODO: Ignore, and propose it self if not propsed yet
+                        ;
                     }
+                } else if (title.equals(LEADER_ACK_TITLE)) {
+                    // once ge the leader ack from other server, it will get
+                    // set the proposal ack to true
+                    leaderProposalAcks[sender_idx] = true;
+                    
                 } else if (title.equals(EXIT_TITLE) && sender_type.equals(MASTER_TYPE)) {
                     carryLeader = false;
                     socket.close();
@@ -370,15 +383,53 @@ class Server extends Util { // a.k.a. Replica
                     System.exit(0);
                 } else if (interruptReason.equals("leaderFailure")) {
                     electionInProgress = true;
-                    // TODO: add the code for electing new leader 
-                    // STEP ONE: propose itself as new leader
-                    for (int serverIndex = 0; serverIndex < numServers; serverIndex++) {
-                        if (serverIndex == leaderID || serverIndex == serverID) continue; 
-                        int port = SERVER_PORT_BASE + serverIndex;
-                        String leaderProposeMsg = String.format(MESSAGE,
+                    // STEP ZERO: add the code for electing new leader 
+                    Thread electNewLeader = new Thread (new Runnable () {
+                        public void run () {
+                        // STEP ONE: propose itself as new leader
+                        for (int serverIndex = 0; serverIndex < numServers; serverIndex++) {
+                            if (serverIndex == serverID) { // ack for itself
+                                leaderProposalAcks[serverIndex] = true;
+                            } else { // not ack yet for others
+                                leaderProposalAcks[serverIndex] = false;
+                            }
+                        }
+                        // send message to ask for ack
+                        for (int serverIndex = 0; serverIndex < numServers; serverIndex++) {
+                            if (serverIndex == leaderID || serverIndex == serverID) continue; 
+                            int port = SERVER_PORT_BASE + serverIndex;
+                            String leaderProposeMsg = String.format(MESSAGE,
                                 SERVER_TYPE, serverIndex, SERVER_TYPE,
                                 serverID, LEADER_PROPOSAL_TITLE, EMPTY_CONTENT);
-                        send (localhost, port, leaderProposeMsg, logHeader);
+                            try {
+                                send (localhost, port, leaderProposeMsg, logHeader);
+                            } catch (IOException e) {
+                                leaderProposalAcks[serverIndex] = null;
+                            }
+                        }
+                        Thread.sleep(LEADER_PROPOSAL_TIMEOUT);
+                        // interrupt main thread
+                        interruptReason = "leaderCheck";
+                        mainThread.interrupt();
+                    }
+                    });
+                    electNewLeader.start();
+                } else if (interruptReason.equals("leaderCheck")) {
+                    // TODO: check the acks of its proposal
+                    boolean amILeader = true;
+                    for (int serverIndex = 0; serverIndex < numServers; serverIndex++) {
+                        if (leaderProposalAcks[serverIndex] == null) continue;
+                        if (!leaderProposalAcks[serverIndex]) {
+                            amILeader = false;
+                            break;
+                        }
+                    }
+                    if (amILeader) {
+                        // TODO: broadcast I am leader and change state
+                         
+                    } else {
+                        // do nothing because I am not the new elected leader
+
                     }
                 } else {
                     ie.printStackTrace();

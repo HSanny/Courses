@@ -81,11 +81,8 @@ class Acceptor extends Util implements Runnable {
                     String p1b_response = String.format(MESSAGE, ACCEPTOR_TYPE,
                       serverID, LEADER_TYPE, lambda, P1B_TITLE, p1b_content);
 
-                    try {
-                    send (localhost, port, p1b_response, logHeader);
-                    } catch (IOException e) {
-                         continue;
-                    } finally {}
+                    if(!send (localhost, port, p1b_response, logHeader))
+                        continue;
                 }
                 // ACCEPTANCE: if incoming message is a p2a
                 else if (title.equals(P2A_TITLE)) {
@@ -107,9 +104,7 @@ class Acceptor extends Util implements Runnable {
                     String p2b_response = String.format(MESSAGE,
                             ACCEPTOR_TYPE, serverID, LEADER_TYPE, lambda,
                             P2B_TITLE, p2b_content);
-                    try {
-                        send (localhost, port, p2b_response, logHeader);
-                    } catch (IOException e) { } finally {}
+                    send (localhost, port, p2b_response, logHeader);
                 }
             }
         }

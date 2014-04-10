@@ -78,11 +78,7 @@ class Leader extends Util implements Runnable{
                             ServerID, SERVER_TYPE, serverIndex,
                             HEARTBEAT_TITLE, EMPTY_CONTENT);
                         int port = SERVER_PORT_BASE + serverIndex;
-                        try {
                         send (Localhost, port, hbMsg, logHeader);
-                        } catch (IOException e) {
-                            ;
-                        }
                     }
                     try {
                         Thread.sleep(HB_INTERVAL);
@@ -321,11 +317,8 @@ class Leader extends Util implements Runnable{
                 String p1aContent = String.format(P1A_CONTENT, leaderID, ballot_num);
                 String p1aMessage = String.format(MESSAGE, LEADER_TYPE,
                         leaderID, ACCEPTOR_TYPE, a, P1A_TITLE, p1aContent);
-                try {
-                    send(localhost, port, p1aMessage, logHeader);
-                } catch (IOException e) {
+                if(send(localhost, port, p1aMessage, logHeader) == false)
                     continue;
-                }
                 messagesUntilCrash--;
                 if(messagesUntilCrash == 0) 
                     return;
@@ -371,11 +364,8 @@ class Leader extends Util implements Runnable{
                             String adoptedContent = String.format(ADOPTED_CONTENT, ballot_num, adopted_str);
                             String adoptedMessage = String.format(MESSAGE, LEADER_TYPE,
                                     leaderID, LEADER_TYPE, leaderID, ADOPTED_TITLE, adoptedContent);
-                            try {
-                                send(localhost, port, adoptedMessage, logHeader);
-                            } catch (IOException e) {
+                            if(!send(localhost, port, adoptedMessage, logHeader))
                                 continue;
-                            }
                             // exit
                             return; 
                         }
@@ -385,11 +375,8 @@ class Leader extends Util implements Runnable{
                         String preemptedContent = String.format(PREEMPTED_CONTENT, newBallotNum);
                         String preemptedMessage = String.format(MESSAGE, LEADER_TYPE,
                                 leaderID, LEADER_TYPE, leaderID, PREEMPTED_TITLE, preemptedContent);
-                        try {
-                            send(localhost, port, preemptedMessage, logHeader);
-                        } catch (IOException e) {
+                        if(!send(localhost, port, preemptedMessage, logHeader))
                             continue;
-                        }
                         // exit
                         return;
                     }
@@ -439,11 +426,8 @@ class Leader extends Util implements Runnable{
                      String.format(PVALUE_CONTENT, ballot_num, slot_num, p));
                 String p2aMessage = String.format(MESSAGE, LEADER_TYPE,
                         leaderID, ACCEPTOR_TYPE, a, P2A_TITLE, p2aContent);
-                try {
-                    send(localhost, port, p2aMessage, logHeader);
-                } catch (IOException e) {
+                if(!send(localhost, port, p2aMessage, logHeader))
                     continue;
-                }
                 messagesUntilCrash--;
                 if(messagesUntilCrash == 0) 
                     return;
@@ -483,11 +467,8 @@ class Leader extends Util implements Runnable{
                                 String decisionContent = String.format(DECISION_CONTENT, slot_num, p);
                                 String decisionMessage = String.format(MESSAGE, LEADER_TYPE,
                                         leaderID, SERVER_TYPE, r, DECISION_TITLE, decisionContent);
-                                try {
-                                    send(localhost, port, decisionMessage, logHeader);
-                                } catch (IOException e) {
+                                if(!send(localhost, port, decisionMessage, logHeader))
                                     continue;
-                                }
                             }
                             return;
                         }
@@ -497,11 +478,8 @@ class Leader extends Util implements Runnable{
                         String preemptedContent = String.format(PREEMPTED_CONTENT, newBallotNum);
                         String preemptedMessage = String.format(MESSAGE, LEADER_TYPE,
                                 leaderID, LEADER_TYPE, leaderID, PREEMPTED_TITLE, preemptedContent);
-                        try {
-                            send(localhost, port, preemptedMessage, logHeader);
-                        } catch (IOException e) {
+                        if(!send(localhost, port, preemptedMessage, logHeader))
                             continue;
-                        }
                         // exit
                         return;
                     }

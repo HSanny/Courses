@@ -84,7 +84,6 @@ class Server extends Util { // a.k.a. Replica
                     // If last heartbeat is too old, then interrupt replica
                     if (diff > HB_TIMEOUT) {
                         print ("DETECT LEADER CRASH.", logHeader);
-                        // FIXME: cannot interrupt the main thread
                         interruptReason = LEADER_FAILURE_INTERRUPT;
                         replica.interrupt();
                         return ;
@@ -404,16 +403,16 @@ class Server extends Util { // a.k.a. Replica
                 } else if (title.equals(LEADER_PROPOSAL_TITLE)) {
                     if (sender_idx < serverID) {
                         // Accept this proposal only when prior 
-                        port = SERVER_PORT_BASE + serverID;
+                        port = SERVER_PORT_BASE + sender_idx;
                         String acceptMsg = String.format (MESSAGE, SERVER_TYPE,
-                                sender_idx, SERVER_TYPE, serverID,
+                                serverID, SERVER_TYPE, sender_idx,
                                 LEADER_PROPOSAL_ACCEPT_TITLE, EMPTY_CONTENT);
                         send (localhost, port, acceptMsg, logHeader);
                     } else {
                         // reject it, propose itself as leader if not proposed
-                        port = SERVER_PORT_BASE + serverID;
+                        port = SERVER_PORT_BASE + sender_idx;
                         String acceptMsg = String.format (MESSAGE, SERVER_TYPE,
-                                sender_idx, SERVER_TYPE, serverID,
+                                serverID, SERVER_TYPE, sender_idx,
                                 LEADER_PROPOSAL_REJECT_TITLE, EMPTY_CONTENT);
                         send (localhost, port, acceptMsg, logHeader);
                     }
@@ -461,17 +460,16 @@ class Server extends Util { // a.k.a. Replica
                             }
                             // send message to ask for ack
                             for (int serverIndex = 0; serverIndex < numServers; serverIndex++) {
-                                if (serverIndex == leaderID || serverIndex == serverID) continue; 
+                                if (serverIndex == serverID) continue; 
                                 int port = SERVER_PORT_BASE + serverIndex;
                                 String leaderProposeMsg = String.format(MESSAGE,
-                                    SERVER_TYPE, serverIndex, SERVER_TYPE,
-                                    serverID, LEADER_PROPOSAL_TITLE, EMPTY_CONTENT);
-                                try {
-                                    send (localhost, port, leaderProposeMsg, logHeader);
-                                } catch (IOException e) {
-                                    // the destination server is dead
-                                    leaderProposalAcks[serverIndex] = null;
-                                }
+                                    SERVER_TYPE, serverID, SERVER_TYPE,
+                                    serverIndex, LEADER_PROPOSAL_TITLE, EMPTY_CONTENT);
+                                    boolean success = send (localhost, port, leaderProposeMsg, logHeader);
+                                    if(!success) {
+                                        // the destination server is dead
+                                        leaderProposalAcks[serverIndex] = null;
+                                    }
                             }
                             try {
                                 Thread.sleep(LEADER_PROPOSAL_TIMEOUT);
@@ -491,6 +489,7 @@ class Server extends Util { // a.k.a. Replica
                     for (int serverIndex = 0; serverIndex < numServers; serverIndex++) {
                         if (leaderProposalAcks[serverIndex] == null) continue;
                         if (!leaderProposalAcks[serverIndex]) {
+                            System.out.println("Value from " + serverIndex + " was " + leaderProposalAcks[serverIndex]);
                             amILeader = false;
                             break;
                         }

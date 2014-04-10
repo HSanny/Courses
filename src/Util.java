@@ -68,14 +68,14 @@ class Util implements Protocol, Logging {
 
     /* Send util functions */
     public static boolean send (InetAddress host, int port, String message, 
-            String HEADER) throws IOException { 
+            String HEADER){ 
         // set null header as empty string
         if (HEADER == null) HEADER = "";
         Socket socket;
         try {
             // establish temporary socket connection
             socket = new Socket (host, port);
-        } catch (ConnectException e) {
+        } catch (Exception e) {
             return false;
         }
         try {
@@ -86,7 +86,11 @@ class Util implements Protocol, Logging {
         } catch(Exception e) {
             return false;
         } finally {
-            socket.close();
+            try {
+                socket.close();
+            } catch (Exception e) {
+               return false; 
+            }
         }
         return true;
     }

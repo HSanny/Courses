@@ -122,13 +122,15 @@ public class Client extends Util {
                 String content = recInfo[CONTENT_IDX];
 
                 if (title.equals(SEND_MESSAGE_TITLE)) {
+                    for (int serverIndex = 0; serverIndex < numServers; serverIndex++) {
                     // send chat message (command) to all servers
-                    String command = String.format(COMMAND, clientID, cid, content);
-                    String request = String.format(MESSAGE, CLIENT_TYPE,
-                            clientID, SERVER_TYPE, leaderID,
-                            REQUEST_TITLE, command);
-                    port = SERVER_PORT_BASE + leaderID;
-                    send (localhost, port, request, logHeader);
+                        String command = String.format(COMMAND, clientID, cid, content);
+                        String request = String.format(MESSAGE, CLIENT_TYPE,
+                                clientID, SERVER_TYPE, serverIndex,
+                                REQUEST_TITLE, command);
+                        port = getPort (SERVER_TYPE, serverIndex);
+                        send (localhost, port, request, logHeader);
+                    }
                     // add that message to send history
                     requestSet.add(cid++);
                 } else if (title.equals(RESPONSE_TITLE)) {

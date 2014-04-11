@@ -21,6 +21,7 @@ import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.InetAddress;
+import java.util.LinkedList;
 import java.util.HashSet;
 import java.util.HashMap; 
 import java.util.concurrent.LinkedBlockingQueue;
@@ -44,12 +45,12 @@ class Server extends Util { // a.k.a. Replica
     static HashMap<Integer, String> proposals;
     static HashMap<Integer, String> decisions;
 
-    // TODO: use Integer to represent reason
     public static Integer interruptReason; 
     static boolean electionInProgress;
     static boolean isRecoveryInProgress;
     static boolean carryLeader;
     static int leaderID;
+    static LinkedList<String> msgCache;
     
     static boolean proposeAsLeader;
     static HeartbeatTimer heartbeatTimer;
@@ -64,7 +65,6 @@ class Server extends Util { // a.k.a. Replica
     static LinkedBlockingQueue<String> queueAcceptor;
 
     static class HeartbeatTimer extends Thread implements Runnable {
-
         public void run() {
             long diff = 0;
             long current = 0;
@@ -166,6 +166,174 @@ class Server extends Util { // a.k.a. Replica
         return true;
     }
 
+    public static void processMessage(String recMessage) {
+        String [] recInfo = recMessage.equals(EMPTY_CONTENT) ? null : recMessage.split(",");
+        int port;
+
+        // Decode the incoming message
+        String sender_type = recInfo[SENDER_TYPE_IDX];
+        int sender_idx = Integer.parseInt(recInfo[SENDER_INDEX_IDX]);
+        String receiver_type = recInfo[RECEIVER_TYPE_IDX];
+        int receiver_idx = Integer.parseInt(recInfo[RECEIVER_INDEX_IDX]);
+        String title = recInfo[TITLE_IDX];
+        String content = recInfo[CONTENT_IDX];
+
+
+        // Check if message is propose, p1b, p2b, adopted, or preempted
+        // If so, add to Leader queue
+        if (receiver_type.equals(LEADER_TYPE)) {
+            queueLeader.put(recMessage);
+            return;
+        }
+        // Check if message is p1a or p2a
+        // If so, add to Acceptor queue
+        if (receiver_type.equals(ACCEPTOR_TYPE)) {
+            queueAcceptor.put(recMessage);
+            return;
+        }
+        printReceivedMessage(recMessage, logHeader);
+        // Check if message is request
+        if (title.equals(REQUEST_TITLE)) {
+            propose (content);
+        } else if (title.equals(DECISION_TITLE)) {
+            // STEP ZERO: decode the content
+            String [] conts = content.split (CONTENT_SEP);
+            int s = Integer.parseInt(conts[0]);
+            String p = conts[1];
+            // STEP ONE: add decision message to decisions
+            decisions.put(s, p);
+            // STEP TWO: find ready decision to be executed
+            // check if exists a decision p' corresponds to
+            // current slot_num s
+            String pprime = null;
+            while ((pprime = decisions.get(slot_num)) != null) {
+                // STEP THREE: check if it has proposed another command
+                // p'' in current slot_num, repropose p'' with new s''
+                String pprimeprime = proposals.get(slot_num);
+                if (!pprime.equals(pprimeprime) && pprimeprime != null) {
+                    propose (pprimeprime);
+                }
+                // STEP FOUR: invoke perform
+                perform(pprime);
+            }
+        } else if (title.equals(I_WANNA_RECOVER_TITLE)) {
+            assert (sender_type.equals(SERVER_TYPE)):
+                "Recover Request should come from server.";
+            assert (sender_idx != serverID): "Cannot recover from itself.";
+            String recoverInfo = "";
+            // STEP ONE: encode slot_num
+            recoverInfo += Integer.toString(slot_num);
+            recoverInfo += RECOVERY_INFO_SEP;
+            // STEP TWO: encode decisions
+            for (int sn: decisions.keySet()) {
+                recoverInfo += Integer.toString(sn) + MAP_SEP
+                    + decisions.get(sn) + DECISION_SEP;
+            }
+            if (decisions.size() > 0) {
+                recoverInfo = recoverInfo.substring(0,
+                        recoverInfo.length()-DECISION_SEP.length());
+            }
+            // STEP THREE: send message back
+            String recoverMsg = String.format(MESSAGE, SERVER_TYPE,
+                    serverID, SERVER_TYPE, sender_idx,
+                    HELP_YOU_RECOVER_TITLE, recoverInfo);
+            port = SERVER_PORT_BASE + sender_idx;
+            send (localhost, port, recoverMsg, logHeader);
+        }  else if (title.equals(SKIP_SLOT_TITLE)) {
+            int amountToSkip = Integer.parseInt(content);
+            // STEP ONE: update the proposals
+            for (int i = slot_num; i < slot_num + amountToSkip; i++) {
+                assert(!proposals.containsKey(i));
+                proposals.put(i, SKIPPED_MARKER);
+            }
+            // STEP TWO: update the decisions
+            for (int i = slot_num; i < slot_num + amountToSkip; i++) {
+                assert(!decisions.containsKey(i));
+                decisions.put(i, SKIPPED_MARKER);
+            }
+            // STEP THREE: update the slot_num
+            slot_num += amountToSkip;
+            // STEP FOUR: send ack message back to master
+            String ackSkipSlot = String.format(MESSAGE,
+                    SERVER_TYPE, serverID, MASTER_TYPE, 0,
+                    SKIP_SLOT_ACK_TITLE, EMPTY_CONTENT);
+            send (localhost, MASTER_PORT, ackSkipSlot, logHeader);
+        } else if (title.equals(TIME_BOMB_TITLE)) {
+            int numMessages = Integer.parseInt(content);
+            // Pass the time bomb message to Leader
+            queueLeader.put(recMessage); 
+        }
+        // =============================================================
+        // THE FOLLOWING IS ABOUT LEADER
+        else if (title.equals(LEADER_REQUEST_TITLE)) {
+            leaderID = Integer.parseInt(content);
+            if (leaderID == serverID) {
+                print ("I think I am leader.", logHeader);
+                // remove heartbeatTimer
+                if (heartbeatTimer != null)
+                    heartbeatTimer.interrupt();
+                // create Leader instance
+                carryLeader = true;
+                queueLeader = new LinkedBlockingQueue<String> ();
+                leader = new Thread(new Leader(queueLeader, serverID,
+                            numServers, localhost,
+                            Thread.currentThread())); 
+                leader.start();
+                for(Integer s: proposals.keySet()) {
+                    if(decisions.get(s) == null) {
+                        propose (proposals.get(s), s);
+                    }
+                }
+            } else {
+                heartbeatTimer = new HeartbeatTimer ();
+                heartbeatTimer.start();
+            }
+            port = getPort(sender_type, sender_idx);
+            String ackLeader = String.format(MESSAGE, SERVER_TYPE,
+                    serverID, sender_type, sender_idx, LEADER_ACK_TITLE,
+                    EMPTY_CONTENT);
+            send (localhost, port, ackLeader, logHeader);
+        } else if (title.equals(LEADER_PROPOSAL_TITLE)) {
+            if (sender_idx < serverID) {
+                // Accept this proposal only when prior 
+                port = SERVER_PORT_BASE + sender_idx;
+                String acceptMsg = String.format (MESSAGE, SERVER_TYPE,
+                        serverID, SERVER_TYPE, sender_idx,
+                        LEADER_PROPOSAL_ACCEPT_TITLE, EMPTY_CONTENT);
+                send (localhost, port, acceptMsg, logHeader);
+            } else {
+                // reject it, propose itself as leader if not proposed
+                port = SERVER_PORT_BASE + sender_idx;
+                String acceptMsg = String.format (MESSAGE, SERVER_TYPE,
+                        serverID, SERVER_TYPE, sender_idx,
+                        LEADER_PROPOSAL_REJECT_TITLE, EMPTY_CONTENT);
+                send (localhost, port, acceptMsg, logHeader);
+            }
+        } else if (title.equals(LEADER_PROPOSAL_ACCEPT_TITLE)) {
+            // once get the leader ack from other server, it will
+            // set the proposal ack to true
+            leaderProposalAcks[sender_idx] = true;
+        } else if (title.equals(LEADER_PROPOSAL_REJECT_TITLE)) {
+            // once get the leader reject from other server, it will
+            // set the proposal ack to false
+            leaderProposalAcks[sender_idx] = false;
+        } 
+        // =============================================================
+        else if (title.equals(HEARTBEAT_TITLE)) {
+            if(timerLock.tryLock()) {
+                try {
+                    lastHeartbeatReceived = System.currentTimeMillis();
+                } finally {
+                    timerLock.unlock();
+                }
+            }
+        } else if (title.equals(EXIT_TITLE) &&
+                sender_type.equals(MASTER_TYPE)) {
+            interruptReason = EXIT_INTERRUPT;
+            Thread.currentThread().interrupt();
+        }
+    }
+
     public static void main (String [] args) throws IOException, InterruptedException {
         // parse the server id assigned by master
         serverID = Integer.parseInt(args[0]);
@@ -185,14 +353,18 @@ class Server extends Util { // a.k.a. Replica
         slot_num = 0;
         proposals = new HashMap<Integer, String> ();
         decisions = new HashMap<Integer, String> ();
+
+        // Leader, Crash, and Election
         electionInProgress = false;
         isRecoveryInProgress = false;
         carryLeader = true;
         leaderID = -1;
         proposeAsLeader = false;
-        replica = Thread.currentThread();
         interruptReason = NO_REASON;
-
+        msgCache = new LinkedList<String>();
+        
+        // Heartbeats
+        replica = Thread.currentThread();
         lastHeartbeatReceived = System.currentTimeMillis();
         timerLock = new ReentrantLock();
 
@@ -204,19 +376,19 @@ class Server extends Util { // a.k.a. Replica
         final Boolean [] leaderProposalAcks = new Boolean [numServers];
         final Thread mainThread = Thread.currentThread();
 
-        // construct stable server socket
+        // Construct stable server socket
         final ServerSocket listener = new ServerSocket(SERVER_PORT_BASE+serverID, 0,
                 localhost);
         listener.setSoTimeout(20);
         listener.setReuseAddress(true);
-        // send acknowledge to the master
+        // Send acknowledge to the master
         String setup_ack = String.format(MESSAGE, SERVER_TYPE, serverID,
                 MASTER_TYPE, 0, START_ACK_TITLE, EMPTY_CONTENT);
         send (localhost, MASTER_PORT, setup_ack, logHeader);
-
-        // indicate the socket listener setup
+        // Indicate the socket listener setup
         print (listener.toString(), logHeader);
-        // if this server is crashed before, recovery it
+        
+        // If this server is crashed before, recover it
         final Integer nClients = numClients;
         // TODO: TEST THIS PART
         if (NeedRecovery) {
@@ -281,6 +453,7 @@ class Server extends Util { // a.k.a. Replica
                 try {
                     socket = listener.accept();
                 } catch (IOException e ){
+                    // On I/O timeout, check for any interrupts before continuing
                     if(Thread.currentThread().interrupted()) {
                         throw new InterruptedException();
                     }
@@ -291,173 +464,23 @@ class Server extends Util { // a.k.a. Replica
                 // channel is established
                 String recMessage = in.readLine();
                 String [] recInfo = recMessage.equals(EMPTY_CONTENT) ? null : recMessage.split(",");
-                int port;
-
-                // Decode the incoming message
-                String sender_type = recInfo[SENDER_TYPE_IDX];
-                int sender_idx = Integer.parseInt(recInfo[SENDER_INDEX_IDX]);
-                String receiver_type = recInfo[RECEIVER_TYPE_IDX];
-                int receiver_idx = Integer.parseInt(recInfo[RECEIVER_INDEX_IDX]);
                 String title = recInfo[TITLE_IDX];
-                String content = recInfo[CONTENT_IDX];
-
-                // Check if message is propose, p1b, p2b, adopted, or preempted
-                // If so, add to Leader queue
-                if (receiver_type.equals(LEADER_TYPE)) {
-                    queueLeader.put(recMessage);
-                    continue;
-                }
-                // Check if message is p1a or p2a
-                // If so, add to Acceptor queue
-                if (receiver_type.equals(ACCEPTOR_TYPE)) {
-                    queueAcceptor.put(recMessage);
-                    continue;
-                }
-                printReceivedMessage(recMessage, logHeader);
-                // Check if message is request
-                if (title.equals(REQUEST_TITLE)) {
-                    propose (content);
-                } else if (title.equals(DECISION_TITLE)) {
-                    // STEP ZERO: decode the content
-                    String [] conts = content.split (CONTENT_SEP);
-                    int s = Integer.parseInt(conts[0]);
-                    String p = conts[1];
-                    // STEP ONE: add decision message to decisions
-                    decisions.put(s, p);
-                    // STEP TWO: find ready decision to be executed
-                    // check if exists a decision p' corresponds to
-                    // current slot_num s
-                    String pprime = null;
-                    while ((pprime = decisions.get(slot_num)) != null) {
-                        // STEP THREE: check if it has proposed another command
-                        // p'' in current slot_num, repropose p'' with new s''
-                        String pprimeprime = proposals.get(slot_num);
-                        if (!pprime.equals(pprimeprime) && pprimeprime != null) {
-                            propose (pprimeprime);
-                        }
-                        // STEP FOUR: invoke perform
-                        perform(pprime);
-                    }
-                } else if (title.equals(I_WANNA_RECOVER_TITLE)) {
-                    assert (sender_type.equals(SERVER_TYPE)):
-                        "Recover Request should come from server.";
-                    assert (sender_idx != serverID): "Cannot recover from itself.";
-                    String recoverInfo = "";
-                    // STEP ONE: encode slot_num
-                    recoverInfo += Integer.toString(slot_num);
-                    recoverInfo += RECOVERY_INFO_SEP;
-                    // STEP TWO: encode decisions
-                    for (int sn: decisions.keySet()) {
-                        recoverInfo += Integer.toString(sn) + MAP_SEP
-                            + decisions.get(sn) + DECISION_SEP;
-                    }
-                    if (decisions.size() > 0) {
-                        recoverInfo = recoverInfo.substring(0,
-                                recoverInfo.length()-DECISION_SEP.length());
-                    }
-                    // STEP THREE: send message back
-                    String recoverMsg = String.format(MESSAGE, SERVER_TYPE,
-                            serverID, SERVER_TYPE, sender_idx,
-                            HELP_YOU_RECOVER_TITLE, recoverInfo);
-                    port = SERVER_PORT_BASE + sender_idx;
-                    send (localhost, port, recoverMsg, logHeader);
-                }  else if (title.equals(SKIP_SLOT_TITLE)) {
-                    int amountToSkip = Integer.parseInt(content);
-                    // STEP ONE: update the proposals
-                    for (int i = slot_num; i < slot_num + amountToSkip; i++) {
-                        assert(!proposals.containsKey(i));
-                        proposals.put(i, SKIPPED_MARKER);
-                    }
-                    // STEP TWO: update the decisions
-                    for (int i = slot_num; i < slot_num + amountToSkip; i++) {
-                        assert(!decisions.containsKey(i));
-                        decisions.put(i, SKIPPED_MARKER);
-                    }
-                    // STEP THREE: update the slot_num
-                    slot_num += amountToSkip;
-                    // STEP FOUR: send ack message back to master
-                    String ackSkipSlot = String.format(MESSAGE,
-                            SERVER_TYPE, serverID, MASTER_TYPE, 0,
-                            SKIP_SLOT_ACK_TITLE, EMPTY_CONTENT);
-                    send (localhost, MASTER_PORT, ackSkipSlot, logHeader);
-                } else if (title.equals(TIME_BOMB_TITLE)) {
-                    int numMessages = Integer.parseInt(content);
-                    // Pass the time bomb message to Leader
-                    queueLeader.put(recMessage); 
-                }
-                // =============================================================
-                // THE FOLLOWING IS ABOUT LEADER
-                else if (title.equals(LEADER_REQUEST_TITLE)) {
-                    leaderID = Integer.parseInt(content);
-                    if (leaderID == serverID) {
-                        print ("I think I am leader.", logHeader);
-                        // remove heartbeatTimer
-                        if (heartbeatTimer != null)
-                            heartbeatTimer.interrupt();
-                        // create Leader instance
-                        carryLeader = true;
-                        queueLeader = new LinkedBlockingQueue<String> ();
-                        leader = new Thread(new Leader(queueLeader, serverID,
-                                    numServers, localhost,
-                                    Thread.currentThread())); 
-                        leader.start();
-                        // TODO: repropose all undecided proposals
-                        for(Integer s: proposals.keySet()) {
-                            if(decisions.get(s) == null) {
-                                propose (proposals.get(s), s);
-                            }
-                        }
-                        // TODO: execute cached messages
-                    } else {
-                        heartbeatTimer = new HeartbeatTimer ();
-                        heartbeatTimer.start();
-                    }
-                    port = getPort(sender_type, sender_idx);
-                    String ackLeader = String.format(MESSAGE, SERVER_TYPE,
-                            serverID, sender_type, sender_idx, LEADER_ACK_TITLE,
-                            EMPTY_CONTENT);
-                    send (localhost, port, ackLeader, logHeader);
-                } else if (title.equals(LEADER_PROPOSAL_TITLE)) {
-                    if (sender_idx < serverID) {
-                        // Accept this proposal only when prior 
-                        port = SERVER_PORT_BASE + sender_idx;
-                        String acceptMsg = String.format (MESSAGE, SERVER_TYPE,
-                                serverID, SERVER_TYPE, sender_idx,
-                                LEADER_PROPOSAL_ACCEPT_TITLE, EMPTY_CONTENT);
-                        send (localhost, port, acceptMsg, logHeader);
-                    } else {
-                        // reject it, propose itself as leader if not proposed
-                        port = SERVER_PORT_BASE + sender_idx;
-                        String acceptMsg = String.format (MESSAGE, SERVER_TYPE,
-                                serverID, SERVER_TYPE, sender_idx,
-                                LEADER_PROPOSAL_REJECT_TITLE, EMPTY_CONTENT);
-                        send (localhost, port, acceptMsg, logHeader);
-                    }
-                } else if (title.equals(LEADER_PROPOSAL_ACCEPT_TITLE)) {
-                    // once ge the leader ack from other server, it will get
-                    // set the proposal ack to true
-                    leaderProposalAcks[sender_idx] = true;
-                } else if (title.equals(LEADER_PROPOSAL_REJECT_TITLE)) {
-                    // once ge the leader ack from other server, it will get
-                    // set the proposal ack to true
-                    leaderProposalAcks[sender_idx] = false;
-                } 
-                // =============================================================
-                else if (title.equals(HEARTBEAT_TITLE)) {
-                    if(timerLock.tryLock()) {
-                        try {
-                            lastHeartbeatReceived = System.currentTimeMillis();
-                        } finally {
-                            timerLock.unlock();
+                // If election is in progress, cache all non-election related messages for later
+                if(electionInProgress && 
+                    !title.equals(LEADER_PROPOSAL_ACCEPT_TITLE) &&
+                    !title.equals(LEADER_PROPOSAL_ACCEPT_TITLE) &&
+                    !title.equals(LEADER_REQUEST_TITLE) &&
+                    !title.equals(LEADER_PROPOSAL_TITLE)) {
+                    msgCache.push(recMessage); 
+                } else {
+                    // If election is not in progress and message cache is not empty,
+                    // execute all cached messages first
+                    if (!electionInProgress && !msgCache.isEmpty()) {
+                        while(!msgCache.isEmpty()) {
+                            processMessage(msgCache.removeFirst());        
                         }
                     }
-                } else if (title.equals(EXIT_TITLE) &&
-                        sender_type.equals(MASTER_TYPE)) {
-                    carryLeader = false;
-                    socket.close();
-                    listener.close();
-                    print("Exit.", logHeader);
-                    System.exit(0);
+                    processMessage(recMessage);
                 }
             } catch (InterruptedException ie) {
                 if (interruptReason == TIMEBOMB_INTERRUPT) {
@@ -544,9 +567,15 @@ class Server extends Util { // a.k.a. Replica
                         // do nothing because I am not the new elected leader
 
                     }
+                } else if (interruptReason == EXIT_INTERRUPT){
+                    carryLeader = false;
+                    socket.close();
+                    listener.close();
+                    print("Exit.", logHeader);
+                    System.exit(0);
                 } else {
                     ie.printStackTrace();
-                } 
+                }
             } catch (IOException e) {
                 print ("IOException catched", logHeader);
                 break;

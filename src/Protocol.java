@@ -115,5 +115,5 @@ interface Protocol {
     final static int TIMEBOMB_INTERRUPT = 0;
     final static int LEADER_FAILURE_INTERRUPT = 1;
     final static int LEADER_CHECK_INTERRUPT = 2;
-    final static int EXIT_INTERRUPT = 0;
+    final static int EXIT_INTERRUPT = 3;
 }

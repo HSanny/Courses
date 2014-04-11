@@ -459,8 +459,9 @@ class Leader extends Util implements Runnable{
                     String[] p2bParts = contents.split(CONTENT_SEP);
                     int acceptor = Integer.parseInt(p2bParts[0]);
                     int newBallotNum = Integer.parseInt(p2bParts[1]);
+                    int newBallotLeader = Integer.parseInt(p2bParts[3]);
                     // if message is a p2b for the same ballot number
-                    if (newBallotNum == ballot_num) {
+                    if (newBallotNum == ballot_num && newBallotLeader == leaderID) {
                         // remove acceptor from waitFor
                         waitFor[acceptor] = 1;
                         int numReceived = 0;
@@ -483,7 +484,7 @@ class Leader extends Util implements Runnable{
                         // else send preempted and the higher ballot number to leader
                     } else {
                         int port = SERVER_PORT_BASE + leaderID;
-                        String preemptedContent = String.format(PREEMPTED_CONTENT, newBallotNum);
+                        String preemptedContent = String.format(PREEMPTED_CONTENT, newBallotNum, newBallotLeader);
                         String preemptedMessage = String.format(MESSAGE, LEADER_TYPE,
                                 leaderID, LEADER_TYPE, leaderID, PREEMPTED_TITLE, preemptedContent);
                         if(!send(localhost, port, preemptedMessage, logHeader))

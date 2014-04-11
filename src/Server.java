@@ -60,7 +60,7 @@ class Server extends Util { // a.k.a. Replica
 
     /* Collocation: put leader and acceptor together */
     static Thread leader;
-    static Acceptor acceptor;
+    static Thread acceptor;
     static LinkedBlockingQueue<String> queueLeader;
     static LinkedBlockingQueue<String> queueAcceptor;
 
@@ -181,13 +181,13 @@ class Server extends Util { // a.k.a. Replica
         // Check if message is propose, p1b, p2b, adopted, or preempted
         // If so, add to Leader queue
         if (receiver_type.equals(LEADER_TYPE)) {
-            queueLeader.put(recMessage);
+            queueLeader.add(recMessage);
             return;
         }
         // Check if message is p1a or p2a
         // If so, add to Acceptor queue
         if (receiver_type.equals(ACCEPTOR_TYPE)) {
-            queueAcceptor.put(recMessage);
+            queueAcceptor.add(recMessage);
             return;
         }
         printReceivedMessage(recMessage, logHeader);
@@ -287,6 +287,7 @@ class Server extends Util { // a.k.a. Replica
                 heartbeatTimer = new HeartbeatTimer ();
                 heartbeatTimer.start();
             }
+            electionInProgress = false;
             port = getPort(sender_type, sender_idx);
             String ackLeader = String.format(MESSAGE, SERVER_TYPE,
                     serverID, sender_type, sender_idx, LEADER_ACK_TITLE,
@@ -369,8 +370,8 @@ class Server extends Util { // a.k.a. Replica
 
         // Initialization for collocation technique
         queueAcceptor = new LinkedBlockingQueue<String> ();
-        acceptor = new Acceptor(queueAcceptor, serverID, localhost);
-        new Thread(acceptor).start();
+        acceptor = new Thread(new Acceptor(queueAcceptor, serverID, localhost));
+        acceptor.start();
 
         final Boolean [] leaderProposalAcks = new Boolean [numServers];
         final Thread mainThread = Thread.currentThread();
@@ -449,6 +450,13 @@ class Server extends Util { // a.k.a. Replica
         Socket socket = null;
         while (true) {
             try {
+                // If election is not in progress and message cache is not empty,
+                // execute all cached messages first
+                if (!electionInProgress && !msgCache.isEmpty()) {
+                    while(!msgCache.isEmpty()) {
+                        processMessage(msgCache.removeFirst(), leaderProposalAcks);        
+                    }
+                }
                 try {
                     socket = listener.accept();
                 } catch (IOException e ){
@@ -463,26 +471,21 @@ class Server extends Util { // a.k.a. Replica
                 // channel is established
                 String recMessage = in.readLine();
                 // Sometimes readLine returns null...
-                if(recMessage == null)
+                if(recMessage == null) {
+                    System.out.println("Received null.");
                     continue;
+                }
                 String [] recInfo = recMessage.equals(EMPTY_CONTENT) ? null : recMessage.split(",");
                 String title = recInfo[TITLE_IDX];
                 // If election is in progress, cache all non-election related messages for later
                 if(electionInProgress && 
+                    !title.equals(LEADER_ACK_TITLE) &&
                     !title.equals(LEADER_PROPOSAL_ACCEPT_TITLE) &&
-                    !title.equals(LEADER_PROPOSAL_ACCEPT_TITLE) &&
+                    !title.equals(LEADER_PROPOSAL_REJECT_TITLE) &&
                     !title.equals(LEADER_REQUEST_TITLE) &&
                     !title.equals(LEADER_PROPOSAL_TITLE)) {
                     msgCache.push(recMessage); 
                 } else {
-                    // If election is not in progress and message cache is not empty,
-                    // execute all cached messages first
-                    if (!electionInProgress && !msgCache.isEmpty()) {
-                        while(!msgCache.isEmpty()) {
-                            System.out.println("Reprocessing message: " + recMessage);
-                            processMessage(msgCache.removeFirst(), leaderProposalAcks);        
-                        }
-                    }
                     processMessage(recMessage, leaderProposalAcks);
                 }
             } catch (InterruptedException ie) {

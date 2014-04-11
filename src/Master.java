@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.concurrent.Semaphore;
 
 public class Master extends Util {
     final static String RUN_SERVER_CMD = "java -cp ./bin/ Server";
@@ -31,58 +32,28 @@ public class Master extends Util {
 
     static InetAddress localhost;
 
-    public static void checkAllClear (final ServerSocket listener) throws IOException, InterruptedException {
+    static ServerSocket masterListener;
+    static ArrayList<Boolean> clientsCheckClear;
+    static ArrayList<Boolean> serversSkipSlotACK;
+
+    static Semaphore checkClearSema;
+    static Semaphore skipSlotsSema;
+
+    public static void checkAllClear () throws IOException, InterruptedException {
         // STEP ZERO: check the parameters
         assert (numClients > 0): "numClients not initialized.";
         assert (numNodes > 0): "numNodes not initialized";
-        final Integer nClients1 = numClients;
+        // final Integer nClients1 = numClients;
         int clientIndex, nodeIndex;
 
         // STEP ONE: initialize an all false array saying no acks
         // received at first stage
-        final ArrayList<Boolean> clientsCheckClear = new ArrayList<Boolean> ();
+        clientsCheckClear = new ArrayList<Boolean> ();
         for (clientIndex = 0; clientIndex < numClients; clientIndex ++) {
             clientsCheckClear.add(false);
         }
-        // STEP TWO: start a new thread listenning to the ack
-        Thread collectCheckClearAcks = new Thread (new Runnable() {
-            public void run () {
-                try {
-                    while (true) {
-                        Socket socket = listener.accept();
-                        try { 
-                            BufferedReader in = new BufferedReader(new
-                                InputStreamReader(socket.getInputStream()));
-                            String recMessage = in.readLine();
-                            String [] recInfo = recMessage.split(",");
-                            String title = recInfo[TITLE_IDX];
-                            printReceivedMessage(recMessage, MASTER_LOG_HEADER);
-                            if (title.equals(CHECK_CLEAR_ACK_TITLE)) {
-                                String sender_type = recInfo[SENDER_TYPE_IDX];
-                                if (sender_type.equals(CLIENT_TYPE)){
-                                    int cindex = Integer.parseInt(recInfo[SENDER_INDEX_IDX]);
-                                    clientsCheckClear.set(cindex, true);
-                                }
-                                // check if all clients have been clear about this
-                                boolean isAllClear = true;
-                                for (int cIdx = 0; cIdx < nClients1; cIdx ++) {
-                                    if (!clientsCheckClear.get(cIdx)) {
-                                        isAllClear = false; 
-                                        break;
-                                    }
-                                }
-                                // all clear, end up this thread
-                                if (isAllClear) break;
-                            } else {
-                                continue;
-                            }
-                        } finally { socket.close(); }
-                    }
-                } catch (IOException e) {;} finally { ;}
-            }
-        });
-        collectCheckClearAcks.start();
-
+        // STEP TWO: initialize a new semaphore with no permit
+        checkClearSema = new Semaphore (0, true);
         // STEP THREE: send all CHECK_CLEAR message to all clients
         int port;
         for (clientIndex = 0; clientIndex < numClients; clientIndex ++) {
@@ -93,8 +64,101 @@ public class Master extends Util {
         }
 
         // STEP FOUR: Busy waits until receipt of all clients' ack
-        collectCheckClearAcks.join();
+        checkClearSema.acquire();
         return ;
+    }
+
+    // create a thread dealing with the normal messages
+    static class MasterRoutineExecutor extends Thread implements Runnable {
+        public void run () {
+            Socket socket = null;
+            while (true) {
+                try {
+                    socket = masterListener.accept();
+                    BufferedReader in = new BufferedReader(new
+                            InputStreamReader(socket.getInputStream()));
+                    String recMessage = in.readLine();
+                    printReceivedMessage(recMessage, MASTER_LOG_HEADER);
+                    String [] recInfo = recMessage.split(",");
+
+                    String sender_type = recInfo[SENDER_TYPE_IDX];
+                    int sender_idx = Integer.parseInt(recInfo[SENDER_INDEX_IDX]);
+                    String receiver_type = recInfo[RECEIVER_TYPE_IDX];
+                    int receiver_idx = Integer.parseInt(recInfo[RECEIVER_INDEX_IDX]);
+                    String title = recInfo[TITLE_IDX];
+                    String content = recInfo[CONTENT_IDX];
+
+                    /* update the master's knowledge of who is new leader */
+                    if (title.equals(LEADER_REQUEST_TITLE)) {
+                        print ("I know that Server " + sender_idx + 
+                                " is new leader." , MASTER_LOG_HEADER);
+                        leaderID = sender_idx;
+                        break;
+                    }
+                    /* print the received chat log */
+                    else if (title.equals(HERE_IS_CHAT_LOG_TITLE)) {
+                        // decode the content
+                        String [] chatLogs = content.split(CHAT_PIECE_SEP);
+                        for (int clIdx = 0; clIdx < chatLogs.length; clIdx ++) {
+                            // print out the received chat log
+                            System.out.println(chatLogs[clIdx]);
+                        }
+                    }
+                    /* all clear acknowledgement */
+                    else if (title.equals(CHECK_CLEAR_ACK_TITLE)) {
+                        // update the cached check clear arraylist
+                        if (sender_type.equals(CLIENT_TYPE)) {
+                            clientsCheckClear.set(sender_idx, true);
+                        }
+                        // check if all clients have been clear about this
+                        boolean isAllClear = true;
+                        for (int cIdx = 0; cIdx < numClients; cIdx ++) {
+                            if (!clientsCheckClear.get(cIdx)) {
+                                isAllClear = false; 
+                                break;
+                            }
+                        }
+                        // signal and unblock the main thread 
+                        if (isAllClear) {
+                            checkClearSema.release();
+                        }
+                    }
+                    /* Skip slot acknowledgement */
+                    else if (title.equals(SKIP_SLOT_ACK_TITLE)) {
+                        // update the cached skip slot acks arraylist
+                        if (sender_type.equals(SERVER_TYPE)) {
+                            serversSkipSlotACK.set(sender_idx, true);
+                        } 
+
+                        // check if all acks come
+                        boolean isACKComplete = true;
+                        for (int sIdx = 0; sIdx < numNodes; sIdx ++) {
+                            if (!serversSkipSlotACK.get(sIdx)) {
+                                isACKComplete = false;
+                                break;
+                            }
+                        }
+                        // if all server sends back skip slot completes,
+                        //  we then proceed
+                        if (isACKComplete) {
+                            print("Skip Slots Completes.", MASTER_LOG_HEADER); 
+                            skipSlotsSema.release();
+                        }
+                    }
+                    /* Exit title */
+                    if (title.equals(EXIT_TITLE)) {
+                        return ;
+                    }
+
+                } catch (IOException e) {
+                    ;
+                } finally { 
+                    try {
+                        if (socket != null) socket.close(); 
+                    } catch (IOException e) { ; }
+                }
+            }
+        }
     }
 
     public static void main(String [] args) throws IOException, InterruptedException {
@@ -107,6 +171,8 @@ public class Master extends Util {
         final ServerSocket listener = new ServerSocket(MASTER_PORT, 0,
                 localhost);
         listener.setReuseAddress(true);
+
+        masterListener = listener;
 
         while (scan.hasNextLine()) {
             int port;
@@ -141,6 +207,7 @@ public class Master extends Util {
                     final Integer nClients = numClients;
                     Thread collectSetUpAcks = new Thread (new Runnable() {
                         public void run () {
+//{{{
                             try {
                             while (true) {
                             Socket socket = listener.accept();
@@ -182,7 +249,7 @@ public class Master extends Util {
                             }
                             } catch (IOException e) {;} finally { ;}
                         }
-                    });
+                    });//}}}
                     collectSetUpAcks.start();
 
                     serverProcesses = new Process [numNodes];
@@ -236,6 +303,7 @@ public class Master extends Util {
                     }
                     // Create new thread to accept the leader response
                     Thread CollectLeaderResponse = new Thread (new Runnable () {
+//{{{
                         public void run () {
                             try {
                             while (true) {
@@ -282,6 +350,7 @@ public class Master extends Util {
                             } catch (IOException e) {;} finally { ;}
                         }
                     });
+//}}}
                     CollectLeaderResponse.start();
                     // Send message to tell the result of election
                     String eLeaderMsg;
@@ -302,6 +371,10 @@ public class Master extends Util {
                     }
                     // Wait for the leader response
                     CollectLeaderResponse.join();
+
+                    // create a thread dealing with the normal messages
+                    MasterRoutineExecutor masterRoutineExecutor = new MasterRoutineExecutor ();
+                    masterRoutineExecutor.start(); 
 
                     // ============================================================
                     break;
@@ -336,45 +409,11 @@ public class Master extends Util {
                      *
                      * NOTE that the chat log should be printed by master
                      */
-                    Thread collectChatLog = new Thread (new Runnable() {
-                        public void run () {
-                            try { while (true) {
-                                Socket socket = listener.accept();
-                                try { 
-                                    BufferedReader in = new BufferedReader(new
-                                        InputStreamReader(socket.getInputStream()));
-                                    String recMessage = in.readLine();
-                                    printReceivedMessage(recMessage, MASTER_LOG_HEADER);
-                                    String [] recInfo = recMessage.split(",");
-                                    if (recInfo[TITLE_IDX].equals(HERE_IS_CHAT_LOG_TITLE)) {
-                                        String chatLogs = recInfo[CONTENT_IDX];
-                                        // check if setup is complete
-                                        boolean isChatLogReceived = true;
-                                        // decode the content
-                                        String [] chatLogsPart = chatLogs.split(CHAT_PIECE_SEP);
-                                        for (int clIdx = 0; clIdx < chatLogsPart.length; clIdx ++) {
-                                            // print out the received chat log
-                                            System.out.println(chatLogsPart[clIdx]);
-                                        }
-                                        if (isChatLogReceived) {
-                                            break;
-                                        }
-                                    } else {
-                                        continue;
-                                    }
-                                } finally { socket.close(); }
-                            }
-                            } catch (IOException e) {;} finally { ;}
-                        }
-                    });
-                    collectChatLog.start();
-                    // STEP TWO: send message to client asking for chat log
+                    // send message to client asking for chat log
                     port = CLIENT_PORT_BASE + clientIndex; 
                     String tmp_message = String.format(MESSAGE, MASTER_TYPE,
                             0, CLIENT_TYPE, clientIndex, PRINT_CHAT_LOG_TITLE, EMPTY_CONTENT);
                     send (localhost, port, tmp_message, MASTER_LOG_HEADER);
-                    // STEP THREE: wait until the chat log is received
-                    collectChatLog.join();
                     break;
                 case "allClear":
                     /*
@@ -385,7 +424,7 @@ public class Master extends Util {
                      * NOTE: Our solution is to check whether all clients
                      * receive all messages they sent.
                      */
-                    checkAllClear(listener);
+                    checkAllClear();
                     break;
                 case "crashServer":
                     nodeIndex = Integer.parseInt(inputLine[1]);
@@ -425,52 +464,13 @@ public class Master extends Util {
                      * Instruct the leader to skip slots in the chat message sequence  
                      */ 
                     // STEP ZERO: check if all clients are clear
-                    checkAllClear(listener);
-                    // STEP ONE: create a thread and start to collect ack
-                    final ArrayList<Boolean> serversSkipSlotACK = new ArrayList<Boolean> ();
+                    checkAllClear();
+                    // STEP ONE: initialize semaphore and cached acks array
+                    skipSlotsSema = new Semaphore(0, true);
+                    serversSkipSlotACK = new ArrayList<Boolean> ();
                     for (nodeIndex = 0; nodeIndex < numNodes; nodeIndex ++) {
                         serversSkipSlotACK.add(false);
                     }
-                    final Integer nServers2 = numNodes;
-                    Thread collectSkipSlotsAcks = new Thread (new Runnable () {
-                        public void run () {
-                            try {
-                            while (true) {
-                            Socket socket = listener.accept();
-                            try { 
-                                BufferedReader in = new BufferedReader(new
-                                        InputStreamReader(socket.getInputStream()));
-                                String recMessage = in.readLine();
-                                printReceivedMessage(recMessage, MASTER_LOG_HEADER);
-                                String [] recInfo = recMessage.split(",");
-                                String title = recInfo[TITLE_IDX];
-                                String sender_type = recInfo[SENDER_TYPE_IDX];
-                                int sender_idx = Integer.parseInt(recInfo[SENDER_INDEX_IDX]);
-                                if (title.equals(SKIP_SLOT_ACK_TITLE)) {
-                                    if (sender_type.equals(SERVER_TYPE)) {
-                                        serversSkipSlotACK.set(sender_idx, true);
-                                    } 
-                                }
-                                // check if all acks come
-                                boolean isACKComplete = true;
-                                for (int sIdx = 0; sIdx < nServers2; sIdx ++) {
-                                    if (!serversSkipSlotACK.get(sIdx)) {
-                                        isACKComplete = false;
-                                        break;
-                                    }
-                                }
-                                if (isACKComplete) {
-                                    print("Skip Slots Completes.", MASTER_LOG_HEADER); 
-                                    break;
-                                } else {
-                                    continue;
-                                }
-                            } finally { socket.close(); }
-                            }
-                            } catch (IOException e) {;} finally { ;}
-                        }
-                    });
-                    collectSkipSlotsAcks.start();
                     // STEP TWO: send skipSlots instruction to all replicas
                     for (nodeIndex = 0; nodeIndex < numNodes; nodeIndex ++) {
                         port = SERVER_PORT_BASE + nodeIndex;
@@ -479,8 +479,8 @@ public class Master extends Util {
                                 SKIP_SLOT_TITLE, Integer.toString(amountToSkip));
                         send(localhost, port, SkipSlotMessage, MASTER_LOG_HEADER);
                     }
-                    // STEP THREE: wait the collection thread to join
-                    collectSkipSlotsAcks.join();
+                    // STEP THREE: block until receving all acks
+                    skipSlotsSema.acquire();
                     break;
                 case "timeBombLeader": // death within protocol
                     int numMessages = Integer.parseInt(inputLine[1]);
@@ -488,33 +488,6 @@ public class Master extends Util {
                      * Instruct the leader to crash after sending the number of paxos
                      * related messages specified by numMessages
                      */ 
-                    Thread collectLeaderResponse = new Thread ( new Runnable () {
-                        public void run () {
-                            try {
-                            while (true) {
-                            Socket socket = listener.accept();
-                            try { 
-                                BufferedReader in = new BufferedReader(new
-                                        InputStreamReader(socket.getInputStream()));
-                                String recMessage = in.readLine();
-                                printReceivedMessage(recMessage, MASTER_LOG_HEADER);
-                                String [] recInfo = recMessage.split(MESSAGE_SEP);
-                                String title = recInfo[TITLE_IDX];
-                                String sender_index = recInfo[SENDER_INDEX_IDX];
-                                int sender_idx = Integer.parseInt(recInfo[SENDER_INDEX_IDX]);
-                                if (title.equals(LEADER_REQUEST_TITLE)) {
-                                    print ("I know that Server " + sender_idx
-                                    + " is new leader." , MASTER_LOG_HEADER);
-                                    leaderID = sender_idx;
-                                    break;
-                                }
-
-                            } finally { socket.close(); }
-                            }
-                            } catch (IOException e) {;} finally { ;}
-                        }
-                    });
-                    collectLeaderResponse.start();
                     // Send timeBomb instruction to server with leaderID
                     port = SERVER_PORT_BASE + leaderID;
                     String timeBombMessage = String.format(MESSAGE,
@@ -524,13 +497,17 @@ public class Master extends Util {
                     break;
             }
         }
-        /* Ask all clients and server to terminate */
-        checkAllClear(listener);
+        /* Ask all clients and servers to terminate, as well as its listenning
+         * thread */
+        checkAllClear();
+        String exitMessage = String.format(MESSAGE, MASTER_TYPE, 0,
+                MASTER_TYPE, 0, EXIT_TITLE, EMPTY_CONTENT);
+        send(localhost, MASTER_PORT, exitMessage, MASTER_LOG_HEADER);
         if (clientProcesses != null) {
             for (clientIndex = 0; clientIndex < clientProcesses.length; clientIndex ++) {
                 if (clientProcesses[clientIndex] != null) {
                     int port = CLIENT_PORT_BASE + clientIndex;
-                    String exitMessage = String.format(MESSAGE, MASTER_TYPE, 0,
+                    exitMessage = String.format(MESSAGE, MASTER_TYPE, 0,
                             CLIENT_TYPE, clientIndex, EXIT_TITLE, EMPTY_CONTENT);
                     send(localhost, port, exitMessage, MASTER_LOG_HEADER);
                 }
@@ -541,7 +518,7 @@ public class Master extends Util {
                 if (serverProcesses[nodeIndex] != null) {
                     InetAddress host = InetAddress.getLocalHost();
                     int port = SERVER_PORT_BASE + nodeIndex;
-                    String exitMessage = String.format(MESSAGE, MASTER_TYPE, 0,
+                    exitMessage = String.format(MESSAGE, MASTER_TYPE, 0,
                             SERVER_TYPE, nodeIndex, EXIT_TITLE, EMPTY_CONTENT);
                     send(localhost, port, exitMessage, MASTER_LOG_HEADER);
                 }

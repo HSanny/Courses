@@ -43,6 +43,7 @@ class Item implements Comparable<Item>{
         this.id = id_count ++;
         this.quality = quality;
         this.reservePrice = reservePrice;  
+        this.startPrice = startPrice;
     }
     public String toString () {
         String str = "Item: " + this.quality + "," + this.reservePrice;
@@ -138,55 +139,7 @@ class Bidding {
         bidlist.add(bid);
         return ;
     }
-    public static int ComputeWeight (ArrayList<SingleItemBid> siblist,
-            ArrayList<LinearBid> lblist, ArrayList<Item> itemlist) {
-        int total_weight = 0;
-        ArrayList<Item> clonedItemList = new ArrayList<Item> (itemlist);
-        SingleItemBid tmp_sib;
-        for (int i = 0; i < siblist.size(); i++) {
-            tmp_sib = siblist.get(i);
-            tmp_sib.toItem.toBid = tmp_sib.id; // to bid update
-            clonedItemList.remove(tmp_sib.toItem);
-            total_weight += tmp_sib.offer;
-        }
-        LinearBid tmp_lb;
-        Item tmp_item;
-        for (int i = 0; i < lblist.size(); i++) {
-            tmp_lb = lblist.get(i);
-            tmp_item = clonedItemList.get(i);
-            tmp_lb.toItemIndex = tmp_item.id;
-            tmp_item.toBid = tmp_lb.id;
-            total_weight += tmp_lb.getWeight(tmp_item);
-        }
-        return total_weight;
-    }
 
-    public static int [] ComputeAssignment (ArrayList<SingleItemBid>
-            arraySingleBids, ArrayList<LinearBid> arrayLinearBids,
-            ArrayList<Item> itemlist)
-    {
-        int nItems = itemlist.size();
-        int [] assignment = new int [nItems];
-        for (int i = 0; i < nItems; i ++) {
-            assignment[i] = -1;
-        }
-
-        ArrayList<Item> clonedItemList = new ArrayList<Item> (itemlist);
-        for (int i = 0; i < arraySingleBids.size(); i ++) {
-            SingleItemBid tmp_sib = arraySingleBids.get(i);
-            if (tmp_sib.id < 0) { // dummy
-                assignment[tmp_sib.toItem.id] = -1;
-            } else { 
-                assignment[tmp_sib.toItem.id] = tmp_sib.id;
-            }
-            clonedItemList.remove(tmp_sib.toItem);
-        }
-        for (int i = 0; i < arrayLinearBids.size(); i ++) {
-            LinearBid tmp_lb = arrayLinearBids.get(i);
-            assignment[clonedItemList.get(i).id] = tmp_lb.id;
-        }
-        return assignment;
-    }
 
     public static void main (String [] args) throws IOException {
         BufferedReader reader = new BufferedReader(new
@@ -251,6 +204,9 @@ class Bidding {
 
         /* Initialize the priceVector */
         int [] priceVector = new int [nItems];
+        for (int i = 0; i < nItems; i ++) {
+            priceVector[i] = hashItems.get(i).startPrice;
+        }
         int [] MWMCM = new int [nItems];
         while ((line = reader.readLine()) != null) {
             String [] bidding_infos = line.split(" ");
@@ -403,8 +359,8 @@ class Bidding {
                 }
             } else if (type == 3) {
                 /* In summary */
-                String summary = Integer.toString (maximum_weight);
-                for (int i = 0; i < nItems; i ++) {
+                String summary = Integer.toString (priceVector[0]);
+                for (int i = 1; i < nItems; i ++) {
                     summary += " " + Integer.toString (priceVector[i]);
                 }
                 System.out.println(summary);

@@ -29,20 +29,22 @@ class Item implements Comparable<Item>{
     // fields characterizing item
     int id;  
     int quality;  
-    int price;  // unit: cents
+    int reservePrice;  // unit: cents
+
+    int startPrice;
 
     int toBid;
 
     static int id_count;  // as id assigner
 
     // constructor for item class
-    Item (int quality, int price) {
+    Item (int quality, int reservePrice, int startPrice) {
         this.id = id_count ++;
         this.quality = quality;
-        this.price = price;  
+        this.reservePrice = reservePrice;  
     }
     public String toString () {
-        String str = "Item: " + this.quality + "," + this.price;
+        String str = "Item: " + this.quality + "," + this.reservePrice;
         return str;
     }
     public int compareTo (Item item) {
@@ -74,10 +76,10 @@ class SingleItemBid extends Bid implements Comparable<SingleItemBid> {
         this.toItem = toItem;
     }
     int getWeight () {
-        if (this.offer > this.toItem.price) {
+        if (this.offer > this.toItem.reservePrice) {
             return this.offer;
         } else {
-            return this.toItem.price;
+            return this.toItem.reservePrice;
         }
     }
 
@@ -201,8 +203,10 @@ class Bidding {
             line = reader.readLine();
             String [] item_infos = line.split(" ");
             int tmp_quality = Integer.parseInt(item_infos[0]);
-            int tmp_price = Integer.parseInt(item_infos[1]);
-            Item newitem = new Item (tmp_quality, tmp_price);
+            int tmp_reservePrice = Integer.parseInt(item_infos[1]);
+            int tmp_startPrice = Integer.parseInt(item_infos[2]);
+            assert (tmp_startPrice <= tmp_reservePrice): "startPrice is greater than reservePrice.";
+            Item newitem = new Item (tmp_quality, tmp_reservePrice,tmp_startPrice);
             arrayItems.add(newitem);
             hashItems.put(i, newitem);
             // System.out.println(items[i].toString());
@@ -215,7 +219,6 @@ class Bidding {
             System.out.println(tmp_item.id + "," + tmp_item.quality);
         }
         */
-
         /* Create arraylist and hashmap for single-item bids */
         ArrayList<SingleItemBid> arraySingleBids = new ArrayList<SingleItemBid> ();
         HashMap<Integer,SingleItemBid> hashSingleBids = new HashMap<Integer,SingleItemBid> ();
@@ -228,14 +231,15 @@ class Bidding {
         int dummy_id = -1;
         for (int i = 0; i < nItems; i ++, dummy_id--) {
             Item tmp_item = hashItems.get(i);
-            SingleItemBid tmp_dummy = new SingleItemBid(tmp_item.price, tmp_item);
+            SingleItemBid tmp_dummy = new SingleItemBid(tmp_item.reservePrice, tmp_item);
             tmp_dummy.id = dummy_id;
             arraySingleBids.add(tmp_dummy);
             hashSingleBids.put(dummy_id, tmp_dummy);
-            maximum_weight += tmp_item.price;  // initial max_weight
+            maximum_weight += tmp_item.reservePrice;  // initial max_weight
         }
         Collections.sort(arraySingleBids);
-        /*
+        /* 
+        // check the sorting of arraySingleBids
         for (int i = 0; i < arraySingleBids.size(); i ++) {
             SingleItemBid tmp_bid = arraySingleBids.get(i);
             Item tmp_item = arrayItems.get(i);
@@ -244,65 +248,24 @@ class Bidding {
         */
         Bid.id_count = 0;
 
-        /* Initialize the assignment */
-        int [] assignment = new int [nItems];
-        for (int i = 0; i < nItems; i ++) {
-            assignment[i] = -1;  // retained by seller  
-            // System.out.println(arrayItems.get(i).quality);
-        }
+        /* Initialize the priceVector */
+        int [] priceVector = new int [nItems];
+        int [] MWMCM = new int [nItems];
         while ((line = reader.readLine()) != null) {
             String [] bidding_infos = line.split(" ");
             int type = Integer.parseInt(bidding_infos[0]);
             if (type == 1 || type == 2) { 
-                /*
-                    System.out.println("nSingleItem: " +
-                            arraySingleBids.size() + ", nLinearItems: " +
-                            arrayLinearBids.size() + ", nItems: " + arrayItems.size());
-                            */
+                for (int i = 0; i < nItems; i ++) {
+                    priceVector[i] = hashItems.get(i).startPrice;
+                    MWMCM[i] = bidding_infos[i+3];
+                }
                 if (type == 1) {
                     /* Single item bid insertion */
-                    int tmp_price = Integer.parseInt(bidding_infos[1]);
+                    int tmp_reservePrice = Integer.parseInt(bidding_infos[1]);
                     int tmp_id = Integer.parseInt(bidding_infos[2]);
-                    SingleItemBid newBid = new SingleItemBid(tmp_price, hashItems.get(tmp_id));
-                    // System.out.println("1 " + tmp_id + ", " + tmp_price);
-                    /*
-                    int bid_id = assignment[tmp_id];
-                    LinearBid lb = hashLinearBids.get(bid_id);
-                    if (lb != null) {
-                        System.out.println(lb.id + " combo: " + lb.getWeight(hashItems.get(tmp_id)));
-                    }
-                    */
-                    // if it is SingleItemBid replace SingleItemBid
-                    int A = arraySingleBids.size();
-                    boolean isReplaceSIB = false;
-                    SingleItemBid toReplace = null;
-                    for (int i = 0; i < A; i ++) {
-                        SingleItemBid tmp_sib = arraySingleBids.get(i);
-                        if (tmp_sib.toItem.id == newBid.toItem.id) {
-                            isReplaceSIB = true;
-                            toReplace = tmp_sib;
-                            break;
-                        }
-                    }
-                    if (isReplaceSIB && toReplace != null) {
-                        /*
-                        System.out.println("old_id: "+ toReplace.id + " old_toItem: " + toReplace.toItem.id);
-                        System.out.println("newoffer_toItem: " + newBid.toItem.id);
-                        System.out.println("newoffer: " + newBid.offer + ", old: " + toReplace.offer);
-                        */
-                        if (newBid.offer >= toReplace.offer) {
-                            hashSingleBids.put(newBid.id, newBid);
-                            int indx = arraySingleBids.lastIndexOf(toReplace);
-                            arraySingleBids.remove(toReplace);
-                            arraySingleBids.add(indx, newBid);
-                            hashSingleBids.remove(toReplace.id);
-                            maximum_weight += newBid.offer - toReplace.offer;
-                            assignment[toReplace.toItem.id] = newBid.id;
-                        } // otherwise, nothing changed
-                        continue;
-                    } 
-                    hashSingleBids.put(newBid.id, newBid);
-                    insertToArrayList(arraySingleBids, newBid);
+                    SingleItemBid newBid = new SingleItemBid(tmp_reservePrice, hashItems.get(tmp_id));
+                    // System.out.println("1 " + tmp_id + ", " + tmp_reservePrice);
+
                 } else if (type == 2) { 
                     /* Linear bid insertion */
                     int intercept = Integer.parseInt(bidding_infos[1]);
@@ -312,110 +275,26 @@ class Bidding {
                     insertToArrayList (arrayLinearBids, newbid);
                     // System.out.println("2 " + intercept + ", " + slope);
                 }
-                /* Compute the first matching M_0 */
-                int A = arraySingleBids.size();
-                int [] wMa = new int [A];
-                SingleItemBid firstSingleItemBid = arraySingleBids.get(0);
-                arraySingleBids.remove(0);
-                wMa[0] = ComputeWeight(arraySingleBids, arrayLinearBids, arrayItems);
-                arraySingleBids.add(0, firstSingleItemBid);
-
-                /*
-                for (int i = 0; i < arraySingleBids.size(); i ++) {
-                    SingleItemBid tmp_bid = arraySingleBids.get(i);
-                    Item tmp_item = arrayItems.get(i);
-                    System.out.println(tmp_bid.id + "," + tmp_bid.toItem.quality);
-                }
-                */
-                /* Dynamic Programming: Incremental Computation */
-                int startItemIndex = arrayItems.lastIndexOf(firstSingleItemBid.toItem);
-                for (int i = 1; i < A; i++) {
-                    SingleItemBid toAddBid = arraySingleBids.get(i-1);
-                    SingleItemBid toRemoveBid = arraySingleBids.get(i);
-                    Item startItem = toAddBid.toItem;
-                    Item endItem = toRemoveBid.toItem;
-                    // update for the variation of single-item bid part 
-                    wMa[i] = wMa[i-1] + toAddBid.offer - toRemoveBid.offer;
-                    // System.out.println("i: "+ i + ", toAddBid: " + toAddBid.id +
-                    //       ", toRemoveBid: " + toRemoveBid.id);
-                  
-                    int endItemIndex = startItemIndex;
-                    for (int j = startItemIndex; j < nItems; j ++) {
-                        Item tmp_item = arrayItems.get(j);
-                        if (endItem.id == tmp_item.id) {
-                            endItemIndex = j;
-                            break;
-                        }
-                    }
-                    // update for the variation of linear bid part
-                    // System.out.println("startItemIndex: " + startItemIndex + ", endItemIndex: " + endItemIndex);
-                    for (int j = endItemIndex; j > startItemIndex; j --) {
-                        Item last = arrayItems.get(j-1);
-                        Item now = arrayItems.get(j);
-                        LinearBid tmp_lb = hashLinearBids.get(last.toBid);
-                        if (tmp_lb == null) {
-                            System.out.println(hashSingleBids.get(last.toBid).id);
-                        }
-                        // System.out.println("lastQ: " + last.quality + ", nowQ: " + now.quality);
-                        wMa[i] += tmp_lb.slope * (now.quality - last.quality);
-                        // System.out.println("wMa[" + i + "," +j +"]" + wMa[i]);
-                        now.toBid = tmp_lb.id;
-                    }
-                    startItem.toBid = toAddBid.id;
-                    startItemIndex = endItemIndex;
-                    // System.out.println("itemIndex: " + itemIndex );
-                }
-                /* Compute the first matching M'_0 */
-                int B = arrayLinearBids.size();
-                int [] wMb = new int [B];
-                LinearBid tmp_linearBid = arrayLinearBids.get(0);
-                arrayLinearBids.remove(0);
-                wMb[0] = ComputeWeight(arraySingleBids, arrayLinearBids, arrayItems);
-                arrayLinearBids.add(0, tmp_linearBid);
-                /* Dynamic Programming: Incremental Computation */
-                for (int i = 1; i < B; i++) { 
-                    // the item involves in exchange matching
-                    LinearBid tmp_bid = arrayLinearBids.get(i);
-                    Item tmp_item = hashItems.get(tmp_bid.toItemIndex);
-                    wMb[i] = wMb[i-1] + arrayLinearBids.get(i-1).getWeight(tmp_item) -
-                        arrayLinearBids.get(i).getWeight(tmp_item);
-                    // System.out.println("wMb[" + i +"]" + wMb[i]);
-                }
-                
-                /* Pick up the matching with maximum weight */
-                int max_weight = wMa[0];
-                int max_asgn = 0;
-                boolean isA = true;
-                for (int i = 1; i < A; i++) {
-                    if (wMa[i] > max_weight) {
-                        max_weight = wMa[i];
-                        max_asgn = i;
-                        isA = true;
-                    }
-                }
-                for (int i = 0; i < B; i++) {
-                    if (wMb[i] > max_weight) {
-                        max_weight = wMb[i];
-                        max_asgn = i;
-                        isA = false;
-                    }
-                }
-                if (isA) {
-                    hashSingleBids.remove(arraySingleBids.get(max_asgn));
-                    arraySingleBids.remove(max_asgn);
-                } else {
-                    hashLinearBids.remove(arrayLinearBids.get(max_asgn));
-                    arrayLinearBids.remove(max_asgn);
-                }
                 /* update the assignment and maximum_weight */
-                assignment = ComputeAssignment (arraySingleBids,
-                        arrayLinearBids, arrayItems);
-                maximum_weight = max_weight;
+                while (true) {
+                    // STEP ONE: check if violate case 1
+                    
+                    // STEP TWO: update the priceVector if yes
+                    // continue;
+                    
+                    // STEP THREE: check if violate case 2
+                    //
+                    // STEP FOUR: update the priceVector if yes
+                    // continue;
+                    
+                    // STEP FIVE: break the infinite loop if nothing is found
+                    break;
+                }
             } else if (type == 3) {
                 /* In summary */
                 String summary = Integer.toString (maximum_weight);
                 for (int i = 0; i < nItems; i ++) {
-                    summary += " " + Integer.toString (assignment[i]);
+                    summary += " " + Integer.toString (reservePriceVector[i]);
                 }
                 System.out.println(summary);
             } 

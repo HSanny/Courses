@@ -118,7 +118,6 @@ class Server extends Util { // a.k.a. Replica
 
     public static boolean propose (String command, int s) throws IOException {
         // STEP ONE: check if this request has not been decided
-        System.out.println(command);
         for (String value: decisions.values()) {
             if (command.equals(value)) {
                 // ignore this request since decided
@@ -166,7 +165,7 @@ class Server extends Util { // a.k.a. Replica
         return true;
     }
 
-    public static void processMessage(String recMessage) {
+    public static void processMessage(String recMessage, Boolean[] leaderProposalAcks) throws IOException, InterruptedException{
         String [] recInfo = recMessage.equals(EMPTY_CONTENT) ? null : recMessage.split(",");
         int port;
 
@@ -463,6 +462,9 @@ class Server extends Util { // a.k.a. Replica
                         InputStreamReader(socket.getInputStream()));
                 // channel is established
                 String recMessage = in.readLine();
+                // Sometimes readLine returns null...
+                if(recMessage == null)
+                    continue;
                 String [] recInfo = recMessage.equals(EMPTY_CONTENT) ? null : recMessage.split(",");
                 String title = recInfo[TITLE_IDX];
                 // If election is in progress, cache all non-election related messages for later
@@ -477,10 +479,11 @@ class Server extends Util { // a.k.a. Replica
                     // execute all cached messages first
                     if (!electionInProgress && !msgCache.isEmpty()) {
                         while(!msgCache.isEmpty()) {
-                            processMessage(msgCache.removeFirst());        
+                            System.out.println("Reprocessing message: " + recMessage);
+                            processMessage(msgCache.removeFirst(), leaderProposalAcks);        
                         }
                     }
-                    processMessage(recMessage);
+                    processMessage(recMessage, leaderProposalAcks);
                 }
             } catch (InterruptedException ie) {
                 if (interruptReason == TIMEBOMB_INTERRUPT) {

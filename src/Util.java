@@ -60,6 +60,10 @@ class Util implements Protocol, Logging {
         String title = recParts[TITLE_IDX];
         String content = recParts[CONTENT_IDX];
 
+        // Remove Heartbeats for cleaner logs
+        if(title.equals(HEARTBEAT_TITLE))
+            return;
+
         String str = "";
         str += logHeader + "|Receive *" + title + "* from ";
         str += "{" + sender_type + " #" + sender_index + "}: ";
@@ -76,6 +80,10 @@ class Util implements Protocol, Logging {
         int receiver_idx = Integer.parseInt(sentParts[RECEIVER_INDEX_IDX]);
         String title = sentParts[TITLE_IDX];
         String content = sentParts[CONTENT_IDX];
+
+        // Remove Heartbeats for cleaner logs
+        if(title.equals(HEARTBEAT_TITLE))
+            return;
 
         String str = "";
         str += logHeader + "Sent *" + title + "* to ";

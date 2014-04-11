@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.PriorityQueue;
 import java.util.Comparator;
 import java.util.Collections;
+import java.util.HashSet;
 
 // ****************************************************************
 // Item data structure
@@ -257,7 +258,7 @@ class Bidding {
             if (type == 1 || type == 2) { 
                 for (int i = 0; i < nItems; i ++) {
                     priceVector[i] = hashItems.get(i).startPrice;
-                    MWMCM[i] = bidding_infos[i+3];
+                    MWMCM[i] = Integer.parseInt(bidding_infos[i+3]);
                 }
                 if (type == 1) {
                     /* Single item bid insertion */
@@ -275,17 +276,127 @@ class Bidding {
                     insertToArrayList (arrayLinearBids, newbid);
                     // System.out.println("2 " + intercept + ", " + slope);
                 }
+                /* Create a hashset to restore index of all matched bids */
+                HashSet<Integer> allIndexMatchedBids = new HashSet<Integer> ();
+                for (int i = 0; i < nItems; i ++) {
+                    if (MWMCM[i] < 0) continue;
+                    else allIndexMatchedBids.add(MWMCM[i]);
+                }
+
                 /* update the assignment and maximum_weight */
                 while (true) {
+                    int itemToincrement = -1;
+                    int incrementAmount = -1;
                     // STEP ONE: check if violate case 1
-                    
+                    boolean isViolateOne = false;
+                    for (int itemIdx = 0; itemIdx < nItems; itemIdx++) {
+                        int matchedBidIdx = MWMCM[itemIdx];
+                        if (matchedBidIdx < 0) { 
+                            // win by dummy bid
+                            // Since dummy bid does not offer price to
+                            // other item, impossible to violate case 1
+                            continue;
+                        } else if (hashSingleBids.containsKey(matchedBidIdx)) {
+                            // win by a non-dummy single-item bid
+                            // Since single-item bid does not offer price to
+                            // other item, impossible to violate case 1
+                            continue;
+                        } else if (hashLinearBids.containsKey(matchedBidIdx)) {
+                            // win by a linear bid
+                            LinearBid u = hashLinearBids.get(matchedBidIdx);
+                            int u_slope = u.slope;
+                            int u_intercept = u.intercept;
+                            Item v_zero = hashItems.get(itemIdx);
+                            int v_zero_quality = v_zero.quality;
+                            int wuv_zero = u_slope * v_zero_quality + u_intercept;
+                            for (int vone = 0; vone < nItems; vone ++) {
+                                if (vone == itemIdx) continue;
+                                Item v_one = hashItems.get(vone);
+                                int v_one_quality = v_one.quality;
+                                int wuv_one = u_slope * v_one_quality + u_intercept;
+                                if (wuv_zero - priceVector[itemIdx] < wuv_one - priceVector[vone]) {
+                                    // it is a violation!
+                                    isViolateOne = true;
+                                    itemToincrement = vone;
+                                    incrementAmount = wuv_one - wuv_zero +
+                                        priceVector[itemIdx] - priceVector[vone];
+                                    break;
+                                }
+                            }
+                            if (isViolateOne) break;
+                            else continue;
+                        }
+                    }
                     // STEP TWO: update the priceVector if yes
-                    // continue;
-                    
+                    if (isViolateOne) {
+                        // update the price vector
+                        assert (itemToincrement >= 0) : "cannot increment idx < 0";
+                        assert (incrementAmount > 0) : "increment a negative number";
+                        priceVector[itemToincrement] += incrementAmount;
+                        continue;
+                    }
                     // STEP THREE: check if violate case 2
-                    //
-                    // STEP FOUR: update the priceVector if yes
-                    // continue;
+                    // We do not need to care about start-price dummy bids, it
+                    // can be guaranteed to be no violation for them
+                    boolean isViolateTwo = false;
+                    // (a) check single-item bid first
+                    for (int sibIdx: hashSingleBids.keySet()) {
+                        SingleItemBid sib = hashSingleBids.get(sibIdx);
+                        int offeredItemIdx = sib.toItem.id;
+                        int wuv_zero = sib.offer; // offered price
+                        if (priceVector[offeredItemIdx] < wuv_zero) {
+                            // it is a violation of case 2
+                            isViolateTwo = true;
+                            itemToincrement = offeredItemIdx;
+                            incrementAmount = wuv_zero - priceVector[offeredItemIdx];
+                            break;
+                        }
+                        if (isViolateTwo) break;
+                        else continue;
+                    }
+                    // (a) update the price vector for the found violation
+                    if (isViolateTwo) {
+                        assert (itemToincrement >= 0) : "cannot increment idx < 0";
+                        assert (incrementAmount > 0) : "increment a negative number";
+                        priceVector[itemToincrement] += incrementAmount;
+                        continue;
+                    } 
+                    // (b) check linear bid then
+                    for (int lbIdx: hashLinearBids.keySet()) {
+                        LinearBid lb = hashLinearBids.get(lbIdx);
+                        int u_slope = lb.slope;
+                        int u_intercept = lb.intercept;
+                        // if it is matched in MWMCM M?
+                        if (allIndexMatchedBids.contains(lb.id)) {
+                            // matched, not to check for violation
+                            continue;
+                        } else { 
+                            // unmatched, check for violation
+                            for (int itemIdx = 0; itemIdx < nItems; itemIdx ++) {
+                                Item v_zero = hashItems.get(itemIdx);
+                                int v_zero_quality = v_zero.quality;
+                                int wuv_zero = u_slope * v_zero_quality + u_intercept;
+                                if (priceVector[itemIdx] < wuv_zero) {
+                                    // violation for case 2 detected!
+                                    isViolateTwo = true;
+                                    itemToincrement = itemIdx;
+                                    incrementAmount = wuv_zero - priceVector[itemIdx];
+                                    break;
+                                }
+                            }
+                            if (isViolateTwo) break;
+                            else continue;
+                        }
+
+                    }
+                    // (b) update the priceVector if yes
+                     if (isViolateTwo) {
+                        // update the price vector
+                        assert (itemToincrement >= 0) : "cannot increment idx < 0";
+                        assert (incrementAmount > 0) : "increment a negative number";
+                        priceVector[itemToincrement] += incrementAmount;
+                        continue;
+                    } 
                     
                     // STEP FIVE: break the infinite loop if nothing is found
                     break;
@@ -294,7 +405,7 @@ class Bidding {
                 /* In summary */
                 String summary = Integer.toString (maximum_weight);
                 for (int i = 0; i < nItems; i ++) {
-                    summary += " " + Integer.toString (reservePriceVector[i]);
+                    summary += " " + Integer.toString (priceVector[i]);
                 }
                 System.out.println(summary);
             } 

@@ -246,6 +246,8 @@ class Leader extends Util implements Runnable{
             // Ignore pvals that have been processed already
             if(pval != null) {
                 String[] pvalParts = pval.split(PVALUE_SEP);
+                if(pvalParts.length != 3)
+                    continue;
                 int s = Integer.parseInt(pvalParts[1]);
                 int maxB = -1;
                 String maxPval = null;

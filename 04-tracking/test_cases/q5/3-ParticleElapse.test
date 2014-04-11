@@ -27,7 +27,7 @@ checkUniform: "False"
 maxMoves: "100"
 
 numGhosts: "1"
-inference: "ParticleFilter"
+inference: "MarginalInference"
 ghost: "GoSouthAgent"
 L2Tolerance: "0.05"
 errorMsg: "Particle filter full test: %d inference errors."

@@ -3,15 +3,20 @@ class: "DoubleInferenceAgentTest"
 seed: "188"
 
 layout: """
-%%%%%%%
-%  G  %
-% %%% %
-% %P% %
-% %%% %
-%     %
-%%%%%%%
-% %%%%%
-%%%%%%%
+%%%%%%%%%%%
+%% % % % %%
+%    G    %
+%%       %%
+%         %
+%%       %%
+%         %
+%%       %%
+%         %
+%% % % % %%
+%%%%%%%%%%%
+%%%%%%%%P%%
+% %%%%%%%%%
+%%%%%%%%%%%
 """
 
 observe: "False"
@@ -19,11 +24,11 @@ observe: "False"
 elapse: "True"
 
 checkUniform: "False"
-maxMoves: "40"
+maxMoves: "100"
 
 numGhosts: "1"
+inference: "ParticleFilter"
 ghost: "GoSouthAgent"
-inference: "MarginalInference"
 L2Tolerance: "0.05"
 errorMsg: "Particle filter full test: %d inference errors."
 

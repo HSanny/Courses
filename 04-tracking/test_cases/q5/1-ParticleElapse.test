@@ -23,7 +23,7 @@ maxMoves: "40"
 
 numGhosts: "1"
 ghost: "SeededRandomGhostAgent"
-inference: "ParticleFilter"
+inference: "MarginalInference"
 L2Tolerance: "0.05"
 errorMsg: "Particle filter full test: %d inference errors."
 

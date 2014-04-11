@@ -20,7 +20,7 @@ observe: "True"
 elapse: "True"
 maxMoves: "100"
 ghost: "SeededRandomGhostAgent"
-inference: "MarginalInference"
+inference: "ParticleFilter"
 numGhosts: "2"
 
 

@@ -5,17 +5,52 @@ Textbook Chapter 18-18.2, 20-20.2.
 Email response: respond to the reading following the syllabus guidelines.
 =========================================================================
 
+Chapter 18.1 illustrates us different forms of learning. There are four
+factors the techniques and improvements depends on: component of improvement,
+prior knowledge of the agent state, representation of the data and component,
+and finally feedback of available learning source. As to the component of
+improvement, six types of agent designs are listed in this chapter.
+And for representations for agent components: propositional and first-order logical
+sententces for logical agent. For now, the learning task typically make use of
+factored representation. The distinction between inductive learning and
+deductive learning also deserves being mentioned. Learning a (possibly
+incorrect) general function or rule from specific input–output pairs is called
+inductive learning. Deductive learning is a form of learning which goes from a
+known general rule to a new rule that is logically entailed, but is useful
+because it allows more efficient processing. In terms of the types of
+feedback, we can categorizes the learning task as unsupervised learning,
+reinforcement learning and supervised learning. There is also semi-supervised
+learning in between. 
 
+Chapter 18.2 basically introduces us to the architecture of supervised
+learning. The roles of training set, model, test set and hypothesis are
+articulated. Afterwards, the author distinguish the concepts of classification
+and regression.  It also presents us the principle of selecting hypothesis
+from the large consistent hypotheses. That principle is named as Ockham's
+razor. There is also a tradeoff between complex hypotheses that fit the
+training data well and simpler hypotheses that may generalize better. Another
+tradeoff in supervised learning is between the expressiveness of a hypothesis
+space and the complexity of finding a good hypothesis within that space.
 
+Chapter 20.1 introduce us the statistical learning. Among approaches of
+statistical learning, Bayesian learning simply calculates the probability of
+each hypothesis, given the data, and makes predictions on that basis. The key
+quantities in the Bayesian approach are the hypothesis prior, P (h_i), and the
+likelihood of the data under each hypothesis, P (d|h_i). The author also shows
+us by example that the Bayesian prediction eventually agrees with the true hy-
+pothesis, which is the key characteristic of Bayesian learning. Another common
+approximation is maximum a posteriori (MAP) hypothesis. MAP hypothesis can be
+further reduced to maximum-likelihood (ML) hypothesis by taking uniform prior
+probability. 
 
-
-
-
-
-
-
-
-
+In Chapter 20.2, the author shows us the simplest hypothesis evaluation:
+maximum-likelihood parameter learning. The computation complexity can be
+slightly smoothed by transforming the original problem to maximize the log
+likelihood. The naive bayes model is provided as example of learning in
+discrete-variable model. Then the continuous ML estimation is illustrated with
+the occurence of linear Gaussian model. Bayesian parameter learning is shown and
+Learning Bayes net structures are involved in the discussion of learning by
+means of MAP inference.
 
 
 =========================================================================
@@ -23,3 +58,4 @@ Readings: due Thurs 4/10
 Textbook Chapter 18.4, 18.6 (except 18.6.2), 18.7 through 18.7.2
 No email response due
 =========================================================================
+

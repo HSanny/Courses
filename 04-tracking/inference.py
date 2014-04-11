@@ -434,9 +434,12 @@ class JointParticleFilter:
 	self.particles = list()
 	catesianProduct = list(itertools.product(self.legalPositions,repeat=self.numGhosts))
 	averageParticles = self.numParticles/len(catesianProduct)
+	if(averageParticles == 0):
+		averageParticles = 1
         for posTuple in catesianProduct:
 	    for i in range(averageParticles):
 		self.particles.append(posTuple)
+	#print self.numParticles, len(catesianProduct), averageParticles, len(self.particles), self.getBeliefDistribution().totalCount()
 
 	"""print catesianProduct
 	for purple in perMutationPos:
@@ -584,12 +587,6 @@ class JointParticleFilter:
               but in this project all ghost agents are always the same.
         """
         newParticles = []
-        for oldParticle in self.particles:
-            newParticle = list(oldParticle) # A list of ghost positions
-
-            # now loop through and update each entry in newParticle...
-
-            "*** YOUR CODE HERE ***"
 	for oldParticle in self.particles:
 	    newParticle = list(oldParticle)
 	    for ghostIndex in range(self.numGhosts):

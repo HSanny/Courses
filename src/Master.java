@@ -153,7 +153,6 @@ public class Master extends Util {
                         print ("I know that Server " + sender_idx + 
                                 " is new leader." , MASTER_LOG_HEADER);
                         leaderID = sender_idx;
-                        break;
                     }
                     /* printChatLog INSTRUCTION: print the received chat log */
                     else if (title.equals(HERE_IS_CHAT_LOG_TITLE)) {

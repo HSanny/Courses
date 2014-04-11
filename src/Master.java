@@ -35,7 +35,13 @@ public class Master extends Util {
     static ServerSocket masterListener;
     static ArrayList<Boolean> clientsCheckClear;
     static ArrayList<Boolean> serversSkipSlotACK;
+    static ArrayList<Boolean> serversSetup;
+    static ArrayList<Boolean> clientsSetup;
+    static ArrayList<Boolean> serversLeaderACK;
+    static ArrayList<Boolean> clientsLeaderACK;
 
+    static Semaphore setupSema;
+    static Semaphore ackLeaderSema;
     static Semaphore checkClearSema;
     static Semaphore skipSlotsSema;
 
@@ -79,7 +85,7 @@ public class Master extends Util {
                             InputStreamReader(socket.getInputStream()));
                     String recMessage = in.readLine();
                     printReceivedMessage(recMessage, MASTER_LOG_HEADER);
-                    String [] recInfo = recMessage.split(",");
+                    String [] recInfo = recMessage.split(MESSAGE_SEP);
 
                     String sender_type = recInfo[SENDER_TYPE_IDX];
                     int sender_idx = Integer.parseInt(recInfo[SENDER_INDEX_IDX]);
@@ -88,29 +94,83 @@ public class Master extends Util {
                     String title = recInfo[TITLE_IDX];
                     String content = recInfo[CONTENT_IDX];
 
-                    /* update the master's knowledge of who is new leader */
-                    if (title.equals(LEADER_REQUEST_TITLE)) {
+                    /* SYSTEM CONFIGURATION: collects start-up acknowledgement */
+                    if (title.equals(START_ACK_TITLE)) {
+                        if (sender_type.equals(SERVER_TYPE)) {
+                            serversSetup.set(sender_idx, true);
+                        } else if (sender_type.equals(CLIENT_TYPE)){
+                            clientsSetup.set(sender_idx, true);
+                        }
+                        // check if setup is complete
+                        boolean isSetUpComplete = true;
+                        for (int cIdx = 0; cIdx < numClients; cIdx ++) {
+                            if (!clientsSetup.get(cIdx)) { 
+                                isSetUpComplete = false; 
+                                break;
+                            }
+                        }
+                        for (int sIdx = 0; sIdx < numNodes; sIdx ++) {
+                            if (!serversSetup.get(sIdx)) {
+                                isSetUpComplete = false;
+                                break;
+                            }
+                        }
+                        if (isSetUpComplete) {
+                            print("SETUP COMPLETES", MASTER_LOG_HEADER);
+                            setupSema.release();
+                        }
+                    }
+                    /* Leader Acknowledgement */
+                    else if (title.equals(LEADER_ACK_TITLE)) {
+                        if (sender_type.equals(SERVER_TYPE)) {
+                            serversLeaderACK.set(sender_idx, true);
+                        } else if (sender_type.equals(CLIENT_TYPE)) {
+                            clientsLeaderACK.set(sender_idx, true);
+                        }
+                        // check if setup is complete
+                        boolean isACKComplete = true;
+                        for (int cIdx = 0; cIdx < numClients; cIdx ++) {
+                            if (!clientsLeaderACK.get(cIdx)) { 
+                                isACKComplete = false; 
+                                break;
+                            }
+                        }
+                        for (int sIdx = 0; sIdx < numNodes; sIdx ++) {
+                            if (!serversLeaderACK.get(sIdx)) {
+                                isACKComplete = false;
+                                break;
+                            }
+                        }
+                        if (isACKComplete) {
+                            print("LEADER ACK COLLECTION COMPLETE with LEADER " + leaderID,
+                                    MASTER_LOG_HEADER); 
+                            ackLeaderSema.release();
+                        }
+                    }
+                    /* LEADER ELECTION PROTOCOL: update the master's knowledge of who is new leader */
+                    else if (title.equals(LEADER_REQUEST_TITLE)) {
+                        // STEP ONE: change the leaderID
                         print ("I know that Server " + sender_idx + 
                                 " is new leader." , MASTER_LOG_HEADER);
                         leaderID = sender_idx;
                         break;
                     }
-                    /* print the received chat log */
+                    /* printChatLog INSTRUCTION: print the received chat log */
                     else if (title.equals(HERE_IS_CHAT_LOG_TITLE)) {
-                        // decode the content
+                        // STEP ONE: decode the content
                         String [] chatLogs = content.split(CHAT_PIECE_SEP);
+                        // STEP TWO: print out the received chat log
                         for (int clIdx = 0; clIdx < chatLogs.length; clIdx ++) {
-                            // print out the received chat log
                             System.out.println(chatLogs[clIdx]);
                         }
                     }
-                    /* all clear acknowledgement */
+                    /* allClear INSTRUCTION: collects acknowledgement */
                     else if (title.equals(CHECK_CLEAR_ACK_TITLE)) {
-                        // update the cached check clear arraylist
+                        // STEP ONE: update the cached check clear arraylist
                         if (sender_type.equals(CLIENT_TYPE)) {
                             clientsCheckClear.set(sender_idx, true);
                         }
-                        // check if all clients have been clear about this
+                        // STEP TWO: check if all clients have been clear about this
                         boolean isAllClear = true;
                         for (int cIdx = 0; cIdx < numClients; cIdx ++) {
                             if (!clientsCheckClear.get(cIdx)) {
@@ -118,19 +178,18 @@ public class Master extends Util {
                                 break;
                             }
                         }
-                        // signal and unblock the main thread 
+                        // STEP THREE: signal and unblock the main thread 
                         if (isAllClear) {
                             checkClearSema.release();
                         }
                     }
-                    /* Skip slot acknowledgement */
+                    /* skipSlot INSTRUCTION: collects acknowledgement */
                     else if (title.equals(SKIP_SLOT_ACK_TITLE)) {
-                        // update the cached skip slot acks arraylist
+                        // STEP ONE: update the cached skip slot acks arraylist
                         if (sender_type.equals(SERVER_TYPE)) {
                             serversSkipSlotACK.set(sender_idx, true);
                         } 
-
-                        // check if all acks come
+                        // STEP TWO: check if all acks come
                         boolean isACKComplete = true;
                         for (int sIdx = 0; sIdx < numNodes; sIdx ++) {
                             if (!serversSkipSlotACK.get(sIdx)) {
@@ -138,14 +197,13 @@ public class Master extends Util {
                                 break;
                             }
                         }
-                        // if all server sends back skip slot completes,
-                        //  we then proceed
+                        // STEP THREE: unblock when all acks received,
                         if (isACKComplete) {
                             print("Skip Slots Completes.", MASTER_LOG_HEADER); 
                             skipSlotsSema.release();
                         }
                     }
-                    /* Exit title */
+                    /* Exit */
                     if (title.equals(EXIT_TITLE)) {
                         return ;
                     }
@@ -192,69 +250,23 @@ public class Master extends Util {
                      *  connections to them for sending further commands
                      */
                     // ============================================================
-                    // DRIVEN BY JIMMY LIN STARTS
-                    // STEP ONE: SET UP SERVERS AND CLIENTS
-                    final ArrayList<Boolean> serversSetup = new ArrayList<Boolean> ();
+                    // create a thread dealing with the normal messages
+                    MasterRoutineExecutor masterRoutineExecutor = new MasterRoutineExecutor ();
+                    masterRoutineExecutor.start(); 
+                    // STEP ONE: SET UP SERVERS AND CLIENTS PROCESSES
+                    setupSema = new Semaphore (0, true);
+                    serversSetup = new ArrayList<Boolean> ();
                     for (nodeIndex = 0; nodeIndex < numNodes; nodeIndex ++) {
                         serversSetup.add(false);
                     }
-                    final ArrayList<Boolean> clientsSetup = new ArrayList<Boolean> ();
+                    clientsSetup = new ArrayList<Boolean> ();
                     for (clientIndex = 0; clientIndex < numClients; clientIndex ++) {
                         clientsSetup.add(false);
                     }
-
-                    final Integer nServers = numNodes;
-                    final Integer nClients = numClients;
-                    Thread collectSetUpAcks = new Thread (new Runnable() {
-                        public void run () {
-//{{{
-                            try {
-                            while (true) {
-                            Socket socket = listener.accept();
-                            try { 
-                                BufferedReader in = new BufferedReader(new
-                                        InputStreamReader(socket.getInputStream()));
-                                String recMessage = in.readLine();
-                                printReceivedMessage(recMessage, MASTER_LOG_HEADER);
-                                String [] recInfo = recMessage.split(",");
-                                if (recInfo[TITLE_IDX].equals(START_ACK_TITLE)) {
-                                    int index = Integer.parseInt(recInfo[SENDER_INDEX_IDX]);
-                                    if (recInfo[SENDER_TYPE_IDX].equals(SERVER_TYPE)) {
-                                        serversSetup.set(index, true);
-                                    } else if (recInfo[SENDER_TYPE_IDX].equals(CLIENT_TYPE)){
-                                        clientsSetup.set(index, true);
-                                    }
-                                    // check if setup is complete
-                                    boolean isSetUpComplete = true;
-                                    for (int cIdx = 0; cIdx < nClients; cIdx ++) {
-                                        if (!clientsSetup.get(cIdx)) { 
-                                            isSetUpComplete = false; 
-                                            break;
-                                        }
-                                    }
-                                    for (int sIdx = 0; sIdx < nServers; sIdx ++) {
-                                        if (!serversSetup.get(sIdx)) {
-                                            isSetUpComplete = false;
-                                            break;
-                                        }
-                                    }
-                                    if (isSetUpComplete) {
-                                        print("SETUP COMPLETES", MASTER_LOG_HEADER);
-                                        break;
-                                    }
-                                } else {
-                                    continue;
-                                }
-                            } finally { socket.close(); }
-                            }
-                            } catch (IOException e) {;} finally { ;}
-                        }
-                    });//}}}
-                    collectSetUpAcks.start();
-
                     serverProcesses = new Process [numNodes];
                     clientProcesses = new Process [numClients];
 
+                    // PROCESSES CREATION
                     for (clientIndex = 0; clientIndex < numClients; clientIndex ++) {
                         Integer clientID = new Integer(clientIndex);
                         String [] commandArray = new String [4];
@@ -270,7 +282,6 @@ public class Master extends Util {
                         Process pclient = runtime.exec(cmd);
                         clientProcesses[clientIndex] = pclient;
                     }
-
                     for (nodeIndex = 0; nodeIndex < numNodes; nodeIndex ++) {
                         Integer serverID = new Integer(nodeIndex);
                         String [] commandArray = new String [5];
@@ -288,70 +299,20 @@ public class Master extends Util {
                         serverProcesses[nodeIndex] = pserver;
                     }
                     // Confirm all clients and servers have set up their listeners
-                    collectSetUpAcks.join();
+                    setupSema.acquire();
 
                     // STEP TWO: ELECT A NEW LEADER
                     // we use server 0 to carry leader
                     leaderID = 0;
-                    final ArrayList<Boolean> serversLeaderACK = new ArrayList<Boolean> ();
+                    ackLeaderSema = new Semaphore (0, true);
+                    serversLeaderACK = new ArrayList<Boolean> ();
                     for (nodeIndex = 0; nodeIndex < numNodes; nodeIndex ++) {
                         serversLeaderACK.add(false);
                     }
-                    final ArrayList<Boolean> clientsLeaderACK = new ArrayList<Boolean> ();
+                    clientsLeaderACK = new ArrayList<Boolean> ();
                     for (clientIndex = 0; clientIndex < numClients; clientIndex ++) {
                         clientsLeaderACK.add(false);
                     }
-                    // Create new thread to accept the leader response
-                    Thread CollectLeaderResponse = new Thread (new Runnable () {
-//{{{
-                        public void run () {
-                            try {
-                            while (true) {
-                            Socket socket = listener.accept();
-                            try { 
-                                BufferedReader in = new BufferedReader(new
-                                        InputStreamReader(socket.getInputStream()));
-                                String recMessage = in.readLine();
-                                printReceivedMessage(recMessage, MASTER_LOG_HEADER);
-                                String [] recInfo = recMessage.split(",");
-                                String title = recInfo[TITLE_IDX];
-                                String sender_type = recInfo[SENDER_TYPE_IDX];
-                                int sender_idx = Integer.parseInt(recInfo[SENDER_INDEX_IDX]);
-                                if (title.equals(LEADER_ACK_TITLE)) {
-                                    if (sender_type.equals(SERVER_TYPE)) {
-                                        serversLeaderACK.set(sender_idx, true);
-                                    } else if (sender_type.equals(CLIENT_TYPE)) {
-                                        clientsLeaderACK.set(sender_idx, true);
-                                    }
-                                }
-                                // check if setup is complete
-                                boolean isACKComplete = true;
-                                for (int cIdx = 0; cIdx < nClients; cIdx ++) {
-                                    if (!clientsLeaderACK.get(cIdx)) { 
-                                        isACKComplete = false; 
-                                        break;
-                                    }
-                                }
-                                for (int sIdx = 0; sIdx < nServers; sIdx ++) {
-                                    if (!serversLeaderACK.get(sIdx)) {
-                                        isACKComplete = false;
-                                        break;
-                                    }
-                                }
-                                if (isACKComplete) {
-                                    print("LEADER ACK COLLECTION COMPLETE with LEADER " + leaderID,
-                                            MASTER_LOG_HEADER); 
-                                    break;
-                                } else {
-                                    continue;
-                                }
-                            } finally { socket.close(); }
-                            }
-                            } catch (IOException e) {;} finally { ;}
-                        }
-                    });
-//}}}
-                    CollectLeaderResponse.start();
                     // Send message to tell the result of election
                     String eLeaderMsg;
                     String leaderStr = Integer.toString(leaderID);
@@ -370,11 +331,8 @@ public class Master extends Util {
                         send (localhost, port, eLeaderMsg, MASTER_LOG_HEADER);
                     }
                     // Wait for the leader response
-                    CollectLeaderResponse.join();
+                    ackLeaderSema.acquire();
 
-                    // create a thread dealing with the normal messages
-                    MasterRoutineExecutor masterRoutineExecutor = new MasterRoutineExecutor ();
-                    masterRoutineExecutor.start(); 
 
                     // ============================================================
                     break;

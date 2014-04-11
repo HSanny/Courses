@@ -224,8 +224,31 @@ cluster membership after the reassignment of these data points.
 \newpage
 \section{Hierarchical Clustering}
 \subsection{Single-Link Clustering}
+For MIN Hierarchical Clustering,
+\begin{itemize}
+    \item{Step one: merge p2, p5 by Similarity 0.98}
+    \item{Step two: merge p3, (p2,p5) by Similarly 0.85}
+    \item{Step three: merge p4, (p2,p3,p5) by Similarity 0.76}
+    \item{Step four: merge p1, (p2,p3,p5) by Similarity 0.55}
+\end{itemize}
+
+The resulting clusters are (p1), (p2,p3,p5). 
+
+The dendrogram is in the attachment.
 
 \subsection{Complete-Link Clustering}
+For MAX Hierarchical Clustering,
+\begin{itemize}
+    \item{Step one: merge p2, p5 by Similarity 0.98}
+    \item{Step two: merge p3, (p2,p5) by Similarly 0.64}
+    \item{Step three: merge p1, p4 by Similarity 0.55}
+    \item{Step four: merge (p1,p4), (p2,p3,p5) by similarity 0.1}
+\end{itemize}
+
+The resulting clusters are (p1,p4), (p2,p3,p5).
+
+The dendrogram is in the attachment.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% General Documentation ends

@@ -1,0 +1,13 @@
+start 3 2
+sendMessage 0 hello0
+sendMessage 0 hello1
+skipSlots 1
+sendMessage 0 hello3
+allClear
+timeBombLeader 10
+sendMessage 0 hello4
+sendMessage 0 hello5
+sendMessage 0 hello6
+allClear
+printChatLog 0
+printChatLog 1

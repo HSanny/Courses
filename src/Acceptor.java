@@ -22,6 +22,8 @@ class Acceptor extends Util implements Runnable {
         private LinkedBlockingQueue<String> queue = null;
         // ballotNum: the current adopted ballot number
         private int ballot_num;
+        // ballotLeaderID: the leader ID of the current adopted ballot
+        private int ballotLeaderID;
         // accepted: set of accepted ballots
         private HashSet<String> accepted;
         
@@ -61,10 +63,12 @@ class Acceptor extends Util implements Runnable {
                 if (title.equals(P1A_TITLE)) {
                     int lambda = Integer.parseInt(conts[0]); // leader id
                     int b = Integer.parseInt(conts[1]);
-                    // if the given ballot number is greater than the current one, then adopt it
-                    if (b > ballot_num) {
+                    // if the given ballot number is greater than the current one 
+                    // or the same, with a lower leader ID, then adopt it
+                    if (b > ballot_num || (b == ballot_num && lambda < ballotLeaderID)) {
                         ballot_num = b;
-                    }
+                        ballotLeaderID = lambda;
+                    } 
                     // send a p1b in response with identifier, its current
                     // ballot number, and all accepted pvalue
                     int port = SERVER_PORT_BASE + lambda;
@@ -77,7 +81,7 @@ class Acceptor extends Util implements Runnable {
                         accepted_str = accepted_str.substring(0, endIndex);
 
                     String p1b_content = String.format(P1B_CONTENT, serverID,
-                            ballot_num, accepted_str);
+                            ballot_num, ballotLeaderID, accepted_str);
                     String p1b_response = String.format(MESSAGE, ACCEPTOR_TYPE,
                       serverID, LEADER_TYPE, lambda, P1B_TITLE, p1b_content);
 
@@ -86,7 +90,6 @@ class Acceptor extends Util implements Runnable {
                 }
                 // ACCEPTANCE: if incoming message is a p2a
                 else if (title.equals(P2A_TITLE)) {
-                    System.out.println(content);
                     int lambda = Integer.parseInt(conts[0]); // leader id
                     String pvalue = conts[1];
                     String [] pvalueParts = pvalue.split(PVALUE_SEP);
@@ -94,14 +97,15 @@ class Acceptor extends Util implements Runnable {
                     int s = Integer.parseInt(pvalueParts[1]);
                     String cmd = pvalueParts[2];
                     // if the given ballot number is greater than or equal to the current one
-                    if (b >= ballot_num) {
+                    if (b > ballot_num || (b == ballot_num && lambda == ballotLeaderID)) {
                         // adopt that ballot number and accept the ballot
                         ballot_num = b;
+                        ballotLeaderID = lambda;
                         accepted.add(pvalue);
                     } 
                     // send a p2b in response with the current ballot number
                     int port = SERVER_PORT_BASE + lambda;
-                    String p2b_content = String.format(P2B_CONTENT, serverID, ballot_num, s);
+                    String p2b_content = String.format(P2B_CONTENT, serverID, ballot_num, s, ballotLeaderID);
                     String p2b_response = String.format(MESSAGE,
                             ACCEPTOR_TYPE, serverID, LEADER_TYPE, lambda,
                             P2B_TITLE, p2b_content);

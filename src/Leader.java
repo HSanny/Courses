@@ -192,10 +192,10 @@ class Leader extends Util implements Runnable{
                 // become Active
                 isActive = true; 
             } else if (title.equals(PREEMPTED_TITLE)) {
-                // TODO: Why does the pseudocode show <r', L'> instead of b?
                 int b = Integer.parseInt(contentParts[0]); 
+                int l = Integer.parseInt(contentParts[1]);
                 // if the ballot number in the message is greater than the current ballot number
-                if (b > ballot_num) {
+                if (b > ballot_num || l != serverID) {
                     // become Passive
                     isActive = false;
                     // update the ballot number
@@ -255,6 +255,8 @@ class Leader extends Util implements Runnable{
                 for(String tmp_pval: pvals) {
                     if(tmp_pval != null) {
                         String[] tmp_pvalParts = tmp_pval.split(PVALUE_SEP);
+                        if(tmp_pvalParts.length != 3)
+                            continue;
                         int tmp_b = Integer.parseInt(tmp_pvalParts[0]);
                         int tmp_s = Integer.parseInt(tmp_pvalParts[1]);
                         if(tmp_s == s) {
@@ -342,10 +344,11 @@ class Leader extends Util implements Runnable{
                     String[] p1bParts = msgParts[CONTENT_IDX].split(CONTENT_SEP);
                     int acceptor = Integer.parseInt(p1bParts[0]);
                     int newBallotNum = Integer.parseInt(p1bParts[1]);
+                    int newBallotLeader = Integer.parseInt(p1bParts[2]);
                     // Note: there may be no pvals accepted yet
-                    String pval = p1bParts.length == 3 ? p1bParts[2] : "";
+                    String pval = p1bParts.length == 4 ? p1bParts[3] : "";
                     // if message is a p1b for the same ballot number
-                    if(newBallotNum == ballot_num) {
+                    if(newBallotNum == ballot_num && newBallotLeader == leaderID) {
                         // add pvalues to pValues
                         pvalues.add(pval); 
                         // remove acceptor from waitFor
@@ -376,7 +379,7 @@ class Leader extends Util implements Runnable{
                     } else {
                         // else send preempted and the higher ballot number to leader
                         int port = SERVER_PORT_BASE + leaderID;
-                        String preemptedContent = String.format(PREEMPTED_CONTENT, newBallotNum);
+                        String preemptedContent = String.format(PREEMPTED_CONTENT, newBallotNum, newBallotLeader);
                         String preemptedMessage = String.format(MESSAGE, LEADER_TYPE,
                                 leaderID, LEADER_TYPE, leaderID, PREEMPTED_TITLE, preemptedContent);
                         if(!send(localhost, port, preemptedMessage, logHeader))
@@ -456,8 +459,9 @@ class Leader extends Util implements Runnable{
                     String[] p2bParts = contents.split(CONTENT_SEP);
                     int acceptor = Integer.parseInt(p2bParts[0]);
                     int newBallotNum = Integer.parseInt(p2bParts[1]);
+                    int newBallotLeader = Integer.parseInt(p2bParts[3]);
                     // if message is a p2b for the same ballot number
-                    if (newBallotNum == ballot_num) {
+                    if (newBallotNum == ballot_num && newBallotLeader == leaderID) {
                         // remove acceptor from waitFor
                         waitFor[acceptor] = 1;
                         int numReceived = 0;
@@ -480,7 +484,7 @@ class Leader extends Util implements Runnable{
                         // else send preempted and the higher ballot number to leader
                     } else {
                         int port = SERVER_PORT_BASE + leaderID;
-                        String preemptedContent = String.format(PREEMPTED_CONTENT, newBallotNum);
+                        String preemptedContent = String.format(PREEMPTED_CONTENT, newBallotNum, newBallotLeader);
                         String preemptedMessage = String.format(MESSAGE, LEADER_TYPE,
                                 leaderID, LEADER_TYPE, leaderID, PREEMPTED_TITLE, preemptedContent);
                         if(!send(localhost, port, preemptedMessage, logHeader))

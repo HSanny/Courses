@@ -26,5 +26,14 @@ elif [ $1 -eq 4 ]; then
     done
 elif [ $1 -eq 5 ]; then
     cat $2 | $(cat COMMAND)
+elif [ $1 -eq 6 ]; then
+    for TEST in tests/*.test
+    do
+        echo "=================$(echo $TEST)================="
+        cat $TEST
+        echo "-------------------------------------"
+        cat $TEST | $(cat COMMAND)
+    done
+    echo "==================================================="
 fi
 

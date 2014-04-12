@@ -26,7 +26,7 @@ import java.util.HashSet;
 
 // ****************************************************************
 // Item data structure
-class Item implements Comparable<Item>{
+class Item implements Comparable<Item> {
     // fields characterizing item
     int id;  
     int quality;  
@@ -140,6 +140,10 @@ class Bidding {
         return ;
     }
 
+    public static void print (int amountToIncrement, int itemIdx) {
+        //System.out.println("Item_idx: " + itemIdx + ", amount: " + amountToIncrement);
+    }
+
 
     public static void main (String [] args) throws IOException {
         BufferedReader reader = new BufferedReader(new
@@ -167,12 +171,6 @@ class Bidding {
         }
         /* Sorted array list */
         Collections.sort(arrayItems);
-        /*
-        for (int i = 0; i < nItems; i ++) {
-            Item tmp_item = arrayItems.get(i);
-            System.out.println(tmp_item.id + "," + tmp_item.quality);
-        }
-        */
         /* Create arraylist and hashmap for single-item bids */
         ArrayList<SingleItemBid> arraySingleBids = new ArrayList<SingleItemBid> ();
         HashMap<Integer,SingleItemBid> hashSingleBids = new HashMap<Integer,SingleItemBid> ();
@@ -192,14 +190,6 @@ class Bidding {
             maximum_weight += tmp_item.reservePrice;  // initial max_weight
         }
         Collections.sort(arraySingleBids);
-        /* 
-        // check the sorting of arraySingleBids
-        for (int i = 0; i < arraySingleBids.size(); i ++) {
-            SingleItemBid tmp_bid = arraySingleBids.get(i);
-            Item tmp_item = arrayItems.get(i);
-            System.out.println(tmp_bid.id + "," + tmp_bid.toItem.quality);
-        }
-        */
         Bid.id_count = 0;
 
         /* Initialize the priceVector */
@@ -289,6 +279,7 @@ class Bidding {
                         assert (itemToincrement >= 0) : "cannot increment idx < 0";
                         assert (incrementAmount > 0) : "increment a negative number";
                         priceVector[itemToincrement] += incrementAmount;
+                        print (incrementAmount, itemToincrement);
                         continue;
                     }
                     // STEP THREE: check if violate case 2
@@ -315,6 +306,7 @@ class Bidding {
                         assert (itemToincrement >= 0) : "cannot increment idx < 0";
                         assert (incrementAmount > 0) : "increment a negative number";
                         priceVector[itemToincrement] += incrementAmount;
+                        print (incrementAmount, itemToincrement);
                         continue;
                     } 
                     // (b) check linear bid then
@@ -351,6 +343,7 @@ class Bidding {
                         assert (itemToincrement >= 0) : "cannot increment idx < 0";
                         assert (incrementAmount > 0) : "increment a negative number";
                         priceVector[itemToincrement] += incrementAmount;
+                        print (incrementAmount, itemToincrement);
                         continue;
                     } 
                     

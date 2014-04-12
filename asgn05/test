@@ -1,3 +1,6 @@
+run input/input501.txt myoutput/myoutput501.txt
+run input/input502.txt myoutput/myoutput502.txt
+run input/input503.txt myoutput/myoutput503.txt
 diff output/output501.txt myoutput/myoutput501.txt
 diff output/output502.txt myoutput/myoutput502.txt                                     
 diff output/output503.txt myoutput/myoutput503.txt 

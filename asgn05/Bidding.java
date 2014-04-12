@@ -129,6 +129,8 @@ class Bidding {
                 InputStreamReader (System.in));
         /* Parse the number of items */
         int nItems = Integer.parseInt(reader.readLine());
+        if (nItems <= 0) return ;
+        assert (nItems > 0);
         // System.out.println("number of items: " + n);
 
         /* Use hash map to restore items */
@@ -234,24 +236,18 @@ class Bidding {
                                 if (wuv_zero - priceVector[itemIdx] < wuv_one - priceVector[vone]) {
                                     // it is a violation!
                                     isViolate = true;
-                                    tmp_incrementAmount = wuv_one - wuv_zero +
+                                    itemToincrement = vone;
+                                    incrementAmount = wuv_one - wuv_zero +
                                         priceVector[itemIdx] - priceVector[vone];
-                                    if (tmp_incrementAmount < incrementAmount) {
-                                        incrementAmount = tmp_incrementAmount;
-                                        itemToincrement = vone;
-                                        vioType = 1;
-                                    }
+                                    break;
                                 }
                             }
-                            /*
-                            if (isViolateOne) break;
+                            if (isViolate) break;
                             else continue;
-                            */
                         }
                     }
                     // STEP TWO: update the priceVector if yes
-                    /*
-                    if (isViolateOne) {
+                    if (isViolate) {
                         // update the price vector
                         assert (itemToincrement >= 0) : "cannot increment idx < 0";
                         assert (incrementAmount > 0) : "increment a negative number";
@@ -259,13 +255,9 @@ class Bidding {
                         print (1, incrementAmount, itemToincrement);
                         continue;
                     }
-                    */
                     // STEP THREE: check if violate case 2
                     // We do not need to care about start-price dummy bids, it
                     // can be guaranteed to be no violation for them
-                    /*
-                    boolean isViolateTwo = false;
-                    */
                     // (a) check single-item bid first
                     for (int sibIdx: hashSingleBids.keySet()) {
                         SingleItemBid sib = hashSingleBids.get(sibIdx);
@@ -280,37 +272,22 @@ class Bidding {
                             // matched
                             continue;
                         }
-                       //  System.out.println("sibId: " + sib.id + "pv0: " +  priceVector[offeredItemIdx]+ ", wuv_zero: " + wuv_zero);
                         if (priceVector[offeredItemIdx] < wuv_zero) {
                             // it is a violation of case 2
                             isViolate = true;
-                            /*
                             itemToincrement = offeredItemIdx;
                             incrementAmount = wuv_zero - priceVector[offeredItemIdx];
                             break;
-                            */
-                            tmp_incrementAmount = wuv_zero - priceVector[offeredItemIdx];
-                            if (tmp_incrementAmount < incrementAmount) {
-                                incrementAmount = tmp_incrementAmount;
-                                itemToincrement = offeredItemIdx;
-                                vioType = 21;
-                            }
                         }
-                        /*
-                        if (isViolateTwo) break;
-                        else continue;
-                        */
                     }
                     // (a) update the price vector for the found violation
-                    /*
-                    if (isViolateTwo) {
+                    if (isViolate) {
                         assert (itemToincrement >= 0) : "cannot increment idx < 0";
                         assert (incrementAmount > 0) : "increment a negative number";
                         priceVector[itemToincrement] += incrementAmount;
                         print (2, incrementAmount, itemToincrement);
                         continue;
                     } 
-                    */
                     // (b) check linear bid then
                     for (int lbIdx: hashLinearBids.keySet()) {
                         LinearBid lb = hashLinearBids.get(lbIdx);
@@ -328,25 +305,14 @@ class Bidding {
                                 int wuv_zero = u_slope * v_zero_quality + u_intercept;
                                 if (priceVector[itemIdx] < wuv_zero) {
                                     // violation for case 2 detected!
-                                    /*
-                                    isViolateTwo = true;
+                                    isViolate = true;
                                     itemToincrement = itemIdx;
                                     incrementAmount = wuv_zero - priceVector[itemIdx];
                                     break;
-                                    */
-                                    isViolate = true;
-                                    tmp_incrementAmount = wuv_zero - priceVector[itemIdx];
-                                    if (tmp_incrementAmount < incrementAmount) {
-                                        incrementAmount = tmp_incrementAmount;
-                                        itemToincrement = itemIdx;
-                                        vioType = 22;
-                                    }
                                 }
                             }
-                            /*
-                            if (isViolateTwo) break;
+                            if (isViolate) break;
                             else continue;
-                            */
                         }
 
                     }

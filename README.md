@@ -127,4 +127,8 @@ Implementation Details
    priority**. If a server with lower index received a leader proposal from
    higher-index server, it will reject this leader proposal. Otherwise, it will accept that proposal. 
    
-
+4. **All Clear Checking**: master will send message to ask all replicas and
+   clients about whether they are clear about all they should know. That is,
+   did they receive corresponding decision for all they have proposed. Note
+   that some replicas may crash and the ultimate allClear check in master side
+   will ignore those replicas that it believes to be dead.

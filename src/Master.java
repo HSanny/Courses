@@ -34,11 +34,15 @@ public class Master extends Util {
 
     static ServerSocket masterListener;
     static ArrayList<Boolean> clientsCheckClear;
+    static ArrayList<Boolean> serversCheckClear;
     static ArrayList<Boolean> serversSkipSlotACK;
     static ArrayList<Boolean> serversSetup;
     static ArrayList<Boolean> clientsSetup;
     static ArrayList<Boolean> serversLeaderACK;
     static ArrayList<Boolean> clientsLeaderACK;
+
+    static Process [] serverProcesses;
+    static Process [] clientProcesses;
 
     static Semaphore setupSema;
     static Semaphore ackLeaderSema;
@@ -50,17 +54,21 @@ public class Master extends Util {
         assert (numClients > 0): "numClients not initialized.";
         assert (numNodes > 0): "numNodes not initialized";
         // final Integer nClients1 = numClients;
-        int clientIndex, nodeIndex;
+        int clientIndex, serverIndex;
 
         // STEP ONE: initialize an all false array saying no acks
         // received at first stage
         clientsCheckClear = new ArrayList<Boolean> ();
+        serversCheckClear = new ArrayList<Boolean> ();
         for (clientIndex = 0; clientIndex < numClients; clientIndex ++) {
             clientsCheckClear.add(false);
         }
+        for (serverIndex = 0; serverIndex < numNodes; serverIndex ++) {
+            serversCheckClear.add(false);
+        }
         // STEP TWO: initialize a new semaphore with no permit
         checkClearSema = new Semaphore (0, true);
-        // STEP THREE: send all CHECK_CLEAR message to all clients
+        // STEP THREE: send all CHECK_CLEAR message to all clients and servers
         int port;
         for (clientIndex = 0; clientIndex < numClients; clientIndex ++) {
             port = CLIENT_PORT_BASE + clientIndex; 
@@ -68,7 +76,12 @@ public class Master extends Util {
                     0, CLIENT_TYPE, clientIndex, CHECK_CLEAR_TITLE, EMPTY_CONTENT);
             send (localhost, port, checkClearMessage, MASTER_LOG_HEADER);
         }
-
+        for (serverIndex = 0; serverIndex < numNodes; serverIndex ++) {
+            port = SERVER_PORT_BASE + serverIndex; 
+            String checkClearMessage = String.format(MESSAGE, MASTER_TYPE,
+                    0, SERVER_TYPE, serverIndex, CHECK_CLEAR_TITLE, EMPTY_CONTENT);
+            send (localhost, port, checkClearMessage, MASTER_LOG_HEADER);
+        }
         // STEP FOUR: Busy waits until receipt of all clients' ack
         checkClearSema.acquire();
         return ;
@@ -149,10 +162,17 @@ public class Master extends Util {
                     }
                     /* LEADER ELECTION PROTOCOL: update the master's knowledge of who is new leader */
                     else if (title.equals(LEADER_REQUEST_TITLE)) {
-                        // STEP ONE: change the leaderID
+                        // STEP ONE: remove the process that carry previous leader
+                        serverProcesses[leaderID] = null;
+                        String recheckClearAcks = String.format(MESSAGE,
+                                MASTER_TYPE, 0, MASTER_TYPE, 0,
+                                CHECK_CLEAR_TITLE, EMPTY_CONTENT);
+                        send (localhost, MASTER_PORT, recheckClearAcks, MASTER_LOG_HEADER);
+                        // STEP TWO: change the leaderID
+                        leaderID = sender_idx;
+                        // STEP THREE: make statement
                         print ("I know that Server " + sender_idx + 
                                 " is new leader." , MASTER_LOG_HEADER);
-                        leaderID = sender_idx;
                     }
                     /* printChatLog INSTRUCTION: print the received chat log */
                     else if (title.equals(HERE_IS_CHAT_LOG_TITLE)) {
@@ -168,11 +188,22 @@ public class Master extends Util {
                         // STEP ONE: update the cached check clear arraylist
                         if (sender_type.equals(CLIENT_TYPE)) {
                             clientsCheckClear.set(sender_idx, true);
+                        } else if (sender_type.equals(SERVER_TYPE)) {
+                            serversCheckClear.set(sender_idx, true);
                         }
                         // STEP TWO: check if all clients have been clear about this
                         boolean isAllClear = true;
                         for (int cIdx = 0; cIdx < numClients; cIdx ++) {
+                            if (clientProcesses[cIdx] == null) continue;
                             if (!clientsCheckClear.get(cIdx)) {
+                                isAllClear = false; 
+                                break;
+                            }
+                        }
+                        for (int sIdx = 0; sIdx < numNodes; sIdx ++) {
+                            // NOTE: ignore the dead server
+                            if (serverProcesses[sIdx] == null) continue;
+                            if (!serversCheckClear.get(sIdx)) {
                                 isAllClear = false; 
                                 break;
                             }
@@ -221,8 +252,6 @@ public class Master extends Util {
     public static void main(String [] args) throws IOException, InterruptedException {
         Scanner scan = new Scanner(System.in);
         int clientIndex, nodeIndex;
-        Process [] serverProcesses = null;
-        Process [] clientProcesses = null;
         // server socket of master
         localhost = InetAddress.getLocalHost();
         final ServerSocket listener = new ServerSocket(MASTER_PORT, 0,
@@ -332,7 +361,6 @@ public class Master extends Util {
                     // Wait for the leader response
                     ackLeaderSema.acquire();
 
-
                     // ============================================================
                     break;
                 case "sendMessage":
@@ -390,8 +418,8 @@ public class Master extends Util {
                      */
                     // ======================================================
                     // We directly kill that process
-                    // serverProcesses[nodeIndex].destroy();
-                    // serverProcesses[nodeIndex] = null;
+                    serverProcesses[nodeIndex].destroy();
+                    serverProcesses[nodeIndex] = null;
                     // ======================================================
                     break;
                 case "restartServer":

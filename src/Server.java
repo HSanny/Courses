@@ -45,10 +45,11 @@ class Server extends Util { // a.k.a. Replica
     static HashMap<Integer, String> proposals;
     static HashMap<Integer, String> decisions;
 
-    public static Integer interruptReason; 
+    static Integer interruptReason; 
     static boolean electionInProgress;
     static boolean isRecoveryInProgress;
     static boolean carryLeader;
+    static boolean needToCheckClear;
     static int leaderID;
     static LinkedList<String> msgCache;
     
@@ -63,6 +64,25 @@ class Server extends Util { // a.k.a. Replica
     static Thread acceptor;
     static LinkedBlockingQueue<String> queueLeader;
     static LinkedBlockingQueue<String> queueAcceptor;
+
+    public static boolean check_clear () throws IOException {
+        // STEP ONE: check if it is clear 
+        boolean isClear = true;
+        for (int sn: proposals.keySet()) {
+            // add send history and chat log comparison
+            if (!decisions.containsKey(sn)) {
+                isClear = false;
+            }
+            // System.out.println(cid);
+        }
+        // STEP TWO: send CHECK_CLEAR_ACK to Master
+        if (isClear) {
+            String ack = String.format(MESSAGE, SERVER_TYPE, serverID,
+                    MASTER_TYPE, 0, CHECK_CLEAR_ACK_TITLE, EMPTY_CONTENT); 
+            send (localhost, MASTER_PORT, ack, logHeader);
+        }
+        return isClear;
+    }
 
     static class HeartbeatTimer extends Thread implements Runnable {
         public void run() {
@@ -201,6 +221,7 @@ class Server extends Util { // a.k.a. Replica
             String p = conts[1];
             // STEP ONE: add decision message to decisions
             decisions.put(s, p);
+            if (needToCheckClear) needToCheckClear = !check_clear();
             // STEP TWO: find ready decision to be executed
             // check if exists a decision p' corresponds to
             // current slot_num s
@@ -257,6 +278,9 @@ class Server extends Util { // a.k.a. Replica
                     SERVER_TYPE, serverID, MASTER_TYPE, 0,
                     SKIP_SLOT_ACK_TITLE, EMPTY_CONTENT);
             send (localhost, MASTER_PORT, ackSkipSlot, logHeader);
+        } else if (title.equals(CHECK_CLEAR_TITLE)) {
+            boolean success = check_clear();
+            if (!success) needToCheckClear = true;
         } else if (title.equals(TIME_BOMB_TITLE)) {
             int numMessages = Integer.parseInt(content);
             // Pass the time bomb message to Leader
@@ -573,7 +597,7 @@ class Server extends Util { // a.k.a. Replica
                         // do nothing because I am not the new elected leader
 
                     }
-                } else if (interruptReason == EXIT_INTERRUPT){
+                } else if (interruptReason == EXIT_INTERRUPT) {
                     carryLeader = false;
                     socket.close();
                     listener.close();

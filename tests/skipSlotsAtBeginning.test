@@ -1,11 +1,11 @@
 start 3 2
 skipSlots 1
-sendMessage 0 hello10
-sendMessage 0 hello11
+sendMessage 0 hello1
+sendMessage 0 hello2
 allClear
 timeBombLeader 0
-sendMessage 0 hello12
-sendMessage 0 hello13
+sendMessage 0 hello3
+sendMessage 0 hello4
 allClear
 printChatLog 0
 printChatLog 1

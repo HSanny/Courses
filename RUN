@@ -21,8 +21,11 @@ elif [ $1 -eq 4 ]; then
     do 
         outdir=$logs$hardTest_dir$iteration
         mkdir $outdir
-        cat tests/threeNodeGap.test | $(cat COMMAND) > $logs/Master.txt
+(cat tests/threeNodeGap.test | $(cat COMMAND) > $logs/Master.txt ; continue ) & (sleep 10;
+ kill $!)
         mv $logs/*.txt $outdir/
     done
+elif [ $1 -eq 5 ]; then
+    cat $2 | $(cat COMMAND)
 fi
 

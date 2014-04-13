@@ -343,10 +343,10 @@ class Leader extends Util implements Runnable{
                 if(title.equals(P1B_TITLE)) {
                     String[] p1bParts = msgParts[CONTENT_IDX].split(CONTENT_SEP);
                     int acceptor = Integer.parseInt(p1bParts[0]);
-                    int newBallotNum = Integer.parseInt(p1bParts[1]);
-                    int newBallotLeader = Integer.parseInt(p1bParts[2]);
+                    int newBallotNum = Integer.parseInt(p1bParts[2]);
+                    int newBallotLeader = Integer.parseInt(p1bParts[3]);
                     // Note: there may be no pvals accepted yet
-                    String pval = p1bParts.length == 4 ? p1bParts[3] : "";
+                    String pval = p1bParts.length == 5 ? p1bParts[4] : "";
                     // if message is a p1b for the same ballot number
                     if(newBallotNum == ballot_num && newBallotLeader == leaderID) {
                         // add pvalues to pValues
@@ -458,8 +458,8 @@ class Leader extends Util implements Runnable{
                 } else if (title.equals(P2B_TITLE)) {
                     String[] p2bParts = contents.split(CONTENT_SEP);
                     int acceptor = Integer.parseInt(p2bParts[0]);
-                    int newBallotNum = Integer.parseInt(p2bParts[1]);
-                    int newBallotLeader = Integer.parseInt(p2bParts[3]);
+                    int newBallotNum = Integer.parseInt(p2bParts[3]);
+                    int newBallotLeader = Integer.parseInt(p2bParts[4]);
                     // if message is a p2b for the same ballot number
                     if (newBallotNum == ballot_num && newBallotLeader == leaderID) {
                         // remove acceptor from waitFor

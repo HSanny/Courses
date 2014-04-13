@@ -81,7 +81,7 @@ class Acceptor extends Util implements Runnable {
                         accepted_str = accepted_str.substring(0, endIndex);
 
                     String p1b_content = String.format(P1B_CONTENT, serverID,
-                            ballot_num, ballotLeaderID, accepted_str);
+                            b, ballot_num, ballotLeaderID, accepted_str);
                     String p1b_response = String.format(MESSAGE, ACCEPTOR_TYPE,
                       serverID, LEADER_TYPE, lambda, P1B_TITLE, p1b_content);
 
@@ -105,7 +105,7 @@ class Acceptor extends Util implements Runnable {
                     } 
                     // send a p2b in response with the current ballot number
                     int port = SERVER_PORT_BASE + lambda;
-                    String p2b_content = String.format(P2B_CONTENT, serverID, ballot_num, s, ballotLeaderID);
+                    String p2b_content = String.format(P2B_CONTENT, serverID, b, s, ballot_num, ballotLeaderID);
                     String p2b_response = String.format(MESSAGE,
                             ACCEPTOR_TYPE, serverID, LEADER_TYPE, lambda,
                             P2B_TITLE, p2b_content);

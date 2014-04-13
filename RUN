@@ -66,7 +66,7 @@ done
 ## summarize the result
 echo "============================= Summary ============================="
 allIdx=(0 $(seq $i))
-allUniqueIdx=$(echo $allIdx | uniq)
+allUniqueIdx=$(echo ${allIdx[@]} | uniq)
 for j in $allUniqueIdx
 do
     if [ ${passedOrFailed[j]} -eq 1 ] ; 

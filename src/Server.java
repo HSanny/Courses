@@ -51,7 +51,7 @@ class Server extends Util { // a.k.a. Replica
     static boolean carryLeader;
     static boolean needToCheckClear;
     static int leaderID;
-    static LinkedList<String> msgCache;
+    final static LinkedList<String> msgCache = new LinkedList<String>();
     
     static boolean proposeAsLeader;
     static HeartbeatTimer heartbeatTimer;
@@ -124,10 +124,10 @@ class Server extends Util { // a.k.a. Replica
     public static boolean propose (String command) throws IOException {
         // STEP ONE: Determine the lowest unused slot number
         // Solution: incrementing slot number until we find one
-        // that is not proposed yet
+        // that is not proposed or decided yet
         int s = -1; 
         for (int tmp_s = 0; ; tmp_s ++) {
-            if (proposals.get(tmp_s) == null) {
+            if (proposals.get(tmp_s) == null && decisions.get(tmp_s) == null) {
                 s = tmp_s;
                 break;
             }
@@ -159,6 +159,10 @@ class Server extends Util { // a.k.a. Replica
     }
 
     public static boolean perform (String command) throws IOException {
+        // TODO: Does replica ever need to update slot_num on a skip?
+        if(command.equals(SKIPPED_MARKER)) {
+            return true;
+        }
         // STEP ONE: Decode the input command
         String [] cmds = command.split(COMMAND_SEP);
         int clientID = Integer.parseInt(cmds[0]); // client indexx
@@ -385,7 +389,6 @@ class Server extends Util { // a.k.a. Replica
         leaderID = -1;
         proposeAsLeader = false;
         interruptReason = NO_REASON;
-        msgCache = new LinkedList<String>();
         
         // Heartbeats
         replica = Thread.currentThread();
@@ -444,6 +447,8 @@ class Server extends Util { // a.k.a. Replica
                                     break;
                                 }
                             } else {
+                                // Cache all non-Recovery messages for later
+                                msgCache.push(recMessage);
                                 continue;
                             }
                         } finally { socket.close(); }
@@ -469,6 +474,8 @@ class Server extends Util { // a.k.a. Replica
             collectRecoveryInfo.join();
             isRecoveryInProgress = false;
             NeedRecovery = false;
+            heartbeatTimer = new HeartbeatTimer ();
+            heartbeatTimer.start();
         }
 
         Socket socket = null;
@@ -606,6 +613,7 @@ class Server extends Util { // a.k.a. Replica
                 } else {
                     ie.printStackTrace();
                 }
+                interruptReason = NO_REASON;
             } catch (IOException e) {
                 print ("IOException catched", logHeader);
                 break;

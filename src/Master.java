@@ -86,9 +86,9 @@ public class Master extends Util {
             port = SERVER_PORT_BASE + serverIndex; 
             String checkClearMessage = String.format(MESSAGE, MASTER_TYPE,
                     0, SERVER_TYPE, serverIndex, CHECK_CLEAR_TITLE, EMPTY_CONTENT);
-            boolean success = send (localhost, port, checkClearMessage, MASTER_LOG_HEADER);
-            if(!success) {
-                serversCheckClear.set(serverIndex, true);
+            boolean success = false;
+            while(serverProcesses[serverIndex]!=null && !success) {
+                success = send (localhost, port, checkClearMessage, MASTER_LOG_HEADER);
             }
         }
         // STEP FOUR: Busy waits until receipt of all clients' ack
@@ -175,7 +175,7 @@ public class Master extends Util {
                         serverProcesses[leaderID] = null;
                         String recheckClearAcks = String.format(MESSAGE,
                                 MASTER_TYPE, 0, MASTER_TYPE, 0,
-                                CHECK_CLEAR_TITLE, EMPTY_CONTENT);
+                                CHECK_CLEAR_ACK_TITLE, EMPTY_CONTENT);
                         send (localhost, MASTER_PORT, recheckClearAcks, MASTER_LOG_HEADER);
                         // STEP TWO: change the leaderID
                         leaderID = sender_idx;

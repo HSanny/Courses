@@ -75,9 +75,11 @@ interface Protocol {
     final static String PVALUE_SEP = "</p>";
     final static String PVALUE_CONTENT = "%d" + PVALUE_SEP + "%d" + PVALUE_SEP + "%s";
     final static String P1A_CONTENT = "%d" + CONTENT_SEP + "%d";
-    final static String P1B_CONTENT = "%d" + CONTENT_SEP + "%d" + CONTENT_SEP + "%d" + CONTENT_SEP + "%s";
+    // Acceptor ID, requested ballot number, promised ballot number, promised leader ID, accepted values
+    final static String P1B_CONTENT = "%d" + CONTENT_SEP + "%d" + CONTENT_SEP + "%d" + CONTENT_SEP + "%d" + CONTENT_SEP + "%s";
     final static String P2A_CONTENT = "%d" + CONTENT_SEP + "%s";
-    final static String P2B_CONTENT = "%d" + CONTENT_SEP + "%d" + CONTENT_SEP + "%d" + CONTENT_SEP + "%d";
+    // Acceptor ID, requested ballot number, requested slot number, promised ballot number, promised leader ID
+    final static String P2B_CONTENT = "%d" + CONTENT_SEP + "%d" + CONTENT_SEP + "%d" + CONTENT_SEP + "%d" + CONTENT_SEP + "%d";
 
     final static String MAP_SEP = "</mapto>";
     final static String DECISION_SEP = "</decn>";

@@ -58,6 +58,7 @@ do
     mkdir -p $logsDir$testname 
     mv $logsDir*.txt $logsDir$testname/
     echo
+    kill -9 $(pgrep java)
 done
 
 ## summarize the result

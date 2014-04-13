@@ -80,7 +80,10 @@ public class Master extends Util {
             port = SERVER_PORT_BASE + serverIndex; 
             String checkClearMessage = String.format(MESSAGE, MASTER_TYPE,
                     0, SERVER_TYPE, serverIndex, CHECK_CLEAR_TITLE, EMPTY_CONTENT);
-            send (localhost, port, checkClearMessage, MASTER_LOG_HEADER);
+            boolean success = send (localhost, port, checkClearMessage, MASTER_LOG_HEADER);
+            if(!success) {
+                serversCheckClear.set(serverIndex, true);
+            }
         }
         // STEP FOUR: Busy waits until receipt of all clients' ack
         checkClearSema.acquire();

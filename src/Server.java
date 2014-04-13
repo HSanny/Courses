@@ -159,8 +159,9 @@ class Server extends Util { // a.k.a. Replica
     }
 
     public static boolean perform (String command) throws IOException {
-        // TODO: Does replica ever need to update slot_num on a skip?
+        // TODO: Does replica always need to update slot_num on a skip?
         if(command.equals(SKIPPED_MARKER)) {
+            slot_num += 1;
             return true;
         }
         // STEP ONE: Decode the input command

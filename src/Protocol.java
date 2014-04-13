@@ -16,9 +16,9 @@
 interface Protocol {
     //  Manually specify the base of client listener port and server
     //  listener port.
-    final static int CLIENT_PORT_BASE = 8205 +50+30;
-    final static int SERVER_PORT_BASE = 8210+50+30; 
-    final static int MASTER_PORT = 8215 + 50+30;
+    final static int CLIENT_PORT_BASE = 8305;
+    final static int SERVER_PORT_BASE = 8310; 
+    final static int MASTER_PORT = 8315;
 
     /* Manually specify the format of differnt type of message */
     final static String MESSAGE_SEP = ",";

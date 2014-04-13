@@ -18,7 +18,9 @@ import java.net.ServerSocket;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.io.File;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.concurrent.Semaphore;
@@ -31,6 +33,10 @@ public class Master extends Util {
     static int numNodes = -1, numClients = -1; // initialize to invalid value
 
     static InetAddress localhost;
+    static String logfilename;
+    static PrintStream original;
+    static PrintStream log;
+    static PrintWriter writer;
 
     static ServerSocket masterListener;
     static ArrayList<Boolean> clientsCheckClear;
@@ -184,6 +190,7 @@ public class Master extends Util {
                         // STEP TWO: print out the received chat log
                         for (int clIdx = 0; clIdx < chatLogs.length; clIdx ++) {
                             System.out.println(chatLogs[clIdx]);
+                            writer.println(chatLogs[clIdx]);
                         }
                     }
                     /* allClear INSTRUCTION: collects acknowledgement */
@@ -262,6 +269,12 @@ public class Master extends Util {
         listener.setReuseAddress(true);
 
         masterListener = listener;
+        logfilename = Master_LOG_FILENAME;
+        log = new PrintStream (new File(logfilename));
+        original = new PrintStream(System.out);
+        writer = new PrintWriter(RESULT_FILENAME);
+        System.setOut(log);
+        System.setErr(log);
 
         while (scan.hasNextLine()) {
             int port;

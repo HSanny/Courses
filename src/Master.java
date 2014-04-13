@@ -528,5 +528,6 @@ public class Master extends Util {
             }
         }
         listener.close();
+        writer.close();
     }
 }

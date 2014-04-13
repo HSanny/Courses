@@ -35,10 +35,7 @@ do
     cat "$logsDir"result.txt > $resultDir$testname.txt
     ## compare output with solution
     compare=$(diff $resultDir$testname.txt $solsDir$testname.sol)
-    if [ $? -ne 0 ] ; then
-        echo "failed"
-        passedOrFailed[i]=0
-    elif [ ${#compare} -eq 0 ] ; then
+    if [ ${#compare} -eq 0 ] ; then
         passedOrFailed[i]=1
         echo $testname passed.
         echo
@@ -65,8 +62,13 @@ done
 
 ## summarize the result
 echo "============================= Summary ============================="
-allIdx=(0 $(seq $i))
-allUniqueIdx=$(echo $allIdx | uniq)
+
+if [ $1 = '-t' ]; then
+    allUniqueIdx=(0)
+else
+    allUniqueIdx=$(seq $i)
+fi
+
 for j in $allUniqueIdx
 do
     if [ ${passedOrFailed[j]} -eq 1 ] ; 

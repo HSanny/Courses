@@ -418,8 +418,10 @@ public class Master extends Util {
                      */
                     // ======================================================
                     // We directly kill that process
-                    serverProcesses[nodeIndex].destroy();
-                    serverProcesses[nodeIndex] = null;
+                    if(serverProcesses[nodeIndex] != null) {
+                        serverProcesses[nodeIndex].destroy();
+                        serverProcesses[nodeIndex] = null;
+                    }
                     // ======================================================
                     break;
                 case "restartServer":

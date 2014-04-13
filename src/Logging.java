@@ -25,5 +25,6 @@ interface Logging {
     /* LOG FILENAME */
     final static String CLIENT_LOG_FILENAME = "logs/Client%d.txt";
     final static String SERVER_LOG_FILENAME = "logs/Server%d.txt";
-
+    final static String Master_LOG_FILENAME = "logs/Master.txt";
+    final static String RESULT_FILENAME = "logs/result.txt";
 }

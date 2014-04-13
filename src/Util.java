@@ -19,7 +19,7 @@ import java.net.ConnectException;
 import java.io.PrintWriter;
 
 class Util implements Protocol, Logging {
-    final static boolean PrintingSwitch = false;
+    final static boolean PrintingSwitch = true;
     /* get client port given the clientIndex */
     public static int getClientPort (int clientIndex) { return 0; }
     public static int getServerPort (int clientIndex) { return 0; }

@@ -20,7 +20,7 @@ import java.io.PrintWriter;
 
 class Util implements Protocol, Logging {
     final static boolean PrintingSwitch = true;
-    final static boolean SUBMISSION = false;
+    final static boolean SUBMISSION = true;
 
     /* get client port given the clientIndex */
     public static int getClientPort (int clientIndex) { return 0; }

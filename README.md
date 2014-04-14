@@ -3,25 +3,37 @@ PAXOS Project
 
 ##### Contributors
 
- 	Jimmy Lin (xl5224)
- 	Calvin Szeto 
+ 	**Jimmy Lin** (UTEID: xl5224)  Login: jimmylin 
+ 	**Calvin Szeto** (UTEID: CS37888) Login: calvins
 
 USAGE:
 ---------------
-TO run the provide test, you can use
 
-    ./RUN 1   - run the simple test
-    ./RUN 2   - run the threenode test
-    ./RUN 3 times  - run the simple test for $times iterations
-    ./RUN 4 tiems  - run the threenode test for $times iterations
+To better test our implementation, we design a series of new tests based on given system requirement and **pass all of them in our own machine**. The series of tests are 
+
+	simpleTest.test (provided)
+	threeNodeGap.test (provided)
+	
+	crashNonLeaderServer.test    
+	repeatedCrash.test           
+	skipManySlots.test
+	timeBombLeaderAtNonZero.test
+	crashRecoverBomb.test
+	restartServer.test
+	skipSlotsAtBeginning.test
+	overlapSendMessage.test
 
 To run the sample tests, replace test_name with the name of the test and execute the following command:
 
-	cat tests/[test_name].test | $(cat COMMAND)
+	cat tests/tests/[test_name].test | $(cat COMMAND)
+	
+An alternative is that you can use the RUN script designed by us, the usage is as follows:
 
-To automatically check the output:
+	./RUN -t tests/tests/[test_name].test
 
-	cat tests/[test_name].test | $(cat COMMAND) > temp_output && diff -q temp_output tests/[test_name].sol
+or you can run all tests by simply typing:
+
+	./RUN 
 
 If your output matches the solution, NOTHING will be printed. Otherwise the lines that differ will be shown. 
 The output for the run of the test will also be stored in a file temp_output after running the second command.
@@ -53,36 +65,6 @@ Protocol Design
 	TITLE
 	CONTENT
 
-TODO
-----------------
-1. Crash instruction: kill a server and then re-elect a new leader if that server carries current leader.
-    
-    Leader creates heartbeat thread that sends timed heartbeat to every other replica
-    Replica holds global variable for lastHeartbeatReceived
-    Replica creates thread for counting timeout
-    On receipt of a heartbeat message, Replica updates lastHeartbeatReceived with currentTime(or attached time?)
-    What happens when counter reaches timeout?
-        Interrupt replica
-        End counter
-        replica enters leader election
-        *if receive message not related to election:
-            cache message in queue
-
-    Idea for Leader Election:
-        Use Heartbeats for detecting failure.
-        Non-leader servers use the Bully algorithm
-
-    After election-New Leader (when you receive all leader_proposal_acks):
-        start leader thread
-        execute all proposals which have not been decided
-        execute all queued messages
-    
-    After election-Other Replicas
-        On receipt of new heartbeat, start a new counter
-
-2. Write tests for recover and crash
-3. FIXME: should commander care about skip slot instruction. see code.
-
 Problems
 ---------------
 
@@ -104,7 +86,7 @@ Sometimes there are Connection problems:
 
 6. Ballot numbers don't have to necessarily be globally unique; the problem we want to avoid is where two replicas each have a ballot with the same number but different proposals. We can solve this problem by saying, from the point of view of the acceptor, we accept the ballot which came from the server (or client) with the higher index. 
 
-7. Why does the pseudocode show <r', L'> instead of b? For commander.
+7. Why does the pseudocode show <r', L'> instead of b? For commander?
 
 Implementation Details
 ---------------
@@ -124,11 +106,34 @@ Implementation Details
    that the current leader has failed and propose itself to be a new leader.
 
 3. **Leader Re-election**: **the server with lower index number possesses the
-   priority**. If a server with lower index received a leader proposal from
-   higher-index server, it will reject this leader proposal. Otherwise, it will accept that proposal. 
+   priority**. If a server with lower index received a leader proposal from higher-index server, it will reject this leader proposal. Otherwise, it will accept that proposal. 
    
 4. **All Clear Checking**: master will send message to ask all replicas and
    clients about whether they are clear about all they should know. That is,
    did they receive corresponding decision for all they have proposed. Note
    that some replicas may crash and the ultimate allClear check in master side
    will ignore those replicas that it believes to be dead.
+   
+5. **Crash instruction**: kill a server and then re-elect a new leader if that server carries current leader.
+    
+    Leader creates heartbeat thread that sends timed heartbeat to every other replica
+    Replica holds global variable for lastHeartbeatReceived
+    Replica creates thread for counting timeout
+    On receipt of a heartbeat message, Replica updates lastHeartbeatReceived with currentTime(or attached time?)
+    What happens when counter reaches timeout?
+        Interrupt replica
+        End counter
+        replica enters leader election
+        *if receive message not related to election:
+            cache message in queue
+
+6. Specific Idea for Leader Election:
+        Use Heartbeats for detecting failure.
+        Non-leader servers use the Bully algorithm
+
+    After election-New Leader (when you receive all leader_proposal_acks):
+        start leader thread
+        execute all proposals which have not been decided
+        execute all queued messages
+    
+    After election-Other Replicas

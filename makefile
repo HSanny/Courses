@@ -1,15 +1,12 @@
-src="src"
-bin="bin"
-all:
-	javac $(src)/Protocol.java -d $(bin) -cp $(bin)
-	javac $(src)/Logging.java -d $(bin) -cp $(bin)
-	javac $(src)/Util.java -d $(bin) -cp $(bin)
-	javac $(src)/Server.java -d $(bin) -cp $(bin)
-	javac $(src)/Leader.java -d $(bin) -cp $(bin)
-	javac $(src)/Acceptor.java -d $(bin) -cp $(bin)
-	javac $(src)/Server.java -d $(bin) -cp $(bin)
-	javac $(src)/Client.java -d $(bin) -cp $(bin)
-	javac $(src)/Master.java -d $(bin) -cp $(bin) 
+SHELL=/bin/sh
+BIN="bin"
+
+JC = javac
+FLAGS = -d $(BIN) -cp $(BIN)
+SOURCES = $(shell echo src/*.java)
+
+all: 
+	$(JC) $(FLAGS) $(SOURCES)
 
 clean:
 	rm -rf bin/*.class

@@ -52,6 +52,7 @@ class Server extends Util { // a.k.a. Replica
     static boolean needToCheckClear;
     static int leaderID;
     final static LinkedList<String> msgCache = new LinkedList<String>();
+    static ServerSocket serverListener;
     
     static boolean proposeAsLeader;
     static HeartbeatTimer heartbeatTimer;
@@ -186,8 +187,7 @@ class Server extends Util { // a.k.a. Replica
             String response = String.format(MESSAGE, SERVER_TYPE, serverID,
                     CLIENT_TYPE, clientIndex, RESPONSE_TITLE, cid_result); 
             send (localhost, port, response, logHeader);
-        }
-        return true;
+        } return true;
     }
 
     public static void processMessage(String recMessage, Boolean[] leaderProposalAcks) throws IOException, InterruptedException{
@@ -202,7 +202,6 @@ class Server extends Util { // a.k.a. Replica
         String title = recInfo[TITLE_IDX];
         String content = recInfo[CONTENT_IDX];
 
-
         // Check if message is propose, p1b, p2b, adopted, or preempted
         // If so, add to Leader queue
         if (receiver_type.equals(LEADER_TYPE)) {
@@ -215,7 +214,7 @@ class Server extends Util { // a.k.a. Replica
             queueAcceptor.add(recMessage);
             return;
         }
-        printReceivedMessage(recMessage, logHeader);
+        printReceivedMessage(recMessage, "[processMessage]");
         // Check if message is request
         if (title.equals(REQUEST_TITLE)) {
             propose (content);
@@ -290,6 +289,9 @@ class Server extends Util { // a.k.a. Replica
             int numMessages = Integer.parseInt(content);
             // Pass the time bomb message to Leader
             queueLeader.put(recMessage); 
+        } else if (title.equals(CRASH_SERVER_TITLE)) {
+            serverListener.close();
+            System.exit(1);
         }
         // =============================================================
         // THE FOLLOWING IS ABOUT LEADER
@@ -361,6 +363,24 @@ class Server extends Util { // a.k.a. Replica
             interruptReason = EXIT_INTERRUPT;
             Thread.currentThread().interrupt();
         }
+        if (title.equals(HELP_YOU_RECOVER_TITLE)) {
+            System.out.println("got recovery message..");
+            String chatLogs = recInfo[CONTENT_IDX];
+            // decode the content
+            String [] chatLogsPart = chatLogs.split(RECOVERY_INFO_SEP);
+            int slot_num = Integer.parseInt(chatLogsPart[0]);
+            String [] recDecisions = chatLogsPart[1].split(DECISION_SEP);
+            for (int dIdx = 0; dIdx < recDecisions.length; dIdx ++) {
+                String [] oneDecision = recDecisions[dIdx].split(MAP_SEP);
+                decisions.put(Integer.parseInt(oneDecision[0]), oneDecision[1]);
+            }
+            print("Replica Recovered.", logHeader);
+            String setup_ack = String.format(MESSAGE, SERVER_TYPE, serverID,
+                    MASTER_TYPE, 0, RESTART_ACK_TITLE, EMPTY_CONTENT);
+            send (localhost, MASTER_PORT, setup_ack, logHeader);
+            isRecoveryInProgress = false;
+            NeedRecovery = false;
+        }
     }
 
     public static void main (String [] args) throws IOException, InterruptedException {
@@ -403,62 +423,29 @@ class Server extends Util { // a.k.a. Replica
 
         final Boolean [] leaderProposalAcks = new Boolean [numServers];
         final Thread mainThread = Thread.currentThread();
-
-        // Construct stable server socket
-        final ServerSocket listener = new ServerSocket(SERVER_PORT_BASE+serverID, 0,
+        if (NeedRecovery) {
+            ServerSocket originalListener = new ServerSocket(SERVER_PORT_BASE+serverID, 0,
                 localhost);
+            originalListener.close();
+        }
+
+        final ServerSocket listener = new ServerSocket
+            (SERVER_PORT_BASE+serverID, 0, localhost);
+        serverListener = listener;
+        // Construct stable server socket
         listener.setSoTimeout(20);
         listener.setReuseAddress(true);
         // Send acknowledge to the master
-        String setup_ack = String.format(MESSAGE, SERVER_TYPE, serverID,
-                MASTER_TYPE, 0, START_ACK_TITLE, EMPTY_CONTENT);
-        send (localhost, MASTER_PORT, setup_ack, logHeader);
+        if (!NeedRecovery) {
+            String setup_ack = String.format(MESSAGE, SERVER_TYPE, serverID,
+                    MASTER_TYPE, 0, START_ACK_TITLE, EMPTY_CONTENT);
+            send (localhost, MASTER_PORT, setup_ack, logHeader);
+        } 
         // Indicate the socket listener setup
         print (listener.toString(), logHeader);
         
-        // If this server is crashed before, recover it
-        final Integer nClients = numClients;
-        // TODO: TEST THIS PART
         if (NeedRecovery) {
-            // STEP ONE: create a thread to receive recovery info 
-            Thread collectRecoveryInfo = new Thread (new Runnable() {
-                public void run () {
-                    try { while (true) {
-                        Socket socket = listener.accept();
-                        try { 
-                            BufferedReader in = new BufferedReader(new
-                                InputStreamReader(socket.getInputStream()));
-                            String recMessage = in.readLine();
-                            printReceivedMessage(recMessage, MASTER_LOG_HEADER);
-                            String [] recInfo = recMessage.split(MESSAGE_SEP);
-                            if (recInfo[TITLE_IDX].equals(HELP_YOU_RECOVER_TITLE)) {
-                                String chatLogs = recInfo[CONTENT_IDX];
-                                // check if setup is complete
-                                boolean isRecoveryInfoReceived = true;
-                                // decode the content
-                                String [] chatLogsPart = chatLogs.split(RECOVERY_INFO_SEP);
-                                int slot_num = Integer.parseInt(chatLogsPart[0]);
-                                String [] recDecisions = chatLogsPart[1].split(DECISION_SEP);
-                                for (int dIdx = 0; dIdx < recDecisions.length; dIdx ++) {
-                                    String [] oneDecision = recDecisions[dIdx].split(MAP_SEP);
-                                    decisions.put(Integer.parseInt(oneDecision[0]), oneDecision[1]);
-                                }
-                                if (isRecoveryInfoReceived) {
-                                    print("Replica Recovered.", MASTER_LOG_HEADER);
-                                    break;
-                                }
-                            } else {
-                                // Cache all non-Recovery messages for later
-                                msgCache.push(recMessage);
-                                continue;
-                            }
-                        } finally { socket.close(); }
-                    }
-                    } catch (IOException e) {;} finally { ;}
-                }
-            });
-            collectRecoveryInfo.start();
-            // STEP TWO: send message to all replicas, ask for the chat log
+            // send message to all replicas, ask for the chat log
             isRecoveryInProgress = true;
             for (int serverIndex = 0; serverIndex < numServers; serverIndex++) {
                 if (serverIndex == serverID) continue;  // not to request itself
@@ -470,13 +457,6 @@ class Server extends Util { // a.k.a. Replica
                 int port = SERVER_PORT_BASE + serverIndex;
                 send (localhost, port, askForRecovery, logHeader);
             }
-
-            // STEP THREE: join thread and indicate completion of recovery
-            collectRecoveryInfo.join();
-            isRecoveryInProgress = false;
-            NeedRecovery = false;
-            heartbeatTimer = new HeartbeatTimer ();
-            heartbeatTimer.start();
         }
 
         Socket socket = null;

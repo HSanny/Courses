@@ -4,7 +4,7 @@ testsDir="tests/tests/"
 solsDir="tests/solutions/"
 resultDir="tests/results/"
 
-if [ $1 = "-t" ]; then
+if [ "$1" = "-t" ]; then
     # single test, $2 input should be the path of test file
     alltests=$2
 else 

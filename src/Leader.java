@@ -222,7 +222,7 @@ class Leader extends Util implements Runnable{
                 // Set message count
                 timeBombMessages = Integer.parseInt(contentParts[0]);
                 // If message count is 0, exit immediately
-                if(timeBombMessages == 0) {
+                if (timeBombMessages == 0) {
                     // Inform the replica
                     Server.interruptReason = TIMEBOMB_INTERRUPT;
                     replica.interrupt();

@@ -16,9 +16,9 @@
 interface Protocol {
     //  Manually specify the base of client listener port and server
     //  listener port.
-    final static int CLIENT_PORT_BASE = 8505;
+    final static int CLIENT_PORT_BASE = 8100;
     final static int SERVER_PORT_BASE = 8510; 
-    final static int MASTER_PORT = 8515;
+    final static int MASTER_PORT = 8001;
 
     /* Manually specify the format of differnt type of message */
     final static String MESSAGE_SEP = ",";
@@ -29,12 +29,14 @@ interface Protocol {
     /* MACROS FOR TITLE */
     final static String EXIT_TITLE = "EXIT";
     final static String START_ACK_TITLE = "STARTUP_ACK";
+    final static String RESTART_ACK_TITLE = "RESTARTUP_ACK";
     final static String REQUEST_TITLE = "REQUEST";
     final static String SEND_MESSAGE_TITLE = "SENT_MESSAGE";
     final static String PRINT_CHAT_LOG_TITLE = "PRINT_CHAT_LOG";
     final static String SKIP_SLOT_TITLE = "SKIP_SLOT";
     final static String SKIP_SLOT_ACK_TITLE = "SKIP_SLOT_ACK";
     final static String TIME_BOMB_TITLE = "TIME_BOMB";
+    final static String CRASH_SERVER_TITLE = "CRASH_SERVER";
     final static String CHECK_CLEAR_TITLE = "CHECK_CLEAR";
     final static String CHECK_CLEAR_ACK_TITLE = "CHECK_CLEAR_ACK";
     final static String I_WANNA_RECOVER_TITLE = "I_WANNA_RECOVER";

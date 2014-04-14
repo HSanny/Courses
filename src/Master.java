@@ -28,6 +28,7 @@ import java.util.concurrent.Semaphore;
 public class Master extends Util {
     final static String RUN_SERVER_CMD = "java -cp ./bin/ Server";
     final static String RUN_CLIENT_CMD = "java -cp ./bin/ Client";
+    final static String KILL_SERVER_CMD = "kill -9 $(ps | grep 'Server %d' | cut -d ' ' -f 1)";
 
     static int leaderID;
     static int numNodes = -1, numClients = -1; // initialize to invalid value
@@ -54,6 +55,7 @@ public class Master extends Util {
     static Semaphore ackLeaderSema;
     static Semaphore checkClearSema;
     static Semaphore skipSlotsSema;
+    static Semaphore restartSema;
 
     public static void checkAllClear () throws IOException, InterruptedException {
         // STEP ZERO: check the parameters
@@ -87,7 +89,7 @@ public class Master extends Util {
             String checkClearMessage = String.format(MESSAGE, MASTER_TYPE,
                     0, SERVER_TYPE, serverIndex, CHECK_CLEAR_TITLE, EMPTY_CONTENT);
             boolean success = false;
-            while(serverProcesses[serverIndex]!=null && !success) {
+            while (serverProcesses[serverIndex]!=null && !success) {
                 success = send (localhost, port, checkClearMessage, MASTER_LOG_HEADER);
             }
         }
@@ -242,6 +244,10 @@ public class Master extends Util {
                             print("Skip Slots Completes.", MASTER_LOG_HEADER); 
                             skipSlotsSema.release();
                         }
+                    }
+                    /* Restart Instruction */
+                    else if (title.equals(RESTART_ACK_TITLE)) {
+                        restartSema.release();
                     }
                     /* Exit */
                     if (title.equals(EXIT_TITLE)) {
@@ -434,10 +440,17 @@ public class Master extends Util {
                      */
                     // ======================================================
                     // We directly kill that process
-                    if(serverProcesses[nodeIndex] != null) {
-                        serverProcesses[nodeIndex].destroy();
-                        serverProcesses[nodeIndex] = null;
-                    }
+                    assert (serverProcesses[nodeIndex] != null) : "Crash a non-existing Server.";
+                    /*
+                    String kill_server_cmd = String.format(KILL_SERVER_CMD, nodeIndex);
+                    runtime.exec(kill_server_cmd);
+                    serverProcesses[nodeIndex] = null;
+                    */
+                    port = SERVER_PORT_BASE + nodeIndex;
+                    String crashServerMessage = String.format(MESSAGE,
+                        MASTER_TYPE, 0, SERVER_TYPE, nodeIndex,
+                        CRASH_SERVER_TITLE, EMPTY_CONTENT);
+                    send(localhost, port, crashServerMessage, MASTER_LOG_HEADER);
                     // ======================================================
                     break;
                 case "restartServer":
@@ -445,7 +458,7 @@ public class Master extends Util {
                     /*
                      * Restart the server specified by nodeIndex
                      */
-                    assert(serverProcesses[nodeIndex] == null): "Do not restart an uncrashed server.";
+                    assert (serverProcesses[nodeIndex] == null): "Do not restart an uncrashed server.";
                     Integer serverID = new Integer(nodeIndex);
                     String [] commandArray = new String [5];
                     commandArray[0] = RUN_SERVER_CMD;
@@ -458,8 +471,11 @@ public class Master extends Util {
                         cmd += " " + commandArray[i];
                     }
                     print (cmd, MASTER_LOG_HEADER);
+                    restartSema = new Semaphore (0, true);
                     Process pserver = runtime.exec(cmd); 
                     serverProcesses[nodeIndex] = pserver;
+                    // STEP TWO: wait for startup ack
+                    restartSema.acquire();
                     break;
                 case "skipSlots":
                     int amountToSkip = Integer.parseInt(inputLine[1]);
@@ -503,9 +519,7 @@ public class Master extends Util {
         /* Ask all clients and servers to terminate, as well as its listenning
          * thread */
         checkAllClear();
-        String exitMessage = String.format(MESSAGE, MASTER_TYPE, 0,
-                MASTER_TYPE, 0, EXIT_TITLE, EMPTY_CONTENT);
-        send(localhost, MASTER_PORT, exitMessage, MASTER_LOG_HEADER);
+        String exitMessage;
         if (clientProcesses != null) {
             for (clientIndex = 0; clientIndex < clientProcesses.length; clientIndex ++) {
                 if (clientProcesses[clientIndex] != null) {
@@ -519,7 +533,6 @@ public class Master extends Util {
         if (serverProcesses != null) {
             for (nodeIndex = 0; nodeIndex < serverProcesses.length; nodeIndex ++) {
                 if (serverProcesses[nodeIndex] != null) {
-                    InetAddress host = InetAddress.getLocalHost();
                     int port = SERVER_PORT_BASE + nodeIndex;
                     exitMessage = String.format(MESSAGE, MASTER_TYPE, 0,
                             SERVER_TYPE, nodeIndex, EXIT_TITLE, EMPTY_CONTENT);
@@ -527,6 +540,10 @@ public class Master extends Util {
                 }
             }
         }
+        exitMessage = String.format(MESSAGE, MASTER_TYPE, 0,
+                MASTER_TYPE, 0, EXIT_TITLE, EMPTY_CONTENT);
+        send(localhost, MASTER_PORT, exitMessage, MASTER_LOG_HEADER);
+
         listener.close();
         writer.close();
     }

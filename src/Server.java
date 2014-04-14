@@ -214,7 +214,7 @@ class Server extends Util { // a.k.a. Replica
             queueAcceptor.add(recMessage);
             return;
         }
-        printReceivedMessage(recMessage, "[processMessage]");
+        printReceivedMessage(recMessage, logHeader);
         // Check if message is request
         if (title.equals(REQUEST_TITLE)) {
             propose (content);
@@ -261,8 +261,12 @@ class Server extends Util { // a.k.a. Replica
             String recoverMsg = String.format(MESSAGE, SERVER_TYPE,
                     serverID, SERVER_TYPE, sender_idx,
                     HELP_YOU_RECOVER_TITLE, recoverInfo);
+            String whoIsLeader = String.format(MESSAGE, SERVER_TYPE,
+                    serverID, SERVER_TYPE, sender_idx,
+                    LEADER_REQUEST_TITLE, Integer.toString(leaderID));
             port = SERVER_PORT_BASE + sender_idx;
             send (localhost, port, recoverMsg, logHeader);
+            send (localhost, port, whoIsLeader, logHeader);
         }  else if (title.equals(SKIP_SLOT_TITLE)) {
             int amountToSkip = Integer.parseInt(content);
             // STEP ONE: update the proposals
@@ -315,8 +319,10 @@ class Server extends Util { // a.k.a. Replica
                     }
                 }
             } else {
-                heartbeatTimer = new HeartbeatTimer ();
-                heartbeatTimer.start();
+                if (heartbeatTimer == null) {
+                    heartbeatTimer = new HeartbeatTimer ();
+                    heartbeatTimer.start();
+                }
             }
             electionInProgress = false;
             port = getPort(sender_type, sender_idx);
@@ -351,6 +357,7 @@ class Server extends Util { // a.k.a. Replica
         } 
         // =============================================================
         else if (title.equals(HEARTBEAT_TITLE)) {
+            System.out.println("Got a heartBeat");
             if(timerLock.tryLock()) {
                 try {
                     lastHeartbeatReceived = System.currentTimeMillis();
@@ -364,7 +371,6 @@ class Server extends Util { // a.k.a. Replica
             Thread.currentThread().interrupt();
         }
         if (title.equals(HELP_YOU_RECOVER_TITLE)) {
-            System.out.println("got recovery message..");
             String chatLogs = recInfo[CONTENT_IDX];
             // decode the content
             String [] chatLogsPart = chatLogs.split(RECOVERY_INFO_SEP);
@@ -374,10 +380,11 @@ class Server extends Util { // a.k.a. Replica
                 String [] oneDecision = recDecisions[dIdx].split(MAP_SEP);
                 decisions.put(Integer.parseInt(oneDecision[0]), oneDecision[1]);
             }
-            print("Replica Recovered.", logHeader);
-            String setup_ack = String.format(MESSAGE, SERVER_TYPE, serverID,
-                    MASTER_TYPE, 0, RESTART_ACK_TITLE, EMPTY_CONTENT);
-            send (localhost, MASTER_PORT, setup_ack, logHeader);
+            if (isRecoveryInProgress) {
+                String setup_ack = String.format(MESSAGE, SERVER_TYPE, serverID,
+                        MASTER_TYPE, 0, RESTART_ACK_TITLE, EMPTY_CONTENT);
+                send (localhost, MASTER_PORT, setup_ack, logHeader);
+            }
             isRecoveryInProgress = false;
             NeedRecovery = false;
         }
@@ -487,7 +494,8 @@ class Server extends Util { // a.k.a. Replica
                     System.out.println("Received null.");
                     continue;
                 }
-                String [] recInfo = recMessage.equals(EMPTY_CONTENT) ? null : recMessage.split(",");
+                String [] recInfo = recMessage.equals(EMPTY_CONTENT) ? null :
+                    recMessage.split(MESSAGE_SEP);
                 String title = recInfo[TITLE_IDX];
                 // If election is in progress, cache all non-election related messages for later
                 if(electionInProgress && 
@@ -505,7 +513,7 @@ class Server extends Util { // a.k.a. Replica
                     // Leader interrupts when it exits, signalling a crash
                     listener.close();
                     print("I get Crashed.", logHeader);
-                    System.exit(0);
+                    System.exit(1);
                 } else if (interruptReason == LEADER_FAILURE_INTERRUPT) {
                     print ("Elect new leader start..", logHeader);
                     electionInProgress = true;

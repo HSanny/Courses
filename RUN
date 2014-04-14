@@ -67,7 +67,7 @@ echo "============================= Summary ============================="
 if [ "$1" = "-t" ]; then
     allUniqueIdx=(0)
 else
-    allUniqueIdx=$(seq $i)
+    allUniqueIdx=$(seq 0 $i)
 fi
 
 for j in $allUniqueIdx

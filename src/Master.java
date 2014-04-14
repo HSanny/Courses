@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.concurrent.Semaphore;
@@ -50,6 +51,7 @@ public class Master extends Util {
 
     static Process [] serverProcesses;
     static Process [] clientProcesses;
+    static Process leaderToCrash;
 
     static Semaphore setupSema;
     static Semaphore ackLeaderSema;
@@ -89,7 +91,7 @@ public class Master extends Util {
             String checkClearMessage = String.format(MESSAGE, MASTER_TYPE,
                     0, SERVER_TYPE, serverIndex, CHECK_CLEAR_TITLE, EMPTY_CONTENT);
             boolean success = false;
-            while (serverProcesses[serverIndex]!=null && !success) {
+            while (serverProcesses[serverIndex] != null && !success) {
                 success = send (localhost, port, checkClearMessage, MASTER_LOG_HEADER);
             }
         }
@@ -171,10 +173,18 @@ public class Master extends Util {
                             ackLeaderSema.release();
                         }
                     }
-                    /* LEADER ELECTION PROTOCOL: update the master's knowledge of who is new leader */
+                    /* LEADER ELECTION PROTOCOL: 
+                     *    update the master's knowledge of who is new leader */
                     else if (title.equals(LEADER_REQUEST_TITLE)) {
                         // STEP ONE: remove the process that carry previous leader
-                        serverProcesses[leaderID] = null;
+                        if (leaderToCrash != null) {
+                            for (int sIdx = 0; sIdx < numNodes; sIdx ++ ) {
+                                if (serverProcesses[sIdx] == leaderToCrash) {
+                                    serverProcesses[sIdx] = null;
+                                    leaderToCrash = null;
+                                }
+                            }
+                        }
                         String recheckClearAcks = String.format(MESSAGE,
                                 MASTER_TYPE, 0, MASTER_TYPE, 0,
                                 CHECK_CLEAR_ACK_TITLE, EMPTY_CONTENT);
@@ -451,6 +461,7 @@ public class Master extends Util {
                         MASTER_TYPE, 0, SERVER_TYPE, nodeIndex,
                         CRASH_SERVER_TITLE, EMPTY_CONTENT);
                     send(localhost, port, crashServerMessage, MASTER_LOG_HEADER);
+                    serverProcesses[nodeIndex] = null;
                     // ======================================================
                     break;
                 case "restartServer":
@@ -473,9 +484,9 @@ public class Master extends Util {
                     print (cmd, MASTER_LOG_HEADER);
                     restartSema = new Semaphore (0, true);
                     Process pserver = runtime.exec(cmd); 
-                    serverProcesses[nodeIndex] = pserver;
                     // STEP TWO: wait for startup ack
                     restartSema.acquire();
+                    serverProcesses[nodeIndex] = pserver;
                     break;
                 case "skipSlots":
                     int amountToSkip = Integer.parseInt(inputLine[1]);
@@ -508,6 +519,9 @@ public class Master extends Util {
                      * related messages specified by numMessages
                      */ 
                     // Send timeBomb instruction to server with leaderID
+                    if (numMessages == 0)
+                        serverProcesses[leaderID] = null;
+                    leaderToCrash = serverProcesses[leaderID];
                     port = SERVER_PORT_BASE + leaderID;
                     String timeBombMessage = String.format(MESSAGE,
                         MASTER_TYPE, 0, SERVER_TYPE, leaderID,
@@ -546,5 +560,14 @@ public class Master extends Util {
 
         listener.close();
         writer.close();
+        log.close();
+        if (SUBMISSION) {
+            System.setOut(original);
+            BufferedReader br = new BufferedReader(new FileReader(RESULT_FILENAME));
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                System.out.println(line);
+            }
+        }
     }
 }

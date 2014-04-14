@@ -20,6 +20,8 @@ import java.io.PrintWriter;
 
 class Util implements Protocol, Logging {
     final static boolean PrintingSwitch = true;
+    final static boolean SUBMISSION = false;
+
     /* get client port given the clientIndex */
     public static int getClientPort (int clientIndex) { return 0; }
     public static int getServerPort (int clientIndex) { return 0; }
@@ -104,6 +106,7 @@ class Util implements Protocol, Logging {
             // establish temporary socket connection
             socket = new Socket (host, port);
         } catch (Exception e) {
+            System.out.println("fail to construct socket..");
             return false;
         }
         try {
@@ -112,11 +115,13 @@ class Util implements Protocol, Logging {
             out.println(message);
             printSentMessage(message, HEADER);
         } catch(Exception e) {
+            System.out.println("fail to send message..");
             return false;
         } finally {
             try {
                 socket.close();
             } catch (Exception e) {
+                System.out.println("fail to close socket.");
                return false; 
             }
         }

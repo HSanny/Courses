@@ -12,17 +12,31 @@
 
 import Util
 import Protocol as P
+import Logging as L
 
-''' Program entry '''
-if __name__ == "__main__":
-    # read command file
+# acquire protocol information
+logHeader = L.MASTER_LOG_HEADER
 
-    # variables
-    [allClients, allServers] = [[], []]
-    print P.getMaster()
+def MasterListener():
+    '''
+    Hold on server socket and listen to all incoming message by infinite loop
+    '''
+    s = socket.socket()         # Create a socket object
+    host = socket.gethostname() # Get local machine name
+    port = P.MASTER_PORT               # Reserve a port for your service.
+    s.bind((host, port))        # Bind to the port
 
-    # process command
-    command = ""
+    s.listen(5)                 # Now wait for client connection.
+    while True:
+        conn, addr = s.accept()     # Establish connection with client.
+        # c.send('Thank you for connecting')  # send message to client
+        recvMsg = conn.recv(P.BUFFER_SIZE)      # receive message with BUFFER_SIZE
+        printReceivedMessage(recvMsg, logHeader)
+        
+        conn.close()                # Close the connection
+
+
+def MasterProcessor(command):
     if command == "startClient":
         ''' 
         startClient(i,j): Start a client with client id i, which is
@@ -97,5 +111,14 @@ if __name__ == "__main__":
         '''
 
     # send messages to terminate the whole system
-    
-    
+
+
+''' Program entry '''
+if __name__ == "__main__":
+    # read command file
+
+    # variables
+    [allClients, allServers] = [[], []]
+    print P.MASTER_TYPE
+
+

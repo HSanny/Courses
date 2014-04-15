@@ -12,23 +12,33 @@
 
 import Protocol as P
 import Logging as L
+import Util as U
 
 ## TODO: static variable here
+logHeader = None
 
-
-## TODO: client command processor
-
-
-if __name__ == '__main__':
+def main():
+    ## TODO: initialize static variables
+    clientID
+    logHeader = L.CLIENT_LOG_HEADER % clientID
+    ## construct server socket
     s = socket.socket()         
     host = socket.gethostname() 
     port = P.SERVER_PORT_BASE + clientID
     s.bind((host, port))        
 
-    s.listen(5)                 
+    s.listen(5)  
     while True:
         conn, addr = s.accept()     
         recvMsg = conn.recv(P.BUFFER_SIZE)
+        st, si, rt, ri, title, content = U.decode(recvMsg)
+        # TODO: process incoming message
+        if title == '':
+            pass
 
         conn.close() 
     pass
+
+if __name__ == '__main__':
+    ## TODO: process cmd arguments and give it to main
+    main()

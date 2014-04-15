@@ -64,12 +64,12 @@ def printSentMessage (sentMessage, logHeader):
         print string
     return 
 
-def printReceivedMessage (recMessage, logHeader):
+def printRecvMessage (recvMessage, logHeader):
     '''
     API: send message
     '''
     if printSwitch:
-        components = recMessage.split(P.MESSAGE_SEP)
+        components = recvMessage.split(P.MESSAGE_SEP)
         sender_type = components[P.SENDER_TYPE_IDX];
         sender_index = components[P.SENDER_INDEX_IDX];
         title = components[P.TITLE_IDX];

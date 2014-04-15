@@ -14,7 +14,7 @@ import Util
 import Protocol as P
 import Logging as L
 
-# acquire protocol information
+# TODO: add more static variable here..
 logHeader = L.MASTER_LOG_HEADER
 
 def MasterListener():
@@ -32,7 +32,12 @@ def MasterListener():
         # c.send('Thank you for connecting')  # send message to client
         recvMsg = conn.recv(P.BUFFER_SIZE)      # receive message with BUFFER_SIZE
         printReceivedMessage(recvMsg, logHeader)
-        
+        st, si, rt, ri, title, content = decode (recvMsg)
+        # TODO: add the processor
+        if title == 'startupAck':
+            pass
+        elif title == '':
+            pass
         conn.close()                # Close the connection
 
 

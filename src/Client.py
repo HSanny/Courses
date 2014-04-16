@@ -19,7 +19,7 @@ logHeader = None
 
 def main():
     ## TODO: initialize static variables
-    clientID
+    print "Client start"
     logHeader = L.CLIENT_LOG_HEADER % clientID
     ## construct server socket
     s = socket.socket()         

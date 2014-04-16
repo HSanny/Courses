@@ -1,0 +1,6 @@
+join 1
+startClient 2 1
+pause
+continue
+clientDisconnect 1
+leave 1

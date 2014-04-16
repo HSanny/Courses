@@ -49,80 +49,93 @@ def MasterListener():
 
 def MasterProcessor():
     for command in sys.stdin:
-        if command == "startClient":
+        args = command.split(" ")
+        cmd = args[0]
+        print cmd
+        if cmd == "startClient":
             ''' 
             startClient(i,j): Start a client with client id i, which is
             conneted to server j.
             ''' 
-            assert (i is not in allClients), "START: Client already exists"
-            assert (j is in allServers), "START: Server not exists."
-            allClients.update ([i])
-            call (["python src/Client.py", str(i)])
+            clientIdx = int (args[1])
+            serverIdx = int (args[2])
+            assert (clientIdx not in allClients), \
+                    "START: Client %d already exists" % clientIdx
+            assert (serverIdx in allServers), \
+                    "START: Server %d not exists." % serverIdx
+            allClients.update ([clientIdx])
+            # call (["python src/Client.py", str(clientIdx)])
 
-        elif command == "clientDisconnect":
+            print "startClient", clientIdx, serverIdx, "completes."
+
+        elif cmd == "clientDisconnect":
             '''
             clientDisconnect(i): Client i disconnects with the server.
             '''
 
-        elif command == "clientReconnect":
+        elif cmd == "clientReconnect":
             '''
             clientReconnect(i,j): Client i reconnect to server j. We use this
-            command after client i has disconnected with server by calling
+            cmd after client i has disconnected with server by calling
             clientDisconnect(i).
             '''
 
-        elif command == "pause":
+        elif cmd == "pause":
             '''
             Pause the progress of the Bayou protocol, later you can continue the
             execution of the protocol.
             '''
 
-        elif command == "continue":
+        elif cmd == "continue":
             '''
             Continue after pause.
             '''
 
-        elif command == "printLog":
+        elif cmd == "printLog":
             '''
             Print logs of all nodes.
             '''
 
-        elif command == "printLogi":
+        elif cmd == "printLogi":
             '''
             Print log of node i.
             '''
 
-        elif command == "Isolate":
+        elif cmd == "Isolate":
             '''
             Isolate(i): Node i is partitioned from other nodes.
             '''
 
-        elif command == "reconnect":
+        elif cmd == "reconnect":
             '''
             reconnect(i): Node i is connected to all other nodes. It is used when
             we try to recover the connections after we call partition(i).
             '''
 
-        elif command == "breakConnection":
+        elif cmd == "breakConnection":
             '''
             breakConnection(i,j): Break the connection between Node i and Node j.
             '''
 
 
-        elif command == "recoverConnection":
+        elif cmd == "recoverConnection":
             '''
             recoverConnection(i,j): Recover the connection between Node i and Node j.
             '''
 
 
-        elif command == "join":
+        elif cmd == "join":
             '''
             join(i): Node i joins the system.
             '''
-            assert (i in allServers), "JOIN: server i already exists"
-            allServers.update([i])
+            serverIdx = int(args[1])
+            assert (serverIdx not in allServers), \
+                    "JOIN: server %d already exists." % serverIdx
+            allServers.update([serverIdx])
 
-        elif command == "leave":
+            print "join ", serverIdx, "completes."
+
+        elif cmd == "leave":
             '''
             leave(i): Node i leaves (retires from) the system.
             '''

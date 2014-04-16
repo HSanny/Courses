@@ -21,6 +21,6 @@ let b:atp_StarEnvDefault = ''
 let b:atp_StarMathEnvDefault = ''
 let b:atp_updatetime_insert = 4000
 let b:atp_updatetime_normal = 2000
-let b:atp_LocalCommands = ['\xii', '\xbar', '\xihat', '\X', '\Xbar', '\Y', '\yii', '\wxs', '\wzs', '\wos']
+let b:atp_LocalCommands = ['\xii', '\xbar', '\xihat', '\X', '\Xhat', '\Y', '\Yhat', '\yii', '\yihat', '\wxs', '\wzs', '\wos', '\sxi', '\sxis', '\sxihat', '\sxihats', '\sy', '\sxy', '\sxhaty', '\deta', '\detahat', '\ximxbar', '\syhat', '\sxyhat', '\at']
 let b:atp_LocalEnvironments = []
 let b:atp_LocalColors = []

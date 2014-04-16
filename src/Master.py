@@ -20,6 +20,9 @@ import Logging as L
 # TODO: add more static variable here..
 logHeader = L.MASTER_LOG_HEADER
 
+allClients = set([])
+allServers = set([])
+
 def MasterListener():
     '''
     Hold on server socket and listen to all incoming message by infinite loop
@@ -51,6 +54,10 @@ def MasterProcessor():
             startClient(i,j): Start a client with client id i, which is
             conneted to server j.
             ''' 
+            assert (i is not in allClients), "START: Client already exists"
+            assert (j is in allServers), "START: Server not exists."
+            allClients.update ([i])
+            call (["python src/Client.py", str(i)])
 
         elif command == "clientDisconnect":
             '''
@@ -112,7 +119,8 @@ def MasterProcessor():
             '''
             join(i): Node i joins the system.
             '''
-
+            assert (i in allServers), "JOIN: server i already exists"
+            allServers.update([i])
 
         elif command == "leave":
             '''

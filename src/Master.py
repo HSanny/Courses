@@ -23,7 +23,9 @@ logHeader = L.MASTER_LOG_HEADER
 allClients = set([])
 allServers = set([])
 
-def MasterListener():
+localhost = socket.gethostname()
+
+def MasterListener(log):
     '''
     Hold on server socket and listen to all incoming message by infinite loop
     '''
@@ -45,9 +47,10 @@ def MasterListener():
         elif title == '':
             pass
         conn.close()                # Close the connection
+    s.close()
 
 
-def MasterProcessor():
+def MasterProcessor(log):
     for command in sys.stdin:
         args = command.split(" ")
         cmd = args[0]
@@ -91,44 +94,51 @@ def MasterProcessor():
             Continue after pause.
             '''
 
-        elif cmd == "printLog":
+        elif cmd == "printLog" and len(args) == 1:
             '''
             Print logs of all nodes.
             '''
 
-        elif cmd == "printLogi":
+        elif cmd == "printLog" and len(args) == 2:
+            serverIdx = args[1]
             '''
             Print log of node i.
             '''
 
         elif cmd == "Isolate":
+            serverIdx = args[1]
             '''
             Isolate(i): Node i is partitioned from other nodes.
             '''
 
         elif cmd == "reconnect":
+            serverIdx = args[1]
             '''
             reconnect(i): Node i is connected to all other nodes. It is used when
             we try to recover the connections after we call partition(i).
             '''
 
         elif cmd == "breakConnection":
+            serverOneIdx = args[1]
+            serverTwoIdx = args[2]
             '''
             breakConnection(i,j): Break the connection between Node i and Node j.
             '''
 
 
         elif cmd == "recoverConnection":
+            serverOneIdx = args[1]
+            serverTwoIdx = args[2]
             '''
             recoverConnection(i,j): Recover the connection between Node i and Node j.
             '''
 
 
         elif cmd == "join":
+            serverIdx = int(args[1])
             '''
             join(i): Node i joins the system.
             '''
-            serverIdx = int(args[1])
             assert (serverIdx not in allServers), \
                     "JOIN: server %d already exists." % serverIdx
             allServers.update([serverIdx])
@@ -139,18 +149,37 @@ def MasterProcessor():
             '''
             leave(i): Node i leaves (retires from) the system.
             '''
+            serverIdx = args[1]
     # Command processing completes
     # TODO: send messages to terminate the whole system
+    for clientIdx in allClients:
+        exitMsg = U.encode (P.MASTER_TYPE, 0, P.CLIENT_TYPE, clientIdx, \
+                          P.EXIT_TITLE, P.EMPTY_CONTENT)
+        port = P.CLIENT_PORT_BASE + clientIdx;
+        U.send (localhost, port, exitMsg, logHeader)
 
+    for serverIdx in allServers:
+        exitMsg = U.encode (P.MASTER_TYPE, 0, P.SERVER_TYPE, serverIdx, \
+                          P.EXIT_TITLE, P.EMPTY_CONTENT)
+        port = P.SERVER_PORT_BASE + serverIdx;
+        U.send (localhost, port, exitMsg, logHeader)
+
+    exitMsg = U.encode (P.MASTER_TYPE, 0, P.MASTER_TYPE, 0, \
+                          P.EXIT_TITLE, P.EMPTY_CONTENT)
+    port = P.MASTER_PORT;
+    U.send (localhost, port, exitMsg, logHeader)
 
 ''' Program entry '''
 if __name__ == "__main__":
+    # out logging file
+    log = open(L.Master_LOG_FILENAME, 'w+')
     # create listener thread 
-    listener = Thread(target=MasterListener)
-    processor = Thread(target=MasterProcessor)
+    listener = Thread(target=MasterListener, args=(log,))
+    processor = Thread(target=MasterProcessor, args=(log,))
 
     listener.start()
     processor.start()
 
     processor.join()
     listener.join()
+    log.close()

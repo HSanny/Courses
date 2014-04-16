@@ -19,7 +19,7 @@ def encode (st, si, rt, ri, title, content):
     '''
     API: encode the message by components
     '''
-    msg = P.MESSAGE % st, si, rt, ri, title, content
+    msg = P.MESSAGE % (st, si, rt, ri, title, content)
     return msg
 
 def decode (msg):
@@ -28,10 +28,10 @@ def decode (msg):
     '''
     components = msg.split(P.MESSAGE_SEP)
     sender_type = components[P.SENDER_TYPE_IDX];
-    sender_index = components[P.SENDER_INDEX_IDX];
+    sender_index = int(components[P.SENDER_INDEX_IDX])
     receiver_type = components[P.RECEIVER_TYPE_IDX]
-    receiver_idx = components[P.RECEIVER_INDEX_IDX]
-    title = components[P.TITLE_IDX];
+    receiver_idx = int(components[P.RECEIVER_INDEX_IDX])
+    title = components[P.TITLE_IDX]
     content = components[P.CONTENT_IDX]
     return sender_type, sender_index, receiver_type, receiver_idx,\
             title, content

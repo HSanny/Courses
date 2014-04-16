@@ -41,4 +41,5 @@ def main():
 
 if __name__ == '__main__':
     ## TODO: process cmd arguments and give it to main
+    log = open (CLIENT_LOG_FILENAME, 'w+')
     main()

@@ -36,3 +36,9 @@ MESSAGE_SEP = ",";
 MESSAGE = "%s" + MESSAGE_SEP + "%d" + MESSAGE_SEP +"%s" + MESSAGE_SEP \
         +"%d" + MESSAGE_SEP +"%s" + MESSAGE_SEP +"%s";
 
+# TITLES
+EXIT_TITLE = "EXIT"
+
+
+# CONTENT
+EMPTY_CONTENT = "EMPTY"

@@ -47,42 +47,95 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% GENERAL DOCUMENTATION BEGINS 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newcommand{\wm}[1]{\ensuremath{w(M_{#1})}}
-\newcommand{\wmp}[1]{\ensuremath{w(M'_{#1})}}
-\newcommand{\wmi}{\ensuremath{w(M_i)}}
-\newcommand{\wmip}{\ensuremath{w(M'_i)}}
-\newcommand{\constantTime}{\ensuremath{\mathcal{O}(1)}}
-\newcommand{\linearTime}{\ensuremath{\mathcal{O}(n)}}
-\newcommand{\lbw}[1]{\ensuremath{a_{#1} q_{#1} + b_{#1}}}  %% linear bid weight
-\newcommand{\sbw}[1]{\ensuremath{m_{#1}}}
-
-\newcommand{\Pt}{\ensuremath{P(G, M, p)}}
-\newcommand{\Pzero}{\ensuremath{P_0(G, p)}}
-\newcommand{\Pone}{\ensuremath{P_1(G, M, p)}}
-\newcommand{\Ptwo}{\ensuremath{P_2(G, M, p)}}
-
+\newcommand{\gapjk}{\ensuremath{gap(p,j,k)}}
+\newcommand{\gapij}{\ensuremath{gap(p,i,j)}}
+\newcommand{\gapik}{\ensuremath{gap(p,i,k)}}
+\newcommand{\gjk}{\ensuremath{g(j,k)}}
+\newcommand{\gij}{\ensuremath{g(i,j)}}
+\newcommand{\gik}{\ensuremath{g(i,k)}}
+\newcommand{\fpij}{\ensuremath{f(p,i,j)}}
+\newcommand{\fpjk}{\ensuremath{f(p,j,k)}}
+\newcommand{\fpik}{\ensuremath{f(p,i,k)}}
+\newcommand{\s}[1]{\ensuremath{s(#1)}}
+\newcommand{\al}[1]{\ensuremath{\alpha(#1)}}
+\newcommand{\qi}{\ensuremath{q_{\beta(i)}}}
+\newcommand{\qj}{\ensuremath{q_{\beta(j)}}}
+\newcommand{\qk}{\ensuremath{q_{\beta(k)}}}
 
 \section{Exercise 2}
 \ovalbox{
-\begin{minipage}{16cm} 
-Consider an iteration of Algorithm A on a configuration $G = (U,V,E)$ that
-increments the price of an item due to a violation of Stability Condition 2.
-Assume that the MCM M of G associated with this execution of Algorithm A is an
-MWMCM of $G$. Let $p (resp., p_0)$ denote the price vector of G maintained by
-Algorithm A just before (resp., after) this iteration. Prove that if $P_0(G,p)$
-holds, then so does $P_0(G,p_0)$. Hint: Make use of Lemma 1 of Assignment 4.
+\begin{minipage}{17cm} 
+    Let $i$, $j$, and $k$ be distinct integers in $[n]$ such that $j$ lies
+    between $i$ and $k$, i.e., either $i < j < k$ and $k < j < i$. Assume that 
+    bids $\alpha(i)$ and $\alpha(j)$ are linear. Prove that if $gap(p,i,j) =
+    0$ and $\gjk = 0$, then $\gij = 0$.
 \end{minipage} } \\[0.5cm]
 
+Based on the known condition as follows, 
+\begin{align}
+    \gapij = 0 \\
+    \gapjk = 0
+\end{align}
+
+And the assumed condition that 
+\begin{align}
+    i,j,k \in [n] \\
+    \al{j} \text{ is linear}  \\
+    \al{i} \text{ is linear} 
+\end{align}
+
+We have 
+\begin{align}
+    max(0, \s{i} \cdot \gij - \fpij) = 0 \\
+    max(0, \s{j} \cdot \gjk - \fpjk) = 0
+\end{align}
+
+That is, 
+\begin{align}
+    \s{i} \cdot \gij - \fpij \leq 0 \label{1.1.A} \\
+    \s{j} \cdot \gjk - \fpjk \leq 0 \label{1.1.B}
+\end{align}
+
+We sum up \eqref{1.1.A} and \eqref{1.1.B}, then get
+\begin{align}
+    \s{i} \cdot \gij - \fpij + \s{j} \cdot \gjk - \fpjk \leq 0 
+\end{align}
+
+This can be simplified to be 
+
+\begin{align}
+    \s{i} \cdot \gik - \fpik \leq  \gjk \cdot (\s{i} - \s{j})  
+\end{align}
+
+According to the known condition, we have
+\begin{align}
+    i < j < k \ \text{or }  k < j < i 
+\end{align}
+
+In the case of $i < j < k$, we have $\gjk = \qk - \qj \geq 0$ and 
+$\s{i} - \s{j} \leq 0$ since $\al{i}$ and $\al{j}$ are matched to $\beta{i}$ and
+$\beta{j}$ in MWMCM $M$, respectively. Similarly, in the case of $k < j < i$,
+we have $\gij = \qj - \qi \leq 0$ and $\s{i} - \s{j} \geq 0$.
+Therefore, it can be concluded that in either case, 
+\begin{align}
+    \gjk \cdot (\s{i} - \s{j}) \leq 0
+\end{align}
+
+Hence, we have 
+\begin{align}
+    \s{i} \cdot \gik - \fpik \leq  \gjk \leq 0
+\end{align}
+
+Since $\al{i}$ is linear bid and $i \in [n]$
+\begin{align}
+    \gapik = 0
+\end{align}
 \newpage
 
 \section{Exercise 5}
 \ovalbox{
 \begin{minipage}{17cm}
-    Consider an execution of Algorithm A on a configuration $G = (U,V,E)$.
-    Assume that the associated MCM $M$ of $G$ is an MWMCM of $G$, and that the
-    initial price vector $p$ for $G$ is such that $\Pt$ holds. Prove that
-    Algorithm $A$ is guaranteed to halt successfully within a finite number of
-    iterations. Hint: Make use of Lemma 3.
+    
 \end{minipage} } \\[0.5cm]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

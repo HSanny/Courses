@@ -1,13 +1,13 @@
-/*##############################################################
+/*#############################################################
 ## MODULE: Bidding.java
 ## VERSION: 1.0 
-## SINCE: 2014-01-14
+## SINCE: 2014-04-16
 ## AUTHOR: 
 ##         JIMMY LIN (xl5224) - JimmyLin@utexas.edu  
 ##
 ## DESCRIPTION: 
-##    Algorithm Assignment #4: BIDDING SYSTEM by Algorithm A
-##    We incrementally implement the bidding-item stable matching.
+##    Algorithm Assignment #6: A faster algorithm of dealing with
+## stability violation.
 ## 
 #################################################################
 ## Edited by MacVim
@@ -38,8 +38,7 @@ class Item implements Comparable<Item> {
     static int id_count;  // as id assigner
 
     // constructor for item class
-    Item (int quality, int reservePrice, int startPrice) {
-        this.id = id_count ++;
+    Item (int quality, int reservePrice, int startPrice) { this.id = id_count ++;
         this.quality = quality;
         this.reservePrice = reservePrice;  
         this.startPrice = startPrice;
@@ -118,10 +117,8 @@ class LinearBid extends Bid implements Comparable<LinearBid> {
 class Bidding {
     /* for debugging */
     public static void print (int violation, int amountToIncrement, int itemIdx) {
-        /*
         System.out.println("Vio: " + violation + ", Item_idx: " + itemIdx + 
                 ", amount: " + amountToIncrement);
-        */
     }
 
     public static void main (String [] args) throws IOException {
@@ -170,12 +167,14 @@ class Bidding {
         }
         int [] MWMCM = new int [nItems];
         int [] lastMWMCM = new int [nItems];
+        for (int i = 0; i < nItems; i ++) {
+            MWMCM[i] = -1;
+        }
         while ((line = reader.readLine()) != null) {
             String [] bidding_infos = line.split(" ");
             int type = Integer.parseInt(bidding_infos[0]);
             if (type == 1 || type == 2) { 
                 for (int i = 0; i < nItems; i ++) {
-                    priceVector[i] = hashItems.get(i).startPrice;
                     lastMWMCM[i] = MWMCM[i]; // update old MWMCM
                     MWMCM[i] = Integer.parseInt(bidding_infos[i+3]);
                 }
@@ -195,20 +194,16 @@ class Bidding {
                     hashLinearBids.put (newbid.id, newbid);
                     // System.out.println("2 " + intercept + ", " + slope);
                 }
-                /* Create a hashset to restore index of all matched bids */
-                HashSet<Integer> allIndexMatchedBids = new HashSet<Integer> ();
-                for (int i = 0; i < nItems; i ++) {
-                    if (MWMCM[i] < 0) continue;
-                    else allIndexMatchedBids.add(MWMCM[i]);
-                }
+
                 /* Local variables */
                 int itemToincrement = -1;
                 int vioType = -1;
                 int incrementAmount = Integer.MAX_VALUE;
                 int tmp_incrementAmount;
                 boolean isViolate = false;
+                int ZERO_IDX = 0;
                 // PHASE ONE: resolve stability violation 3
-                // STEP ZERO: identify the newly unmatched bid
+                // STEP ONE: identify the newly unmatched bid within O(n)
                 ArrayList<Integer> oldMatchedBids = new ArrayList<Integer> ();
                 ArrayList<Integer> newMatchedBids = new ArrayList<Integer> ();
                 for (int i = 0; i < nItems; i++) {
@@ -220,27 +215,51 @@ class Bidding {
                 // what remained is the newly unmatched bids
                 oldMatchedBids.removeAll(newMatchedBids);
                 int nRemainedBids = oldMatchedBids.size();
-                int newUnmatchBidIdx = -1;
+                int newUnmatchBidIdx;
                 if (nRemainedBids == 0) {
                     // in this case, new bid is newly unmatched one
                     newUnmatchBidIdx = Bid.id_count - 1;
                 } else if (nRemainedBids == 1) {
                     // in this case, the remained is newly unmatched one
-                    newUnmatchBidIdx = oldMatchedBids.get(0).id;
+                    newUnmatchBidIdx = oldMatchedBids.get(ZERO_IDX);
+                } else {
+                    // this branch provides illegal value
+                    newUnmatchBidIdx = -1000;
                 }
-                // (a) for single-item bid first
-                if (hashSingleBids.containsKey(newUnmatchBidIdx)) {
+                if (newUnmatchBidIdx > 0)
+                    System.out.println("newUnmatchBidIdx: " + newUnmatchBidIdx);
+                // STEP TWO: deal with stability violation 3
+                // (a) for dummy bid
+                if (newUnmatchBidIdx < 0) {
+                    // find the corresponding item who leave dummy bids
+                    int itemIdx;
+                    for (itemIdx = 0; itemIdx < nItems; itemIdx++) {
+                        if (lastMWMCM[itemIdx] < 0 && MWMCM[itemIdx] >= 0) {
+                            break;
+                        }
+                    }
+                    // check violation and increment if violated
+                    int wuv_zero = hashItems.get(itemIdx).reservePrice;
+                    if (priceVector[itemIdx] < wuv_zero) {
+                        incrementAmount = wuv_zero - priceVector[itemIdx];
+                        priceVector[itemIdx] += incrementAmount;
+                        System.out.println("newUnmatchBidIdx: -" + itemIdx);
+                        print (30, incrementAmount, itemIdx);
+                    }
+                }
+                // (b) for single-item bid 
+                else if (hashSingleBids.containsKey(newUnmatchBidIdx)) {
                     SingleItemBid sib = hashSingleBids.get(newUnmatchBidIdx);
                     int offeredItemIdx = sib.toItem.id;
                     int wuv_zero = sib.offer; // offered price
-                    // for dummy bid
+                    /*
                     if (sib.id < 0 && MWMCM[sib.toItem.id] < 0) {
                         // this dummy bid matched
                         continue;
                     }
+                    */
                     if (priceVector[offeredItemIdx] < wuv_zero) {
                         // it is a violation of case 2
-                        isViolate = true;
                         itemToincrement = offeredItemIdx;
                         incrementAmount = wuv_zero -
                             priceVector[offeredItemIdx]; 
@@ -252,8 +271,8 @@ class Bidding {
                         print (31, incrementAmount, itemToincrement);
                     }
                 }
-                // for linear bid
-                if (hashLinearBids.containsKey(newUnmatchBidIdx)) {
+                // (c) for linear bid
+                else if (hashLinearBids.containsKey(newUnmatchBidIdx)) {
                     LinearBid lb = hashLinearBids.get(newUnmatchBidIdx);
                     int u_slope = lb.slope;
                     int u_intercept = lb.intercept;
@@ -264,7 +283,6 @@ class Bidding {
                         int wuv_zero = u_slope * v_zero_quality + u_intercept;
                         if (priceVector[itemIdx] < wuv_zero) {
                             // violation for case 2 detected!
-                            isViolate = true;
                             itemToincrement = itemIdx;
                             incrementAmount = wuv_zero - priceVector[itemIdx];
 
@@ -276,56 +294,67 @@ class Bidding {
                             print (32, incrementAmount, itemToincrement);
                         }
                     }
-
                 }
 
-                // PHASE TWO: given a pricevector with no violation 3
-                for (int itemIdx = 0; itemIdx < nItems; itemIdx++) {
-                    int matchedBidIdx = MWMCM[itemIdx];
-                    if (matchedBidIdx < 0) { 
-                        // win by dummy bid
-                        // Since dummy bid does not offer price to
-                        // other item, impossible to stability violation 2
+                // PHASE TWO: given a price-vector with no violation 3
+                incrementAmount = -1;
+                // STEP ONE: identify the newly matched bid
+                // NOTE THAT: This step is in O(n)
+                oldMatchedBids = new ArrayList<Integer> ();
+                newMatchedBids = new ArrayList<Integer> ();
+                for (int i = 0; i < nItems; i++) {
+                    if (lastMWMCM[i] != MWMCM[i]) {
+                        oldMatchedBids.add(lastMWMCM[i]);
+                        newMatchedBids.add(MWMCM[i]);
+                    }
+                }
+                newMatchedBids.removeAll(oldMatchedBids);
+                int nNewMatchedBids = newMatchedBids.size();
+                if (nNewMatchedBids == 0) {
+                    // no new matched bids, that is to say, the original
+                    // MWMCM does not change. Do nothing in this case
+                    // NOTE THAT: It is in O(1)
+                    continue;
+                } else if (nNewMatchedBids == 1) {
+                    // there is one newly matched bid
+                    int newMatchedBidIdx = newMatchedBids.get(ZERO_IDX);
+                    System.out.println("newMatchedBidIdx: " + newMatchedBidIdx);
+                    if (hashSingleBids.containsKey(newMatchedBidIdx)) {
+                        // the newly matched bid is single-item bid
+                        // do nothing because impossible to violate rule 2
+                        // NOTE THAT: It is in O(1)
                         continue;
-                    } else if (hashSingleBids.containsKey(matchedBidIdx)) {
-                        // win by a non-dummy single-item bid
-                        // Since single-item bid does not offer price to
-                        // other item, impossible to violate case 1
-                        continue;
-                    } else if (hashLinearBids.containsKey(matchedBidIdx)) {
-                        // win by a linear bid
-                        LinearBid u = hashLinearBids.get(matchedBidIdx);
-                        int u_slope = u.slope;
-                        int u_intercept = u.intercept;
-                        Item v_zero = hashItems.get(itemIdx);
-                        int v_zero_quality = v_zero.quality;
-                        int wuv_zero = u_slope * v_zero_quality + u_intercept;
-                        for (int vone = 0; vone < nItems; vone ++) {
-                            if (vone == itemIdx) continue;
-                            Item v_one = hashItems.get(vone);
-                            int v_one_quality = v_one.quality;
-                            int wuv_one = u_slope * v_one_quality + u_intercept;
-                            if (wuv_zero - priceVector[itemIdx] < wuv_one - priceVector[vone]) {
-                                // it is a violation!
-                                isViolate = true;
-                                itemToincrement = vone;
-                                incrementAmount = wuv_one - wuv_zero +
-                                    priceVector[itemIdx] - priceVector[vone];
+                    } else if (hashLinearBids.containsKey(newMatchedBidIdx)) {
+                        // the newly matched is linear bid
+                        int vIdx;
+                        for (vIdx = 0; vIdx < nItems; vIdx++) {
+                            if (MWMCM[vIdx] == newMatchedBidIdx) {
                                 break;
                             }
                         }
-                        if (isViolate) break;
-                        else continue;
+                        // loop through all v_1 to check violation of rule 2
+                        // NOTE THAT: It is in O(n)
+                        LinearBid u = hashLinearBids.get(newMatchedBidIdx);
+                        int u_slope = u.slope;
+                        int u_intercept = u.intercept;
+                        Item v_zero = hashItems.get(vIdx);
+                        int v_zero_quality = v_zero.quality;
+                        int wuv_zero = u_slope * v_zero_quality + u_intercept;
+                        for (int vone = 0; vone < nItems; vone ++) {
+                            if (vone == vIdx) continue;
+                            Item v_one = hashItems.get(vone);
+                            int v_one_quality = v_one.quality;
+                            int wuv_one = u_slope * v_one_quality + u_intercept;
+                            if (wuv_zero - priceVector[vIdx] < wuv_one -
+                                    priceVector[vone]) {
+                                // it is a violation!
+                                itemToincrement = vone;
+                                incrementAmount = wuv_one - wuv_zero +
+                                    priceVector[vIdx] - priceVector[vone];
+                                priceVector[itemToincrement] += incrementAmount;
+                            }
+                        }
                     }
-                }
-                // STEP TWO: update the priceVector if yes
-                if (isViolate) {
-                    // update the price vector
-                    assert (itemToincrement >= 0) : "cannot increment idx < 0";
-                        assert (incrementAmount > 0) : "increment a negative number";
-                            priceVector[itemToincrement] += incrementAmount;
-                            print (1, incrementAmount, itemToincrement);
-                            continue;
                 }
 
             } else if (type == 3) {

@@ -132,11 +132,78 @@ Since $\al{i}$ is linear bid and $i \in [n]$
 \end{align}
 \newpage
 
-\section{Exercise 5}
+\section{Exercise 1}
+\newcommand{\Lpn}{\ensuremath{L(p,n)}}
+\newcommand{\Rpz}{\ensuremath{R(p,0)}}
 \ovalbox{
 \begin{minipage}{17cm}
-    
+    Let $p$ be a price vector for $G$ such that $L(p,n) \wedge R(p,0)$ holds.
+    Prove that $\gapij = 0$ for all integers $i$ and $j$ in $[n]$. Hint: Make
+    use of Exercise 1.
 \end{minipage} } \\[0.5cm]
+
+\begin{proof}[Case 1]
+In the case of $i \in \{-1, n\}$ or in the case of $i \in [n]$ and $\al{i}$ is
+single-item bid, it can be easy to conclude that $\forall i,j,\ \gapij = 0$ by definition of
+$gap$ function.
+
+\end{proof}
+
+\begin{proof}[Case 2]
+In the case of $i \in [n]$ and $\al{i}$ is linear bid, things are more
+complicated. There are two subcases, (1) $i > j$, (2) $j > i$. We provide
+detailed proof as follows.
+
+Based on give condition $\Lpn \wedge \Rpz$, we have both of the followings
+hold.
+\begin{align}
+    \Lpn \label{lpn} \\   
+    \Rpz \label{rpz}
+\end{align}
+
+\noindent
+{\it For $i > j$}, we can iteratively employ \eqref{rpz} and the result of exercise
+1 to reach the conclusion of $\forall i,j,\ \gapij = 0$.
+Specifically, apply the \eqref{rpz} repeatedly and since $\al{i}$ is linear
+bid, it will eventually reach $\al{i}$. 
+
+\begin{align}
+    gap(p,\tau(j), j) &= 0 \label{start} \\
+    gap(p,\tau(\tau(j)), \tau(j)) &= 0 \\
+    \vdots& \nonumber \\
+    gap(p,\tau_s(j),\tau_{s-1}(j)) &= 0 \\
+    gap(p,i,\tau_s(j)) &= 0 \label{end}
+\end{align}
+
+Note that $s$ denotes the number of times we apply rule of $\Rpz$ and
+$\tau_{s}(j)$ denotes the integer derived by apply $s$ times of $\Rpz$ on
+original integer $j$. 
+
+Then we can make use of the result of exercise 1 to address the series of
+equations \eqref{start} - \eqref{end} and conclude that 
+
+\begin{align}
+    \forall i,j\ gap(p, i, j) = 0
+\end{align}
+
+Note that the above proof can be formalized by doing mathematical induction on
+the number of times we employ $\Rpz$, which is $s$. \\[0.3cm]
+
+\noindent
+{\it For $i < j$}, we can iteratively employ \eqref{lpn} and the result of exercise
+1 to reach the conclusion of $\forall i,j,\ \gapij = 0$. The detailed proof
+follows the same routine as the case of $i > j$ in the above. 
+
+In terms of the dicussion over two subcases, we have $\forall i,j,\ \gapij =
+0$ in the case of $i \in [n]$ and $\al{i}$ is linear bid.
+
+\end{proof}
+
+According to the dicussion over {\it case 1} and {\it case 2}, it can be
+concluded that {\it generally}
+\begin{align}
+    \forall i,j,\ \gapij = 0
+\end{align}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% General Documentation ends

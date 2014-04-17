@@ -47,43 +47,163 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% GENERAL DOCUMENTATION BEGINS 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newcommand{\wm}[1]{\ensuremath{w(M_{#1})}}
-\newcommand{\wmp}[1]{\ensuremath{w(M'_{#1})}}
-\newcommand{\wmi}{\ensuremath{w(M_i)}}
-\newcommand{\wmip}{\ensuremath{w(M'_i)}}
-\newcommand{\constantTime}{\ensuremath{\mathcal{O}(1)}}
-\newcommand{\linearTime}{\ensuremath{\mathcal{O}(n)}}
-\newcommand{\lbw}[1]{\ensuremath{a_{#1} q_{#1} + b_{#1}}}  %% linear bid weight
-\newcommand{\sbw}[1]{\ensuremath{m_{#1}}}
-
-\newcommand{\Pt}{\ensuremath{P(G, M, p)}}
-\newcommand{\Pzero}{\ensuremath{P_0(G, p)}}
-\newcommand{\Pone}{\ensuremath{P_1(G, M, p)}}
-\newcommand{\Ptwo}{\ensuremath{P_2(G, M, p)}}
-
+\newcommand{\gapjk}{\ensuremath{gap(p,j,k)}}
+\newcommand{\gapij}{\ensuremath{gap(p,i,j)}}
+\newcommand{\gapik}{\ensuremath{gap(p,i,k)}}
+\newcommand{\gjk}{\ensuremath{g(j,k)}}
+\newcommand{\gij}{\ensuremath{g(i,j)}}
+\newcommand{\gik}{\ensuremath{g(i,k)}}
+\newcommand{\fpij}{\ensuremath{f(p,i,j)}}
+\newcommand{\fpjk}{\ensuremath{f(p,j,k)}}
+\newcommand{\fpik}{\ensuremath{f(p,i,k)}}
+\newcommand{\s}[1]{\ensuremath{s(#1)}}
+\newcommand{\al}[1]{\ensuremath{\alpha(#1)}}
+\newcommand{\qi}{\ensuremath{q_{\beta(i)}}}
+\newcommand{\qj}{\ensuremath{q_{\beta(j)}}}
+\newcommand{\qk}{\ensuremath{q_{\beta(k)}}}
 
 \section{Exercise 2}
 \ovalbox{
-\begin{minipage}{16cm} 
-Consider an iteration of Algorithm A on a configuration $G = (U,V,E)$ that
-increments the price of an item due to a violation of Stability Condition 2.
-Assume that the MCM M of G associated with this execution of Algorithm A is an
-MWMCM of $G$. Let $p (resp., p_0)$ denote the price vector of G maintained by
-Algorithm A just before (resp., after) this iteration. Prove that if $P_0(G,p)$
-holds, then so does $P_0(G,p_0)$. Hint: Make use of Lemma 1 of Assignment 4.
+\begin{minipage}{17cm} 
+    Let $i$, $j$, and $k$ be distinct integers in $[n]$ such that $j$ lies
+    between $i$ and $k$, i.e., either $i < j < k$ and $k < j < i$. Assume that 
+    bids $\alpha(i)$ and $\alpha(j)$ are linear. Prove that if $gap(p,i,j) =
+    0$ and $\gjk = 0$, then $\gij = 0$.
 \end{minipage} } \\[0.5cm]
 
+Based on the known condition as follows, 
+\begin{align}
+    \gapij = 0 \\
+    \gapjk = 0
+\end{align}
+
+And the assumed condition that 
+\begin{align}
+    i,j,k \in [n] \\
+    \al{j} \text{ is linear}  \\
+    \al{i} \text{ is linear} 
+\end{align}
+
+We have 
+\begin{align}
+    max(0, \s{i} \cdot \gij - \fpij) = 0 \\
+    max(0, \s{j} \cdot \gjk - \fpjk) = 0
+\end{align}
+
+That is, 
+\begin{align}
+    \s{i} \cdot \gij - \fpij \leq 0 \label{1.1.A} \\
+    \s{j} \cdot \gjk - \fpjk \leq 0 \label{1.1.B}
+\end{align}
+
+We sum up \eqref{1.1.A} and \eqref{1.1.B}, then get
+\begin{align}
+    \s{i} \cdot \gij - \fpij + \s{j} \cdot \gjk - \fpjk \leq 0 
+\end{align}
+
+This can be simplified to be 
+
+\begin{align}
+    \s{i} \cdot \gik - \fpik \leq  \gjk \cdot (\s{i} - \s{j})  
+\end{align}
+
+According to the known condition, we have
+\begin{align}
+    i < j < k \ \text{or }  k < j < i 
+\end{align}
+
+In the case of $i < j < k$, we have $\gjk = \qk - \qj \geq 0$ and 
+$\s{i} - \s{j} \leq 0$ since $\al{i}$ and $\al{j}$ are matched to $\beta{i}$ and
+$\beta{j}$ in MWMCM $M$, respectively. Similarly, in the case of $k < j < i$,
+we have $\gij = \qj - \qi \leq 0$ and $\s{i} - \s{j} \geq 0$.
+Therefore, it can be concluded that in either case, 
+\begin{align}
+    \gjk \cdot (\s{i} - \s{j}) \leq 0
+\end{align}
+
+Hence, we have 
+\begin{align}
+    \s{i} \cdot \gik - \fpik \leq  \gjk \leq 0
+\end{align}
+
+Since $\al{i}$ is linear bid and $i \in [n]$
+\begin{align}
+    \gapik = 0
+\end{align}
 \newpage
 
-\section{Exercise 5}
+\section{Exercise 1}
+\newcommand{\Lpn}{\ensuremath{L(p,n)}}
+\newcommand{\Rpz}{\ensuremath{R(p,0)}}
 \ovalbox{
 \begin{minipage}{17cm}
-    Consider an execution of Algorithm A on a configuration $G = (U,V,E)$.
-    Assume that the associated MCM $M$ of $G$ is an MWMCM of $G$, and that the
-    initial price vector $p$ for $G$ is such that $\Pt$ holds. Prove that
-    Algorithm $A$ is guaranteed to halt successfully within a finite number of
-    iterations. Hint: Make use of Lemma 3.
+    Let $p$ be a price vector for $G$ such that $L(p,n) \wedge R(p,0)$ holds.
+    Prove that $\gapij = 0$ for all integers $i$ and $j$ in $[n]$. Hint: Make
+    use of Exercise 1.
 \end{minipage} } \\[0.5cm]
+
+\begin{proof}[Case 1]
+In the case of $i \in \{-1, n\}$ or in the case of $i \in [n]$ and $\al{i}$ is
+single-item bid, it can be easy to conclude that $\forall i,j,\ \gapij = 0$ by definition of
+$gap$ function.
+
+\end{proof}
+
+\begin{proof}[Case 2]
+In the case of $i \in [n]$ and $\al{i}$ is linear bid, things are more
+complicated. There are two subcases, (1) $i > j$, (2) $j > i$. We provide
+detailed proof as follows.
+
+Based on give condition $\Lpn \wedge \Rpz$, we have both of the followings
+hold.
+\begin{align}
+    \Lpn \label{lpn} \\   
+    \Rpz \label{rpz}
+\end{align}
+
+\noindent
+{\it For $i > j$}, we can iteratively employ \eqref{rpz} and the result of exercise
+1 to reach the conclusion of $\forall i,j,\ \gapij = 0$.
+Specifically, apply the \eqref{rpz} repeatedly and since $\al{i}$ is linear
+bid, it will eventually reach $\al{i}$. 
+
+\begin{align}
+    gap(p,\tau(j), j) &= 0 \label{start} \\
+    gap(p,\tau(\tau(j)), \tau(j)) &= 0 \\
+    \vdots& \nonumber \\
+    gap(p,\tau_s(j),\tau_{s-1}(j)) &= 0 \\
+    gap(p,i,\tau_s(j)) &= 0 \label{end}
+\end{align}
+
+Note that $s$ denotes the number of times we apply rule of $\Rpz$ and
+$\tau_{s}(j)$ denotes the integer derived by apply $s$ times of $\Rpz$ on
+original integer $j$. 
+
+Then we can make use of the result of exercise 1 to address the series of
+equations \eqref{start} - \eqref{end} and conclude that 
+
+\begin{align}
+    \forall i,j\ gap(p, i, j) = 0
+\end{align}
+
+Note that the above proof can be formalized by doing mathematical induction on
+the number of times we employ $\Rpz$, which is $s$. \\[0.3cm]
+
+\noindent
+{\it For $i < j$}, we can iteratively employ \eqref{lpn} and the result of exercise
+1 to reach the conclusion of $\forall i,j,\ \gapij = 0$. The detailed proof
+follows the same routine as the case of $i > j$ in the above. 
+
+In terms of the dicussion over two subcases, we have $\forall i,j,\ \gapij =
+0$ in the case of $i \in [n]$ and $\al{i}$ is linear bid.
+
+\end{proof}
+
+According to the dicussion over {\it case 1} and {\it case 2}, it can be
+concluded that {\it generally}
+\begin{align}
+    \forall i,j,\ \gapij = 0
+\end{align}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% General Documentation ends

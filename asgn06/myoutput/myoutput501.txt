@@ -1,21 +1,6 @@
 1000 1000 11000 13000 17000
-newUnmatchBidIdx: -3
-Vio: 30, Item_idx: 3, amount: 17000
-newMatchedBidIdx: 0
 1000 1000 19000 30000 41000
-newUnmatchBidIdx: -4
-Vio: 30, Item_idx: 4, amount: 9000
-newMatchedBidIdx: 1
-1000 1000 26000 38000 50000
-newUnmatchBidIdx: -0
-Vio: 30, Item_idx: 0, amount: 1000
-newMatchedBidIdx: 2
-2000 1000 26000 38000 50000
-newUnmatchBidIdx: 2
-Vio: 31, Item_idx: 0, amount: 1000
-newMatchedBidIdx: 3
-3000 1000 26000 38000 50000
-newUnmatchBidIdx: -2
-Vio: 30, Item_idx: 2, amount: 14000
-newMatchedBidIdx: 4
-3000 1000 40000 38000 50000
+1000 1000 27000 38000 50000
+2000 1000 27000 38000 50000
+3000 1000 27000 38000 50000
+3000 1000 40000 51000 63000

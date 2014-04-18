@@ -20,10 +20,6 @@ logHeader = None
 localhost = socket.gethostname() 
 serverID = None
 
-send = send
-encode = encode
-decode = decode
-
 def main(argv):
     '''
     Main function of server

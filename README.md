@@ -61,9 +61,27 @@ TODO list
 4. implement put, get and delete
     - local data structure for client and server
 
+5. implement pause and resume
+    - send message to all servers
+    - when received, send acks?
+    - use indicator to denote the working status
+    - catogorize messages that are anti-entropy related 
+    - disable these messages if switched off
+
+6.  when node enters the system, should be brought up to date
+    - 
+
+7. implement retirement protocol: when a node leaves system
+    - 
+    - 
+
+8. 
+
 Problems
 ---------------
 
 Implementation Details
 ---------------
+
+
 

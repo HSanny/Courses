@@ -47,6 +47,19 @@ Protocol Design
 	TITLE
 	CONTENT
 
+TODO list
+--------------
+1. implement joinServer and joinClient
+    - invoke process for server and client
+    - establish listener for server and client
+    - send ack back to master
+
+2. implement logging for server and client
+    - write new macro function
+
+3. implement put, get and delete
+    - local data structure for client and server
+
 Problems
 ---------------
 

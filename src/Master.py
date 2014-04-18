@@ -27,10 +27,14 @@ allClients = set([])
 allServers = set([])
 
 '''Boolean Counter'''
+joinClientCounter = None
+joinServerCounter = None
 restartAcks = None
 pauseAcks = None
 
 '''Semaphores'''
+joinClientSema = None
+joinServerSema = None
 restartSema = None 
 pauseSema = None 
 
@@ -54,18 +58,21 @@ def MasterListener(log):
         # TODO: add the processor
         if title == 'startupAck':
             pass
-        elif title == PAUSE_ACK_TITLE:
+        elif title == P.PAUSE_ACK_TITLE:
             if U.checkCounterAllTrue(pauseAcks):
                 pauseSema.release()
-        elif title == RESTART_ACK_TITLE:
+        elif title == P.RESTART_ACK_TITLE:
             if U.checkCounterAllTrue(restartAcks):
                 startSema.release()
+        elif title == P.EXIT_TITLE:
+            conn.close()
+            s.close()
+            return 
         else:
             pass
 
         conn.close()                # Close the connection
     s.close()
-
 
 def MasterProcessor(log):
     for line in fileinput.input():
@@ -192,22 +199,12 @@ def MasterProcessor(log):
 
     # Command processing completes
     # TODO: send messages to terminate the whole system
-    for clientIdx in allClients:
-        exitMsg = U.encode (P.MASTER_TYPE, 0, P.CLIENT_TYPE, clientIdx, \
-                          P.EXIT_TITLE, P.EMPTY_CONTENT)
-        port = P.CLIENT_PORT_BASE + clientIdx;
-        U.send (localhost, port, exitMsg, logHeader)
-
-    for serverIdx in allServers:
-        exitMsg = U.encode (P.MASTER_TYPE, 0, P.SERVER_TYPE, serverIdx, \
-                          P.EXIT_TITLE, P.EMPTY_CONTENT)
-        port = P.SERVER_PORT_BASE + serverIdx;
-        U.send (localhost, port, exitMsg, logHeader)
-
+    exitMsg = U.encode (P.MASTER_TYPE, 0, "xx", -1, P.EXIT_TITLE, \
+                        P.EMPTY_CONTENT)
+    U.broadcast (localhost, exitMsg, logHeader, allServers, allClients)
     exitMsg = U.encode (P.MASTER_TYPE, 0, P.MASTER_TYPE, 0, \
                           P.EXIT_TITLE, P.EMPTY_CONTENT)
-    port = P.MASTER_PORT;
-    U.send (localhost, port, exitMsg, logHeader)
+    U.send (localhost, MASTER_PORT, exitMsg, logHeader)
 
 ''' Program entry '''
 if __name__ == "__main__":

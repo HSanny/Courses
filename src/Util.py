@@ -102,11 +102,11 @@ def broadcast (host, sampleMsg, Header, allServers, allClients):
     st, si, _, _, title, content = decode (sampleMsg)
     for serverIdx in allServers:
         msg = encode (st, si, SERVER_TYPE, serverIdx, title, content)
-        port = P.SERVER_PORT_BASE + serverIdx
+        port = getPortByMsg (msg)
         send (host, port, msg, Header)
     for clientIdx in allClients:
         msg = encode (st, si, CLIENT_TYPE, clientIdx, title, content)
-        port = P.CLIENT_PORT_BASE + clientIdx
+        port = getPortByMsg (msg)
         send (host, port, msg, Header)
     return True
     

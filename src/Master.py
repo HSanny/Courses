@@ -149,22 +149,21 @@ def MasterProcessor():
             Pause the system and don't allow any Anti-Entropy messages to
             propagate through the system
             """
-            continue
             pauseAcks = initAllFalseCounter(allServers)
             pauseSema = initEmptySemaphore()
             sampleMsg = encode(MASTER_TYPE, 0,"xx",0, PAUSE_TITLE,"")
-            broadcast(localhost, sampleMsg, logHeader, allServers, allClients)
+            broadcastServers (localhost, sampleMsg, logHeader, allServers, allClients)
+
             pauseSema.acquire()
         if line[0] ==  "start":
             """
             Resume the system and allow any Anti-Entropy messages to
             propagate through the system
             """
-            continue
             restartAcks = initAllFalseCounter(allServers)
             restartSema = initEmptySemaphore()
             sampleMsg = encode(MASTER_TYPE, 0,"xx",0, RESTART_TITLE,"")
-            broadcast (localhost, sampleMsg, logHeader, allServers, allClients)
+            broadcastServers (localhost, sampleMsg, logHeader, allServers, allClients)
             restartSema.acquire()
         if line[0] ==  "stabilize":
             """

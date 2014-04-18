@@ -91,7 +91,7 @@ def MasterProcessor(log):
                                RETIRE_REQUEST_TITLE, EMPTY_CONTENT)
             port = U.getPortByMsg (retireMsg)
             send (localhost, port, retireMsg, logHeader)
-            ## TODO: retirement
+            ## TODO: retirement Protocol
 
         if line[0] ==  "joinClient":
             clientId = int(line[1])
@@ -106,8 +106,14 @@ def MasterProcessor(log):
                     "START: Client %d already exists" % clientIdx
             assert (serverIdx in allServers), \
                     "START: Server %d not exists." % serverIdx
+            joinClientSema = U.initEmptySemaphore() 
+            joinClientCounter = U.initAllFalseCounter([clientIdx])
+
             allClients.update ([clientIdx])
+            ## TODO: invoke new client
             # call (["python src/Client.py", str(clientIdx)])
+
+            ## TODO: block until received ack
 
             print "startClient", clientIdx, serverIdx, "completes."
 
@@ -130,9 +136,9 @@ def MasterProcessor(log):
             Pause the system and don't allow any Anti-Entropy messages to
             propagate through the system
             """
-            pauseAcks = initAllFalseCounter(allServers)
-            pauseSema = threading.Semaphore(0)
-            sampleMsg = encode(MASTER_TYPE, 0,"xx",0, PAUSE_TITLE,"")
+            pauseAcks = U.initAllFalseCounter(allServers)
+            pauseSema = U.initEmptySemaphore()
+            sampleMsg = U.encode(MASTER_TYPE, 0,"xx",0, PAUSE_TITLE,"")
             U.broadcast(localhost, sampleMsg, logHeader, allServers, allClients)
             pauseSema.acquire()
         if line[0] ==  "start":
@@ -140,9 +146,9 @@ def MasterProcessor(log):
             Resume the system and allow any Anti-Entropy messages to
             propagate through the system
             """
-            restartAcks = initAllFalseCounter(allServers)
-            restartSema = threading.Semaphore(0)
-            sampleMsg = encode(MASTER_TYPE, 0,"xx",0, RESTART_TITLE,"")
+            restartAcks = U.initAllFalseCounter(allServers)
+            restartSema = U.initEmptySemaphore()
+            sampleMsg = U.encode(MASTER_TYPE, 0,"xx",0, RESTART_TITLE,"")
             U.broadcast (localhost, sampleMsg, logHeader, allServers, allClients)
             restartSema.acquire()
         if line[0] ==  "stabilize":

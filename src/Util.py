@@ -12,6 +12,7 @@
 
 import socket
 import Protocol as P
+import threading
 
 printSwitch = True
 
@@ -143,3 +144,6 @@ def getPortByMsg (msg):
         base = P.CLIENT_PORT_BASE
     port = base + receiver_idx
     return port
+
+def initEmptySemaphore ():
+    return threading.Semaphore(0)

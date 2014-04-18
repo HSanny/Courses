@@ -32,7 +32,7 @@ def main(argv):
     ## construct server socket
     s = socket.socket()         
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    port = SERVER_PORT_BASE + clientID
+    port = CLIENT_PORT_BASE + clientID
     s.bind((localhost, port))        
 
     ## send back acknowledgement

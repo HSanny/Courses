@@ -1,8 +1,7 @@
 PAXOS Project 
 =============
 
-##### Contributors
-
+##### Contributors 
  	**Jimmy Lin** (UTEID: xl5224)  Login: jimmylin 
  	**Calvin Szeto** (UTEID: CS37888) Login: calvins
 
@@ -57,7 +56,7 @@ TODO list
 2. [DONE] implement logging for server and client
     - write new macro function
 
-3. make system terminated by itself
+3. [DONE] make system terminated by itself
 
 4. implement put, get and delete
     - local data structure for client and server

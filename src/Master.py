@@ -13,14 +13,14 @@
 import sys, socket, os, subprocess
 from threading import Thread
 
-import Util as U
-import Protocol as P
-import Logging as L
+from Util import *
+from Protocol import *
+from Logging import *
 
 ## TODO: add more static variable here..
 '''Utitlity'''
 localhost = socket.gethostname()
-logHeader = L.MASTER_LOG_HEADER
+logHeader = MASTER_LOG_HEADER
 
 '''Global States'''
 allClients = set([])
@@ -31,8 +31,8 @@ restartAcks = None
 pauseAcks = None
 
 '''Semaphores'''
-joinClientSema = U.initEmptySemaphore() 
-joinServerSema = U.initEmptySemaphore()
+joinClientSema = initEmptySemaphore() 
+joinServerSema = initEmptySemaphore()
 restartSema = None 
 pauseSema = None 
 listenerSetUpSema = None
@@ -43,28 +43,28 @@ def MasterListener():
     '''
     s = socket.socket()         # Create a socket object
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    s.bind((localhost, P.MASTER_PORT))        # Bind to the port
+    s.bind((localhost, MASTER_PORT))        # Bind to the port
     listenerSetUpSema.release()
 
     s.listen(5)                 # Now wait for client connection.
     while True:
         conn, addr = s.accept()     # Establish connection with client.
         # c.send('Thank you for connecting')  # send message to client
-        recvMsg = conn.recv(P.BUFFER_SIZE)      # receive message with BUFFER_SIZE
-        U.printRecvMessage(recvMsg, logHeader)
-        st, si, rt, ri, title, content = U.decode (recvMsg)
+        recvMsg = conn.recv(BUFFER_SIZE)      # receive message with BUFFER_SIZE
+        printRecvMessage(recvMsg, logHeader)
+        st, si, rt, ri, title, content = decode (recvMsg)
         # TODO: add the processor
-        if title == P.JOIN_SERVER_ACK_TITLE:
+        if title == JOIN_SERVER_ACK_TITLE:
             joinServerSema.release()
-        elif title == P.JOIN_CLIENT_ACK_TITLE:
+        elif title == JOIN_CLIENT_ACK_TITLE:
             joinClientSema.release()
-        elif title == P.PAUSE_ACK_TITLE:
-            if U.checkCounterAllTrue(pauseAcks):
+        elif title == PAUSE_ACK_TITLE:
+            if checkCounterAllTrue(pauseAcks):
                 pauseSema.release()
-        elif title == P.RESTART_ACK_TITLE:
-            if U.checkCounterAllTrue(restartAcks):
+        elif title == RESTART_ACK_TITLE:
+            if checkCounterAllTrue(restartAcks):
                 startSema.release()
-        elif title == P.EXIT_TITLE:
+        elif title == EXIT_TITLE:
             conn.close()
             s.close()
             return 
@@ -101,9 +101,9 @@ def MasterProcessor():
             Retire the server with the id specified. This should block until
             the server can tell another server of its retirement
             ''' 
-            retireMsg = encode (P.MASTER_TYPE, 0, P.SERVER_TYPE, serverId, \
-                               P.RETIRE_REQUEST_TITLE, P.EMPTY_CONTENT)
-            port = U.getPortByMsg (retireMsg)
+            retireMsg = encode (MASTER_TYPE, 0, SERVER_TYPE, serverId, \
+                               RETIRE_REQUEST_TITLE, EMPTY_CONTENT)
+            port = getPortByMsg (retireMsg)
             send (localhost, port, retireMsg, logHeader)
             ## TODO: retirement Protocol
 
@@ -150,10 +150,10 @@ def MasterProcessor():
             propagate through the system
             """
             continue
-            pauseAcks = U.initAllFalseCounter(allServers)
-            pauseSema = U.initEmptySemaphore()
-            sampleMsg = U.encode(P.MASTER_TYPE, 0,"xx",0, P.PAUSE_TITLE,"")
-            U.broadcast(localhost, sampleMsg, logHeader, allServers, allClients)
+            pauseAcks = initAllFalseCounter(allServers)
+            pauseSema = initEmptySemaphore()
+            sampleMsg = encode(MASTER_TYPE, 0,"xx",0, PAUSE_TITLE,"")
+            broadcast(localhost, sampleMsg, logHeader, allServers, allClients)
             pauseSema.acquire()
         if line[0] ==  "start":
             """
@@ -161,10 +161,10 @@ def MasterProcessor():
             propagate through the system
             """
             continue
-            restartAcks = U.initAllFalseCounter(allServers)
-            restartSema = U.initEmptySemaphore()
-            sampleMsg = U.encode(P.MASTER_TYPE, 0,"xx",0, P.RESTART_TITLE,"")
-            U.broadcast (localhost, sampleMsg, logHeader, allServers, allClients)
+            restartAcks = initAllFalseCounter(allServers)
+            restartSema = initEmptySemaphore()
+            sampleMsg = encode(MASTER_TYPE, 0,"xx",0, RESTART_TITLE,"")
+            broadcast (localhost, sampleMsg, logHeader, allServers, allClients)
             restartSema.acquire()
         if line[0] ==  "stabilize":
             """
@@ -207,12 +207,13 @@ def MasterProcessor():
 
     # Command processing completes
     # TODO: send messages to terminate the whole system
-    exitMsg = U.encode (P.MASTER_TYPE, 0, "xx", -1, P.EXIT_TITLE, \
-                        P.EMPTY_CONTENT)
-    U.broadcast (localhost, exitMsg, logHeader, allServers, allClients)
-    exitMsg = U.encode (P.MASTER_TYPE, 0, P.MASTER_TYPE, 0, \
-                          P.EXIT_TITLE, P.EMPTY_CONTENT)
-    U.send (localhost, P.MASTER_PORT, exitMsg, logHeader)
+    exitMsg = encode (MASTER_TYPE, 0, "xx", -1, EXIT_TITLE, \
+                        EMPTY_CONTENT)
+    broadcast (localhost, exitMsg, logHeader, allServers, allClients)
+
+    exitMsg = encode (MASTER_TYPE, 0, MASTER_TYPE, 0, \
+                          EXIT_TITLE, EMPTY_CONTENT)
+    send (localhost, MASTER_PORT, exitMsg, logHeader)
 
 ''' Program entry '''
 if __name__ == "__main__":
@@ -220,12 +221,12 @@ if __name__ == "__main__":
     origin_out = sys.stdout
     origin_err = sys.stderr
     '''
-    logFile = open(L.Master_LOG_FILENAME, 'w+')
+    logFile = open(Master_LOG_FILENAME, 'w+')
     sys.stdout = logFile
     sys.stderr = logFile
     '''
     # create listener thread 
-    listenerSetUpSema = U.initEmptySemaphore()
+    listenerSetUpSema = initEmptySemaphore()
     listener = Thread(target=MasterListener, args=())
     listener.start()
     ## block until master's listener has setup

@@ -92,8 +92,8 @@ def send (host, port, message, Header):
     '''
     s = socket.socket()
     s.connect((host, port))
-    s.send(message)
     printSentMessage(message, Header)
+    s.send(message)
     s.close()
     return True
 
@@ -104,13 +104,13 @@ def broadcast (host, sampleMsg, Header, allServers, allClients):
     '''
     st, si, _, _, title, content = decode (sampleMsg)
 
-    print allServers
+    #print allServers
     for serverIdx in allServers:
         msg = encode (st, si, SERVER_TYPE, serverIdx, title, content)
         port = getPortByMsg (msg)
         send (host, port, msg, Header)
 
-    print allClients
+    #print allClients
     for clientIdx in allClients:
         msg = encode (st, si, CLIENT_TYPE, clientIdx, title, content)
         port = getPortByMsg (msg)

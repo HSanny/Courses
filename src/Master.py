@@ -76,7 +76,8 @@ def MasterListener():
 
 def MasterProcessor():
     for line in sys.stdin:
-        print line
+        line = line.strip()
+        print "[INPUT]", line
         line = line.split()
         if line[0] ==  "joinServer":
             serverId = int(line[1])
@@ -91,7 +92,6 @@ def MasterProcessor():
             os.system(cmd + " &")
             print cmd
 
-            print "acquire.."
             joinServerSema.acquire()
             print "joinServer ", serverId, "completes."
 

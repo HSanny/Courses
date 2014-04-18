@@ -49,15 +49,17 @@ Protocol Design
 
 TODO list
 --------------
-1. implement joinServer and joinClient
+1. [DONE] implement joinServer and joinClient
     - invoke process for server and client
     - establish listener for server and client
     - send ack back to master
 
-2. implement logging for server and client
+2. [DONE] implement logging for server and client
     - write new macro function
 
-3. implement put, get and delete
+3. make system terminated by itself
+
+4. implement put, get and delete
     - local data structure for client and server
 
 Problems

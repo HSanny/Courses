@@ -1,6 +1,0 @@
-join 1
-start 1 2
-pause
-continue
-clientDisconnect 1
-leave 1

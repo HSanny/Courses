@@ -11,29 +11,32 @@
 ############################################################
 
 import socket
-import Protocol as P
+from Protocol import *
 import threading
 
+__all__ = ['encode', 'decode', 'printLog', 'printRecvMessage', \
+          'printSentMessage', 'initAllFalseCounter', 'initEmptySemaphore', \
+          'send', 'broadcast', 'checkCounterAllTrue', 'getPortByMsg' ]
 printSwitch = True
 
 def encode (st, si, rt, ri, title, content):
     '''
     API: encode the message by components
     '''
-    msg = P.MESSAGE % (st, si, rt, ri, title, content)
+    msg = MESSAGE % (st, si, rt, ri, title, content)
     return msg
 
 def decode (msg):
     ''' 
     API: Decode the message to various components
     '''
-    components = msg.split(P.MESSAGE_SEP)
-    sender_type = components[P.SENDER_TYPE_IDX];
-    sender_index = int(components[P.SENDER_INDEX_IDX])
-    receiver_type = components[P.RECEIVER_TYPE_IDX]
-    receiver_idx = int(components[P.RECEIVER_INDEX_IDX])
-    title = components[P.TITLE_IDX]
-    content = components[P.CONTENT_IDX]
+    components = msg.split(MESSAGE_SEP)
+    sender_type = components[SENDER_TYPE_IDX];
+    sender_index = int(components[SENDER_INDEX_IDX])
+    receiver_type = components[RECEIVER_TYPE_IDX]
+    receiver_idx = int(components[RECEIVER_INDEX_IDX])
+    title = components[TITLE_IDX]
+    content = components[CONTENT_IDX]
     return sender_type, sender_index, receiver_type, receiver_idx,\
             title, content
 
@@ -52,15 +55,15 @@ def printSentMessage (sentMessage, logHeader):
     API: send message
     '''
     if printSwitch:
-        components = sentMessage.split(P.MESSAGE_SEP)
-        sender_type = components[P.SENDER_TYPE_IDX];
-        sender_index = components[P.SENDER_INDEX_IDX];
-        title = components[P.TITLE_IDX];
-        content = components[P.CONTENT_IDX];
+        components = sentMessage.split(MESSAGE_SEP)
+        receiver_type = components[RECEIVER_TYPE_IDX]
+        receiver_idx = components[RECEIVER_INDEX_IDX]
+        title = components[TITLE_IDX];
+        content = components[CONTENT_IDX];
 
         string = "";
-        string += logHeader + "|| Receive *" + title + "* from ";
-        string += "{" + sender_type + " #" + sender_index + "}: ";
+        string += logHeader + "send *" + title + "* to ";
+        string += "{" + receiver_type + " #" + receiver_idx + "}: ";
         string += content
         print string
     return 
@@ -70,11 +73,11 @@ def printRecvMessage (recvMessage, logHeader):
     API: send message
     '''
     if printSwitch:
-        components = recvMessage.split(P.MESSAGE_SEP)
-        sender_type = components[P.SENDER_TYPE_IDX];
-        sender_index = components[P.SENDER_INDEX_IDX];
-        title = components[P.TITLE_IDX];
-        content = components[P.CONTENT_IDX];
+        components = recvMessage.split(MESSAGE_SEP)
+        sender_type = components[SENDER_TYPE_IDX];
+        sender_index = components[SENDER_INDEX_IDX];
+        title = components[TITLE_IDX];
+        content = components[CONTENT_IDX];
 
         string = "";
         string += logHeader + "|| Receive *" + title + "* from ";
@@ -100,14 +103,19 @@ def broadcast (host, sampleMsg, Header, allServers, allClients):
     with empty content
     '''
     st, si, _, _, title, content = decode (sampleMsg)
+
+    print allServers
     for serverIdx in allServers:
         msg = encode (st, si, SERVER_TYPE, serverIdx, title, content)
         port = getPortByMsg (msg)
         send (host, port, msg, Header)
+
+    print allClients
     for clientIdx in allClients:
         msg = encode (st, si, CLIENT_TYPE, clientIdx, title, content)
         port = getPortByMsg (msg)
         send (host, port, msg, Header)
+
     return True
     
 def checkCounterAllTrue (boolCounter, NoneIgnore=True):
@@ -116,10 +124,10 @@ def checkCounterAllTrue (boolCounter, NoneIgnore=True):
     '''
     decision = True
     for idx, bvalue in boolArray.items():
-        if bvalue == None and !NoneIgnore:
+        if bvalue == None and not NoneIgnore:
             decision = False
             break
-        if !bvalue:
+        if not bvalue:
             decision = False
             break
     return decision
@@ -136,14 +144,16 @@ def initAllFalseCounter (allIndex):
 def getPortByMsg (msg):
     _, _, receiver_type, receiver_idx, _, _ = decode(msg)
     [base, port] = [-1, -1]
-    if receiver_type == P.MASTER_TYPE:
-        return P.MASTER_PORT
-    elif receiver_type == P.SERVER_TYPE:
-        base = P.SERVER_PORT_BASE
-    elif receiver_type == P.CLIENT_TYPE:
-        base = P.CLIENT_PORT_BASE
+    if receiver_type == MASTER_TYPE:
+        return MASTER_PORT
+    elif receiver_type == SERVER_TYPE:
+        base = SERVER_PORT_BASE
+    elif receiver_type == CLIENT_TYPE:
+        base = CLIENT_PORT_BASE
     port = base + receiver_idx
     return port
 
 def initEmptySemaphore ():
     return threading.Semaphore(0)
+
+

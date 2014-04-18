@@ -17,13 +17,23 @@ import Util as U
 import Protocol as P
 import Logging as L
 
-# TODO: add more static variable here..
+## TODO: add more static variable here..
+'''Utitlity'''
+localhost = socket.gethostname()
 logHeader = L.MASTER_LOG_HEADER
 
+'''Global States'''
 allClients = set([])
 allServers = set([])
 
-localhost = socket.gethostname()
+'''Boolean Counter'''
+restartAcks = None
+pauseAcks = None
+
+'''Semaphores'''
+restartSema = None 
+pauseSema = None 
+
 
 def MasterListener(log):
     '''
@@ -44,8 +54,15 @@ def MasterListener(log):
         # TODO: add the processor
         if title == 'startupAck':
             pass
-        elif title == '':
+        elif title == PAUSE_ACK_TITLE:
+            if U.checkCounterAllTrue(pauseAcks):
+                pauseSema.release()
+        elif title == RESTART_ACK_TITLE:
+            if U.checkCounterAllTrue(restartAcks):
+                startSema.release()
+        else:
             pass
+
         conn.close()                # Close the connection
     s.close()
 
@@ -55,9 +72,9 @@ def MasterProcessor(log):
         line = line.split()
         if line[0] ==  "joinServer":
             serverId = int(line[1])
-            """
+            '''
             Start up a new server with this id and connect it to all servers
-            """
+            '''
             assert (serverIdx not in allServers), \
                     "JOIN: server %d already exists." % serverIdx
             allServers.update([serverIdx])
@@ -66,10 +83,16 @@ def MasterProcessor(log):
 
         if line[0] ==  "retireServer":
             serverId = int(line[1])
-            """
+            '''
             Retire the server with the id specified. This should block until
             the server can tell another server of its retirement
-            """ 
+            ''' 
+            retireMsg = encode (MASTER_TYPE, 0, SERVER_TYPE, serverId, \
+                               RETIRE_REQUEST_TITLE, EMPTY_CONTENT)
+            port = U.getPortByMsg (retireMsg)
+            send (localhost, port, retireMsg, logHeader)
+            ## TODO: retirement
+
         if line[0] ==  "joinClient":
             clientId = int(line[1])
             serverId = int(line[2])
@@ -107,11 +130,21 @@ def MasterProcessor(log):
             Pause the system and don't allow any Anti-Entropy messages to
             propagate through the system
             """
+            pauseAcks = initAllFalseCounter(allServers)
+            pauseSema = threading.Semaphore(0)
+            sampleMsg = encode(MASTER_TYPE, 0,"xx",0, PAUSE_TITLE,"")
+            U.broadcast(localhost, sampleMsg, logHeader, allServers, allClients)
+            pauseSema.acquire()
         if line[0] ==  "start":
             """
             Resume the system and allow any Anti-Entropy messages to
             propagate through the system
             """
+            restartAcks = initAllFalseCounter(allServers)
+            restartSema = threading.Semaphore(0)
+            sampleMsg = encode(MASTER_TYPE, 0,"xx",0, RESTART_TITLE,"")
+            U.broadcast (localhost, sampleMsg, logHeader, allServers, allClients)
+            restartSema.acquire()
         if line[0] ==  "stabilize":
             """
             Block until there are enough Anti-Entropy messages for all values to 

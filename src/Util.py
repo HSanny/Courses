@@ -91,5 +91,55 @@ def send (host, port, message, Header):
     s.send(message)
     printSentMessage(message, Header)
     s.close()
-    return
+    return True
 
+def broadcast (host, sampleMsg, Header, allServers, allClients):
+    '''
+    API: broadcast message with $title$ to all given servers and clients
+    with empty content
+    '''
+    st, si, _, _, title, content = decode (sampleMsg)
+    for serverIdx in allServers:
+        msg = encode (st, si, SERVER_TYPE, serverIdx, title, content)
+        port = P.SERVER_PORT_BASE + serverIdx
+        send (host, port, msg, Header)
+    for clientIdx in allClients:
+        msg = encode (st, si, CLIENT_TYPE, clientIdx, title, content)
+        port = P.CLIENT_PORT_BASE + clientIdx
+        send (host, port, msg, Header)
+    return True
+    
+def checkCounterAllTrue (boolCounter, NoneIgnore=True):
+    '''
+    API: determine whether the input array contains all boolean value
+    '''
+    decision = True
+    for idx, bvalue in boolArray.items():
+        if bvalue == None and !NoneIgnore:
+            decision = False
+            break
+        if !bvalue:
+            decision = False
+            break
+    return decision
+
+def initAllFalseCounter (allIndex):
+    '''
+    API: determine
+    '''
+    counter = {}
+    for index in allIndex:
+        counter.update({index:False})
+    return counter
+
+def getPortByMsg (msg):
+    _, _, receiver_type, receiver_idx, _, _ = decode(msg)
+    [base, port] = [-1, -1]
+    if receiver_type == P.MASTER_TYPE:
+        return P.MASTER_PORT
+    elif receiver_type == P.SERVER_TYPE:
+        base = P.SERVER_PORT_BASE
+    elif receiver_type == P.CLIENT_TYPE:
+        base = P.CLIENT_PORT_BASE
+    port = base + receiver_idx
+    return port

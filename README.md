@@ -74,7 +74,7 @@ TODO list
     - catogorize messages that are anti-entropy related 
     - disable these messages if switched off
 
-6. Connection Mechanism:
+6. [DONE] Connection Mechanism:
     - [DONE] servers initialize with knowledge all other servers, and no clients
     - [DONE] clients initialize with knowledge only one server
     - [DONE] breakConnection and restoreConnection updates above data structure
@@ -88,7 +88,6 @@ TODO list
     - 
     - 
 
-9. 
 
 Problems
 ---------------

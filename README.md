@@ -49,42 +49,46 @@ Protocol Design
 TODO list
 --------------
 1. [DONE] naively implement joinServer and joinClient
-    - invoke process for server and client
-    - establish listener for server and client
-    - send ack back to master
+    - [DONE] invoke process for server and client
+    - [DONE] tell all existing server about the new server
+    - [DONE] establish listener for server and client
+    - [DONE] send ack back to master
 
 2. [DONE] implement logging for server and client
-    - write new macro function
-    - use uncached file object to log the errors
+    - [DONE] write new macro function
+    - [DONE] use uncached file object to log the errors
 
 3. [DONE] make system terminated by itself
-    - broadcast EXIT message to all servers and clients
-    - send EXIT message to master's listener thread
+    - [DONE] broadcast EXIT message to all servers and clients
+    - [DONE] send EXIT message to master's listener thread
 
-4. implement put, get and delete
-    - local data structure for client and server
+4. [DONE] implement put, get and delete
+    - [DONE] request and ack sending and delivery
+    - [DONE] use local data structure localLogs and localData for each server
+    - [DONE] update the local structure on server that client connects to
 
 5. implement pause and resume
-    - send message to all servers
-    - when received, send acks?
-    - use indicator to denote the working status
+    - [DONE] send message to all servers
+    - [DONE] when received, send acks?
+    - [DONE] use indicator to denote the working status
     - catogorize messages that are anti-entropy related 
     - disable these messages if switched off
 
 6. Connection Mechanism:
-    - servers initialize with all other servers, and no clients
-    - clients initialize with only one server
-    - breakConnection and restoreConnection updates above data structure
+    - [DONE] servers initialize with knowledge all other servers, and no clients
+    - [DONE] clients initialize with knowledge only one server
+    - [DONE] breakConnection and restoreConnection updates above data structure
 
-
-6.  when node enters the system, should be brought up to date
+7. implement epidemic algorithm 
+    - when node enters the system, should be brought up to date
+    - update local data structure between servers
     - 
 
-7. implement retirement protocol: when a node leaves system
+8. implement retirement protocol: when a node leaves system
     - 
     - 
 
-8. 
+9. 
 
 Problems
 ---------------

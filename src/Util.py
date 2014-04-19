@@ -14,10 +14,10 @@ import socket
 from Protocol import *
 import threading
 
-__all__ = ['encode', 'decode', 'printLog', 'printRecvMessage', \
-          'printSentMessage', 'initAllFalseCounter', 'initEmptySemaphore', \
-          'send', 'broadcast', 'broadcastServers', 'checkCounterAllTrue', 'getPortByMsg' ]
 printSwitch = True
+
+LOAD_SERVER_CMD = "python -u src/Server.py"
+LOAD_CLIENT_CMD = "python -u src/Client.py"
 
 def encode (st, si, rt, ri, title, content):
     '''
@@ -171,10 +171,21 @@ def getPortByMsg (msg):
 def initEmptySemaphore ():
     return threading.Semaphore(0)
 
-def list2str (inList):
-    outString = ','.join(inList)
+def set2str (inSet):
+    if len(inSet) == 0:
+        return 'None'
+    outString = ','.join(inSet)
     return outString
 
-def str2list (inString):
-    outList = [int(x) for x in inString.split(",")]
-    return outList
+def str2set (inString):
+    if inString == 'None':
+        return []
+    outSet = set([int(x) for x in inString.split(",")])
+    return outSet
+
+
+def args2cmd (args):
+    cmd = ""
+    for arg in args:
+        cmd += arg + " "
+    return cmd

@@ -57,8 +57,9 @@ def MasterListener():
         st, si, rt, ri, title, content = decode (recvMsg)
         # TODO: add the processor
         if title == JOIN_SERVER_ACK_TITLE:
-            global joinServerSema
-            joinServerSema.release()
+            global joinServerSema, joinServerAcks
+            if checkCounterAllTrue(joinServerAcks):
+                joinServerSema.release()
         elif title == JOIN_CLIENT_ACK_TITLE:
             global joinClientSema
             joinClientSema.release()
@@ -95,10 +96,23 @@ def MasterProcessor():
             assert (serverId not in allServers), \
                     "JOIN: server %d already exists." % serverIdx
 
+            global joinServerSema, joinServerAcks
             ## invoke new server
-            cmd = "python -u src/Server.py "+ str(serverId)
+            args = []
+            args.append(LOAD_SERVER_CMD) # main command
+            args.append(str(serverId))  # arg: server ID
+            args.append(set2str(allServers)) # arg: all existing server ID
+            cmd = args2cmd(args)
             os.system(cmd + " &")
             print cmd
+
+            ## notify all existing server
+            joinServerAcks = initAllFalseCounter(allServers)
+            for oldServerId in allServers:
+                notifyMsg = encode(MASTER_TYPE, 0, SERVER_TYPE, oldServerId,
+                                   JOIN_SERVER_TITLE, EMPTY_CONTENT)
+                port = getPortByMsg(notifyMsg)
+                send(localhost, port, notifyMsg, logHeader)
 
             ## block until receiving acks
             joinServerSema.acquire()
@@ -131,7 +145,11 @@ def MasterProcessor():
                     "START: Server %d not exists." % serverId
 
             ## invoke new client
-            cmd = "python -u src/Client.py "+ str(clientId) + " "+ str(serverId) 
+            args = []
+            args.append(LOAD_CLIENT_CMD)
+            args.append(str(clientId))
+            args.append(str(serverId))
+            cmd = args2cmd(args)
             os.system(cmd+ " &")
             print cmd
 

@@ -24,8 +24,10 @@ def main(argv):
     Main function of server
     '''
     ## TODO: initialize static variables
-    assert len(argv) >= 1, "SERVER: too less arguments"
+    assert len(argv) >= 2, "SERVER: too less arguments"
     serverID = int(argv[0])
+    allServers = str2set(argv[1])
+
     logHeader = SERVER_LOG_HEADER % serverID
     pause = False
 
@@ -53,9 +55,9 @@ def main(argv):
             ## switch the pause indicator
             pause = True
             ## send pause acknowledgement to master
-            pausAckMsg = encode(SERVER_TYPE, serverID, MASTER_TYPE, 0, \
+            pauseAckMsg = encode(SERVER_TYPE, serverID, MASTER_TYPE, 0, \
                                  PAUSE_ACK_TITLE, EMPTY_CONTENT)
-            send (localhost, MASTER_PORT, pausAckMsg, logHeader)
+            send (localhost, MASTER_PORT, pauseAckMsg, logHeader)
             ## TODO: other mechanism to pause the system
             #  - cache the following incoming messages
             #  - cache the following anti-entroy messages

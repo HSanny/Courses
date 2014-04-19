@@ -57,6 +57,21 @@ def main(argv):
             ackMsg = encode(SERVER_TYPE, serverID, MASTER_TYPE, 0, \
                            JOIN_SERVER_ACK_TITLE, str(newServerId))
             send(localhost, MASTER_PORT, ackMsg, logHeader)
+
+        elif title == JOIN_CLIENT_ACK_TITLE:
+            deliverAckMsg = encode (SERVER_TYPE, serverID, \
+               MASTER_TYPE, 0, JOIN_CLIENT_ACK_TITLE, EMPTY_CONTENT)
+            port = getPortByMsg(deliverAckMsg)
+            send (localhost, port, deliverAckMsg, logHeader)
+
+        elif title == PRINT_LOG_TITLE:
+            assert (st == MASTER_TYPE)
+            ## TODO: deal with logstring
+            logString = ""
+            logMsg = encode(SERVER_TYPE, serverID, st, si, \
+                           PRINT_LOG_TITLE, logHeader)
+            send(localhost, MASTER_PORT, logMsg, logString)
+
         elif title == BREAK_CONNECTION_TITLE:
             toBreakServerId = int(content)
             assert (toBreakServerId in allServers)
@@ -91,11 +106,6 @@ def main(argv):
             #  - cache the following incoming messages
             #  - cache the following anti-entroy messages
 
-        elif title == JOIN_CLIENT_ACK_TITLE:
-            deliverAckMsg = encode (SERVER_TYPE, serverID, \
-               MASTER_TYPE, 0, JOIN_CLIENT_ACK_TITLE, EMPTY_CONTENT)
-            port = getPortByMsg(deliverAckMsg)
-            send (localhost, port, deliverAckMsg, logHeader)
         elif title == EXIT_TITLE:
             conn.close() 
             s.close()

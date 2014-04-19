@@ -23,6 +23,7 @@ localhost = socket.gethostname()
 logHeader = MASTER_LOG_HEADER
 
 '''Global States'''
+global allClients, allServers
 allClients = set([])
 allServers = set([])
 
@@ -39,13 +40,13 @@ startSema = None
 pauseSema = None
 listenerSetUpSema = None
 
-def checkConnClients(id1, id2, allServers, allServers):
-    assert id1 in allServers or id1 in allClients,\
+def checkConnClients(id1, id2, servers, clients):
+    assert id1 in servers or id1 in clients,\
             "CONNECTION: id1 %d unknown." % id1
-    assert id2 in allServers or id2 in allClients,\
+    assert id2 in servers or id2 in clients,\
             "CONNECTION: id2 %d unknown." % id2
-    isServer1 = id1 in allServers && id1 not in allClients
-    isServer2 = id2 in allServers && id2 not in allClients
+    isServer1 = id1 in servers and id1 not in clients
+    isServer2 = id2 in servers and id2 not in clients
     assert isServer1 or isServer2, \
             "CONNECTION: both id are clients."
     return isServer1, isServer2
@@ -66,6 +67,7 @@ def MasterListener():
 
         printRecvMessage(recvMsg, logHeader)
         st, si, rt, ri, title, content = decode (recvMsg)
+        global allClients, allServers
 
         if title == JOIN_SERVER_ACK_TITLE:
             global joinServerSema, joinServerAcks
@@ -104,6 +106,7 @@ def MasterProcessor():
         line = line.strip()
         print "[INPUT]", line
         line = line.split()
+        global allClients, allServers
         if line[0] ==  "joinServer":
             serverId = int(line[1])
             '''
@@ -232,7 +235,6 @@ def MasterProcessor():
                 port = getPortByMsg(restoreConnMsg2)
                 send(localhost, port, restoreConnMsg2, logHeader)
 
-           
             ## Case 2: restore connection between a client and a server
             if isServer1 and not isServer2:
                 restoreConnMsg3 = encode(MASTER_TYPE, 0, CLIENT_TYPE, id2, \
@@ -253,7 +255,8 @@ def MasterProcessor():
             global pauseAcks, pauseSema
             pauseAcks = initAllFalseCounter(allServers)
             pauseSema = initEmptySemaphore()
-            sampleMsg = encode(MASTER_TYPE, 0,"xx",0, PAUSE_TITLE,"")
+            sampleMsg = encode(MASTER_TYPE, 0,"xx",0, PAUSE_TITLE, \
+                               EMPTY_CONTENT)
             broadcastServers (localhost, sampleMsg, logHeader, allServers)
             pauseSema.acquire()
 
@@ -265,7 +268,8 @@ def MasterProcessor():
             global startAcks, startSema
             startAcks = initAllFalseCounter(allServers)
             startSema = initEmptySemaphore()
-            sampleMsg = encode(MASTER_TYPE, 0,"xx",0, RESTART_TITLE, "")
+            sampleMsg = encode(MASTER_TYPE, 0,"xx",0, RESTART_TITLE,\
+                               EMPTY_CONTENT)
             broadcastServers (localhost, sampleMsg, logHeader, allServers)
             startSema.acquire()
 
@@ -282,7 +286,10 @@ def MasterProcessor():
             Print out a server's operation log in the format specified in the
             handout.
             """
-
+            askForLogMsg = encode(MASTER_TYPE, 0, SERVER_TYPE, serverId, \
+                                 PRINT_LOG_TITLE, EMPTY_CONTENT) 
+            port = getPortByMsg(askForLogMsg)
+            send(localhost, port, askForLogMsg, logHeader)
         if line[0] ==  "put":
             clientId = int(line[1])
             songName = line[2]

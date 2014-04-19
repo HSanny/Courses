@@ -87,12 +87,15 @@ def MasterProcessor():
             assert (serverId not in allServers), \
                     "JOIN: server %d already exists." % serverIdx
 
-            allServers.update([serverId])
+            ## invoke new server
             cmd = "python -u src/Server.py "+ str(serverId)
             os.system(cmd + " &")
             print cmd
 
+            ## block until receiving acks
             joinServerSema.acquire()
+            ## confirm to add new server to its list
+            allServers.update([serverId])
             print "joinServer ", serverId, "completes."
 
         if line[0] ==  "retireServer":
@@ -119,14 +122,16 @@ def MasterProcessor():
             assert (serverId in allServers), \
                     "START: Server %d not exists." % serverId
 
-            allClients.update ([clientId])
-            ## TODO: invoke new client
+            ## invoke new client
             cmd = "python -u src/Client.py "+ str(clientId) + " "+ str(serverId) 
             os.system(cmd+ " &")
             print cmd
 
-            ## TODO: block until received ack
+            ## block until received ack
             joinClientSema.acquire()
+            ## confirm to add new client to its list
+            allServers.update([serverId])
+            allClients.update ([clientId])
 
             print "startClient", clientId, serverId, "completes."
 

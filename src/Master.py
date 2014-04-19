@@ -39,6 +39,10 @@ joinServerSema = initEmptySemaphore()
 startSema = None
 pauseSema = None
 listenerSetUpSema = None
+global putSema, getSema, deleteSema
+putSema = None
+getSema = None
+deleteSema = None
 
 def checkConnClients(id1, id2, servers, clients):
     assert id1 in servers or id1 in clients,\
@@ -91,6 +95,20 @@ def MasterListener():
             if checkCounterAllTrue(startAcks):
                 startSema.release()
 
+        elif title == PUT_ACK_TITLE:
+            global putSema
+            putSema.release()
+
+        elif title == GET_RESPONSE_TITLE:
+            global getSema
+            songName, URL = content.split(SU_SEP)
+            print GET_FORMAT % (songName, URL)
+            getSema.release()
+
+        elif title == DELETE_ACK_TITLE:
+            global deleteSema
+            deleteSema.release()
+            
         elif title == EXIT_TITLE:
             conn.close()
             s.close()
@@ -299,6 +317,14 @@ def MasterProcessor():
             songName. This command should block until the client communicates with
             one server.
             """ 
+            global putSema
+            putSema = initEmptySemaphore()
+            putRequestMsg = encode(MASTER_TYPE, 0, CLIENT_TYPE, clientId, \
+                                  PUT_REQUEST_TITLE, songName+SU_SEP+URL)
+            port = getPortByMsg(putRequestMsg)
+            send(localhost, port, putRequestMsg, logHeader)
+            putSema.acquire()
+
         if line[0] ==  "get":
             clientId = int(line[1])
             songName = line[2]
@@ -308,6 +334,13 @@ def MasterProcessor():
             the master script in the format specified in the handout. This command 
             should block until the client communicates with one server.
             """ 
+            global getSema
+            getSema = initEmptySemaphore()
+            getRequestMsg = encode(MASTER_TYPE, 0, CLIENT_TYPE, clientId, \
+                                  GET_REQUEST_TITLE, songName)
+            port = getPortByMsg(getRequestMsg)
+            send(localhost, port, getRequestMsg, logHeader)
+            getSema.acquire()
         if line[0] ==  "delete":
             clientId = int(line[1])
             songName = line[2]
@@ -315,6 +348,13 @@ def MasterProcessor():
             Instruct the client to delete the given songName from the playlist. 
             This command should block until the client communicates with one server.
             """ 
+            global deleteSema
+            deleteSema = initEmptySemaphore()
+            deleteRequestMsg = encode(MASTER_TYPE, 0, CLIENT_TYPE, clientId, \
+                                     DELETE_REQUEST_TITLE, songName)
+            port = getPortByMsg(deleteRequestMsg)
+            send(localhost, port, deleteRequestMsg, logHeader)
+            deleteSema.acquire()
 
     # Command processing completes
     # TODO: send messages to terminate the whole system

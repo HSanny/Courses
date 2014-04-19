@@ -23,12 +23,13 @@ def main(argv):
     '''
     Main function of server
     '''
-    ## TODO: initialize static variables
     assert len(argv) >= 2, "SERVER: too less arguments"
+
+    ## initialize static variables
     serverID = int(argv[0])
     allServers = str2set(argv[1])
-
     logHeader = SERVER_LOG_HEADER % serverID
+    localLogs = {}
     pause = False
 
     ## construct server socket
@@ -105,6 +106,41 @@ def main(argv):
             ## TODO: other mechanism to restart the system
             #  - cache the following incoming messages
             #  - cache the following anti-entroy messages
+
+        elif title == PUT_REQUEST_TITLE:
+            ## update locallog
+            [sn, URL] = content.split(SU_SEP)
+            putlog = LOG_FORMAT % (PUT, OP_VALUE % (sn, URL), bool2str(False))
+            localLogs.append(putlog)
+            ## update local datastore
+            localData.update({sn:URL})
+            ## send ack back
+            putAckMsg = encode(rt, ri, st, si, PUT_ACK_TITLE, EMPTY_CONTENT)
+            port = getPortByMsg(putAckMsg)
+            send(localhost, port, putAckMsg, logHeader)
+
+        elif title == GET_REQUEST_TITLE:
+            ## look up local data store
+            sn = content
+            response_content = localData.get(sn)
+            if response_content is None:
+                response_content = ERR_KEY
+            ## send response back
+            reponseMsg = encode(rt, ri, st, si, GET_RESPONSE_TITLE, \
+                                EMPTY_CONTENT)
+
+        elif title == DELETE_REQUEST_TITLE:
+            ## update locallog
+            sn = content
+            deletelog = LOG_FORMAT % (PUT, sn, bool2str(False))
+            localLogs.append(deletelog)
+            ## update local datastore
+            localData.pop(sn, None)
+            ## send ack back
+            deleteAckMsg = encode(rt, ri, st, si, DELETE_ACK_TITLE,\
+                                  EMPTY_CONTENT)
+            port = getPortByMsg(deleteAckMsg)
+            send(localhost, port, deleteAckMsg, logHeader)
 
         elif title == EXIT_TITLE:
             conn.close() 

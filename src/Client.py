@@ -50,6 +50,42 @@ def main(argv):
         # TODO: process incoming message
         if title == '':
             pass
+        elif title == PUT_REQUEST_TITLE:
+            putRequestMsg = encode(CLIENT_TYPE, clientID, SERVER_TYPE, \
+                                   serverToConnect, PUT_REQUEST_TITLE, content)
+            port = getPortByMsg(putRequestMsg)
+            send(localhost, port, putRequestMsg, logHeader)
+
+        elif title == PUT_ACK_TITLE:
+            ## send ack to unblock the master
+            putAckMsg = encode(CLIENT_TYPE, clientID, MASTER_TYPE, 0, \
+                              PUT_ACK_TITLE, EMPTY_CONTENT)
+            send(localhost, MASTER_PORT, putAckMsg, logHeader)
+
+        elif title == GET_REQUEST_TITLE:
+            getRequestMsg = encode(CLIENT_TYPE, clientID, SERVER_TYPE, \
+                                  serverToConnect, GET_REQUEST_TITLE, content)
+            port = getPortByMsg(putRequestMsg)
+            send(localhost, port, getRequestMsg, logHeader)
+
+        elif title == GET_RESPONSE_TITLE:
+            ## send response to inform and unblock the master
+            getResponseMsg = encode(CLIENT_TYPE, clientID, MASTER_TYPE, 0,\
+                                   GET_RESPONSE_TITLE, content)
+            send(localhost, MASTER_PORT, getResponseMsg, logHeader)
+
+        elif title == DELETE_REQUEST_TITLE:
+            deleteRequestMsg = encode(CLIENT_TYPE, clientID, SERVER_TYPE, \
+                                  serverToConnect, GET_REQUEST_TITLE, content)
+            port = getPortByMsg(deleteRequestMsg)
+            send(localhost, port, deleteRequestMsg, logHeader)
+
+        elif title == DELETE_ACK_TITLE:
+            ## send ack to unblock the master
+            putAckMsg = encode(CLIENT_TYPE, clientID, MASTER_TYPE, 0, \
+                              DELETE_ACK_TITLE, EMPTY_CONTENT)
+            send(localhost, MASTER_PORT, putAckMsg, logHeader)
+
         elif title == BREAK_CONNECTION_TITLE:
             toBreakServerId = int(content)
             assert (serverToConnect == toBreakServerId)

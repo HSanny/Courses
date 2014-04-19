@@ -35,6 +35,16 @@ CONTENT_IDX = 5;
 MESSAGE_SEP = ",";
 MESSAGE = "%s" + MESSAGE_SEP + "%d" + MESSAGE_SEP +"%s" + MESSAGE_SEP \
         +"%d" + MESSAGE_SEP +"%s" + MESSAGE_SEP +"%s";
+LOG_FORMAT = "%s:(%s):%s" # OP_TYPE:OP_VALUE:STABLE_BOOL
+OP_VALUE = "%s, %s" # songName, URL
+GET_FORMAT = "%s:%s"
+
+LOG_SEP = "<\log>"
+
+# Operation marocs
+PUT = "PUT"
+DELETE = "DELETE"
+
 
 # TITLES
 EXIT_TITLE = "EXIT"
@@ -55,3 +65,4 @@ RETIRE_REQUEST_TITLE = "PLEASE_RETIRE"
 
 # CONTENT
 EMPTY_CONTENT = "EMPTY"
+

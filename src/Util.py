@@ -188,3 +188,11 @@ def args2cmd (args):
     for arg in args:
         cmd += arg + " "
     return cmd
+
+def bool2str (bvalue):
+    if bvalue is None:
+        return "NONE"
+    elif bvalue:
+        return "TRUE"
+    elif not bvalue:
+        return "FALSE"

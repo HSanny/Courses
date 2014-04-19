@@ -90,7 +90,7 @@ if __name__ == '__main__':
     serverID = int(sys.argv[1])
     origin_out = sys.stdout
     origin_err = sys.stderr
-    logFile = open (SERVER_LOG_FILENAME % serverID, 'w+')
+    logFile = open (SERVER_LOG_FILENAME % serverID, 'w+', 0)
     sys.stdout = logFile
     sys.stderr = logFile
     main(sys.argv[1:])

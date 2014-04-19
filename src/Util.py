@@ -16,7 +16,7 @@ import threading
 
 __all__ = ['encode', 'decode', 'printLog', 'printRecvMessage', \
           'printSentMessage', 'initAllFalseCounter', 'initEmptySemaphore', \
-          'send', 'broadcast', 'checkCounterAllTrue', 'getPortByMsg' ]
+          'send', 'broadcast', 'broadcastServers', 'checkCounterAllTrue', 'getPortByMsg' ]
 printSwitch = True
 
 def encode (st, si, rt, ri, title, content):
@@ -136,8 +136,9 @@ def checkCounterAllTrue (boolCounter, NoneIgnore=True):
     '''
     API: determine whether the input array contains all boolean value
     '''
+    assert (boolCounter is not None)
     decision = True
-    for idx, bvalue in boolArray.items():
+    for idx, bvalue in boolCounter.items():
         if bvalue == None and not NoneIgnore:
             decision = False
             break

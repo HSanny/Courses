@@ -27,14 +27,16 @@ allClients = set([])
 allServers = set([])
 
 '''Boolean Counter'''
-restartAcks = None
+global startAcks, pauseAcks
+startAcks = None
 pauseAcks = None
 
 '''Semaphores'''
+global joinClientSema, joinServerSema, startSema, pauseSema
 joinClientSema = initEmptySemaphore() 
 joinServerSema = initEmptySemaphore()
-restartSema = None 
-pauseSema = None 
+startSema = None
+pauseSema = None
 listenerSetUpSema = None
 
 def MasterListener():
@@ -55,14 +57,20 @@ def MasterListener():
         st, si, rt, ri, title, content = decode (recvMsg)
         # TODO: add the processor
         if title == JOIN_SERVER_ACK_TITLE:
+            global joinServerSema
             joinServerSema.release()
         elif title == JOIN_CLIENT_ACK_TITLE:
+            global joinClientSema
             joinClientSema.release()
         elif title == PAUSE_ACK_TITLE:
+            global pauseAcks, pauseSema
+            pauseAcks.update({si:True})
             if checkCounterAllTrue(pauseAcks):
                 pauseSema.release()
         elif title == RESTART_ACK_TITLE:
-            if checkCounterAllTrue(restartAcks):
+            global startAcks, startSema
+            startAcks.update({si:True})
+            if checkCounterAllTrue(startAcks):
                 startSema.release()
         elif title == EXIT_TITLE:
             conn.close()
@@ -154,10 +162,11 @@ def MasterProcessor():
             Pause the system and don't allow any Anti-Entropy messages to
             propagate through the system
             """
+            global pauseAcks, pauseSema
             pauseAcks = initAllFalseCounter(allServers)
             pauseSema = initEmptySemaphore()
             sampleMsg = encode(MASTER_TYPE, 0,"xx",0, PAUSE_TITLE,"")
-            broadcastServers (localhost, sampleMsg, logHeader, allServers, allClients)
+            broadcastServers (localhost, sampleMsg, logHeader, allServers)
 
             pauseSema.acquire()
         if line[0] ==  "start":
@@ -165,11 +174,12 @@ def MasterProcessor():
             Resume the system and allow any Anti-Entropy messages to
             propagate through the system
             """
-            restartAcks = initAllFalseCounter(allServers)
-            restartSema = initEmptySemaphore()
-            sampleMsg = encode(MASTER_TYPE, 0,"xx",0, RESTART_TITLE,"")
-            broadcastServers (localhost, sampleMsg, logHeader, allServers, allClients)
-            restartSema.acquire()
+            global startAcks, startSema
+            startAcks = initAllFalseCounter(allServers)
+            startSema = initEmptySemaphore()
+            sampleMsg = encode(MASTER_TYPE, 0,"xx",0, RESTART_TITLE, "")
+            broadcastServers (localhost, sampleMsg, logHeader, allServers)
+            startSema.acquire()
         if line[0] ==  "stabilize":
             """
             Block until there are enough Anti-Entropy messages for all values to 

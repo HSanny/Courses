@@ -79,7 +79,7 @@ TODO list
     - [DONE] clients initialize with knowledge only one server
     - [DONE] breakConnection and restoreConnection updates above data structure
 
-7. implement epidemic algorithm 
+7. implement update propagation
     - when node enters the system, should be brought up to date
     - update local data structure between servers
     - 

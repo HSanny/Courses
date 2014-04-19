@@ -1,6 +1,7 @@
-join 1
-startClient 2 1
+joinServer 1
+joinServer 2
+joinClient 2 1
 pause
-continue
+start
 clientDisconnect 1
 leave 1

@@ -39,6 +39,17 @@ startSema = None
 pauseSema = None
 listenerSetUpSema = None
 
+def checkConnClients(id1, id2, allServers, allServers):
+    assert id1 in allServers or id1 in allClients,\
+            "CONNECTION: id1 %d unknown." % id1
+    assert id2 in allServers or id2 in allClients,\
+            "CONNECTION: id2 %d unknown." % id2
+    isServer1 = id1 in allServers && id1 not in allClients
+    isServer2 = id2 in allServers && id2 not in allClients
+    assert isServer1 or isServer2, \
+            "CONNECTION: both id are clients."
+    return isServer1, isServer2
+
 def MasterListener():
     '''
     Hold on server socket and listen to all incoming message by infinite loop
@@ -51,28 +62,33 @@ def MasterListener():
     s.listen(5)                 # Now wait for client connection.
     while True:
         conn, addr = s.accept()     # Establish connection with client.
-        # c.send('Thank you for connecting')  # send message to client
         recvMsg = conn.recv(BUFFER_SIZE)      # receive message with BUFFER_SIZE
+
         printRecvMessage(recvMsg, logHeader)
         st, si, rt, ri, title, content = decode (recvMsg)
-        # TODO: add the processor
+
         if title == JOIN_SERVER_ACK_TITLE:
             global joinServerSema, joinServerAcks
+            joinServerAcks.update({si:True})
             if checkCounterAllTrue(joinServerAcks):
                 joinServerSema.release()
+
         elif title == JOIN_CLIENT_ACK_TITLE:
             global joinClientSema
             joinClientSema.release()
+
         elif title == PAUSE_ACK_TITLE:
             global pauseAcks, pauseSema
             pauseAcks.update({si:True})
             if checkCounterAllTrue(pauseAcks):
                 pauseSema.release()
+
         elif title == RESTART_ACK_TITLE:
             global startAcks, startSema
             startAcks.update({si:True})
             if checkCounterAllTrue(startAcks):
                 startSema.release()
+
         elif title == EXIT_TITLE:
             conn.close()
             s.close()
@@ -97,6 +113,8 @@ def MasterProcessor():
                     "JOIN: server %d already exists." % serverIdx
 
             global joinServerSema, joinServerAcks
+            joinServerAcks = initAllFalseCounter(allServers)
+            joinServerAcks.update({serverId:False})
             ## invoke new server
             args = []
             args.append(LOAD_SERVER_CMD) # main command
@@ -107,10 +125,9 @@ def MasterProcessor():
             print cmd
 
             ## notify all existing server
-            joinServerAcks = initAllFalseCounter(allServers)
             for oldServerId in allServers:
                 notifyMsg = encode(MASTER_TYPE, 0, SERVER_TYPE, oldServerId,
-                                   JOIN_SERVER_TITLE, EMPTY_CONTENT)
+                                   JOIN_SERVER_TITLE, str(serverId))
                 port = getPortByMsg(notifyMsg)
                 send(localhost, port, notifyMsg, logHeader)
 
@@ -140,10 +157,13 @@ def MasterProcessor():
             the server
             """
             assert (clientId not in allClients), \
-                    "START: Client %d already exists" % clientId
+                    "JOIN_SERVER: Client %d already exists." % clientId
+            assert (clientId not in allServers), \
+                    "JOIN_SERVER: Id %d already occupied by certain server." % clientId
+            assert (serverId not in allClients), \
+                    "JOIN_SERVER: Given Id %d is a clientId." % serverId
             assert (serverId in allServers), \
-                    "START: Server %d not exists." % serverId
-
+                    "JOIN_SERVER: Server %d not exists." % serverId
             ## invoke new client
             args = []
             args.append(LOAD_CLIENT_CMD)
@@ -168,6 +188,31 @@ def MasterProcessor():
             Break the connection between a client and a server or between
             two servers
             """
+            isServer1, isServer2 = checkConnClients(id1, id2, allServers, allClients)
+            ## Case 1: break connection between two servers
+            # remove opponent's id from its allServers 
+            if isServer1 and isServer2:
+                breakConnMsg1 = encode(MASTER_TYPE, 0, SERVER_TYPE, id1, \
+                                     BREAK_CONNECTION_TITLE, str(id2))
+                port = getPortByMsg(breakConnMsg1)
+                send(localhost, port, breakConnMsg1, logHeader)
+                breakConnMsg2 = encode(MASTER_TYPE, 0, SERVER_TYPE, id2, \
+                                     BREAK_CONNECTION_TITLE, str(id1))
+                port = getPortByMsg(breakConnMsg2)
+                send(localhost, port, breakConnMsg2, logHeader)
+
+            ## Case 2: break connection between a client and a server
+            if isServer1 and not isServer2:
+                breakConnMsg3 = encode(MASTER_TYPE, 0, CLIENT_TYPE, id2, \
+                                     BREAK_CONNECTION_TITLE, str(id1))
+                port = getPortByMsg(breakConnMsg3)
+                send(localhost, port, breakConnMsg3, logHeader)
+            if not isServer1 and isServer2:
+                breakConnMsg4 = encode(MASTER_TYPE, 0, CLIENT_TYPE, id1, \
+                                     BREAK_CONNECTION_TITLE, str(id2))
+                port = getPortByMsg(breakConnMsg4)
+                send(localhost, port, breakConnMsg4, logHeader)
+
         if line[0] ==  "restoreConnection":
             id1 = int(line[1])
             id2 = int(line[2])
@@ -175,6 +220,31 @@ def MasterProcessor():
             Restore the connection between a client and a server or between
             two servers
             """
+            isServer1, isServer2 = checkConnClients(id1, id2, allServers, allClients)
+            ## Case 1: restore connection between two servers
+            if isServer1 and isServer2:
+                restoreConnMsg1 = encode(MASTER_TYPE, 0, SERVER_TYPE, id1, \
+                                     RESTORE_CONNECTION_TITLE, str(id2))
+                port = getPortByMsg(restoreConnMsg1)
+                send(localhost, port, breakConnMsg1, logHeader)
+                restoreConnMsg2 = encode(MASTER_TYPE, 0, SERVER_TYPE, id2, \
+                                     RESTORE_CONNECTION_TITLE, str(id1))
+                port = getPortByMsg(restoreConnMsg2)
+                send(localhost, port, restoreConnMsg2, logHeader)
+
+           
+            ## Case 2: restore connection between a client and a server
+            if isServer1 and not isServer2:
+                restoreConnMsg3 = encode(MASTER_TYPE, 0, CLIENT_TYPE, id2, \
+                                     RESTORE_CONNECTION_TITLE, str(id1))
+                port = getPortByMsg(restoreConnMsg3)
+                send(localhost, port, restoreConnMsg3, logHeader)
+            if not isServer1 and isServer2:
+                restoreConnMsg4 = encode(MASTER_TYPE, 0, CLIENT_TYPE, id1, \
+                                     RESTORE_CONNECTION_TITLE, str(id2))
+                port = getPortByMsg(restoreConnMsg4)
+                send(localhost, port, restoreConnMsg4, logHeader)
+
         if line[0] ==  "pause":
             """
             Pause the system and don't allow any Anti-Entropy messages to
@@ -185,8 +255,8 @@ def MasterProcessor():
             pauseSema = initEmptySemaphore()
             sampleMsg = encode(MASTER_TYPE, 0,"xx",0, PAUSE_TITLE,"")
             broadcastServers (localhost, sampleMsg, logHeader, allServers)
-
             pauseSema.acquire()
+
         if line[0] ==  "start":
             """
             Resume the system and allow any Anti-Entropy messages to
@@ -198,6 +268,7 @@ def MasterProcessor():
             sampleMsg = encode(MASTER_TYPE, 0,"xx",0, RESTART_TITLE, "")
             broadcastServers (localhost, sampleMsg, logHeader, allServers)
             startSema.acquire()
+
         if line[0] ==  "stabilize":
             """
             Block until there are enough Anti-Entropy messages for all values to 
@@ -211,6 +282,7 @@ def MasterProcessor():
             Print out a server's operation log in the format specified in the
             handout.
             """
+
         if line[0] ==  "put":
             clientId = int(line[1])
             songName = line[2]

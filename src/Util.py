@@ -174,15 +174,14 @@ def initEmptySemaphore ():
 def set2str (inSet):
     if len(inSet) == 0:
         return 'None'
-    outString = ','.join(inSet)
+    outString = ",".join(str(x) for x in inSet)
     return outString
 
 def str2set (inString):
-    if inString == 'None':
-        return []
+    if inString == 'None' or len(inString) == 0:
+        return set([])
     outSet = set([int(x) for x in inString.split(",")])
     return outSet
-
 
 def args2cmd (args):
     cmd = ""

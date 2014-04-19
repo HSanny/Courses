@@ -51,7 +51,25 @@ def main(argv):
         printRecvMessage(recvMsg, logHeader)
 
         '''Processing incoming messages'''
-        if title == PAUSE_TITLE:
+        if title == JOIN_SERVER_TITLE:
+            newServerId = int(content)
+            allServers.add(newServerId)
+            ackMsg = encode(SERVER_TYPE, serverID, MASTER_TYPE, 0, \
+                           JOIN_SERVER_ACK_TITLE, str(newServerId))
+            send(localhost, MASTER_PORT, ackMsg, logHeader)
+        elif title == BREAK_CONNECTION_TITLE:
+            toBreakServerId = int(content)
+            assert (toBreakServerId in allServers)
+            allServers.remove(toBreakServerId)
+            ## TODO: send ack stuff?
+            
+        elif title == RESTORE_CONNECTION_TITLE:
+            toRestoreServerId = int(content)
+            assert (toRestoreServerId not in allServers)
+            allServers.add(toRestoreServerId)
+            ## TODO: send ack stuff??
+
+        elif title == PAUSE_TITLE:
             ## switch the pause indicator
             pause = True
             ## send pause acknowledgement to master

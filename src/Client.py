@@ -50,6 +50,18 @@ def main(argv):
         # TODO: process incoming message
         if title == '':
             pass
+        elif title == BREAK_CONNECTION_TITLE:
+            toBreakServerId = int(content)
+            assert (serverToConnect == toBreakServerId)
+            serverToConnect = None
+            ## TODO: send ack stuff?
+
+        elif title == RESTORE_CONNECTION_TITLE:
+            toRestoreServerId = int(content)
+            assert (serverToConnect is None)
+            serverToConnect = toRestoreServerId
+            ## TODO: send ack stuff?
+
         elif title == EXIT_TITLE:
             conn.close() 
             s.close()

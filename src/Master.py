@@ -95,6 +95,11 @@ def MasterListener():
             if checkCounterAllTrue(startAcks):
                 startSema.release()
 
+        elif title == PRINT_LOG_RESPONSE_TITLE:
+            recvLogs = content.split(LOG_SEP)
+            for plog in recvLogs:
+                print plog
+
         elif title == PUT_ACK_TITLE:
             global putSema
             putSema.release()
@@ -341,6 +346,7 @@ def MasterProcessor():
             port = getPortByMsg(getRequestMsg)
             send(localhost, port, getRequestMsg, logHeader)
             getSema.acquire()
+
         if line[0] ==  "delete":
             clientId = int(line[1])
             songName = line[2]

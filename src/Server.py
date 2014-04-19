@@ -67,10 +67,12 @@ def main(argv):
 
         elif title == PRINT_LOG_TITLE:
             assert (st == MASTER_TYPE)
-            ## TODO: deal with logstring
-            logString = ""
+            ## generate logstr
+            logstr = localLogs.join(LOG_SEP)
+
+            ## send print log response back to master
             logMsg = encode(SERVER_TYPE, serverID, st, si, \
-                           PRINT_LOG_TITLE, logHeader)
+                           PRINT_LOG_RESPONSE_TITLE, logstr)
             send(localhost, MASTER_PORT, logMsg, logString)
 
         elif title == BREAK_CONNECTION_TITLE:

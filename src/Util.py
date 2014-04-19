@@ -97,6 +97,20 @@ def send (host, port, message, Header):
     s.close()
     return True
 
+def broadcastServers (host, sampleMsg, Header, allServers):
+    '''
+    API: broadcast message with $title$ to all given servers 
+    with empty content
+    '''
+    st, si, _, _, title, content = decode (sampleMsg)
+
+    #print allServers
+    for serverIdx in allServers:
+        msg = encode (st, si, SERVER_TYPE, serverIdx, title, content)
+        port = getPortByMsg (msg)
+        send (host, port, msg, Header)
+    return True
+
 def broadcast (host, sampleMsg, Header, allServers, allClients):
     '''
     API: broadcast message with $title$ to all given servers and clients
@@ -156,4 +170,10 @@ def getPortByMsg (msg):
 def initEmptySemaphore ():
     return threading.Semaphore(0)
 
+def list2str (inList):
+    outString = ','.join(inList)
+    return outString
 
+def str2list (inString):
+    outList = [int(x) for x in inString.split(",")]
+    return outList

@@ -18,11 +18,6 @@ from Util import *
 ## TODO: static variable here
 logHeader = None
 localhost = socket.gethostname() 
-serverID = None
-
-send = send
-encode = encode
-decode = decode
 
 def main(argv):
     '''
@@ -32,12 +27,13 @@ def main(argv):
     assert len(argv) >= 1, "SERVER: too less arguments"
     serverID = int(argv[0])
     logHeader = SERVER_LOG_HEADER % serverID
+    pause = False
+
     ## construct server socket
     s = socket.socket()         
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     port = SERVER_PORT_BASE + serverID
     s.bind((localhost, port))        
-    #print "socket cannot be established"
     ## send back acknowledgement
     ackMsg = encode (SERVER_TYPE, serverID, MASTER_TYPE, 0,\
                       JOIN_SERVER_ACK_TITLE, EMPTY_CONTENT)
@@ -47,11 +43,34 @@ def main(argv):
     while True:
         conn, addr = s.accept()     
         recvMsg = conn.recv(BUFFER_SIZE)
+
+        '''Incoming message preprocessing'''
         st, si, rt, ri, title, content = decode(recvMsg)
         printRecvMessage(recvMsg, logHeader)
-        # TODO: process incoming message
-        if title == '':
-            pass
+
+        '''Processing incoming messages'''
+        if title == PAUSE_TITLE:
+            ## switch the pause indicator
+            pause = True
+            ## send pause acknowledgement to master
+            pausAckMsg = encode(SERVER_TYPE, serverID, MASTER_TYPE, 0, \
+                                 PAUSE_ACK_TITLE, EMPTY_CONTENT)
+            send (localhost, MASTER_PORT, pausAckMsg, logHeader)
+            ## TODO: other mechanism to pause the system
+            #  - cache the following incoming messages
+            #  - cache the following anti-entroy messages
+
+        elif title == RESTART_TITLE:
+            ## switch the pause indicator
+            pause = False
+            ## send restart acknowledgement to master
+            restartAckMsg = encode(SERVER_TYPE, serverID, MASTER_TYPE, 0 ,\
+                                  RESTART_ACK_TITLE, EMPTY_CONTENT)
+            send(localhost, MASTER_PORT, restartAckMsg, logHeader)
+            ## TODO: other mechanism to restart the system
+            #  - cache the following incoming messages
+            #  - cache the following anti-entroy messages
+
         elif title == JOIN_CLIENT_ACK_TITLE:
             deliverAckMsg = encode (SERVER_TYPE, serverID, \
                MASTER_TYPE, 0, JOIN_CLIENT_ACK_TITLE, EMPTY_CONTENT)

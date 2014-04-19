@@ -48,22 +48,49 @@ Protocol Design
 
 TODO list
 --------------
-1. [DONE] implement joinServer and joinClient
+1. [DONE] naively implement joinServer and joinClient
     - invoke process for server and client
     - establish listener for server and client
     - send ack back to master
 
 2. [DONE] implement logging for server and client
     - write new macro function
+    - use uncached file object to log the errors
 
 3. [DONE] make system terminated by itself
+    - broadcast EXIT message to all servers and clients
+    - send EXIT message to master's listener thread
 
 4. implement put, get and delete
     - local data structure for client and server
+
+5. implement pause and resume
+    - send message to all servers
+    - when received, send acks?
+    - use indicator to denote the working status
+    - catogorize messages that are anti-entropy related 
+    - disable these messages if switched off
+
+6. Connection Mechanism:
+    - servers initialize with all other servers, and no clients
+    - clients initialize with only one server
+    - breakConnection and restoreConnection updates above data structure
+
+
+6.  when node enters the system, should be brought up to date
+    - 
+
+7. implement retirement protocol: when a node leaves system
+    - 
+    - 
+
+8. 
 
 Problems
 ---------------
 
 Implementation Details
 ---------------
+
+
 

@@ -196,3 +196,10 @@ def bool2str (bvalue):
         return "TRUE"
     elif not bvalue:
         return "FALSE"
+
+def initVersionVector ():
+    return dict()
+
+
+def initWriteLogs ():
+    return list([])

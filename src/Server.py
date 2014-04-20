@@ -26,11 +26,14 @@ def main(argv):
     assert len(argv) >= 2, "SERVER: too less arguments"
 
     ## initialize static variables
+    pause = False
     serverID = int(argv[0])
     allServers = str2set(argv[1])
     logHeader = SERVER_LOG_HEADER % serverID
-    localLogs = {}
-    pause = False
+    writeLogs = initWriteLogs()
+    versionVector = initVersionVector()
+    accept_stamp = 0
+    
 
     ## construct server socket
     s = socket.socket()         
@@ -63,12 +66,13 @@ def main(argv):
             deliverAckMsg = encode (SERVER_TYPE, serverID, \
                MASTER_TYPE, 0, JOIN_CLIENT_ACK_TITLE, EMPTY_CONTENT)
             port = getPortByMsg(deliverAckMsg)
-            send (localhost, port, deliverAckMsg, logHeader)
+            send(localhost, port, deliverAckMsg, logHeader)
 
         elif title == PRINT_LOG_TITLE:
             assert (st == MASTER_TYPE)
             ## generate logstr
-            logstr = localLogs.join(LOG_SEP)
+            opLogs = [oplog for (_, _, opLogs) in writeLogs]
+            logstr = writeLogs.join(LOG_SEP)
 
             ## send print log response back to master
             logMsg = encode(SERVER_TYPE, serverID, st, si, \
@@ -113,7 +117,8 @@ def main(argv):
             ## update locallog
             [sn, URL] = content.split(SU_SEP)
             putlog = LOG_FORMAT % (PUT, OP_VALUE % (sn, URL), bool2str(False))
-            localLogs.append(putlog)
+            writeLogs.append((accept_stamp, serverID, putlog))
+            accept_stamp += 1
             ## update local datastore
             localData.update({sn:URL})
             ## send ack back
@@ -135,7 +140,8 @@ def main(argv):
             ## update locallog
             sn = content
             deletelog = LOG_FORMAT % (PUT, sn, bool2str(False))
-            localLogs.append(deletelog)
+            writeLogs.append((accept_stamp, serverID, deletelog))
+            accept_stamp += 1
             ## update local datastore
             localData.pop(sn, None)
             ## send ack back

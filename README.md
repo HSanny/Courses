@@ -37,8 +37,6 @@ Here we provide brief introduction to the java files in the src/ directory.
 Protocol Design
 ----------------
 
-####Message Format: 
-
 	SENDER_TYPE 
 	SENDER_INDEX
 	RECEIVER_TYPE
@@ -79,13 +77,21 @@ TODO list
     - [DONE] clients initialize with knowledge only one server
     - [DONE] breakConnection and restoreConnection updates above data structure
 
-7. implement update propagation
-    - when node enters the system, should be brought up to date
-    - update local data structure between servers
+7. implement update propagation: 
+    - anti-entropy routine (see pseudo-code at FUP Figure 2 or 3.) 
     - 
 
-8. implement retirement protocol: when a node leaves system
+8. implement stabilization process: see FUP 3.1
+    - update the stabilization 
+
+9. implement creation protocol: see paper FUP 4.3
+    - when node enters the system, should be brought up to date
     - 
+
+10. implement retirement protocol: see paper FUP 4.3
+    - initialize accept-stamp 
+    - initialize local logs 
+    - initialize version vector (use counter by util function)
     - 
 
 

@@ -1,1 +1,4 @@
-cat tests/simpleTest.test | $(cat COMMAND)
+#!/bin/bash
+if [ $# -gt 1 ] && [ "$1" = "-t" ]; then
+    cat $2 | $(cat COMMAND)
+fi

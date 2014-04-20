@@ -78,8 +78,8 @@ TODO list
     - [DONE] breakConnection and restoreConnection updates above data structure
 
 7. implement update propagation: 
-    - anti-entropy routine (see pseudo-code at FUP Figure 2 or 3.) 
-    - 
+    - [DONE] anti-entropy routine (see pseudo-code at FUP Figure 2 or 3.) 
+    - how to trigger anti-entropy routine?
 
 8. implement stabilization process: see FUP 3.1
     - update the stabilization 

@@ -156,6 +156,15 @@ def initAllFalseCounter (allIndex):
         counter.update({index:False})
     return counter
 
+def initVersionVector ():
+    return dict()
+
+def initWriteLogs ():
+    return list([])
+
+def initEmptySemaphore ():
+    return threading.Semaphore(0)
+
 def getPortByMsg (msg):
     _, _, receiver_type, receiver_idx, _, _ = decode(msg)
     [base, port] = [-1, -1]
@@ -167,9 +176,6 @@ def getPortByMsg (msg):
         base = CLIENT_PORT_BASE
     port = base + receiver_idx
     return port
-
-def initEmptySemaphore ():
-    return threading.Semaphore(0)
 
 def set2str (inSet):
     if len(inSet) == 0:
@@ -197,9 +203,10 @@ def bool2str (bvalue):
     elif not bvalue:
         return "FALSE"
 
-def initVersionVector ():
-    return dict()
+def vv2str (versionVector):
+    return str(versionVector)
 
 
-def initWriteLogs ():
-    return list([])
+def str2vv (vvStr):
+    return eval(vvStr)
+

@@ -19,6 +19,27 @@ from Util import *
 logHeader = None
 localhost = socket.gethostname() 
 
+def anti_entropy (Senderid, Reiceiverid):
+    ## send request to ask for receiver's version vector
+    vvRequestMsg = encode(SERVER_TYPE, Senderid, SERVER_TYPE, \
+                Reiceiverid, VERSION_VECTOR_REQUEST_TITLE, EMPTY_CONTENT)
+    port = getPortByMsg(vvRequestMsg)
+    send(localhost, port, vvRequestMsg, logHeader)
+    ## block until response
+    global vvResponseSema, vvResponseContent
+    vvResponseSema = initEmpty
+    vvResponseSema.acquire()
+    RVersionVector = str2vv(vvResponseContent)
+    ## for every write-log of Sender
+    for accept_stamp, sid, oplog in writeLogs:
+        wStr = W_FORMAT % (accept_stamp, sid, oplog)
+        if RVersionVector.get(sid) < accept_stamp:
+            # this oplog is new for Receiver
+            # send write to receiver
+            sendWriteMsg = encode(SERVER_TYPE, Senderid, SERVER_TYPE, \
+                   Reiceiverid, SEND_WRITE_TITLE, wStr)
+            send(localhost, port, sendWriteMsg, logHeader)
+
 def main(argv):
     '''
     Main function of server
@@ -33,7 +54,6 @@ def main(argv):
     writeLogs = initWriteLogs()
     versionVector = initVersionVector()
     accept_stamp = 0
-    
 
     ## construct server socket
     s = socket.socket()         
@@ -149,6 +169,32 @@ def main(argv):
                                   EMPTY_CONTENT)
             port = getPortByMsg(deleteAckMsg)
             send(localhost, port, deleteAckMsg, logHeader)
+
+        elif title == VERSION_VECTOR_REQUEST_TITLE:
+            ## convert version vector to string
+            vvstr = vv2str(versionVector)
+            vvMsg = encode(SERVER_TYPE, serverID, st, si, \
+                           VERSION_VECTOR_RESPONSE_TITLE, vvstr)
+            port = getPortByMsg(vvMsg)
+            send(localhost, port, vvMsg, logHeader)
+
+        elif title == VERSION_VECTOR_REQUEST_TITLE:
+            vvstr = vv2str(versionVector)
+            send(rt, ri, st, si, VERSION_VECTOR_RESPONSE_TITLE, vvstr)
+
+        elif title == VERSION_VECTOR_RESPONSE_TITLE:
+            ## sema up
+            global vvResponseSema, vvResponseContent
+            vvResponseContent = content
+            vvResponseSema.release()
+
+        elif title == SEND_WRITE_TITLE:
+            ## decode the content
+            [accept_stamp, sid, oplog] = content.split(W_SEP)
+            w = (int(accept_stamp), int(sid), oplog)
+            ## update the local write-logs
+            writeLogs.append(w)
+            ## TODO: apply update on local data 
 
         elif title == EXIT_TITLE:
             conn.close() 

@@ -195,6 +195,13 @@ def main(argv):
             ## update the local write-logs
             writeLogs.append(w)
             ## TODO: apply update on local data 
+            [op_type, op_value, stable_bool] = oplog.split(OPLOG_SEP)
+            if op_type == PUT:
+                [sn, URL] = op_value.strip("()").split(OP_VALUE_SEP)
+                localData.update({sn:URL})
+            elif op_type == DELETE:
+                sn = op_value.strip("()")
+                localData.pop(sn, None)
 
         elif title == EXIT_TITLE:
             conn.close() 

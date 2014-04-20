@@ -32,12 +32,14 @@ TITLE_IDX = 4;
 CONTENT_IDX = 5;
 
 # MESSAGE FORMAT
-MESSAGE_SEP = ",";
+MESSAGE_SEP = "<,>";
 MESSAGE = "%s" + MESSAGE_SEP + "%d" + MESSAGE_SEP +"%s" + MESSAGE_SEP \
         +"%d" + MESSAGE_SEP +"%s" + MESSAGE_SEP +"%s";
 
-LOG_FORMAT = "%s:(%s):%s" # OP_TYPE:OP_VALUE:STABLE_BOOL
-OP_VALUE_FORMAT = "%s, %s" # songName, URL
+OPLOG_SEP = ":"
+OPLOG_FORMAT = "%s:(%s):%s" # OP_TYPE:OP_VALUE:STABLE_BOOL
+OP_VALUE_SEP = ","
+OP_VALUE_FORMAT = "%s" + OP_VALUE_SEP + " %s" # songName, URL
 GET_FORMAT = "%s:%s"
 
 SU_SEP = ":" # songName and URL

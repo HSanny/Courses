@@ -20,6 +20,9 @@ logHeader = None
 localhost = socket.gethostname() 
 
 def anti_entropy (Senderid, Reiceiverid):
+    ''' 
+    Anti_entropy algorithm by fig. 1 of FUG paper
+    '''
     ## send request to ask for receiver's version vector
     vvRequestMsg = encode(SERVER_TYPE, Senderid, SERVER_TYPE, \
                 Reiceiverid, VERSION_VECTOR_REQUEST_TITLE, EMPTY_CONTENT)
@@ -197,7 +200,10 @@ def main(argv):
         elif title == SEND_WRITE_TITLE:
             ## decode the content
             [accept_stamp, sid, oplog] = content.split(W_SEP)
-            w = (int(accept_stamp), int(sid), oplog)
+            [accept_stamp, sid, oplog] = [int(accept_stamp), int(sid), oplog]
+            assert accept_stamp > versionVector.get(sid), \
+                    "SEND_WRITE: got a known update"
+            w = (accept_stamp, sid, oplog)
             ## update the local write-logs
             writeLogs.append(w)
             ## apply update on local data 

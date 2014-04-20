@@ -69,7 +69,7 @@ TODO list
     - [DONE] send message to all servers
     - [DONE] when received, send acks?
     - [DONE] use indicator to denote the working status
-    - catogorize messages that are anti-entropy related 
+    - [DONE] catogorize messages that are anti-entropy related 
     - [DONE] cached these messages if switched off
     - [DONE] prioritize the cached message if system is non-paused
 
@@ -87,12 +87,11 @@ TODO list
 
 9. implement creation protocol: see paper FUP 4.3
     - when node enters the system, should be brought up to date
-    - 
+    - [DONE] initialize accept-stamp 
+    - [DONE] initialize local logs 
+    - [DONE] initialize version vector (use counter by util function)
 
 10. implement retirement protocol: see paper FUP 4.3
-    - initialize accept-stamp 
-    - initialize local logs 
-    - initialize version vector (use counter by util function)
     - 
 
 

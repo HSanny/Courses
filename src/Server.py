@@ -79,7 +79,7 @@ def main(argv):
         '''Incoming message preprocessing'''
         st, si, rt, ri, title, content = decode(recvMsg)
 
-        if pause and title != RESTART_TITLE:
+        if pause and title in ANTI_ENTROPY_TITLES:
             printCachedMessage(recvMsg, False)
             cachedMessages.append(recvMsg)
 
@@ -142,9 +142,6 @@ def main(argv):
             restartAckMsg = encode(SERVER_TYPE, serverID, MASTER_TYPE, 0 ,\
                                   RESTART_ACK_TITLE, EMPTY_CONTENT)
             send(localhost, MASTER_PORT, restartAckMsg, logHeader)
-            ## TODO: other mechanism to restart the system
-            #  - cache the following incoming messages
-            #  - cache the following anti-entropy messages
 
         elif title == PUT_REQUEST_TITLE:
             ## update locallog
@@ -191,10 +188,6 @@ def main(argv):
             port = getPortByMsg(vvMsg)
             send(localhost, port, vvMsg, logHeader)
 
-        elif title == VERSION_VECTOR_REQUEST_TITLE:
-            vvstr = vv2str(versionVector)
-            send(rt, ri, st, si, VERSION_VECTOR_RESPONSE_TITLE, vvstr)
-
         elif title == VERSION_VECTOR_RESPONSE_TITLE:
             ## sema up
             global vvResponseSema, vvResponseContent
@@ -207,7 +200,7 @@ def main(argv):
             w = (int(accept_stamp), int(sid), oplog)
             ## update the local write-logs
             writeLogs.append(w)
-            ## TODO: apply update on local data 
+            ## apply update on local data 
             [op_type, op_value, stable_bool] = oplog.split(OPLOG_SEP)
             if op_type == PUT:
                 [sn, URL] = op_value.strip("()").split(OP_VALUE_SEP)

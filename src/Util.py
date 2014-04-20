@@ -86,6 +86,27 @@ def printRecvMessage (recvMessage, logHeader):
         print string
     return 
 
+def printCachedMessage (recvMessage, logHeader, cached=False):
+    '''
+    API: send message
+    '''
+    if printSwitch:
+        components = recvMessage.split(MESSAGE_SEP)
+        sender_type = components[SENDER_TYPE_IDX];
+        sender_index = components[SENDER_INDEX_IDX];
+        title = components[TITLE_IDX];
+        content = components[CONTENT_IDX];
+
+        string = "";
+        if cached:
+            string += logHeader + ">> Cached *" + title + "* from ";
+        else:
+            string += logHeader + ">> Uncached *" + title + "* from ";
+        string += "{" + sender_type + " #" + sender_index + "}: ";
+        string += content
+        print string
+    return 
+
 def send (host, port, message, Header):
     '''
     API: send message
@@ -156,6 +177,18 @@ def initAllFalseCounter (allIndex):
         counter.update({index:False})
     return counter
 
+def initVersionVector ():
+    return dict()
+
+def initWriteLogs ():
+    return list([])
+
+def initCachedMessages():
+    return list([])
+
+def initEmptySemaphore ():
+    return threading.Semaphore(0)
+
 def getPortByMsg (msg):
     _, _, receiver_type, receiver_idx, _, _ = decode(msg)
     [base, port] = [-1, -1]
@@ -167,9 +200,6 @@ def getPortByMsg (msg):
         base = CLIENT_PORT_BASE
     port = base + receiver_idx
     return port
-
-def initEmptySemaphore ():
-    return threading.Semaphore(0)
 
 def set2str (inSet):
     if len(inSet) == 0:
@@ -196,3 +226,10 @@ def bool2str (bvalue):
         return "TRUE"
     elif not bvalue:
         return "FALSE"
+
+def vv2str (versionVector):
+    return str(versionVector)
+
+def str2vv (vvStr):
+    return eval(vvStr)
+

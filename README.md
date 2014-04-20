@@ -37,8 +37,6 @@ Here we provide brief introduction to the java files in the src/ directory.
 Protocol Design
 ----------------
 
-####Message Format: 
-
 	SENDER_TYPE 
 	SENDER_INDEX
 	RECEIVER_TYPE
@@ -71,21 +69,37 @@ TODO list
     - [DONE] send message to all servers
     - [DONE] when received, send acks?
     - [DONE] use indicator to denote the working status
-    - catogorize messages that are anti-entropy related 
-    - disable these messages if switched off
+    - [DONE] catogorize messages that are anti-entropy related 
+    - [DONE] cached these messages if switched off
+    - [DONE] prioritize the cached message if system is non-paused
 
 6. [DONE] Connection Mechanism:
     - [DONE] servers initialize with knowledge all other servers, and no clients
     - [DONE] clients initialize with knowledge only one server
     - [DONE] breakConnection and restoreConnection updates above data structure
 
-7. implement update propagation
-    - when node enters the system, should be brought up to date
-    - update local data structure between servers
-    - 
+7. implement update propagation: 
+    - [DONE] anti-entropy routine (see pseudo-code at FUP Figure 2 or 3.) 
 
-8. implement retirement protocol: when a node leaves system
-    - 
+    - how to trigger anti-entropy routine in practice? Paper says that the
+      trigger is chosen at random. Also there is a logical reconcilation ring
+      solution. It seems that the latter is more appropriate.
+
+8. implement stabilization process: see FUP 3.1
+    - stabilize the system
+    - trigger anti-entropy algorithm
+    - evaluate if system is stable
+    - resend ack to master if stable
+
+9. implement creation protocol: see paper FUP 4.3
+    - when node enters the system, should be brought up to date, maybe talk to
+      every existing servers and anti-entropy with them
+    - [DONE] initialize accept-stamp 
+    - [DONE] initialize local logs 
+    - [DONE] initialize version vector (use counter by util function)
+    - [DONE] notify existing server to add a count in version vector
+
+10. implement retirement protocol: see paper FUP 4.3
     - 
 
 
@@ -96,4 +110,15 @@ Implementation Details
 ---------------
 
 
+References
+---------------
+[1] K. Petersen, M. J. Spreitzer, D. B. Terry, M. M. Theimer and A. J. Demers. 
+Flexible Update Propagation for Weakly Consistent Replication
 
+[2] D. B. Terry, M. M. Theimer, K. Petersen, A. J. Demers, M. J. Spreitzer and
+C. H. Hauser. Managing Update Conflicts in Bayou, a Weakly Connected Replicated Storage
+Syste
+
+[3] A. Demers, D. Greene, C. Hauser, W. Irish, 
+J. Larson, S. Shenker, H. Sturgis, D. Swinehart, and D. Terry. Epidemic
+algorithms for replicated database maintenance.

@@ -67,11 +67,22 @@ def main(argv):
 
     s.listen(5)
     while True:
-        conn, addr = s.accept()     
-        recvMsg = conn.recv(BUFFER_SIZE)
+        global cachedMessages
+        ## prioritize uncached message if system is non-paused
+        if not pause and cachedMessages.size() > 0:
+            ## uncached the cached messages
+            recvMsg = cachedMessages.pop(0)
+        else:
+            conn, addr = s.accept()     
+            recvMsg = conn.recv(BUFFER_SIZE)
 
         '''Incoming message preprocessing'''
         st, si, rt, ri, title, content = decode(recvMsg)
+
+        if pause and title != RESTART_TITLE:
+            printCachedMessage(recvMsg, False)
+            cachedMessages.append(recvMsg)
+
         printRecvMessage(recvMsg, logHeader)
 
         '''Processing incoming messages'''
@@ -113,17 +124,19 @@ def main(argv):
 
         elif title == PAUSE_TITLE:
             ## switch the pause indicator
+            assert not pause, "PAUSE: Cannot pause a paused system."
             pause = True
+            ##  cache the following incoming messages
+            global cachedMessages
+            cachedMessages = initCachedMessages
             ## send pause acknowledgement to master
             pauseAckMsg = encode(SERVER_TYPE, serverID, MASTER_TYPE, 0, \
                                  PAUSE_ACK_TITLE, EMPTY_CONTENT)
             send (localhost, MASTER_PORT, pauseAckMsg, logHeader)
-            ## TODO: other mechanism to pause the system
-            #  - cache the following incoming messages
-            #  - cache the following anti-entroy messages
 
         elif title == RESTART_TITLE:
             ## switch the pause indicator
+            assert pause, "START: Cannot restart a non-paused system."
             pause = False
             ## send restart acknowledgement to master
             restartAckMsg = encode(SERVER_TYPE, serverID, MASTER_TYPE, 0 ,\
@@ -131,7 +144,7 @@ def main(argv):
             send(localhost, MASTER_PORT, restartAckMsg, logHeader)
             ## TODO: other mechanism to restart the system
             #  - cache the following incoming messages
-            #  - cache the following anti-entroy messages
+            #  - cache the following anti-entropy messages
 
         elif title == PUT_REQUEST_TITLE:
             ## update locallog

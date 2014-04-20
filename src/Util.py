@@ -86,6 +86,27 @@ def printRecvMessage (recvMessage, logHeader):
         print string
     return 
 
+def printCachedMessage (recvMessage, logHeader, cached=False):
+    '''
+    API: send message
+    '''
+    if printSwitch:
+        components = recvMessage.split(MESSAGE_SEP)
+        sender_type = components[SENDER_TYPE_IDX];
+        sender_index = components[SENDER_INDEX_IDX];
+        title = components[TITLE_IDX];
+        content = components[CONTENT_IDX];
+
+        string = "";
+        if cached:
+            string += logHeader + ">> Cached *" + title + "* from ";
+        else:
+            string += logHeader + ">> Uncached *" + title + "* from ";
+        string += "{" + sender_type + " #" + sender_index + "}: ";
+        string += content
+        print string
+    return 
+
 def send (host, port, message, Header):
     '''
     API: send message
@@ -162,6 +183,9 @@ def initVersionVector ():
 def initWriteLogs ():
     return list([])
 
+def initCachedMessages():
+    return list([])
+
 def initEmptySemaphore ():
     return threading.Semaphore(0)
 
@@ -205,7 +229,6 @@ def bool2str (bvalue):
 
 def vv2str (versionVector):
     return str(versionVector)
-
 
 def str2vv (vvStr):
     return eval(vvStr)

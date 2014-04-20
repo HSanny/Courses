@@ -70,7 +70,8 @@ TODO list
     - [DONE] when received, send acks?
     - [DONE] use indicator to denote the working status
     - catogorize messages that are anti-entropy related 
-    - disable these messages if switched off
+    - [DONE] cached these messages if switched off
+    - [DONE] prioritize the cached message if system is non-paused
 
 6. [DONE] Connection Mechanism:
     - [DONE] servers initialize with knowledge all other servers, and no clients

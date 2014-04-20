@@ -1,9 +1,9 @@
 ############################################################
-##    FILENAME:   Server.py    
-##    VERSION:    1.0
+##    FILENAME:   Server.py 
+##    VERSION:    1.4
 ##    SINCE:      2014-04-15
 ##    AUTHOR: 
-##        Jimmy Lin (xl5224) - JimmyLin@utexas.edu  
+##        Jimmy Lin (xl5224) - JimmyLin@utexas.edu
 ##
 ############################################################
 ##    Edited by MacVim
@@ -57,6 +57,8 @@ def main(argv):
     writeLogs = initWriteLogs()
     versionVector = initVersionVector()
     accept_stamp = 0
+    global cachedMessages
+    cachedMessages = []
 
     ## construct server socket
     s = socket.socket()         
@@ -64,15 +66,14 @@ def main(argv):
     port = SERVER_PORT_BASE + serverID
     s.bind((localhost, port))        
     ## send back acknowledgement
-    ackMsg = encode (SERVER_TYPE, serverID, MASTER_TYPE, 0,\
+    ackMsg = encode(SERVER_TYPE, serverID, MASTER_TYPE, 0,\
                       JOIN_SERVER_ACK_TITLE, EMPTY_CONTENT)
-    send (localhost, MASTER_PORT, ackMsg, logHeader)
+    send(localhost, MASTER_PORT, ackMsg, logHeader)
 
     s.listen(5)
     while True:
-        global cachedMessages
         ## prioritize uncached message if system is non-paused
-        if not pause and cachedMessages.size() > 0:
+        if not pause and len(cachedMessages) > 0:
             ## uncached the cached messages
             recvMsg = cachedMessages.pop(0)
         else:
@@ -92,10 +93,19 @@ def main(argv):
         if title == JOIN_SERVER_TITLE:
             newServerId = int(content)
             allServers.add(newServerId)
+            versionVector.update({newServerId:0})
             ackMsg = encode(SERVER_TYPE, serverID, MASTER_TYPE, 0, \
                            JOIN_SERVER_ACK_TITLE, str(newServerId))
             send(localhost, MASTER_PORT, ackMsg, logHeader)
 
+        elif title == RETIRE_SERVER_TITLE:
+            ## STEP ONE: exchange local log to at least one server it knows
+
+            ## STEP TWO: notify all servers to forget it
+
+            ## STEP THREE: lots of close
+
+            pass
         elif title == JOIN_CLIENT_ACK_TITLE:
             deliverAckMsg = encode (SERVER_TYPE, serverID, \
                MASTER_TYPE, 0, JOIN_CLIENT_ACK_TITLE, EMPTY_CONTENT)
@@ -117,12 +127,21 @@ def main(argv):
             toBreakServerId = int(content)
             assert (toBreakServerId in allServers)
             allServers.remove(toBreakServerId)
+            ## remove that toBreakServerId from its version vector
+            assert versionVector.pop(toBreakServerId, None) is not None, \
+                "The server to break is unknown."
+                
             ## TODO: send ack stuff?
+
             
         elif title == RESTORE_CONNECTION_TITLE:
             toRestoreServerId = int(content)
             assert (toRestoreServerId not in allServers)
             allServers.add(toRestoreServerId)
+            ## add toRestoreServerId to versionVector
+            versionVector.update({toRestoreServerId:0}) 
+            ## trigger anti_entropy to exchange info
+            anti_entropy(serverID, toRestoreServerId)
             ## TODO: send ack stuff??
 
         elif title == PAUSE_TITLE:
@@ -130,8 +149,7 @@ def main(argv):
             assert not pause, "PAUSE: Cannot pause a paused system."
             pause = True
             ##  cache the following incoming messages
-            global cachedMessages
-            cachedMessages = initCachedMessages
+            cachedMessages = initCachedMessages()
             ## send pause acknowledgement to master
             pauseAckMsg = encode(SERVER_TYPE, serverID, MASTER_TYPE, 0, \
                                  PAUSE_ACK_TITLE, EMPTY_CONTENT)
@@ -151,6 +169,9 @@ def main(argv):
             [sn, URL] = content.split(SU_SEP)
             putlog = LOG_FORMAT % (PUT, OP_VALUE % (sn, URL), bool2str(False))
             writeLogs.append((accept_stamp, serverID, putlog))
+            ## update the version vector
+            versionVector.update({serverID:accept_stamp})
+            ## update the accept stamp
             accept_stamp += 1
             ## update local datastore
             localData.update({sn:URL})
@@ -174,6 +195,9 @@ def main(argv):
             sn = content
             deletelog = LOG_FORMAT % (PUT, sn, bool2str(False))
             writeLogs.append((accept_stamp, serverID, deletelog))
+            ## update version vector
+            versionVector.update({serverID:accept_stamp})
+            ## update the local accept stamp
             accept_stamp += 1
             ## update local datastore
             localData.pop(sn, None)

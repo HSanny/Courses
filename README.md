@@ -102,6 +102,10 @@ TODO list
 10. implement retirement protocol: see paper FUP 4.3
     - 
 
+11. implement conflict resolution: see the test
+    - we need a global timestamp to resolve the conflict
+    - 
+
 
 Problems
 ---------------

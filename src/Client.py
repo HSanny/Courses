@@ -65,7 +65,7 @@ def main(argv):
         elif title == GET_REQUEST_TITLE:
             getRequestMsg = encode(CLIENT_TYPE, clientID, SERVER_TYPE, \
                                   serverToConnect, GET_REQUEST_TITLE, content)
-            port = getPortByMsg(putRequestMsg)
+            port = getPortByMsg(getRequestMsg)
             send(localhost, port, getRequestMsg, logHeader)
 
         elif title == GET_RESPONSE_TITLE:

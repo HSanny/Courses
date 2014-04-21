@@ -106,7 +106,8 @@ def MasterListener():
 
         elif title == GET_RESPONSE_TITLE:
             global getSema
-            songName, URL = content.split(SU_SEP)
+            print content
+            [songName, URL] = content.split (SU_SEP)
             print GET_FORMAT % (songName, URL)
             getSema.release()
 

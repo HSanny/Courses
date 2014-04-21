@@ -54,8 +54,11 @@ def main(argv):
     serverID = int(argv[0])
     allServers = str2set(argv[1])
     logHeader = SERVER_LOG_HEADER % serverID
+
     writeLogs = initWriteLogs()
     versionVector = initVersionVector()
+    localData = {}
+
     accept_stamp = 0
     global cachedMessages
     cachedMessages = []
@@ -167,7 +170,7 @@ def main(argv):
         elif title == PUT_REQUEST_TITLE:
             ## update locallog
             [sn, URL] = content.split(SU_SEP)
-            putlog = LOG_FORMAT % (PUT, OP_VALUE % (sn, URL), bool2str(False))
+            putlog = OPLOG_FORMAT % (PUT, OP_VALUE_FORMAT % (sn, URL), bool2str(False))
             writeLogs.append((accept_stamp, serverID, putlog))
             ## update the version vector
             versionVector.update({serverID:accept_stamp})
@@ -180,15 +183,18 @@ def main(argv):
             port = getPortByMsg(putAckMsg)
             send(localhost, port, putAckMsg, logHeader)
 
-        elif title == GET_REQUEST_TITLE:
-            ## look up local data store
+        elif title == GET_REQUEST_TITLE: ## look up local data store
             sn = content
             response_content = localData.get(sn)
             if response_content is None:
-                response_content = ERR_KEY
+                response_content = sn + SU_SEP + ERR_KEY
+            else:
+                response_content = sn + SU_SEP + response_content
             ## send response back
             reponseMsg = encode(rt, ri, st, si, GET_RESPONSE_TITLE, \
-                                EMPTY_CONTENT)
+                                response_content)
+            port = getPortByMsg(reponseMsg)
+            send(localhost, port, reponseMsg, logHeader)
 
         elif title == DELETE_REQUEST_TITLE:
             ## update locallog

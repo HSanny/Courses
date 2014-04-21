@@ -55,7 +55,7 @@ def checkConnClients(id1, id2, servers, clients):
             "CONNECTION: both id are clients."
     return isServer1, isServer2
 
-def MasterListener():
+def MasterListener(out):
     '''
     Hold on server socket and listen to all incoming message by infinite loop
     '''
@@ -99,6 +99,7 @@ def MasterListener():
             recvLogs = content.split(LOG_SEP)
             for plog in recvLogs:
                 print plog
+                os.write(fd, plog + "\n")
 
         elif title == PUT_ACK_TITLE:
             global putSema
@@ -106,9 +107,10 @@ def MasterListener():
 
         elif title == GET_RESPONSE_TITLE:
             global getSema
-            print content
             [songName, URL] = content.split (SU_SEP)
-            print GET_FORMAT % (songName, URL)
+            toprint = GET_FORMAT % (songName, URL)
+            print toprint
+            os.write(stdout, toprint + "\n")
             getSema.release()
 
         elif title == DELETE_ACK_TITLE:
@@ -118,6 +120,7 @@ def MasterListener():
         elif title == EXIT_TITLE:
             conn.close()
             s.close()
+            print "Exit."
             return 
         else:
             pass
@@ -378,14 +381,14 @@ if __name__ == "__main__":
     # out logging file
     origin_out = sys.stdout
     origin_err = sys.stderr
-    '''
-    logFile = open(Master_LOG_FILENAME, 'w+')
+
+    logFile = open(Master_LOG_FILENAME, 'w+', 0)
     sys.stdout = logFile
     sys.stderr = logFile
-    '''
+
     # create listener thread 
     listenerSetUpSema = initEmptySemaphore()
-    listener = Thread(target=MasterListener, args=())
+    listener = Thread(target=MasterListener, args=(origin_out,))
     listener.start()
     ## block until master's listener has setup
     listenerSetUpSema.acquire()
@@ -399,4 +402,3 @@ if __name__ == "__main__":
     # sys.stdout.close()
     sys.stdout = origin_out
     sys.stderr = origin_err
-    print "Exit."

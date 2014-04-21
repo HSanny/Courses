@@ -55,7 +55,7 @@ def checkConnClients(id1, id2, servers, clients):
             "CONNECTION: both id are clients."
     return isServer1, isServer2
 
-def MasterListener(out):
+def MasterListener(stdout):
     '''
     Hold on server socket and listen to all incoming message by infinite loop
     '''
@@ -99,7 +99,7 @@ def MasterListener(out):
             recvLogs = content.split(LOG_SEP)
             for plog in recvLogs:
                 print plog
-                os.write(fd, plog + "\n")
+                os.write(stdout, plog + "\n")
 
         elif title == PUT_ACK_TITLE:
             global putSema

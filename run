@@ -1,4 +1,81 @@
 #!/bin/bash
+logsDir="logs"
+testsDir="tests/tests"
+solsDir="tests/solutions"
+resultDir="tests/results"
+
 if [ $# -gt 1 ] && [ "$1" = "-t" ]; then
-    cat $2 | $(cat COMMAND)
+    # single test, $2 input should be the path of test file
+    alltests=$2
+else 
+    # all tests by default
+    alltests=$(ls $testsDir/*.test) 
 fi
+
+# clean up all existing script
+rm -rf $logsDir/* $resultDir/*
+TIMEOUT=10
+i=-1
+for t in $alltests
+do
+    let "i += 1"
+    echo "=========================" $t "========================"
+    ## get the name of test
+    testname=${t/"$testsDir"/""}
+    testname=${testname/".test"/""}
+    echo Test Name: $testname
+    allTestNames[i]=$testname
+    
+    ## make sure there is a result file
+    touch "$logsDir"/result.txt
+    ## run that test
+    ## TODO: use TIMEOUT
+    cat $t | $(cat COMMAND)
+
+    cat "$logsDir"/result.txt > $resultDir/$testname.result
+    ## compare output with solution
+    compare=$(diff $resultDir/$testname.result $solsDir$testname.sol)
+    if [ ${#compare} -eq 0 ] ; then
+        passedOrFailed[i]=1
+        echo $testname passed.
+        echo
+        echo "Output: "
+        cat $resultDir$testname.result
+    else 
+        passedOrFailed[i]=0
+        echo $testname failed.
+        echo
+        echo "Expected Output: "
+        cat $solsDir$testname.sol
+        echo
+        echo "Your Output: "
+        cat $resultDir$testname.txt
+        echo
+        echo "Difference: "
+        echo -e "$compare"
+    fi
+    # put the file to log directory
+    mkdir -p $logsDir/$testname 
+    mv $logsDir/*.txt $logsDir/$testname/
+    echo
+    ./kill
+done
+
+## summarize the result
+echo "============================= Summary ============================="
+
+if [ "$1" = "-t" ]; then
+    allUniqueIdx=(0)
+else
+    allUniqueIdx=$(seq 0 $i)
+fi
+
+for j in $allUniqueIdx
+do
+    if [ ${passedOrFailed[j]} -eq 1 ] ; 
+    then
+        echo Passed $testsDir${allTestNames[j]}
+    else
+        echo Failed $testsDir${allTestNames[j]}
+    fi
+done

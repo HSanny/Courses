@@ -3,7 +3,9 @@ PAXOS Project
 
 ##### Contributors 
  	**Jimmy Lin** (UTEID: xl5224)  Login: jimmylin 
- 	**Calvin Szeto** (UTEID: CS37888) Login: calvins Slip days used (this project): __0 day__ Slip days used (total): __0 day__
+ 	**Calvin Szeto** (UTEID: CS37888) Login: calvins 
+    
+Slip days used (this project): __0 day__ Slip days used (total): __0 day__
 
 USAGE:
 ---------------
@@ -37,9 +39,14 @@ The output for the run of the test will also be stored in a file temp_output aft
 
 CodeBase Decription
 ------------------
-Here we provide brief introduction to the java files in the src/ directory.
+Here we provide brief introduction to the python files in the src/ directory.
 
-	Master 
+	Master.py
+    Server.py
+    Client.py
+    Protocol.py
+    Logging.py
+    Util.py
 
 Protocol Design
 ----------------

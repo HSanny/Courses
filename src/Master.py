@@ -99,7 +99,7 @@ def MasterListener(stdout):
             recvLogs = content.split(LOG_SEP)
             for plog in recvLogs:
                 print plog
-                os.write(stdout, plog + "\n")
+                os.write(stdout.fileno(), plog + "\n")
 
         elif title == PUT_ACK_TITLE:
             global putSema
@@ -110,7 +110,7 @@ def MasterListener(stdout):
             [songName, URL] = content.split (SU_SEP)
             toprint = GET_FORMAT % (songName, URL)
             print toprint
-            os.write(stdout, toprint + "\n")
+            os.write(stdout.fileno(), toprint + "\n")
             getSema.release()
 
         elif title == DELETE_ACK_TITLE:

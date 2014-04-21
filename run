@@ -22,6 +22,7 @@ do
     echo "=========================" $t "========================"
     ## get the name of test
     testname=${t/"$testsDir"/""}
+    testname=${testname/"/"/""}
     testname=${testname/".test"/""}
     echo Test Name: $testname
     allTestNames[i]=$testname
@@ -30,26 +31,26 @@ do
     touch "$logsDir"/result.txt
     ## run that test
     ## TODO: use TIMEOUT
-    cat $t | $(cat COMMAND)
+    cat $t | $(cat COMMAND) > "$logsDir"/result.txt
 
     cat "$logsDir"/result.txt > $resultDir/$testname.result
     ## compare output with solution
-    compare=$(diff $resultDir/$testname.result $solsDir$testname.sol)
+    compare=$(diff $resultDir/$testname.result $solsDir/$testname.sol)
     if [ ${#compare} -eq 0 ] ; then
         passedOrFailed[i]=1
         echo $testname passed.
         echo
         echo "Output: "
-        cat $resultDir$testname.result
+        cat $resultDir/$testname.result
     else 
         passedOrFailed[i]=0
         echo $testname failed.
         echo
         echo "Expected Output: "
-        cat $solsDir$testname.sol
+        cat $solsDir/$testname.sol
         echo
         echo "Your Output: "
-        cat $resultDir$testname.txt
+        cat $resultDir/$testname.result
         echo
         echo "Difference: "
         echo -e "$compare"

@@ -10,3 +10,4 @@ get 2 UTCS
 delete 3 UTCS
 stabilize
 printLog 0
+get 3 UTCS

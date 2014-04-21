@@ -1,6 +1,6 @@
 #!/bin/bash
 logsDir="logs"
-testsDir="tests/tests"
+testsDir="tests/instructions"
 solsDir="tests/solutions"
 resultDir="tests/results"
 
@@ -58,7 +58,7 @@ do
     mkdir -p $logsDir/$testname 
     mv $logsDir/*.txt $logsDir/$testname/
     echo
-    ./kill
+    tokill=$(./kill)
 done
 
 ## summarize the result

@@ -95,9 +95,10 @@ TODO list
 7. implement update propagation:
     - [DONE] anti-entropy routine (see pseudo-code at FUP Figure 2 or 3.)
 
-    - how to trigger anti-entropy routine in practice? Paper says that the
-      trigger is chosen at random. Also there is a logical reconcilation ring
-      solution. It seems that the latter is more appropriate.
+    - [DONE] how to trigger anti-entropy routine in practice? Paper says that the
+      trigger is chosen at random. Current implementation is to propagate the
+      update on demand; that is, exchagne information between S and R when S
+      detect R's ignorance of S's update.
     - See FUP 5.3: We use a combination of periodic reconciliation and system triggered
         reconciliation:
            On new server connection, do anti-entropy.
@@ -119,6 +120,8 @@ TODO list
       will make decision for stabilization. If stable, unblock reader thread.
       Otherwise, initiate a new round of stabilization checking. 
     - ??? initiate a new round of checking with a time interval?
+    - ??? determine the STABLE\_BOOL in the writeLog of server?
+    - ??? what is ERR\_DEP? 
 
 9. implement creation protocol: see paper FUP 4.3
     - when node enters the system, should be brought up to date, maybe talk to

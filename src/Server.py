@@ -79,7 +79,7 @@ def main(argv):
     localData = {}
 
     accept_stamp = 0
-    stableRound = 0
+    stableRound = -1
     global cachedMessages
     cachedMessages = []
 
@@ -138,13 +138,16 @@ def main(argv):
         elif title == PRINT_LOG_TITLE:
             assert (st == MASTER_TYPE)
             ## generate logstr
-            opLogs = [oplog for (_, _, opLogs) in writeLogs]
-            logstr = writeLogs.join(LOG_SEP)
+            print writeLogs
+            opLogs = [oplog for (_, _, oplog) in writeLogs]
+            print opLogs
+            logstr = LOG_SEP.join(opLogs)
+            print logstr
 
             ## send print log response back to master
-            logMsg = encode(SERVER_TYPE, serverID, st, si, \
+            logMsg = encode(SERVER_TYPE, serverID, MASTER_TYPE, 0, \
                            PRINT_LOG_RESPONSE_TITLE, logstr)
-            send(localhost, MASTER_PORT, logMsg, logString)
+            send(localhost, MASTER_PORT, logMsg, logHeader)
 
         elif title == BREAK_CONNECTION_TITLE:
             toBreakServerId = int(content)
@@ -271,6 +274,14 @@ def main(argv):
             ## stabilization check has been triggered in this server
             if int(content) == stableRound:
                 continue
+            ## if this server does not connect to any other servers
+            ## send stable decision to master
+            print allServers
+            if len(allServers) == 0:
+                decisionMsg = encode(SERVER_TYPE, serverID, MASTER_TYPE, 0,\
+                         CHECK_STABILIZATION_RESPONSE_TITLE, str(True))
+                send(localhost, MASTER_PORT, decisionMsg, logHeader)
+
             ## deliver to all servers it knows about
             for sIdx in allServers - set([si]):
                 checkMsg = encode(SERVER_TYPE, serverID, SERVER_TYPE, \

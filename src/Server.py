@@ -18,6 +18,17 @@ from Util import *
 ## TODO: static variable here
 localhost = socket.gethostname()
 
+def applyLog(localData, oplog):
+    [op_type, op_value, stable_bool] = oplog.split(OPLOG_SEP)
+    if op_type == PUT:
+        [sn, URL] = op_value.strip("()").split(OP_VALUE_SEP)
+        URL = URL.strip(" ")
+        localData.update({sn:URL})
+    elif op_type == DELETE:
+        sn = op_value.strip("()")
+        localData.pop(sn, None)
+    return
+
 def anti_entropy (Senderid, Reiceiverid):
     '''
     Anti_entropy algorithm by fig. 1 of FUG paper
@@ -90,7 +101,7 @@ def main (argv):
     pause = False
     serverID = int(argv[0])
     allServers = str2set(argv[1])
-    isPrimary = str2bool(argv[2])
+    isPrimary = (argv[2] == PRIMARY_PETITION)
     global logHeader
     logHeader = SERVER_LOG_HEADER % serverID
 
@@ -290,17 +301,36 @@ def main (argv):
             ## decode the content
             [log_stamp, sid, csn, oplog] = content.split(W_SEP)
             [log_stamp, sid, csn, oplog] = [int(log_stamp), int(sid), int(csn), oplog]
-            assert log_stamp > versionVector.get(sid), \
-                    "SEND_WRITE: got a known committed update"
+            if log_stamp > versionVector.get(sid):
+                pass
+            else:
+                continue
+                    
             # commit new write log
-            isNewCommit = isPrimary and isInf(csn)
-            if isNewCommit:
+            ## primary will commit an instable log to stable
+            isPrimaryNewCommit = isPrimary and isInf(csn)
+            if isPrimaryNewCommit:
+                ## assignment commit sequence number
                 CSN += 1
                 csn = CSN
                 ## set the STABLE_BOOL oplog
-                [op_type, op_value, stable_bool] = oplog.split(OPLOG_SEP)
-                oplog = OPLOG_FORMAT % (op_type, op_value, bool2str(True))
-            ## write 
+                setStableBool(oplog, True)
+                ## apply log to local data
+                applyLog(localData, oplog)
+
+            ## non-primary receives a commited log
+            # apply lots of update because it got a committed log
+            isNonPrimaryNewCommit = not isPrimary and not isInf(csn)
+            if isNonPrimaryNewCommit:
+                ## apply log to local data
+                applyLog(localData, oplog)
+                ## update the CSN
+                if csn > CSN:
+                    CSN = csn
+
+            ## update the version vector (this is done for all tentative write)
+            versionVector.update({sid:log_stamp})
+            ## write to log
             write = (log_stamp, sid, csn, oplog)
             ## update the local write-logs
             writeLogs.append(write)
@@ -311,22 +341,18 @@ def main (argv):
             [log_stamp, sid, csn, oplog] = [int(log_stamp), int(sid), int(csn), oplog]
             ## TODO: find the piece of log to set its STABLE_BOOL
             for l, s, c, o  in writeLogs:
-                if l == log_stamp and s = sid:
+                if l == log_stamp and s == sid:
                     writeLogs.remove((l,s,c,o))
             writeLogs.append((log_stamp, sid, csn, oplog))
+            ## update the commit sequence number
+            if csn > CSN:
+                CSN = csn
             ## apply update on local data
-            [op_type, op_value, stable_bool] = oplog.split(OPLOG_SEP)
-            if op_type == PUT:
-                [sn, URL] = op_value.strip("()").split(OP_VALUE_SEP)
-                URL = URL.strip(" ")
-                localData.update({sn:URL})
-            elif op_type == DELETE:
-                sn = op_value.strip("()")
-                localData.pop(sn, None)
+            applyLog(localData, oplog)
 
         elif title == CHECK_STABILIZATION_REQUEST_TITLE:
             ## stabilization check has been triggered in this server
-            if int(content) == stableRound:
+            if int(content) <= stableRound:
                 continue
             ## if this server does not connect to any other servers
             ## send stable decision to master

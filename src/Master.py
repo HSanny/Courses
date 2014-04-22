@@ -143,13 +143,13 @@ def MasterListener(stdout):
                 ## start a new round of testing
                 ## resend the request to all servers
                 global serversToListen, stabilizeCheckRound 
-                stabilizeCheckRound += 1
                 stabilizeAcks = initAllNoneCounter(serversToListen)
                 for cIdx in allClients:
                     checkingReqMsg = encode(MASTER_TYPE, 0, CLIENT_TYPE, cIdx, \
                         CHECK_STABILIZATION_REQUEST_TITLE, str(stabilizeCheckRound))
                     port = getPortByMsg(checkingReqMsg)
                     send(localhost, port, checkingReqMsg, logHeader)
+                stabilizeCheckRound += 1
 
         elif title == EXIT_TITLE:
             conn.close()
@@ -395,7 +395,7 @@ def MasterProcessor():
                  CHECK_STABILIZATION_REQUEST_TITLE, str(stabilizeCheckRound))
                 port = getPortByMsg(checkingReqMsg)
                 send(localhost, port, checkingReqMsg, logHeader)
-                stabilizeCheckRound += 1
+            stabilizeCheckRound += 1
             
             ## STEP THREE: block until recept of all positive message
             stabilizeSema.acquire()

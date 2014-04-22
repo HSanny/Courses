@@ -25,7 +25,6 @@ localhost = socket.gethostname()
 def main(argv):
     ## TODO: initialize static variables
     assert len(argv) >= 2, "CLIENT: too less arguments"
-    print "Client start"
     clientID = int(argv[0])
     serverToConnect = int(argv[1])
     logHeader = CLIENT_LOG_HEADER % clientID

@@ -269,3 +269,15 @@ INFINITY = float('inf')
 def isInf (num):
     return num == INFINITY
             
+def setStableBool (oplog, bvalue):
+    """
+    NOTE THAT the input log must be valid.
+    """
+    if bvalue:
+        FROM = "FALSE"
+        TO = "TRUE"
+    else:
+        FROM = "TRUE"
+        TO = "FALSE"
+    return oplog.replace(FROM, TO)
+

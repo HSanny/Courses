@@ -98,6 +98,14 @@ def main(argv):
             serverToConnect = toRestoreServerId
             ## TODO: send ack stuff?
 
+        elif title == CHECK_STABILIZATION_REQUEST_TITLE:
+            ## deliver to replica it connects to
+            checkMsg = encode(CLIENT_TYPE, clientID, SERVER_TYPE, \
+                 serverToConnect, CHECK_STABILIZATION_REQUEST_TITLE,
+                              EMPTY_CONTENT)
+            port = getPortByMsg(checkMsg)
+            send(localhost, port, checkMsg, logHeader)
+
         elif title == EXIT_TITLE:
             conn.close()
             s.close()

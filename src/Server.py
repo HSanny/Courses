@@ -81,6 +81,7 @@ def main(argv):
             recvMsg = cachedMessages.pop(0)
         else:
             conn, addr = s.accept()
+            # for each timeout, trigger anti_entropy
             recvMsg = conn.recv(BUFFER_SIZE)
 
         '''Incoming message preprocessing'''
@@ -245,11 +246,23 @@ def main(argv):
                 sn = op_value.strip("()")
                 localData.pop(sn, None)
 
+        elif title == CHECK_STABILIZATION_REQUEST_TITLE:
+            ## deliver to all servers it knows about
+            for sIdx in allServers.remove(si):
+                checkMsg = encode(SERVER_TYPE, serverID, SERVER_TYPE, \
+                     sIdx, CHECK_STABILIZATION_REQUEST_TITLE, EMPTY_CONTENT)
+                port = getPortByMsg(checkMsg)
+                send(localhost, port, checkMsg, logHeader)
+
+            for sIdx in allServers.remove(si):
+                ## TODO: check stabilization
+
         elif title == EXIT_TITLE:
             conn.close()
             s.close()
             print "Exit."
             return
+
         else:
             pass
         conn.close()

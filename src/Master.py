@@ -28,16 +28,18 @@ allClients = set([])
 allServers = set([])
 
 '''Boolean Counter'''
-global startAcks, pauseAcks
+global startAcks, pauseAcks, stabilizeAcks
 startAcks = None
 pauseAcks = None
+stabilizeAcks = None
 
 '''Semaphores'''
-global joinClientSema, joinServerSema, startSema, pauseSema
+global joinClientSema, joinServerSema, startSema, pauseSema, stabilizeSema
 joinClientSema = initEmptySemaphore()
 joinServerSema = initEmptySemaphore()
 startSema = None
 pauseSema = None
+stabilizeSema = None
 listenerSetUpSema = None
 global putSema, getSema, deleteSema
 putSema = None
@@ -117,6 +119,24 @@ def MasterListener(stdout):
             global deleteSema
             deleteSema.release()
 
+        elif title == CHECK_STABILIZATION_RESPONSE_TITLE:
+            global stabilizeAcks
+            stabilizeAcks.update({si:True})
+            if checkCounterAllTrue(stabilizeAcks):
+                ## unblock the main/reader thread
+                stabilizeSema.release()
+            else:
+                ## resend the request to all servers
+                global serversToListen
+                stabilizeAcks = initAllFalseCounter(serversToListen)
+                for cidx in allClients:
+                    checkingReqMsg = encode(MASTER_TYPE, 0, CLIENT_TYPE, cIdx, \
+                        CHECK_STABILIZATION_REQUEST_TITLE, EMPTY_CONTENT)
+                port = getPortByMsg(checkingReqMsg)
+                send(localhost, port, checkingReqMsg, logHeader)
+
+
+
         elif title == EXIT_TITLE:
             conn.close()
             s.close()
@@ -134,6 +154,8 @@ def MasterProcessor():
         print "[INPUT]", line
         line = line.split()
         global allClients, allServers
+        global clientConnection = {} # record connection from client to server
+        global serverConnection = {} # record connection between servers
         if line[0] ==  "joinServer":
             serverId = int(line[1])
             '''
@@ -165,6 +187,11 @@ def MasterProcessor():
             joinServerSema.acquire()
             ## confirm to add new server to its list
             allServers.update([serverId])
+            ## update serverConnection for all existing servers
+            for sIdx, connectedServers in serverConnection.items():
+                serverConnection.update({sIdx:connectedServers.append(serverId)})
+            ## update serverConnection for itself
+            serverConnection.update({serverId:serverConnection.keys()})
             print "joinServer ", serverId, "completes."
 
         if line[0] ==  "retireServer":
@@ -207,7 +234,8 @@ def MasterProcessor():
             joinClientSema.acquire()
             ## confirm to add new client to its list
             allServers.update([serverId])
-            allClients.update ([clientId])
+            allClients.update([clientId])
+            clientConnection.update({clientId:serverId})
 
             print "startClient", clientId, serverId, "completes."
 
@@ -307,6 +335,39 @@ def MasterProcessor():
             time that this function blocks for should increase linearly with the
             number of servers in the system.
             """
+            ## STEP ZERO: initialize global variables
+            global stabilizeSema, stabilizeAcks
+            stabilizeSema = initEmptySemaphore()
+
+            ## STEP ONE: get all servers to which checking request should send
+            directConnectedServers = set([])
+            for cIdx in allClients:
+                directConnectedServers.update([clientConnection.get(cIdx)])
+            # for all
+            oldServers = directConnectedServers
+            while True:
+                newServers = set(oldServers)
+                tmp = set(newServers)
+                for sIdx in newServers:
+                    tmp.update(serverConnection.get(sIdx))
+                newServers = tmp
+                if newServers.issubset(oldServers) and \
+                   newServers.issuperset(oldServers):
+                    break;
+            global serversToListen
+            serversToListen = newServers
+            startAcks = initAllFalseCounter(serversToListen)
+
+            ## STEP TWO: send checking request to all clients
+            for cIdx in allClients:
+                checkingReqMsg = encode(MASTER_TYPE, 0, CLIENT_TYPE, cIdx, \
+                        CHECK_STABILIZATION_REQUEST_TITLE, EMPTY_CONTENT)
+                port = getPortByMsg(checkingReqMsg)
+                send(localhost, port, checkingReqMsg, logHeader)
+            
+            ## STEP THREE: block until recept of all positive message
+            stabilizeSema.acquire()
+
         if line[0] ==  "printLog":
             serverId = int(line[1])
             """

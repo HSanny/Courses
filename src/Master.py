@@ -163,6 +163,7 @@ def MasterListener(stdout):
     s.close()
 
 def MasterProcessor():
+    primaryServerId = None
     for line in sys.stdin:
         line = line.strip()
         print "[INPUT]", line
@@ -185,6 +186,12 @@ def MasterProcessor():
             args.append(LOAD_SERVER_CMD) # main command
             args.append(str(serverId))  # arg: server ID
             args.append(set2str(allServers)) # arg: all existing server ID
+            if primaryServerId is None:
+                args.append(str(PRIMARY_PETITION))
+                primaryServerId = serverId
+            else:
+                args.append(str(NONPRIMARY_PETITION))
+
             cmd = args2cmd(args)
             os.system(cmd + " &")
             print cmd
@@ -220,7 +227,14 @@ def MasterProcessor():
                                RETIRE_REQUEST_TITLE, EMPTY_CONTENT)
             port = getPortByMsg (retireMsg)
             send (localhost, port, retireMsg, logHeader)
-            ## TODO: retirement Protocol
+            
+            ## TODO: retirement nonProtocol
+            if primaryServerId == serverId:
+                ## TODO: retire the primary replica
+                pass
+            else:
+                ## retire non-primary replica
+                pass
 
         if line[0] ==  "joinClient":
             clientId = int(line[1])

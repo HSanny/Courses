@@ -46,30 +46,51 @@ def anti_entropy (Senderid, Reiceiverid):
             send(localhost, port, sendWriteMsg, logHeader)
     return 
 
-def exchange_info (writeLogs, RVersionVector, Senderid, Reiceiverid):
+def exchange_info (writeLogs, RVV, RCSN, SCSN, SID, RID):
     ## for every write-log of Sender
     global logHeader
-    for accept_stamp, sid, oplog in writeLogs:
-        wStr = W_FORMAT % (accept_stamp, sid, oplog)
-        if RVersionVector.get(sid) < accept_stamp:
+    ## exchange commited write owned by serverID
+    if RCSN < SCSN:
+        for log_stamp, sid, csn, oplog in writeLogs:
+            if not isInf(csn) and csn > RCSN:
+                # this write is commited but R is not unknown
+                wStr = W_FORMAT % (accept_stamp, sid, csn, oplog)
+                if log_stamp <= RVV.get(sid):
+                    # R has the tentative write but has not commit
+                    commitNotifyMsg = encode(SERVER_TYPE, SID, \
+                         SERVER_TYPE, RID, COMMIT_NOTIFICATION_TITLE, wStr)
+                    port = getPortByMsg(commitNotifyMsg)
+                    send(localhost, port, commitNotifyMsg, logHeader)
+                else:
+                    # R does not even know the tentative write
+                    sendWriteMsg = encode(SERVER_TYPE, SID, SERVER_TYPE, \
+                              RID, SEND_WRITE_TITLE, wStr)
+                    port = getPortByMsg(sendWriteMsg)
+                    send(localhost, port, sendWriteMsg, logHeader)
+
+    ## exchange tentative write owned by server SID
+    for accept_stamp, sid, csn, oplog in writeLogs:
+        wStr = W_FORMAT % (accept_stamp, sid, csn, oplog)
+        if RVV.get(sid) < accept_stamp:
             # this oplog is new for Receiver
             # send write to receiver
-            sendWriteMsg = encode(SERVER_TYPE, Senderid, SERVER_TYPE, \
-                   Reiceiverid, SEND_WRITE_TITLE, wStr)
+            sendWriteMsg = encode(SERVER_TYPE, SID, SERVER_TYPE, \
+                   RID, SEND_WRITE_TITLE, wStr)
             port = getPortByMsg(sendWriteMsg)
             send(localhost, port, sendWriteMsg, logHeader)
     return 
 
-def main(argv):
-    '''
+def main (argv):
+    """
     Main function of server
-    '''
+    """
     assert len(argv) >= 2, "SERVER: too less arguments"
 
     ## initialize static variables
     pause = False
     serverID = int(argv[0])
     allServers = str2set(argv[1])
+    isPrimary = str2bool(argv[2])
     global logHeader
     logHeader = SERVER_LOG_HEADER % serverID
 
@@ -77,6 +98,7 @@ def main(argv):
     versionVector = initVersionVector(allServers)
     versionVector.update({serverID: 0})
     localData = {}
+    CSN = -1
 
     accept_stamp = 0
     stableRound = -1
@@ -185,7 +207,7 @@ def main(argv):
             assert pause, "START: Cannot restart a non-paused system."
             pause = False
             ## send restart acknowledgement to master
-            restartAckMsg = encode(SERVER_TYPE, serverID, MASTER_TYPE, 0 ,\
+            restartAckMsg = encode(SERVER_TYPE, serverID, MASTER_TYPE, 0, \
                                   RESTART_ACK_TITLE, EMPTY_CONTENT)
             send(localhost, MASTER_PORT, restartAckMsg, logHeader)
 
@@ -194,8 +216,17 @@ def main(argv):
             accept_stamp += 1
             ## update locallog
             [sn, URL] = content.split(SU_SEP)
-            putlog = OPLOG_FORMAT % (PUT, OP_VALUE_FORMAT % (sn, URL), bool2str(False))
-            writeLogs.append((accept_stamp, serverID, putlog))
+            ## putlog: directly stable if this server is primary 
+            putlog = OPLOG_FORMAT % (PUT, OP_VALUE_FORMAT % (sn, URL),\
+                                  bool2str(isPrimary))
+            if isPrimary:
+                CSN += 1
+                csn = CSN
+            else:
+                csn = INFINITY
+
+            write = (accept_stamp, serverID, csn, putlog)
+            writeLogs.append(write)
             ## update the version vector
             versionVector.update({serverID:accept_stamp})
             ## update local datastore
@@ -221,7 +252,13 @@ def main(argv):
         elif title == DELETE_REQUEST_TITLE:
             ## update locallog
             sn = content
-            deletelog = LOG_FORMAT % (PUT, sn, bool2str(False))
+            if isPrimary:
+                CSN += 1
+                csn = CSN
+            else:
+                csn = INFINITY
+
+            deletelog = LOG_FORMAT % (DELETE, sn, csn, bool2str(False))
             writeLogs.append((accept_stamp, serverID, deletelog))
             ## update version vector
             versionVector.update({serverID:accept_stamp})
@@ -251,15 +288,32 @@ def main(argv):
 
         elif title == SEND_WRITE_TITLE:
             ## decode the content
-            [log_stamp, sid, oplog] = content.split(W_SEP)
-            [log_stamp, sid, oplog] = [int(log_stamp), int(sid), oplog]
+            [log_stamp, sid, csn, oplog] = content.split(W_SEP)
+            [log_stamp, sid, csn, oplog] = [int(log_stamp), int(sid), int(csn), oplog]
             assert log_stamp > versionVector.get(sid), \
-                    "SEND_WRITE: got a known update"
-            w = (log_stamp, sid, oplog)
+                    "SEND_WRITE: got a known committed update"
+            # commit new write log
+            isNewCommit = isPrimary and isInf(csn)
+            if isNewCommit:
+                CSN += 1
+                csn = CSN
+                ## set the STABLE_BOOL oplog
+                [op_type, op_value, stable_bool] = oplog.split(OPLOG_SEP)
+                oplog = OPLOG_FORMAT % (op_type, op_value, bool2str(True))
+            ## write 
+            write = (log_stamp, sid, csn, oplog)
             ## update the local write-logs
-            writeLogs.append(w)
-            ## update the local version vector
-            versionVector.update({sid: log_stamp})
+            writeLogs.append(write)
+
+        elif title == COMMIT_NOTIFICATION_TITLE:
+            ## decode the content
+            [log_stamp, sid, csn, oplog] = content.split(W_SEP)
+            [log_stamp, sid, csn, oplog] = [int(log_stamp), int(sid), int(csn), oplog]
+            ## TODO: find the piece of log to set its STABLE_BOOL
+            for l, s, c, o  in writeLogs:
+                if l == log_stamp and s = sid:
+                    writeLogs.remove((l,s,c,o))
+            writeLogs.append((log_stamp, sid, csn, oplog))
             ## apply update on local data
             [op_type, op_value, stable_bool] = oplog.split(OPLOG_SEP)
             if op_type == PUT:
@@ -276,7 +330,6 @@ def main(argv):
                 continue
             ## if this server does not connect to any other servers
             ## send stable decision to master
-            print allServers
             if len(allServers) == 0:
                 decisionMsg = encode(SERVER_TYPE, serverID, MASTER_TYPE, 0,\
                          CHECK_STABILIZATION_RESPONSE_TITLE, str(True))
@@ -303,19 +356,21 @@ def main(argv):
 
         elif title == STABLE_VV_REQUEST_TITLE:
             vvstr = vv2str(versionVector)
-            vvMsg = encode(SERVER_TYPE, serverID, st, si, \
-                           STABLE_VV_RESPONSE_TITLE, vvstr)
-            port = getPortByMsg(vvMsg)
-            send(localhost, port, vvMsg, logHeader)
+            response = CSN_VV_FORMAT % (CSN, vvstr)
+            responseMsg = encode(SERVER_TYPE, serverID, st, si, \
+                           STABLE_VV_RESPONSE_TITLE, response)
+            port = getPortByMsg(responseMsg)
+            send(localhost, port, responseMsg, logHeader)
 
         elif title == STABLE_VV_RESPONSE_TITLE:
-            vv = str2vv(content)
-            if vv.get(serverID) < accept_stamp:
+            [RCSN, RVV] = content.split(CSN_VV_SEP)
+            [RCSN, RVV] = [int(RCSN), str2vv(RVV)]
+            if RVV.get(serverID) < accept_stamp:
                 # not up to date
                 stableCounter.update({si:False})
                 # trigger the update
-                exchange_info(writeLogs, vv, serverID, si)
-            elif vv.get(serverID) == accept_stamp:
+                exchange_info(writeLogs, RVV, CSN, RCSN, serverID, si)
+            elif RVV.get(serverID) == accept_stamp:
                 # up to date
                 stableCounter.update({si:True})
             # check not all none

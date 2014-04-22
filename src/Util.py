@@ -253,9 +253,19 @@ def bool2str (bvalue):
     elif not bvalue:
         return "FALSE"
 
+def str2bool (bstr):
+    if bstr is None or not bstr:
+        return False
+    else: return True
+
 def vv2str (versionVector):
     return str(versionVector)
 
 def str2vv (vvStr):
     return eval(vvStr)
 
+INFINITY = float('inf')
+
+def isInf (num):
+    return num == INFINITY
+            

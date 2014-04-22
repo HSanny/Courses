@@ -43,15 +43,16 @@ OP_VALUE_FORMAT = "%s" + OP_VALUE_SEP + " %s" # songName, URL
 GET_FORMAT = "%s: %s"
 
 SU_SEP = ":" # songName and URL
-LOG_SEP = "<\log>"
 W_SEP = "<\w>"
+W_FORMAT = "%d" + W_SEP + "%d" + W_SEP+ "%d" + W_SEP + "%s"
+LOG_SEP = "<\log>"
 
-W_FORMAT = "%d" + W_SEP + "%d" + W_SEP + "%s"
+CSN_VV_SEP = "<\cv>"
+CSN_VV_FORMAT = "%d" + CSN_VV_SEP + "%s"
 
 # Operation marocs
 PUT = "PUT"
 DELETE = "DELETE"
-
 
 # TITLES
 EXIT_TITLE = "EXIT"
@@ -86,6 +87,10 @@ CHECK_STABILIZATION_RESPONSE_TITLE = "CHECK_STABILIZATION_RESPONSE"
 
 STABLE_VV_RESPONSE_TITLE = "STABLE_VV_RESPONSE"
 STABLE_VV_REQUEST_TITLE = "STABLE_VV_REQUEST"
+COMMIT_NOTIFICATION_TITLE = "COMMIT_NOTIFICATION"
+
+PRIMARY_PETITION = "PRIMARY"
+NONPRIMARY_PETITION = "NONPRIMARY"
 
 # anti-entropy titles, to catogorize the title
 ANTI_ENTROPY_TITLES = []

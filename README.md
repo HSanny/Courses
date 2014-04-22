@@ -103,20 +103,22 @@ TODO list
            On new server connection, do anti-entropy.
            Also, periodically do anti-entropy with a different server.
 
-8. implement stabilization process: see FUP 3.1
-    - stabilize the system
-    - trigger anti-entropy algorithm
-    - evaluate if system is stable
-    - resend ack to master if stable
-    -   Send stable request to every server
-        Server tests anti-entropy with every connected replica
-        Server responds 'stable' if no new updates occur
-        Otherwise, it responds 'unstable'
-        When Master receives 'unstable', it waits a small amount of time and resends
-            stable request
-        When Master receives all 'stable', system is stable
-        In case Master sends a command to Client before stabilize, Master executes a
-            small wait before the first round
+8. implement stabilization evaluation: see FUP 3.1
+    - [DONE] evaluate if system is stable
+    - [DONE] Master send stabilization checking request to every clients with
+      round number
+    - [DONE] Clients deliver checking request to servers it connects to
+    - [DONE] Servers, when receive request, deliver checking request to server it connects to
+    - [DONE] Servers, once receive request, start asking version vector (VV) of
+      connected servers
+    - [DONE] When one server receives one VV of its connected server, check if that VV
+      up to its own current accept_stamp.
+    - [DONE] When one server collects VV of all its connected servers, decide
+      if it is stable and send decision back to Master.
+    - [DONE] Once Master collects all decisions from un-isolated servers, it
+      will make decision for stabilization. If stable, unblock reader thread.
+      Otherwise, initiate a new round of stabilization checking. 
+    - ??? initiate a new round of checking with a time interval?
 
 9. implement creation protocol: see paper FUP 4.3
     - when node enters the system, should be brought up to date, maybe talk to

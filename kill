@@ -1,2 +1,4 @@
 kill -9 $(pgrep python)
+kill -9 $(pgrep Python)
+kill -9 $(ps -ef | grep '.test' | cut -d " " -f 3)
 kill -9 $(ps -ef | grep defunct | cut -d " " -f 3)

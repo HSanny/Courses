@@ -19,6 +19,7 @@ from Util import *
 logHeader = None
 localhost = socket.gethostname()
 
+
 def anti_entropy (Senderid, Reiceiverid):
     '''
     Anti_entropy algorithm by fig. 1 of FUG paper
@@ -30,9 +31,10 @@ def anti_entropy (Senderid, Reiceiverid):
     send(localhost, port, vvRequestMsg, logHeader)
     ## block until response
     global vvResponseSema, vvResponseContent
-    vvResponseSema = initEmpty
+    vvResponseSema = initEmptySemaphore()
     vvResponseSema.acquire()
     RVersionVector = str2vv(vvResponseContent)
+
     ## for every write-log of Sender
     for accept_stamp, sid, oplog in writeLogs:
         wStr = W_FORMAT % (accept_stamp, sid, oplog)
@@ -42,6 +44,7 @@ def anti_entropy (Senderid, Reiceiverid):
             sendWriteMsg = encode(SERVER_TYPE, Senderid, SERVER_TYPE, \
                    Reiceiverid, SEND_WRITE_TITLE, wStr)
             send(localhost, port, sendWriteMsg, logHeader)
+    return 
 
 def main(argv):
     '''
@@ -56,12 +59,15 @@ def main(argv):
     logHeader = SERVER_LOG_HEADER % serverID
 
     writeLogs = initWriteLogs()
-    versionVector = initVersionVector()
+    versionVector = initVersionVector(allServers)
+    versionVector.update({serverID: 0})
     localData = {}
 
     accept_stamp = 0
+    stableRound = 0
     global cachedMessages
     cachedMessages = []
+
 
     ## construct server socket
     s = socket.socket()
@@ -137,7 +143,6 @@ def main(argv):
 
             ## TODO: send ack stuff?
 
-
         elif title == RESTORE_CONNECTION_TITLE:
             toRestoreServerId = int(content)
             assert (toRestoreServerId not in allServers)
@@ -173,10 +178,10 @@ def main(argv):
             [sn, URL] = content.split(SU_SEP)
             putlog = OPLOG_FORMAT % (PUT, OP_VALUE_FORMAT % (sn, URL), bool2str(False))
             writeLogs.append((accept_stamp, serverID, putlog))
-            ## update the version vector
-            versionVector.update({serverID:accept_stamp})
             ## update the accept stamp
             accept_stamp += 1
+            ## update the version vector
+            versionVector.update({serverID:accept_stamp})
             ## update local datastore
             localData.update({sn:URL})
             ## send ack back
@@ -247,15 +252,51 @@ def main(argv):
                 localData.pop(sn, None)
 
         elif title == CHECK_STABILIZATION_REQUEST_TITLE:
+            ## stabilization check has been triggered in this server
+            if int(content) == stableRound:
+                continue
             ## deliver to all servers it knows about
-            for sIdx in allServers.remove(si):
+            for sIdx in allServers - set([si]):
                 checkMsg = encode(SERVER_TYPE, serverID, SERVER_TYPE, \
-                     sIdx, CHECK_STABILIZATION_REQUEST_TITLE, EMPTY_CONTENT)
+                     sIdx, CHECK_STABILIZATION_REQUEST_TITLE, content)
                 port = getPortByMsg(checkMsg)
                 send(localhost, port, checkMsg, logHeader)
 
-            for sIdx in allServers.remove(si):
-                ## TODO: check stabilization
+            global stableCounter
+            stableCounter = initAllNoneCounter(allServers)
+            ## check stabilization
+            for sIdx in allServers:
+                ## directly send stable boolean
+                stableVVReqMsg = encode(SERVER_TYPE, serverID, SERVER_TYPE, \
+                      sIdx, STABLE_VV_REQUEST_TITLE, content)
+                port = getPortByMsg(stableVVReqMsg)
+                send (localhost, port, stableVVReqMsg, logHeader)
+            ## update the local stable round
+            stableRound = int(content)
+
+        elif title == STABLE_VV_REQUEST_TITLE:
+            vvstr = vv2str(versionVector)
+            vvMsg = encode(SERVER_TYPE, serverID, st, si, \
+                           STABLE_VV_RESPONSE_TITLE, vvstr)
+            port = getPortByMsg(vvMsg)
+            send(localhost, port, vvMsg, logHeader)
+
+        elif title == STABLE_VV_RESPONSE_TITLE:
+            vv = str2vv(content)
+            if vv.get(serverID) < accept_stamp:
+                # not up to date
+                stableCounter.update({si:False})
+            elif vv.get(serverID) == accept_stamp:
+                # up to date
+                stableCounter.update({si:True})
+            # check not all none
+            if checkCounterAllNotNone(stableCounter):
+                # if all not None, send master the decision
+                decision = checkCounterAllTrue(stableCounter, False)
+                decisionMsg = encode(SERVER_TYPE, serverID, MASTER_TYPE, 0,\
+                         CHECK_STABILIZATION_RESPONSE_TITLE, str(decision))
+                port = getPortByMsg(decisionMsg)
+                send(localhost, port, decisionMsg, logHeader)
 
         elif title == EXIT_TITLE:
             conn.close()

@@ -24,8 +24,14 @@ logHeader = MASTER_LOG_HEADER
 
 '''Global States'''
 global allClients, allServers
+global clientConnection, serverConnection
 allClients = set([])
 allServers = set([])
+clientConnection = {} # record connection from client to server
+serverConnection = {} # record connection between servers
+
+global stabilizeCheckRound
+stabilizeCheckRound = 0
 
 '''Boolean Counter'''
 global startAcks, pauseAcks, stabilizeAcks
@@ -121,21 +127,29 @@ def MasterListener(stdout):
 
         elif title == CHECK_STABILIZATION_RESPONSE_TITLE:
             global stabilizeAcks
-            stabilizeAcks.update({si:True})
-            if checkCounterAllTrue(stabilizeAcks):
+            if content in ['True', 'true', 'yes', 'Yes']:
+                stabilizeAcks.update({si:True})
+            else:
+                stabilizeAcks.update({si:False})
+
+            if not checkCounterAllNotNone(stabilizeAcks):
+                continue
+
+            ## if all not none, we make the decision
+            if checkCounterAllTrue(stabilizeAcks, True):
                 ## unblock the main/reader thread
                 stabilizeSema.release()
             else:
+                ## start a new round of testing
                 ## resend the request to all servers
-                global serversToListen
-                stabilizeAcks = initAllFalseCounter(serversToListen)
-                for cidx in allClients:
+                global serversToListen, stabilizeCheckRound 
+                stabilizeCheckRound += 1
+                stabilizeAcks = initAllNoneCounter(serversToListen)
+                for cIdx in allClients:
                     checkingReqMsg = encode(MASTER_TYPE, 0, CLIENT_TYPE, cIdx, \
-                        CHECK_STABILIZATION_REQUEST_TITLE, EMPTY_CONTENT)
-                port = getPortByMsg(checkingReqMsg)
-                send(localhost, port, checkingReqMsg, logHeader)
-
-
+                        CHECK_STABILIZATION_REQUEST_TITLE, str(stabilizeCheckRound))
+                    port = getPortByMsg(checkingReqMsg)
+                    send(localhost, port, checkingReqMsg, logHeader)
 
         elif title == EXIT_TITLE:
             conn.close()
@@ -154,8 +168,7 @@ def MasterProcessor():
         print "[INPUT]", line
         line = line.split()
         global allClients, allServers
-        global clientConnection = {} # record connection from client to server
-        global serverConnection = {} # record connection between servers
+        global clientConnection, serverConnection 
         if line[0] ==  "joinServer":
             serverId = int(line[1])
             '''
@@ -178,7 +191,7 @@ def MasterProcessor():
 
             ## notify all existing server
             for oldServerId in allServers:
-                notifyMsg = encode(MASTER_TYPE, 0, SERVER_TYPE, oldServerId,
+                notifyMsg = encode(MASTER_TYPE, 0, SERVER_TYPE, oldServerId, \
                                    JOIN_SERVER_TITLE, str(serverId))
                 port = getPortByMsg(notifyMsg)
                 send(localhost, port, notifyMsg, logHeader)
@@ -189,9 +202,12 @@ def MasterProcessor():
             allServers.update([serverId])
             ## update serverConnection for all existing servers
             for sIdx, connectedServers in serverConnection.items():
-                serverConnection.update({sIdx:connectedServers.append(serverId)})
+                    serverConnection.update({sIdx:connectedServers+[serverId]})
             ## update serverConnection for itself
-            serverConnection.update({serverId:serverConnection.keys()})
+            if len(serverConnection.keys()) == 0:
+                serverConnection.update({serverId:[]})
+            else:
+                serverConnection.update({serverId:serverConnection.keys()})
             print "joinServer ", serverId, "completes."
 
         if line[0] ==  "retireServer":
@@ -353,17 +369,19 @@ def MasterProcessor():
                 newServers = tmp
                 if newServers.issubset(oldServers) and \
                    newServers.issuperset(oldServers):
-                    break;
+                    break
             global serversToListen
             serversToListen = newServers
-            startAcks = initAllFalseCounter(serversToListen)
+            stabilizeAcks = initAllNoneCounter(serversToListen)
 
             ## STEP TWO: send checking request to all clients
+            global stabilizeCheckRound
             for cIdx in allClients:
                 checkingReqMsg = encode(MASTER_TYPE, 0, CLIENT_TYPE, cIdx, \
-                        CHECK_STABILIZATION_REQUEST_TITLE, EMPTY_CONTENT)
+                 CHECK_STABILIZATION_REQUEST_TITLE, str(stabilizeCheckRound))
                 port = getPortByMsg(checkingReqMsg)
                 send(localhost, port, checkingReqMsg, logHeader)
+                stabilizeCheckRound += 1
             
             ## STEP THREE: block until recept of all positive message
             stabilizeSema.acquire()
@@ -378,6 +396,7 @@ def MasterProcessor():
                                  PRINT_LOG_TITLE, EMPTY_CONTENT)
             port = getPortByMsg(askForLogMsg)
             send(localhost, port, askForLogMsg, logHeader)
+
         if line[0] ==  "put":
             clientId = int(line[1])
             songName = line[2]

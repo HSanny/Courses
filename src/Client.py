@@ -102,7 +102,7 @@ def main(argv):
             ## deliver to replica it connects to
             checkMsg = encode(CLIENT_TYPE, clientID, SERVER_TYPE, \
                  serverToConnect, CHECK_STABILIZATION_REQUEST_TITLE,
-                              EMPTY_CONTENT)
+                              content)
             port = getPortByMsg(checkMsg)
             send(localhost, port, checkMsg, logHeader)
 

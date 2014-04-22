@@ -155,7 +155,7 @@ def broadcast (host, sampleMsg, Header, allServers, allClients):
 
 def checkCounterAllTrue (boolCounter, NoneIgnore=True):
     '''
-    API: determine whether the input array contains all boolean value
+    API: determine whether the input counter contains all True value
     '''
     assert (boolCounter is not None)
     decision = True
@@ -168,6 +168,16 @@ def checkCounterAllTrue (boolCounter, NoneIgnore=True):
             break
     return decision
 
+def checkCounterAllNotNone (boolCounter):
+    '''
+    API: determine whether the input counter contains all not NOne
+    '''
+    assert (boolCounter is not None)
+    for idx, bvalue in boolCounter.items():
+        if bvalue is None:
+            return False
+    return True
+
 def initAllFalseCounter (allIndex):
     '''
     API: determine
@@ -177,8 +187,24 @@ def initAllFalseCounter (allIndex):
         counter.update({index:False})
     return counter
 
-def initVersionVector ():
-    return dict()
+def initAllNoneCounter (allIndex):
+    '''
+    API: determine
+    '''
+    counter = {}
+    for index in allIndex:
+        counter.update({index:None})
+    return counter
+
+
+def initVersionVector (allServers=None):
+    if allServers is None:
+        return {}
+    else:
+        result = {}
+        for sIdx in allServers:
+            result.update({sIdx: 0})
+        return result
 
 def initWriteLogs ():
     return list([])

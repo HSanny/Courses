@@ -1,6 +1,6 @@
 #!/bin/bash
 logsDir="logs"
-testsDir="tests/instructions"
+testsDir="tests/scripts"
 solsDir="tests/solutions"
 resultDir="tests/results"
 
@@ -22,7 +22,7 @@ do
     echo "=========================" $t "========================"
     ## get the name of test
     testname=${t/"$testsDir"/""}
-    testname=${testname/"/"/""}
+    testname=${testname:1:${#testname}-1}
     testname=${testname/".test"/""}
     echo Test Name: $testname
     allTestNames[i]=$testname
@@ -31,7 +31,7 @@ do
     touch "$logsDir"/result.txt
     ## run that test
     ## TODO: use TIMEOUT
-    cat $t | $(cat COMMAND) > "$logsDir"/result.txt
+    cat $t | $(cat COMMAND) > $logsDir/result.txt
 
     cat "$logsDir"/result.txt > $resultDir/$testname.result
     ## compare output with solution
@@ -75,8 +75,8 @@ for j in $allUniqueIdx
 do
     if [ ${passedOrFailed[j]} -eq 1 ] ; 
     then
-        echo Passed $testsDir${allTestNames[j]}
+        echo Passed $testsDir/${allTestNames[j]}
     else
-        echo Failed $testsDir${allTestNames[j]}
+        echo Failed $testsDir/${allTestNames[j]}
     fi
 done

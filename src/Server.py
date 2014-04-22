@@ -16,14 +16,13 @@ from Logging import *
 from Util import *
 
 ## TODO: static variable here
-logHeader = None
 localhost = socket.gethostname()
-
 
 def anti_entropy (Senderid, Reiceiverid):
     '''
     Anti_entropy algorithm by fig. 1 of FUG paper
     '''
+    global logHeader
     ## send request to ask for receiver's version vector
     vvRequestMsg = encode(SERVER_TYPE, Senderid, SERVER_TYPE, \
                 Reiceiverid, VERSION_VECTOR_REQUEST_TITLE, EMPTY_CONTENT)
@@ -43,6 +42,21 @@ def anti_entropy (Senderid, Reiceiverid):
             # send write to receiver
             sendWriteMsg = encode(SERVER_TYPE, Senderid, SERVER_TYPE, \
                    Reiceiverid, SEND_WRITE_TITLE, wStr)
+            port = getPortByMsg(sendWriteMsg)
+            send(localhost, port, sendWriteMsg, logHeader)
+    return 
+
+def exchange_info (writeLogs, RVersionVector, Senderid, Reiceiverid):
+    ## for every write-log of Sender
+    global logHeader
+    for accept_stamp, sid, oplog in writeLogs:
+        wStr = W_FORMAT % (accept_stamp, sid, oplog)
+        if RVersionVector.get(sid) < accept_stamp:
+            # this oplog is new for Receiver
+            # send write to receiver
+            sendWriteMsg = encode(SERVER_TYPE, Senderid, SERVER_TYPE, \
+                   Reiceiverid, SEND_WRITE_TITLE, wStr)
+            port = getPortByMsg(sendWriteMsg)
             send(localhost, port, sendWriteMsg, logHeader)
     return 
 
@@ -56,6 +70,7 @@ def main(argv):
     pause = False
     serverID = int(argv[0])
     allServers = str2set(argv[1])
+    global logHeader
     logHeader = SERVER_LOG_HEADER % serverID
 
     writeLogs = initWriteLogs()
@@ -67,7 +82,6 @@ def main(argv):
     stableRound = 0
     global cachedMessages
     cachedMessages = []
-
 
     ## construct server socket
     s = socket.socket()
@@ -87,7 +101,6 @@ def main(argv):
             recvMsg = cachedMessages.pop(0)
         else:
             conn, addr = s.accept()
-            # for each timeout, trigger anti_entropy
             recvMsg = conn.recv(BUFFER_SIZE)
 
         '''Incoming message preprocessing'''
@@ -174,12 +187,12 @@ def main(argv):
             send(localhost, MASTER_PORT, restartAckMsg, logHeader)
 
         elif title == PUT_REQUEST_TITLE:
+            ## update the accept stamp
+            accept_stamp += 1
             ## update locallog
             [sn, URL] = content.split(SU_SEP)
             putlog = OPLOG_FORMAT % (PUT, OP_VALUE_FORMAT % (sn, URL), bool2str(False))
             writeLogs.append((accept_stamp, serverID, putlog))
-            ## update the accept stamp
-            accept_stamp += 1
             ## update the version vector
             versionVector.update({serverID:accept_stamp})
             ## update local datastore
@@ -235,17 +248,20 @@ def main(argv):
 
         elif title == SEND_WRITE_TITLE:
             ## decode the content
-            [accept_stamp, sid, oplog] = content.split(W_SEP)
-            [accept_stamp, sid, oplog] = [int(accept_stamp), int(sid), oplog]
-            assert accept_stamp > versionVector.get(sid), \
+            [log_stamp, sid, oplog] = content.split(W_SEP)
+            [log_stamp, sid, oplog] = [int(log_stamp), int(sid), oplog]
+            assert log_stamp > versionVector.get(sid), \
                     "SEND_WRITE: got a known update"
-            w = (accept_stamp, sid, oplog)
+            w = (log_stamp, sid, oplog)
             ## update the local write-logs
             writeLogs.append(w)
+            ## update the local version vector
+            versionVector.update({sid: log_stamp})
             ## apply update on local data
             [op_type, op_value, stable_bool] = oplog.split(OPLOG_SEP)
             if op_type == PUT:
                 [sn, URL] = op_value.strip("()").split(OP_VALUE_SEP)
+                URL = URL.strip(" ")
                 localData.update({sn:URL})
             elif op_type == DELETE:
                 sn = op_value.strip("()")
@@ -286,6 +302,8 @@ def main(argv):
             if vv.get(serverID) < accept_stamp:
                 # not up to date
                 stableCounter.update({si:False})
+                # trigger the update
+                exchange_info(writeLogs, vv, serverID, si)
             elif vv.get(serverID) == accept_stamp:
                 # up to date
                 stableCounter.update({si:True})

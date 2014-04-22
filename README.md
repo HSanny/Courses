@@ -1,31 +1,31 @@
-PAXOS Project 
+PAXOS Project
 =============
 
-##### Contributors 
- 	**Jimmy Lin** (UTEID: xl5224)  Login: jimmylin 
- 	**Calvin Szeto** (UTEID: CS37888) Login: calvins 
-    
+##### Contributors
+ 	**Jimmy Lin** (UTEID: xl5224)  Login: jimmylin
+ 	**Calvin Szeto** (UTEID: CS37888) Login: calvins
+
 Slip days used (this project): __0 day__ Slip days used (total): __0 day__
 
 USAGE:
 ---------------
 
-To better test our implementation, we design a series of new tests based on given system requirement and **pass all of them in our own machine**. The series of tests are 
+To better test our implementation, we design a series of new tests based on given system requirement and **pass all of them in our own machine**. The series of tests are
 
     propagate.test
-    conflict.test 
+    conflict.test
 
     simple.test
-    cover.test 
-    delete.test 
-    logging.test 
-    newborn.test  
-    retire.test 
+    cover.test
+    delete.test
+    logging.test
+    newborn.test
+    retire.test
 
 To run the sample tests, replace test_name with the name of the test and execute the following command:
 
     cat tests/scripts/[test_name].test | $(cat COMMAND)
-	
+
 An alternative is that you can use the RUN script designed by us, the usage is as follows:
 
     ./RUN -t tests/scripts/[test_name].test
@@ -34,7 +34,7 @@ or you can run all tests by simply typing:
 
     ./RUN
 
-If your output matches the solution, NOTHING will be printed. Otherwise the lines that differ will be shown. 
+If your output matches the solution, NOTHING will be printed. Otherwise the lines that differ will be shown.
 The output for the run of the test will also be stored in a file temp_output after running the second command.
 
 CodeBase Decription
@@ -51,7 +51,7 @@ Here we provide brief introduction to the python files in the src/ directory.
 Protocol Design
 ----------------
 
-	SENDER_TYPE 
+	SENDER_TYPE
 	SENDER_INDEX
 	RECEIVER_TYPE
 	RECEIVER_INDEX
@@ -83,7 +83,7 @@ TODO list
     - [DONE] send message to all servers
     - [DONE] when received, send acks?
     - [DONE] use indicator to denote the working status
-    - [DONE] catogorize messages that are anti-entropy related 
+    - [DONE] catogorize messages that are anti-entropy related
     - [DONE] cached these messages if switched off
     - [DONE] prioritize the cached message if system is non-paused
 
@@ -92,33 +92,44 @@ TODO list
     - [DONE] clients initialize with knowledge only one server
     - [DONE] breakConnection and restoreConnection updates above data structure
 
-7. implement update propagation: 
-    - [DONE] anti-entropy routine (see pseudo-code at FUP Figure 2 or 3.) 
+7. implement update propagation:
+    - [DONE] anti-entropy routine (see pseudo-code at FUP Figure 2 or 3.)
 
     - how to trigger anti-entropy routine in practice? Paper says that the
       trigger is chosen at random. Also there is a logical reconcilation ring
       solution. It seems that the latter is more appropriate.
+    - See FUP 5.3: We use a combination of periodic reconciliation and system triggered
+        reconciliation:
+           On new server connection, do anti-entropy.
+           Also, periodically do anti-entropy with a different server.
 
 8. implement stabilization process: see FUP 3.1
     - stabilize the system
     - trigger anti-entropy algorithm
     - evaluate if system is stable
     - resend ack to master if stable
+    -   Send stable request to every server
+        Server tests anti-entropy with every connected replica
+        Server responds 'stable' if no new updates occur
+        Otherwise, it responds 'unstable'
+        When Master receives 'unstable', it waits a small amount of time and resends
+            stable request
+        When Master receives all 'stable', system is stable
+        In case Master sends a command to Client before stabilize, Master executes a
+            small wait before the first round
 
 9. implement creation protocol: see paper FUP 4.3
     - when node enters the system, should be brought up to date, maybe talk to
       every existing servers and anti-entropy with them
-    - [DONE] initialize accept-stamp 
-    - [DONE] initialize local logs 
+    - [DONE] initialize accept-stamp
+    - [DONE] initialize local logs
     - [DONE] initialize version vector (use counter by util function)
     - [DONE] notify existing server to add a count in version vector
 
 10. implement retirement protocol: see paper FUP 4.3
-    - 
+    -
 
-11. implement conflict resolution: see the test
-    - we need a global timestamp to resolve the conflict
-    - 
+11. implement conflict resolution: see the test and project specification
 
 
 Problems
@@ -130,13 +141,13 @@ Implementation Details
 
 References
 ---------------
-[1] K. Petersen, M. J. Spreitzer, D. B. Terry, M. M. Theimer and A. J. Demers. 
+[1] K. Petersen, M. J. Spreitzer, D. B. Terry, M. M. Theimer and A. J. Demers.
 Flexible Update Propagation for Weakly Consistent Replication
 
 [2] D. B. Terry, M. M. Theimer, K. Petersen, A. J. Demers, M. J. Spreitzer and
 C. H. Hauser. Managing Update Conflicts in Bayou, a Weakly Connected Replicated Storage
 Syste
 
-[3] A. Demers, D. Greene, C. Hauser, W. Irish, 
+[3] A. Demers, D. Greene, C. Hauser, W. Irish,
 J. Larson, S. Shenker, H. Sturgis, D. Swinehart, and D. Terry. Epidemic
 algorithms for replicated database maintenance.

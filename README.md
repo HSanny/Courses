@@ -119,9 +119,10 @@ TODO list
     - [DONE] Once Master collects all decisions from un-isolated servers, it
       will make decision for stabilization. If stable, unblock reader thread.
       Otherwise, initiate a new round of stabilization checking. 
-    - ??? initiate a new round of checking with a time interval?
-    - ??? determine the STABLE\_BOOL in the writeLog of server?
-    - ??? what is ERR\_DEP? 
+    - [DONE] initiate a new round of checking with a time interval? not
+      necessarily for now.
+    - [DONE] extend the naive implementation to committed write.
+    - ??? what is ERR\_DEP?  See piazza's answer.
 
 9. implement creation protocol: see paper FUP 4.3
     - when node enters the system, should be brought up to date, maybe talk to
@@ -132,9 +133,17 @@ TODO list
     - [DONE] notify existing server to add a count in version vector
 
 10. implement retirement protocol: see paper FUP 4.3
-    -
+    - 
 
 11. implement conflict resolution: see the test and project specification
+    - [DONE] for primary server, there is no conflict because primary is the
+      one who determines the stable write log. All write issued by primary or
+      sent to primary will be commited to be stable. 
+    - [DONE] for non-primary server, once it receive a commited write from
+      other server, it will check if that songName exists. If exists, it will
+      apply the write with highest commit sequence number (csn) to the local
+      data. (that is, to resolve the conflict between the previous committed
+      write and currently committed write)
 
 
 Problems

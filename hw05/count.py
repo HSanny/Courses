@@ -44,4 +44,4 @@ if __name__ == '__main__':
     for i in range(len(Items)):
         for x in list(itertools.combinations(Items, i)):
             query(data, x)
-    print total
+    print "# Frequent Items: ", total

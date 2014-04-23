@@ -213,12 +213,7 @@ def main (argv):
             #port = getPortByMsg(stableVVReqMsg)
             #send (localhost, port, stableVVReqMsg, logHeader)
         elif title == RETIRE_SERVER_TITLE:
-            ## STEP ONE: exchange local log to at least one server it knows
-
-            ## STEP TWO: notify all servers to forget it
-
-            ## STEP THREE: lots of close
-
+            # Send a RETIRE to self
             pass
         elif title == JOIN_CLIENT_ACK_TITLE:
             deliverAckMsg = encode (SERVER_TYPE, serverID, \
@@ -231,6 +226,8 @@ def main (argv):
             ## generate logstr
             print writeLogs
             opLogs = [oplog for (_, _, _, oplog) in writeLogs]
+            # Remove CREATEs and RETIREs
+            opLogs = [oplog for oplog in opLogs if oplog.split(OPLOG_SEP)[0] not in [CREATE, RETIRE]]
             print opLogs
             logstr = LOG_SEP.join(opLogs)
             print logstr

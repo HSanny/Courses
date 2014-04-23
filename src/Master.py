@@ -43,6 +43,7 @@ stabilizeAcks = None
 global joinClientSema, joinServerSema, startSema, pauseSema, stabilizeSema
 joinClientSema = initEmptySemaphore()
 joinServerSema = initEmptySemaphore()
+printLogSema = initEmptySemaphore()
 startSema = None
 pauseSema = None
 stabilizeSema = None
@@ -104,10 +105,12 @@ def MasterListener(stdout):
                 startSema.release()
 
         elif title == PRINT_LOG_RESPONSE_TITLE:
+            global printLogSema
             recvLogs = content.split(LOG_SEP)
             for plog in recvLogs:
                 print plog
                 os.write(stdout.fileno(), plog + "\n")
+            printLogSema.release()
 
         elif title == PUT_ACK_TITLE:
             global putSema
@@ -232,7 +235,7 @@ def MasterProcessor():
             the server can tell another server of its retirement
             '''
             retireMsg = encode (MASTER_TYPE, 0, SERVER_TYPE, serverId, \
-                               RETIRE_REQUEST_TITLE, EMPTY_CONTENT)
+                               RETIRE_SERVER_TITLE, EMPTY_CONTENT)
             port = getPortByMsg (retireMsg)
             send (localhost, port, retireMsg, logHeader)
             
@@ -412,6 +415,7 @@ def MasterProcessor():
 
         if line[0] ==  "printLog":
             serverId = int(line[1])
+            global printLogSema
             """
             Print out a server's operation log in the format specified in the
             handout.
@@ -420,6 +424,7 @@ def MasterProcessor():
                                  PRINT_LOG_TITLE, EMPTY_CONTENT)
             port = getPortByMsg(askForLogMsg)
             send(localhost, port, askForLogMsg, logHeader)
+            printLogSema.acquire()
 
         if line[0] ==  "put":
             clientId = int(line[1])

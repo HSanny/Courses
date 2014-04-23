@@ -50,9 +50,10 @@ LOG_SEP = "<\log>"
 CSN_VV_SEP = "<\cv>"
 CSN_VV_FORMAT = "%d" + CSN_VV_SEP + "%s"
 
-# Operation marocs
+# Operation macros
 PUT = "PUT"
 DELETE = "DELETE"
+CREATE = "CREATE"
 
 # TITLES
 EXIT_TITLE = "EXIT"

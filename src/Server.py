@@ -19,7 +19,7 @@ from Util import *
 ## TODO: static variable here
 localhost = socket.gethostname()
 
-def applyWrite (localData, write, writeLogs):
+def applyWrite (localData, write, writeLogs, versionVector):
     (log_stamp, sid, csn, oplog) = write
     [op_type, op_value, stable_bool] = oplog.split(OPLOG_SEP)
     if op_type == PUT:
@@ -33,15 +33,21 @@ def applyWrite (localData, write, writeLogs):
                 [wsn, _] = oplv.strip("()").split(OP_VALUE_SEP)
                 if wsn == sn and wcsn > maxwcsn and oplsb == "TRUE":
                     maxwcsn = wcsn
-
             if maxwcsn < csn:
                 localData.update({sn:URL})
-            ## otherwise we do not update 
+            ## otherwise we do not update
         else:
             localData.update({sn:URL})
     elif op_type == DELETE:
         sn = op_value.strip("()")
         localData.pop(sn, None)
+    elif op_type == CREATE:
+        # Get bayouID
+        newBayouID = json.loads(op_value.strip("()"))
+        if isinstance(newBayouID, list):
+            newBayouID = tuple(newBayouID)
+        # Update version vector
+        versionVector[newBayouID] = 0
     return
 
 """
@@ -71,7 +77,7 @@ def anti_entropy (Senderid, Reiceiverid):
                    Reiceiverid, SEND_WRITE_TITLE, wStr)
             port = getPortByMsg(sendWriteMsg)
             send(localhost, port, sendWriteMsg, logHeader)
-    return 
+    return
 """
 
 def exchange_info (writeLogs, RVV, SCSN, RCSN, SID, RID):
@@ -109,7 +115,7 @@ def exchange_info (writeLogs, RVV, SCSN, RCSN, SID, RID):
                    RID, SEND_WRITE_TITLE, wStr)
             port = getPortByMsg(sendWriteMsg)
             send(localhost, port, sendWriteMsg, logHeader)
-    return 
+    return
 
 def main (argv):
     """
@@ -121,10 +127,11 @@ def main (argv):
     pause = False
     # serverID is the ID as given by Master and used for communication
     serverID = int(argv[0])
+    # allServers contains MasterIDs, and its primary purpose
+    # is for communicating to all connected servers
+    allServers = str2set(argv[1])
     # bayouID is the ID regarding the Bayou protocol
     bayouID = None
-    # TODO: Remove uses of allServers except to find a server for CREATE/RETIRE
-    allServers = str2set(argv[1])
     isPrimary = (argv[2] == PRIMARY_PETITION)
     global logHeader
     logHeader = SERVER_LOG_HEADER % serverID
@@ -152,7 +159,7 @@ def main (argv):
     while True:
         if firstRun:
             if isPrimary:
-                bayouID = serverID 
+                bayouID = serverID
                 bayouToMaster[bayouID] = serverID
                 ackMsg = encode(SERVER_TYPE, serverID, MASTER_TYPE, 0,
                     JOIN_SERVER_ACK_TITLE, serverID)
@@ -165,7 +172,7 @@ def main (argv):
                 port = getPortByMsg(createMsg)
                 send(localhost, port, createMsg, logHeader)
             firstRun = False
-                
+
 
         ## prioritize uncached message if system is non-paused
         if not pause and len(cachedMessages) > 0:
@@ -191,6 +198,13 @@ def main (argv):
             if isinstance(newBayouID, list):
                 newBayouID = tuple(newBayouID)
             bayouToMaster[newBayouID] = newServerID
+            allServers.add(newServerID)
+            # TODO: Run anti-entropy with new Server so he 'knows' someone
+            #stableVVReqMsg = encode(SERVER_TYPE, serverID,
+                #SERVER_TYPE, bayouToMaster[newBayouID],
+                #STABLE_VV_REQUEST_TITLE, EMPTY_CONTENT)
+            #port = getPortByMsg(stableVVReqMsg)
+            #send (localhost, port, stableVVReqMsg, logHeader)
         elif title == RETIRE_SERVER_TITLE:
             ## STEP ONE: exchange local log to at least one server it knows
 
@@ -223,11 +237,7 @@ def main (argv):
             toBreakServerId = int(content)
             assert (toBreakServerId in allServers)
             allServers.remove(toBreakServerId)
-            ## remove that toBreakServerId from its version vector
-            assert versionVector.pop(toBreakServerId, None) is not None, \
-                "The server to break is unknown."
 
-            ## TODO: send ack stuff?
         elif title == RESTORE_CONNECTION_TITLE:
             toRestoreServerId = int(content)
             assert (toRestoreServerId not in allServers)
@@ -259,12 +269,15 @@ def main (argv):
         elif title == PUT_REQUEST_TITLE:
             ## update the accept stamp
             accept_stamp += 1
+            putlog = ""
             if content == CREATE_CONTENT:
-                putLog = CREATE_CONTENT
+                newServerID = (accept_stamp, bayouID)
+                putlog = OPLOG_FORMAT % (CREATE, json.dumps(newServerID),
+                                      bool2str(isPrimary))
             else:
                 ## update locallog
                 [sn, URL] = content.split(SU_SEP)
-                ## putlog: directly stable if this server is primary 
+                ## putlog: directly stable if this server is primary
                 putlog = OPLOG_FORMAT % (PUT, OP_VALUE_FORMAT % (sn, URL),\
                                       bool2str(isPrimary))
             if isPrimary:
@@ -281,7 +294,6 @@ def main (argv):
                 ## update the version vector
                 newServerID = (accept_stamp, bayouID)
                 versionVector.update({newServerID:0})
-                # TODO: Run anti-entropy with new Server so he 'knows' someone
                 putAckMsg = encode(rt, ri, st, si, PUT_ACK_TITLE, json.dumps(newServerID))
             else:
                 ## update local datastore
@@ -359,7 +371,7 @@ def main (argv):
                 pass
             else:
                 continue
-                    
+
             # commit new write log
             ## primary will commit an instable log to stable
             isPrimaryNewCommit = isPrimary and isInf(csn)
@@ -371,7 +383,7 @@ def main (argv):
                 oplog = setStableBool(oplog, True)
                 ## apply log to local data
                 write = (log_stamp, sid, csn, oplog)
-                applyWrite(localData, write, writeLogs)
+                applyWrite(localData, write, writeLogs, versionVector)
 
             ## non-primary receives a commited log
             # apply lots of update because it got a committed log
@@ -380,7 +392,7 @@ def main (argv):
                 ## apply log to local data
                 oplog = setStableBool(oplog, True)
                 write = (log_stamp, sid, csn, oplog)
-                applyWrite(localData, write, writeLogs)
+                applyWrite(localData, write, writeLogs, versionVector)
                 ## update the CSN
                 if csn > CSN:
                     CSN = csn
@@ -406,7 +418,7 @@ def main (argv):
             if csn > CSN:
                 CSN = csn
             ## apply update on local data
-            applyWrite(localData, write, writeLogs)
+            applyWrite(localData, write, writeLogs, versionVector)
 
         elif title == CHECK_STABILIZATION_REQUEST_TITLE:
             ## stabilization check has been triggered in this server

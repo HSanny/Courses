@@ -111,6 +111,8 @@ def send (host, port, message, Header):
     '''
     API: send message
     '''
+    if port is None:
+        port = getPortByMsg(message)
     s = socket.socket()
     s.connect((host, port))
     printSentMessage(message, Header)
@@ -264,7 +266,7 @@ def vv2str (versionVector):
 def str2vv (vvStr):
     return eval(vvStr)
 
-INFINITY = float('inf')
+INFINITY = 10e5
 
 def isInf (num):
     return num == INFINITY

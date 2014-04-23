@@ -18,17 +18,32 @@ from Util import *
 ## TODO: static variable here
 localhost = socket.gethostname()
 
-def applyLog(localData, oplog):
+def applyWrite (localData, write, writeLogs):
+    (log_stamp, sid, csn, oplog) = write
     [op_type, op_value, stable_bool] = oplog.split(OPLOG_SEP)
     if op_type == PUT:
         [sn, URL] = op_value.strip("()").split(OP_VALUE_SEP)
         URL = URL.strip(" ")
-        localData.update({sn:URL})
+        if localData.has_key(URL):
+            ## get sequence number of the write leading to existing value
+            maxwcsn = -1
+            for ls, s, wcsn, opl in writeLogs:
+                [oplt, oplv, oplsb] = opl.split(OPLOG_SEP)
+                [wsn, _] = oplv.strip("()").split(OP_VALUE_SEP)
+                if wsn == sn and wcsn > maxwcsn and oplsb == "TRUE":
+                    maxwcsn = wcsn
+
+            if maxwcsn < csn:
+                localData.update({sn:URL})
+            ## otherwise we do not update 
+        else:
+            localData.update({sn:URL})
     elif op_type == DELETE:
         sn = op_value.strip("()")
         localData.pop(sn, None)
     return
 
+"""
 def anti_entropy (Senderid, Reiceiverid):
     '''
     Anti_entropy algorithm by fig. 1 of FUG paper
@@ -56,16 +71,20 @@ def anti_entropy (Senderid, Reiceiverid):
             port = getPortByMsg(sendWriteMsg)
             send(localhost, port, sendWriteMsg, logHeader)
     return 
+"""
 
-def exchange_info (writeLogs, RVV, RCSN, SCSN, SID, RID):
+def exchange_info (writeLogs, RVV, SCSN, RCSN, SID, RID):
     ## for every write-log of Sender
     global logHeader
     ## exchange commited write owned by serverID
+    print RCSN, SCSN
     if RCSN < SCSN:
+        print writeLogs
+        print '...............'
         for log_stamp, sid, csn, oplog in writeLogs:
             if not isInf(csn) and csn > RCSN:
                 # this write is commited but R is not unknown
-                wStr = W_FORMAT % (accept_stamp, sid, csn, oplog)
+                wStr = W_FORMAT % (log_stamp, sid, csn, oplog)
                 if log_stamp <= RVV.get(sid):
                     # R has the tentative write but has not commit
                     commitNotifyMsg = encode(SERVER_TYPE, SID, \
@@ -81,6 +100,8 @@ def exchange_info (writeLogs, RVV, RCSN, SCSN, SID, RID):
 
     ## exchange tentative write owned by server SID
     for accept_stamp, sid, csn, oplog in writeLogs:
+        if not isInf(csn):
+            continue
         wStr = W_FORMAT % (accept_stamp, sid, csn, oplog)
         if RVV.get(sid) < accept_stamp:
             # this oplog is new for Receiver
@@ -148,7 +169,7 @@ def main (argv):
         '''Processing incoming messages'''
         if title == JOIN_SERVER_TITLE:
             newServerId = int(content)
-            allServers.add(newServerId)
+            allServers.update([newServerId])
             versionVector.update({newServerId:0})
             ackMsg = encode(SERVER_TYPE, serverID, MASTER_TYPE, 0, \
                            JOIN_SERVER_ACK_TITLE, str(newServerId))
@@ -172,7 +193,7 @@ def main (argv):
             assert (st == MASTER_TYPE)
             ## generate logstr
             print writeLogs
-            opLogs = [oplog for (_, _, oplog) in writeLogs]
+            opLogs = [oplog for (_, _, _, oplog) in writeLogs]
             print opLogs
             logstr = LOG_SEP.join(opLogs)
             print logstr
@@ -198,8 +219,6 @@ def main (argv):
             allServers.add(toRestoreServerId)
             ## add toRestoreServerId to versionVector
             versionVector.update({toRestoreServerId:0})
-            ## trigger anti_entropy to exchange info
-            anti_entropy(serverID, toRestoreServerId)
             ## TODO: send ack stuff??
 
         elif title == PAUSE_TITLE:
@@ -301,6 +320,7 @@ def main (argv):
             ## decode the content
             [log_stamp, sid, csn, oplog] = content.split(W_SEP)
             [log_stamp, sid, csn, oplog] = [int(log_stamp), int(sid), int(csn), oplog]
+            write = (log_stamp, sid, csn, oplog)
             if log_stamp > versionVector.get(sid):
                 pass
             else:
@@ -314,16 +334,19 @@ def main (argv):
                 CSN += 1
                 csn = CSN
                 ## set the STABLE_BOOL oplog
-                setStableBool(oplog, True)
+                oplog = setStableBool(oplog, True)
                 ## apply log to local data
-                applyLog(localData, oplog)
+                write = (log_stamp, sid, csn, oplog)
+                applyWrite(localData, write, writeLogs)
 
             ## non-primary receives a commited log
             # apply lots of update because it got a committed log
             isNonPrimaryNewCommit = not isPrimary and not isInf(csn)
             if isNonPrimaryNewCommit:
                 ## apply log to local data
-                applyLog(localData, oplog)
+                oplog = setStableBool(oplog, True)
+                write = (log_stamp, sid, csn, oplog)
+                applyWrite(localData, write, writeLogs)
                 ## update the CSN
                 if csn > CSN:
                     CSN = csn
@@ -331,24 +354,25 @@ def main (argv):
             ## update the version vector (this is done for all tentative write)
             versionVector.update({sid:log_stamp})
             ## write to log
-            write = (log_stamp, sid, csn, oplog)
             ## update the local write-logs
             writeLogs.append(write)
+            print writeLogs
 
         elif title == COMMIT_NOTIFICATION_TITLE:
             ## decode the content
             [log_stamp, sid, csn, oplog] = content.split(W_SEP)
             [log_stamp, sid, csn, oplog] = [int(log_stamp), int(sid), int(csn), oplog]
             ## TODO: find the piece of log to set its STABLE_BOOL
-            for l, s, c, o  in writeLogs:
-                if l == log_stamp and s == sid:
-                    writeLogs.remove((l,s,c,o))
-            writeLogs.append((log_stamp, sid, csn, oplog))
+            for l, sx, c, o  in writeLogs:
+                if l == log_stamp and sx == sid:
+                    writeLogs.remove((l,sx,c,o))
+            write = (log_stamp, sid, csn, oplog)
+            writeLogs.append(write)
             ## update the commit sequence number
             if csn > CSN:
                 CSN = csn
             ## apply update on local data
-            applyLog(localData, oplog)
+            applyWrite(localData, write, writeLogs)
 
         elif title == CHECK_STABILIZATION_REQUEST_TITLE:
             ## stabilization check has been triggered in this server
@@ -391,7 +415,7 @@ def main (argv):
         elif title == STABLE_VV_RESPONSE_TITLE:
             [RCSN, RVV] = content.split(CSN_VV_SEP)
             [RCSN, RVV] = [int(RCSN), str2vv(RVV)]
-            if RVV.get(serverID) < accept_stamp:
+            if RVV.get(serverID) < accept_stamp or CSN > RCSN:
                 # not up to date
                 stableCounter.update({si:False})
                 # trigger the update
@@ -403,8 +427,9 @@ def main (argv):
             if checkCounterAllNotNone(stableCounter):
                 # if all not None, send master the decision
                 decision = checkCounterAllTrue(stableCounter, False)
+                response = str(CSN) + CHECK_STABLE_RESPONSE_SEP + str(decision)
                 decisionMsg = encode(SERVER_TYPE, serverID, MASTER_TYPE, 0,\
-                         CHECK_STABILIZATION_RESPONSE_TITLE, str(decision))
+                         CHECK_STABILIZATION_RESPONSE_TITLE, response)
                 port = getPortByMsg(decisionMsg)
                 send(localhost, port, decisionMsg, logHeader)
 

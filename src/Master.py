@@ -126,8 +126,11 @@ def MasterListener(stdout):
             deleteSema.release()
 
         elif title == CHECK_STABILIZATION_RESPONSE_TITLE:
-            global stabilizeAcks
-            if content in ['True', 'true', 'yes', 'Yes']:
+            global stabilizeAcks, csnCollections
+            [csn, bvalue] = content.split(CHECK_STABLE_RESPONSE_SEP)
+            [csn, bvalue] = [int(csn), bvalue]
+            csnCollections.add(csn)
+            if bvalue in ['True', 'true', 'yes', 'Yes']:
                 stabilizeAcks.update({si:True})
             else:
                 stabilizeAcks.update({si:False})
@@ -136,12 +139,14 @@ def MasterListener(stdout):
                 continue
 
             ## if all not none, we make the decision
-            if checkCounterAllTrue(stabilizeAcks, True):
+            if checkCounterAllTrue(stabilizeAcks, True) and \
+            len(csnCollections) == 1:
                 ## unblock the main/reader thread
                 stabilizeSema.release()
             else:
                 ## start a new round of testing
                 ## resend the request to all servers
+                csnCollections = set([])
                 global serversToListen, stabilizeCheckRound 
                 stabilizeAcks = initAllNoneCounter(serversToListen)
                 for cIdx in allClients:
@@ -314,7 +319,8 @@ def MasterProcessor():
                 restoreConnMsg1 = encode(MASTER_TYPE, 0, SERVER_TYPE, id1, \
                                      RESTORE_CONNECTION_TITLE, str(id2))
                 port = getPortByMsg(restoreConnMsg1)
-                send(localhost, port, breakConnMsg1, logHeader)
+                send(localhost, port, restoreConnMsg1, logHeader)
+
                 restoreConnMsg2 = encode(MASTER_TYPE, 0, SERVER_TYPE, id2, \
                                      RESTORE_CONNECTION_TITLE, str(id1))
                 port = getPortByMsg(restoreConnMsg2)
@@ -366,7 +372,7 @@ def MasterProcessor():
             number of servers in the system.
             """
             ## STEP ZERO: initialize global variables
-            global stabilizeSema, stabilizeAcks
+            global stabilizeSema, stabilizeAcks, csnCollections
             stabilizeSema = initEmptySemaphore()
 
             ## STEP ONE: get all servers to which checking request should send
@@ -387,6 +393,7 @@ def MasterProcessor():
             global serversToListen
             serversToListen = newServers
             stabilizeAcks = initAllNoneCounter(serversToListen)
+            csnCollections = set([])
 
             ## STEP TWO: send checking request to all clients
             global stabilizeCheckRound

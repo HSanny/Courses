@@ -64,8 +64,6 @@ Q6.
     In this question, we need to design new featuers in order to improve the
     accuracy to 84% for testing set. 
 
-    NOTE THAT our feature extraction takes a long time to run. (10-15min)
-    
     Specifically, what we do is as follows:
         For each pixel, we compute the gradient from every direction 
         The gradient is characterized by -1, 0, +1.
@@ -80,4 +78,15 @@ Q6.
     88% and testing accuracy improves to 84%.
 
 Minicontest.
+
+   data:           digits
+   classifier:             minicontest
+   using minicontest feature extractor
+   training set size:      5000
+   Extracting features...
+   Training...
+   Validating...
+   840 correct out of 1000 (84.0%).
+   Testing...
+   807 correct out of 1000 (80.7%).
 

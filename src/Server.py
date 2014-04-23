@@ -11,6 +11,7 @@
 ############################################################
 
 import sys, socket
+import json
 from Protocol import *
 from Logging import *
 from Util import *
@@ -118,15 +119,19 @@ def main (argv):
 
     ## initialize static variables
     pause = False
+    # serverID is the ID as given by Master and used for communication
     serverID = int(argv[0])
+    # bayouID is the ID regarding the Bayou protocol
+    bayouID = None
+    # TODO: Remove uses of allServers except to find a server for CREATE/RETIRE
     allServers = str2set(argv[1])
     isPrimary = (argv[2] == PRIMARY_PETITION)
     global logHeader
     logHeader = SERVER_LOG_HEADER % serverID
 
     writeLogs = initWriteLogs()
-    versionVector = initVersionVector(allServers)
-    versionVector.update({serverID: 0})
+    versionVector = initVersionVector()
+    bayouToMaster = {}
     localData = {}
     CSN = -1
 
@@ -140,13 +145,28 @@ def main (argv):
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     port = SERVER_PORT_BASE + serverID
     s.bind((localhost, port))
-    ## send back acknowledgement
-    ackMsg = encode(SERVER_TYPE, serverID, MASTER_TYPE, 0,\
-                      JOIN_SERVER_ACK_TITLE, EMPTY_CONTENT)
-    send(localhost, MASTER_PORT, ackMsg, logHeader)
 
+    # TODO: Browse through all uses of Master ID and change to Bayou ID as necessary
+    firstRun = True
     s.listen(5)
     while True:
+        if firstRun:
+            if isPrimary:
+                bayouID = serverID 
+                bayouToMaster[bayouID] = serverID
+                ackMsg = encode(SERVER_TYPE, serverID, MASTER_TYPE, 0,
+                    JOIN_SERVER_ACK_TITLE, serverID)
+                send(localhost, MASTER_PORT, ackMsg, logHeader)
+            else:
+                # Act as client and send CREATE message to a single server
+                lowest_server = min(allServers)
+                createMsg = encode(SERVER_TYPE, serverID, SERVER_TYPE,
+                    lowest_server, PUT_REQUEST_TITLE, CREATE_CONTENT)
+                port = getPortByMsg(createMsg)
+                send(localhost, port, createMsg, logHeader)
+            firstRun = False
+                
+
         ## prioritize uncached message if system is non-paused
         if not pause and len(cachedMessages) > 0:
             ## uncached the cached messages
@@ -166,13 +186,11 @@ def main (argv):
 
         '''Processing incoming messages'''
         if title == JOIN_SERVER_TITLE:
-            newServerId = int(content)
-            allServers.update([newServerId])
-            versionVector.update({newServerId:0})
-            ackMsg = encode(SERVER_TYPE, serverID, MASTER_TYPE, 0, \
-                           JOIN_SERVER_ACK_TITLE, str(newServerId))
-            send(localhost, MASTER_PORT, ackMsg, logHeader)
-
+            # Add a new mapping from bayouID to MasterID
+            newBayouID, newServerID = json.loads(content)
+            if isinstance(newBayouID, list):
+                newBayouID = tuple(newBayouID)
+            bayouToMaster[newBayouID] = newServerID
         elif title == RETIRE_SERVER_TITLE:
             ## STEP ONE: exchange local log to at least one server it knows
 
@@ -210,7 +228,6 @@ def main (argv):
                 "The server to break is unknown."
 
             ## TODO: send ack stuff?
-
         elif title == RESTORE_CONNECTION_TITLE:
             toRestoreServerId = int(content)
             assert (toRestoreServerId not in allServers)
@@ -242,11 +259,14 @@ def main (argv):
         elif title == PUT_REQUEST_TITLE:
             ## update the accept stamp
             accept_stamp += 1
-            ## update locallog
-            [sn, URL] = content.split(SU_SEP)
-            ## putlog: directly stable if this server is primary 
-            putlog = OPLOG_FORMAT % (PUT, OP_VALUE_FORMAT % (sn, URL),\
-                                  bool2str(isPrimary))
+            if content == CREATE_CONTENT:
+                putLog = CREATE_CONTENT
+            else:
+                ## update locallog
+                [sn, URL] = content.split(SU_SEP)
+                ## putlog: directly stable if this server is primary 
+                putlog = OPLOG_FORMAT % (PUT, OP_VALUE_FORMAT % (sn, URL),\
+                                      bool2str(isPrimary))
             if isPrimary:
                 CSN += 1
                 csn = CSN
@@ -257,12 +277,28 @@ def main (argv):
             writeLogs.append(write)
             ## update the version vector
             versionVector.update({serverID:accept_stamp})
-            ## update local datastore
-            localData.update({sn:URL})
-            ## send ack back
-            putAckMsg = encode(rt, ri, st, si, PUT_ACK_TITLE, EMPTY_CONTENT)
+            if content == CREATE_CONTENT:
+                ## update the version vector
+                newServerID = (accept_stamp, bayouID)
+                versionVector.update({newServerID:0})
+                # TODO: Run anti-entropy with new Server so he 'knows' someone
+                putAckMsg = encode(rt, ri, st, si, PUT_ACK_TITLE, json.dumps(newServerID))
+            else:
+                ## update local datastore
+                localData.update({sn:URL})
+                putAckMsg = encode(rt, ri, st, si, PUT_ACK_TITLE, EMPTY_CONTENT)
             port = getPortByMsg(putAckMsg)
             send(localhost, port, putAckMsg, logHeader)
+
+        elif title == PUT_ACK_TITLE:
+            # Server only receives this in response to his own CREATE
+            bayouID = tuple(json.loads(content))
+            # Receive Bayou ID and add to version vector
+            bayouToMaster[bayouID] = serverID
+            # Send Bayou ID to Master
+            ackMsg = encode(SERVER_TYPE, serverID, MASTER_TYPE, 0,
+                JOIN_SERVER_ACK_TITLE, json.dumps(serverID))
+            send(localhost, MASTER_PORT, ackMsg, logHeader)
 
         elif title == GET_REQUEST_TITLE: ## look up local data store
             sn = content

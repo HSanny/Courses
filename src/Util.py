@@ -199,14 +199,9 @@ def initAllNoneCounter (allIndex):
     return counter
 
 
-def initVersionVector (allServers=None):
-    if allServers is None:
-        return {}
-    else:
-        result = {}
-        for sIdx in allServers:
-            result.update({sIdx: 0})
-        return result
+def initVersionVector ():
+    # The first server is implicitly known by all to exist or have existed
+    return {0: 0}
 
 def initWriteLogs ():
     return list([])

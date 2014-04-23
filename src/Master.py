@@ -11,6 +11,7 @@
 ############################################################
 
 import sys, socket, os, subprocess
+import json
 from threading import Thread
 
 from Util import *
@@ -81,10 +82,10 @@ def MasterListener(stdout):
         global allClients, allServers
 
         if title == JOIN_SERVER_ACK_TITLE:
-            global joinServerSema, joinServerAcks
-            joinServerAcks.update({si:True})
-            if checkCounterAllTrue(joinServerAcks):
-                joinServerSema.release()
+            global joinServerSema, joinServerID
+            # Content will be the Bayou ID
+            joinServerID = json.loads(content)
+            joinServerSema.release()
 
         elif title == JOIN_CLIENT_ACK_TITLE:
             global joinClientSema
@@ -186,10 +187,9 @@ def MasterProcessor():
             assert (serverId not in allServers), \
                     "JOIN: server %d already exists." % serverIdx
 
-            global joinServerSema, joinServerAcks
-            joinServerAcks = initAllFalseCounter(allServers)
-            joinServerAcks.update({serverId:False})
-            ## invoke new server
+            global joinServerSema, joinServerID
+
+            # Run new Server process by shell command
             args = []
             args.append(LOAD_SERVER_CMD) # main command
             args.append(str(serverId))  # arg: server ID
@@ -204,16 +204,16 @@ def MasterProcessor():
             os.system(cmd + " &")
             print cmd
 
-            ## notify all existing server
+            # Wait for new Server to return its Bayou ID
+            joinServerSema.acquire()
+            # Send Bayou ID and Master ID of new Server to all existing Servers
             for oldServerId in allServers:
+                mapping = json.dumps((joinServerID, serverId))
                 notifyMsg = encode(MASTER_TYPE, 0, SERVER_TYPE, oldServerId, \
-                                   JOIN_SERVER_TITLE, str(serverId))
+                                   JOIN_SERVER_TITLE, mapping)
                 port = getPortByMsg(notifyMsg)
                 send(localhost, port, notifyMsg, logHeader)
-
-            ## block until receiving acks
-            joinServerSema.acquire()
-            ## confirm to add new server to its list
+            # Add new Server
             allServers.update([serverId])
             ## update serverConnection for all existing servers
             for sIdx, connectedServers in serverConnection.items():

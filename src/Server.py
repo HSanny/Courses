@@ -48,6 +48,13 @@ def applyWrite (localData, write, writeLogs, versionVector):
             newBayouID = tuple(newBayouID)
         # Update version vector
         versionVector[newBayouID] = 0
+    elif op_type == RETIRE:
+        # Get bayouID
+        deadBayouID = json.loads(op_value.strip("()"))
+        if isinstance(deadBayouID, list):
+            deadBayouID = tuple(deadBayouID)
+        # Update version vector
+        versionVector.pop(deadBayouID, None)
     return
 
 """

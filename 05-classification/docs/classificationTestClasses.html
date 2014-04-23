@@ -1,0 +1,289 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<title>./classificationTestClasses.py</title>
+<link rel="stylesheet" type="text/css" href="highlight.css">
+</head>
+<body class="hl">
+<pre class="hl"><span class="hl slc"># classificationTestClasses.py</span>
+<span class="hl slc"># ----------------------------</span>
+<span class="hl slc"># Licensing Information:  You are free to use or extend these projects for </span>
+<span class="hl slc"># educational purposes provided that (1) you do not distribute or publish </span>
+<span class="hl slc"># solutions, (2) you retain this notice, and (3) you provide clear </span>
+<span class="hl slc"># attribution to UC Berkeley, including a link to </span>
+<span class="hl slc"># http://inst.eecs.berkeley.edu/~cs188/pacman/pacman.html</span>
+<span class="hl slc"># </span>
+<span class="hl slc"># Attribution Information: The Pacman AI projects were developed at UC Berkeley.</span>
+<span class="hl slc"># The core projects and autograders were primarily created by John DeNero </span>
+<span class="hl slc"># (denero&#64;cs.berkeley.edu) and Dan Klein (klein&#64;cs.berkeley.edu).</span>
+<span class="hl slc"># Student side autograding was added by Brad Miller, Nick Hay, and </span>
+<span class="hl slc"># Pieter Abbeel (pabbeel&#64;cs.berkeley.edu).</span>
+
+
+<span class="hl kwa">from</span> hashlib <span class="hl kwa">import</span> sha1
+<span class="hl kwa">import</span> testClasses
+<span class="hl slc"># import json</span>
+
+<span class="hl kwa">from</span> collections <span class="hl kwa">import</span> defaultdict
+<span class="hl kwa">from</span> pprint <span class="hl kwa">import</span> PrettyPrinter
+pp <span class="hl opt">=</span> <span class="hl kwd">PrettyPrinter</span><span class="hl opt">()</span>
+
+<span class="hl slc"># from game import Agent</span>
+<span class="hl kwa">from</span> pacman <span class="hl kwa">import</span> GameState
+<span class="hl slc"># from ghostAgents import RandomGhost, DirectionalGhost</span>
+<span class="hl kwa">import</span> random<span class="hl opt">,</span> math<span class="hl opt">,</span> traceback<span class="hl opt">,</span> sys<span class="hl opt">,</span> os
+<span class="hl slc"># import layout, pacman</span>
+<span class="hl slc"># import autograder</span>
+<span class="hl slc"># import grading</span>
+
+<span class="hl kwa">import</span> dataClassifier<span class="hl opt">,</span> samples
+
+VERBOSE <span class="hl opt">=</span> <span class="hl kwa">False</span>
+
+
+
+<span class="hl slc"># Data sets</span>
+<span class="hl slc"># ---------</span>
+
+EVAL_MULTIPLE_CHOICE<span class="hl opt">=</span><span class="hl kwa">True</span>
+
+numTraining <span class="hl opt">=</span> <span class="hl num">100</span>
+TEST_SET_SIZE <span class="hl opt">=</span> <span class="hl num">100</span>
+DIGIT_DATUM_WIDTH<span class="hl opt">=</span><span class="hl num">28</span>
+DIGIT_DATUM_HEIGHT<span class="hl opt">=</span><span class="hl num">28</span>
+
+<span class="hl kwa">def</span> <span class="hl kwd">readDigitData</span><span class="hl opt">(</span>trainingSize<span class="hl opt">=</span><span class="hl num">100</span><span class="hl opt">,</span> testSize<span class="hl opt">=</span><span class="hl num">100</span><span class="hl opt">):</span>
+    rootdata <span class="hl opt">=</span> <span class="hl str">'digitdata/'</span>
+    <span class="hl slc"># loading digits data</span>
+    rawTrainingData <span class="hl opt">=</span> samples<span class="hl opt">.</span><span class="hl kwd">loadDataFile</span><span class="hl opt">(</span>rootdata <span class="hl opt">+</span> <span class="hl str">'trainingimages'</span><span class="hl opt">,</span> trainingSize<span class="hl opt">,</span>DIGIT_DATUM_WIDTH<span class="hl opt">,</span>DIGIT_DATUM_HEIGHT<span class="hl opt">)</span>
+    trainingLabels <span class="hl opt">=</span> samples<span class="hl opt">.</span><span class="hl kwd">loadLabelsFile</span><span class="hl opt">(</span>rootdata <span class="hl opt">+</span> <span class="hl str">&quot;traininglabels&quot;</span><span class="hl opt">,</span> trainingSize<span class="hl opt">)</span>
+    rawValidationData <span class="hl opt">=</span> samples<span class="hl opt">.</span><span class="hl kwd">loadDataFile</span><span class="hl opt">(</span>rootdata <span class="hl opt">+</span> <span class="hl str">&quot;validationimages&quot;</span><span class="hl opt">,</span> TEST_SET_SIZE<span class="hl opt">,</span>DIGIT_DATUM_WIDTH<span class="hl opt">,</span>DIGIT_DATUM_HEIGHT<span class="hl opt">)</span>
+    validationLabels <span class="hl opt">=</span> samples<span class="hl opt">.</span><span class="hl kwd">loadLabelsFile</span><span class="hl opt">(</span>rootdata <span class="hl opt">+</span> <span class="hl str">&quot;validationlabels&quot;</span><span class="hl opt">,</span> TEST_SET_SIZE<span class="hl opt">)</span>
+    rawTestData <span class="hl opt">=</span> samples<span class="hl opt">.</span><span class="hl kwd">loadDataFile</span><span class="hl opt">(</span><span class="hl str">&quot;digitdata/testimages&quot;</span><span class="hl opt">,</span> testSize<span class="hl opt">,</span>DIGIT_DATUM_WIDTH<span class="hl opt">,</span>DIGIT_DATUM_HEIGHT<span class="hl opt">)</span>
+    testLabels <span class="hl opt">=</span> samples<span class="hl opt">.</span><span class="hl kwd">loadLabelsFile</span><span class="hl opt">(</span><span class="hl str">&quot;digitdata/testlabels&quot;</span><span class="hl opt">,</span> testSize<span class="hl opt">)</span>
+    <span class="hl kwa">try</span><span class="hl opt">:</span>
+        <span class="hl kwa">print</span> <span class="hl str">&quot;Extracting features...&quot;</span>
+        featureFunction <span class="hl opt">=</span> dataClassifier<span class="hl opt">.</span>basicFeatureExtractorDigit
+        trainingData <span class="hl opt">=</span> <span class="hl kwb">map</span><span class="hl opt">(</span>featureFunction<span class="hl opt">,</span> rawTrainingData<span class="hl opt">)</span>
+        validationData <span class="hl opt">=</span> <span class="hl kwb">map</span><span class="hl opt">(</span>featureFunction<span class="hl opt">,</span> rawValidationData<span class="hl opt">)</span>
+        testData <span class="hl opt">=</span> <span class="hl kwb">map</span><span class="hl opt">(</span>featureFunction<span class="hl opt">,</span> rawTestData<span class="hl opt">)</span>
+    <span class="hl kwa">except</span><span class="hl opt">:</span>
+        <span class="hl kwd">display</span><span class="hl opt">(</span><span class="hl str">&quot;An exception was raised while extracting basic features:</span> <span class="hl esc">\n</span> <span class="hl str">%s&quot;</span> <span class="hl opt">%</span> <span class="hl kwd">getExceptionTraceBack</span><span class="hl opt">())</span>
+    <span class="hl kwa">return</span> <span class="hl opt">(</span>trainingData<span class="hl opt">,</span> trainingLabels<span class="hl opt">,</span> validationData<span class="hl opt">,</span> validationLabels<span class="hl opt">,</span> rawTrainingData<span class="hl opt">,</span> rawValidationData<span class="hl opt">,</span> testData<span class="hl opt">,</span> testLabels<span class="hl opt">,</span> rawTestData<span class="hl opt">)</span>
+
+<span class="hl kwa">def</span> <span class="hl kwd">readSuicideData</span><span class="hl opt">(</span>trainingSize<span class="hl opt">=</span><span class="hl num">100</span><span class="hl opt">,</span> testSize<span class="hl opt">=</span><span class="hl num">100</span><span class="hl opt">):</span>
+    rootdata <span class="hl opt">=</span> <span class="hl str">'pacmandata'</span>
+    rawTrainingData<span class="hl opt">,</span> trainingLabels <span class="hl opt">=</span> samples<span class="hl opt">.</span><span class="hl kwd">loadPacmanData</span><span class="hl opt">(</span>rootdata <span class="hl opt">+</span> <span class="hl str">'/suicide_training.pkl'</span><span class="hl opt">,</span> trainingSize<span class="hl opt">)</span>
+    rawValidationData<span class="hl opt">,</span> validationLabels <span class="hl opt">=</span> samples<span class="hl opt">.</span><span class="hl kwd">loadPacmanData</span><span class="hl opt">(</span>rootdata <span class="hl opt">+</span> <span class="hl str">'/suicide_validation.pkl'</span><span class="hl opt">,</span> testSize<span class="hl opt">)</span>
+    rawTestData<span class="hl opt">,</span> testLabels <span class="hl opt">=</span> samples<span class="hl opt">.</span><span class="hl kwd">loadPacmanData</span><span class="hl opt">(</span>rootdata <span class="hl opt">+</span> <span class="hl str">'/suicide_test.pkl'</span><span class="hl opt">,</span> testSize<span class="hl opt">)</span>
+    trainingData <span class="hl opt">= []</span>
+    validationData <span class="hl opt">= []</span>
+    testData <span class="hl opt">= []</span>
+    <span class="hl kwa">return</span> <span class="hl opt">(</span>trainingData<span class="hl opt">,</span> trainingLabels<span class="hl opt">,</span> validationData<span class="hl opt">,</span> validationLabels<span class="hl opt">,</span> rawTrainingData<span class="hl opt">,</span> rawValidationData<span class="hl opt">,</span> testData<span class="hl opt">,</span> testLabels<span class="hl opt">,</span> rawTestData<span class="hl opt">)</span>
+
+<span class="hl kwa">def</span> <span class="hl kwd">readContestData</span><span class="hl opt">(</span>trainingSize<span class="hl opt">=</span><span class="hl num">100</span><span class="hl opt">,</span> testSize<span class="hl opt">=</span><span class="hl num">100</span><span class="hl opt">):</span>
+    rootdata <span class="hl opt">=</span> <span class="hl str">'pacmandata'</span>
+    rawTrainingData<span class="hl opt">,</span> trainingLabels <span class="hl opt">=</span> samples<span class="hl opt">.</span><span class="hl kwd">loadPacmanData</span><span class="hl opt">(</span>rootdata <span class="hl opt">+</span> <span class="hl str">'/contest_training.pkl'</span><span class="hl opt">,</span> trainingSize<span class="hl opt">)</span>
+    rawValidationData<span class="hl opt">,</span> validationLabels <span class="hl opt">=</span> samples<span class="hl opt">.</span><span class="hl kwd">loadPacmanData</span><span class="hl opt">(</span>rootdata <span class="hl opt">+</span> <span class="hl str">'/contest_validation.pkl'</span><span class="hl opt">,</span> testSize<span class="hl opt">)</span>
+    rawTestData<span class="hl opt">,</span> testLabels <span class="hl opt">=</span> samples<span class="hl opt">.</span><span class="hl kwd">loadPacmanData</span><span class="hl opt">(</span>rootdata <span class="hl opt">+</span> <span class="hl str">'/contest_test.pkl'</span><span class="hl opt">,</span> testSize<span class="hl opt">)</span>
+    trainingData <span class="hl opt">= []</span>
+    validationData <span class="hl opt">= []</span>
+    testData <span class="hl opt">= []</span>
+    <span class="hl kwa">return</span> <span class="hl opt">(</span>trainingData<span class="hl opt">,</span> trainingLabels<span class="hl opt">,</span> validationData<span class="hl opt">,</span> validationLabels<span class="hl opt">,</span> rawTrainingData<span class="hl opt">,</span> rawValidationData<span class="hl opt">,</span> testData<span class="hl opt">,</span> testLabels<span class="hl opt">,</span> rawTestData<span class="hl opt">)</span>
+
+
+smallDigitData <span class="hl opt">=</span> <span class="hl kwd">readDigitData</span><span class="hl opt">(</span><span class="hl num">20</span><span class="hl opt">)</span>
+bigDigitData <span class="hl opt">=</span> <span class="hl kwd">readDigitData</span><span class="hl opt">(</span><span class="hl num">1000</span><span class="hl opt">)</span>
+
+suicideData <span class="hl opt">=</span> <span class="hl kwd">readSuicideData</span><span class="hl opt">(</span><span class="hl num">1000</span><span class="hl opt">)</span>
+contestData <span class="hl opt">=</span> <span class="hl kwd">readContestData</span><span class="hl opt">(</span><span class="hl num">1000</span><span class="hl opt">)</span>
+
+<span class="hl kwa">def</span> <span class="hl kwd">tinyDataSet</span><span class="hl opt">():</span>
+    <span class="hl kwa">def</span> <span class="hl kwd">count</span><span class="hl opt">(</span>m<span class="hl opt">,</span>b<span class="hl opt">,</span>h<span class="hl opt">):</span>
+        c <span class="hl opt">=</span> util<span class="hl opt">.</span><span class="hl kwd">Counter</span><span class="hl opt">();</span>
+        c<span class="hl opt">[</span><span class="hl str">'m'</span><span class="hl opt">] =</span> m<span class="hl opt">;</span>
+        c<span class="hl opt">[</span><span class="hl str">'b'</span><span class="hl opt">] =</span> b<span class="hl opt">;</span>
+        c<span class="hl opt">[</span><span class="hl str">'h'</span><span class="hl opt">] =</span> h<span class="hl opt">;</span>
+        <span class="hl kwa">return</span> c<span class="hl opt">;</span>
+
+    training <span class="hl opt">= [</span><span class="hl kwd">count</span><span class="hl opt">(</span><span class="hl num">0</span><span class="hl opt">,</span><span class="hl num">0</span><span class="hl opt">,</span><span class="hl num">0</span><span class="hl opt">),</span> <span class="hl kwd">count</span><span class="hl opt">(</span><span class="hl num">1</span><span class="hl opt">,</span><span class="hl num">0</span><span class="hl opt">,</span><span class="hl num">0</span><span class="hl opt">),</span> <span class="hl kwd">count</span><span class="hl opt">(</span><span class="hl num">1</span><span class="hl opt">,</span><span class="hl num">1</span><span class="hl opt">,</span><span class="hl num">0</span><span class="hl opt">),</span> <span class="hl kwd">count</span><span class="hl opt">(</span><span class="hl num">0</span><span class="hl opt">,</span><span class="hl num">1</span><span class="hl opt">,</span><span class="hl num">1</span><span class="hl opt">),</span> <span class="hl kwd">count</span><span class="hl opt">(</span><span class="hl num">1</span><span class="hl opt">,</span><span class="hl num">0</span><span class="hl opt">,</span><span class="hl num">1</span><span class="hl opt">),</span> <span class="hl kwd">count</span><span class="hl opt">(</span><span class="hl num">1</span><span class="hl opt">,</span><span class="hl num">1</span><span class="hl opt">,</span><span class="hl num">1</span><span class="hl opt">)]</span>
+    trainingLabels <span class="hl opt">= [</span><span class="hl num">1</span><span class="hl opt">,</span>        <span class="hl num">1</span><span class="hl opt">,</span>            <span class="hl num">1</span>           <span class="hl opt">,</span> <span class="hl num">1</span>           <span class="hl opt">,      -</span><span class="hl num">1</span>     <span class="hl opt">,      -</span><span class="hl num">1</span><span class="hl opt">]</span>
+
+    validation <span class="hl opt">= [</span><span class="hl kwd">count</span><span class="hl opt">(</span><span class="hl num">1</span><span class="hl opt">,</span><span class="hl num">0</span><span class="hl opt">,</span><span class="hl num">1</span><span class="hl opt">)]</span>
+    validationLabels <span class="hl opt">= [</span> <span class="hl num">1</span><span class="hl opt">]</span>
+
+    test <span class="hl opt">= [</span><span class="hl kwd">count</span><span class="hl opt">(</span><span class="hl num">1</span><span class="hl opt">,</span><span class="hl num">0</span><span class="hl opt">,</span><span class="hl num">1</span><span class="hl opt">)]</span>
+    testLabels <span class="hl opt">= [-</span><span class="hl num">1</span><span class="hl opt">]</span>
+
+    <span class="hl kwa">return</span> <span class="hl opt">(</span>training<span class="hl opt">,</span>trainingLabels<span class="hl opt">,</span>validation<span class="hl opt">,</span>validationLabels<span class="hl opt">,</span>test<span class="hl opt">,</span>testLabels<span class="hl opt">);</span>
+
+
+<span class="hl kwa">def</span> <span class="hl kwd">tinyDataSetPeceptronAndMira</span><span class="hl opt">():</span>
+    <span class="hl kwa">def</span> <span class="hl kwd">count</span><span class="hl opt">(</span>m<span class="hl opt">,</span>b<span class="hl opt">,</span>h<span class="hl opt">):</span>
+        c <span class="hl opt">=</span> util<span class="hl opt">.</span><span class="hl kwd">Counter</span><span class="hl opt">();</span>
+        c<span class="hl opt">[</span><span class="hl str">'m'</span><span class="hl opt">] =</span> m<span class="hl opt">;</span>
+        c<span class="hl opt">[</span><span class="hl str">'b'</span><span class="hl opt">] =</span> b<span class="hl opt">;</span>
+        c<span class="hl opt">[</span><span class="hl str">'h'</span><span class="hl opt">] =</span> h<span class="hl opt">;</span>
+        <span class="hl kwa">return</span> c<span class="hl opt">;</span>
+
+    training <span class="hl opt">= [</span><span class="hl kwd">count</span><span class="hl opt">(</span><span class="hl num">1</span><span class="hl opt">,</span><span class="hl num">0</span><span class="hl opt">,</span><span class="hl num">0</span><span class="hl opt">),</span> <span class="hl kwd">count</span><span class="hl opt">(</span><span class="hl num">1</span><span class="hl opt">,</span><span class="hl num">1</span><span class="hl opt">,</span><span class="hl num">0</span><span class="hl opt">),</span> <span class="hl kwd">count</span><span class="hl opt">(</span><span class="hl num">0</span><span class="hl opt">,</span><span class="hl num">1</span><span class="hl opt">,</span><span class="hl num">1</span><span class="hl opt">),</span> <span class="hl kwd">count</span><span class="hl opt">(</span><span class="hl num">1</span><span class="hl opt">,</span><span class="hl num">0</span><span class="hl opt">,</span><span class="hl num">1</span><span class="hl opt">),</span> <span class="hl kwd">count</span><span class="hl opt">(</span><span class="hl num">1</span><span class="hl opt">,</span><span class="hl num">1</span><span class="hl opt">,</span><span class="hl num">1</span><span class="hl opt">)]</span>
+    trainingLabels <span class="hl opt">= [</span><span class="hl num">1</span><span class="hl opt">,</span>            <span class="hl num">1</span><span class="hl opt">,</span>            <span class="hl num">1</span><span class="hl opt">,          -</span><span class="hl num">1</span>      <span class="hl opt">,      -</span><span class="hl num">1</span><span class="hl opt">]</span>
+
+    validation <span class="hl opt">= [</span><span class="hl kwd">count</span><span class="hl opt">(</span><span class="hl num">1</span><span class="hl opt">,</span><span class="hl num">0</span><span class="hl opt">,</span><span class="hl num">1</span><span class="hl opt">)]</span>
+    validationLabels <span class="hl opt">= [</span> <span class="hl num">1</span><span class="hl opt">]</span>
+
+    test <span class="hl opt">= [</span><span class="hl kwd">count</span><span class="hl opt">(</span><span class="hl num">1</span><span class="hl opt">,</span><span class="hl num">0</span><span class="hl opt">,</span><span class="hl num">1</span><span class="hl opt">)]</span>
+    testLabels <span class="hl opt">= [-</span><span class="hl num">1</span><span class="hl opt">]</span>
+
+    <span class="hl kwa">return</span> <span class="hl opt">(</span>training<span class="hl opt">,</span>trainingLabels<span class="hl opt">,</span>validation<span class="hl opt">,</span>validationLabels<span class="hl opt">,</span>test<span class="hl opt">,</span>testLabels<span class="hl opt">);</span>
+
+
+DATASETS <span class="hl opt">= {</span>
+    <span class="hl str">&quot;smallDigitData&quot;</span><span class="hl opt">:</span> <span class="hl kwa">lambda</span><span class="hl opt">:</span> smallDigitData<span class="hl opt">,</span>
+    <span class="hl str">&quot;bigDigitData&quot;</span><span class="hl opt">:</span> <span class="hl kwa">lambda</span><span class="hl opt">:</span> bigDigitData<span class="hl opt">,</span>
+    <span class="hl str">&quot;tinyDataSet&quot;</span><span class="hl opt">:</span> tinyDataSet<span class="hl opt">,</span>
+    <span class="hl str">&quot;tinyDataSetPeceptronAndMira&quot;</span><span class="hl opt">:</span> tinyDataSetPeceptronAndMira<span class="hl opt">,</span>
+    <span class="hl str">&quot;suicideData&quot;</span><span class="hl opt">:</span> <span class="hl kwa">lambda</span><span class="hl opt">:</span> suicideData<span class="hl opt">,</span>
+    <span class="hl str">&quot;contestData&quot;</span><span class="hl opt">:</span> <span class="hl kwa">lambda</span><span class="hl opt">:</span> contestData
+<span class="hl opt">}</span>
+
+DATASETS_LEGAL_LABELS <span class="hl opt">= {</span>
+    <span class="hl str">&quot;smallDigitData&quot;</span><span class="hl opt">:</span> <span class="hl kwb">range</span><span class="hl opt">(</span><span class="hl num">10</span><span class="hl opt">),</span>
+    <span class="hl str">&quot;bigDigitData&quot;</span><span class="hl opt">:</span> <span class="hl kwb">range</span><span class="hl opt">(</span><span class="hl num">10</span><span class="hl opt">),</span>
+    <span class="hl str">&quot;tinyDataSet&quot;</span><span class="hl opt">: [-</span><span class="hl num">1</span><span class="hl opt">,</span><span class="hl num">1</span><span class="hl opt">],</span>
+    <span class="hl str">&quot;tinyDataSetPeceptronAndMira&quot;</span><span class="hl opt">: [-</span><span class="hl num">1</span><span class="hl opt">,</span><span class="hl num">1</span><span class="hl opt">],</span>
+    <span class="hl str">&quot;suicideData&quot;</span><span class="hl opt">: [</span><span class="hl str">&quot;EAST&quot;</span><span class="hl opt">,</span> <span class="hl str">'WEST'</span><span class="hl opt">,</span> <span class="hl str">'NORTH'</span><span class="hl opt">,</span> <span class="hl str">'SOUTH'</span><span class="hl opt">,</span> <span class="hl str">'STOP'</span><span class="hl opt">],</span>
+    <span class="hl str">&quot;contestData&quot;</span><span class="hl opt">: [</span><span class="hl str">&quot;EAST&quot;</span><span class="hl opt">,</span> <span class="hl str">'WEST'</span><span class="hl opt">,</span> <span class="hl str">'NORTH'</span><span class="hl opt">,</span> <span class="hl str">'SOUTH'</span><span class="hl opt">,</span> <span class="hl str">'STOP'</span><span class="hl opt">]</span>
+<span class="hl opt">}</span>
+
+
+<span class="hl slc"># Test classes</span>
+<span class="hl slc"># ------------</span>
+
+<span class="hl kwa">def</span> <span class="hl kwd">getAccuracy</span><span class="hl opt">(</span>data<span class="hl opt">,</span> classifier<span class="hl opt">,</span> featureFunction<span class="hl opt">=</span>dataClassifier<span class="hl opt">.</span>basicFeatureExtractorDigit<span class="hl opt">):</span>
+    trainingData<span class="hl opt">,</span> trainingLabels<span class="hl opt">,</span> validationData<span class="hl opt">,</span> validationLabels<span class="hl opt">,</span> rawTrainingData<span class="hl opt">,</span> rawValidationData<span class="hl opt">,</span> testData<span class="hl opt">,</span> testLabels<span class="hl opt">,</span> rawTestData <span class="hl opt">=</span> data
+    <span class="hl kwa">if</span> featureFunction <span class="hl opt">!=</span> dataClassifier<span class="hl opt">.</span>basicFeatureExtractorDigit<span class="hl opt">:</span>
+        trainingData <span class="hl opt">=</span> <span class="hl kwb">map</span><span class="hl opt">(</span>featureFunction<span class="hl opt">,</span> rawTrainingData<span class="hl opt">)</span>
+        validationData <span class="hl opt">=</span> <span class="hl kwb">map</span><span class="hl opt">(</span>featureFunction<span class="hl opt">,</span> rawValidationData<span class="hl opt">)</span>
+        testData <span class="hl opt">=</span> <span class="hl kwb">map</span><span class="hl opt">(</span>featureFunction<span class="hl opt">,</span> rawTestData<span class="hl opt">)</span>
+    classifier<span class="hl opt">.</span><span class="hl kwd">train</span><span class="hl opt">(</span>trainingData<span class="hl opt">,</span> trainingLabels<span class="hl opt">,</span> validationData<span class="hl opt">,</span> validationLabels<span class="hl opt">)</span>
+    guesses <span class="hl opt">=</span> classifier<span class="hl opt">.</span><span class="hl kwd">classify</span><span class="hl opt">(</span>testData<span class="hl opt">)</span>
+    correct <span class="hl opt">= [</span>guesses<span class="hl opt">[</span>i<span class="hl opt">] ==</span> testLabels<span class="hl opt">[</span>i<span class="hl opt">]</span> <span class="hl kwa">for</span> i <span class="hl kwa">in</span> <span class="hl kwb">range</span><span class="hl opt">(</span><span class="hl kwb">len</span><span class="hl opt">(</span>testLabels<span class="hl opt">))].</span><span class="hl kwd">count</span><span class="hl opt">(</span><span class="hl kwa">True</span><span class="hl opt">)</span>
+    acc <span class="hl opt">=</span> <span class="hl num">100.0</span> <span class="hl opt">*</span> correct <span class="hl opt">/</span> <span class="hl kwb">len</span><span class="hl opt">(</span>testLabels<span class="hl opt">)</span>
+    serialized_guesses <span class="hl opt">=</span> <span class="hl str">&quot;, &quot;</span><span class="hl opt">.</span><span class="hl kwd">join</span><span class="hl opt">([</span><span class="hl kwb">str</span><span class="hl opt">(</span>guesses<span class="hl opt">[</span>i<span class="hl opt">])</span> <span class="hl kwa">for</span> i <span class="hl kwa">in</span> <span class="hl kwb">range</span><span class="hl opt">(</span><span class="hl kwb">len</span><span class="hl opt">(</span>testLabels<span class="hl opt">))])</span>
+    <span class="hl kwa">print</span> <span class="hl kwb">str</span><span class="hl opt">(</span>correct<span class="hl opt">), (</span><span class="hl str">&quot;correct out of &quot;</span> <span class="hl opt">+</span> <span class="hl kwb">str</span><span class="hl opt">(</span><span class="hl kwb">len</span><span class="hl opt">(</span>testLabels<span class="hl opt">)) +</span> <span class="hl str">&quot; (%.1f%%).&quot;</span><span class="hl opt">) % (</span>acc<span class="hl opt">)</span>
+    <span class="hl kwa">return</span> acc<span class="hl opt">,</span> serialized_guesses
+
+
+<span class="hl kwa">class</span> <span class="hl kwd">GradeClassifierTest</span><span class="hl opt">(</span>testClasses<span class="hl opt">.</span>TestCase<span class="hl opt">):</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">__init__</span><span class="hl opt">(</span>self<span class="hl opt">,</span> question<span class="hl opt">,</span> testDict<span class="hl opt">):</span>
+        <span class="hl kwb">super</span><span class="hl opt">(</span>GradeClassifierTest<span class="hl opt">,</span> self<span class="hl opt">).</span><span class="hl kwd">__init__</span><span class="hl opt">(</span>question<span class="hl opt">,</span> testDict<span class="hl opt">)</span>
+
+        self<span class="hl opt">.</span>classifierModule <span class="hl opt">=</span> testDict<span class="hl opt">[</span><span class="hl str">'classifierModule'</span><span class="hl opt">]</span>
+        self<span class="hl opt">.</span>classifierClass <span class="hl opt">=</span> testDict<span class="hl opt">[</span><span class="hl str">'classifierClass'</span><span class="hl opt">]</span>
+        self<span class="hl opt">.</span>datasetName <span class="hl opt">=</span> testDict<span class="hl opt">[</span><span class="hl str">'datasetName'</span><span class="hl opt">]</span>
+
+        self<span class="hl opt">.</span>accuracyScale <span class="hl opt">=</span> <span class="hl kwb">int</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'accuracyScale'</span><span class="hl opt">])</span>
+        self<span class="hl opt">.</span>accuracyThresholds <span class="hl opt">= [</span><span class="hl kwb">int</span><span class="hl opt">(</span>s<span class="hl opt">)</span> <span class="hl kwa">for</span> s <span class="hl kwa">in</span> testDict<span class="hl opt">.</span><span class="hl kwd">get</span><span class="hl opt">(</span><span class="hl str">'accuracyThresholds'</span><span class="hl opt">,</span><span class="hl str">''</span><span class="hl opt">).</span><span class="hl kwd">split</span><span class="hl opt">()]</span>
+        self<span class="hl opt">.</span>exactOutput <span class="hl opt">=</span> testDict<span class="hl opt">[</span><span class="hl str">'exactOutput'</span><span class="hl opt">].</span><span class="hl kwd">lower</span><span class="hl opt">() ==</span> <span class="hl str">&quot;true&quot;</span>
+
+        self<span class="hl opt">.</span>automaticTuning <span class="hl opt">=</span> testDict<span class="hl opt">[</span><span class="hl str">'automaticTuning'</span><span class="hl opt">].</span><span class="hl kwd">lower</span><span class="hl opt">() ==</span> <span class="hl str">&quot;true&quot;</span> <span class="hl kwa">if</span> <span class="hl str">'automaticTuning'</span> <span class="hl kwa">in</span> testDict <span class="hl kwa">else None</span>
+        self<span class="hl opt">.</span>max_iterations <span class="hl opt">=</span> <span class="hl kwb">int</span><span class="hl opt">(</span>testDict<span class="hl opt">[</span><span class="hl str">'max_iterations'</span><span class="hl opt">])</span> <span class="hl kwa">if</span> <span class="hl str">'max_iterations'</span> <span class="hl kwa">in</span> testDict <span class="hl kwa">else None</span>
+        self<span class="hl opt">.</span>featureFunction <span class="hl opt">=</span> testDict<span class="hl opt">[</span><span class="hl str">'featureFunction'</span><span class="hl opt">]</span> <span class="hl kwa">if</span> <span class="hl str">'featureFunction'</span> <span class="hl kwa">in</span> testDict <span class="hl kwa">else</span> <span class="hl str">'basicFeatureExtractorDigit'</span>
+
+        self<span class="hl opt">.</span>maxPoints <span class="hl opt">=</span> <span class="hl kwb">len</span><span class="hl opt">(</span>self<span class="hl opt">.</span>accuracyThresholds<span class="hl opt">) *</span> self<span class="hl opt">.</span>accuracyScale
+
+
+    <span class="hl kwa">def</span> <span class="hl kwd">grade_classifier</span><span class="hl opt">(</span>self<span class="hl opt">,</span> moduleDict<span class="hl opt">):</span>
+        featureFunction <span class="hl opt">=</span> <span class="hl kwb">getattr</span><span class="hl opt">(</span>dataClassifier<span class="hl opt">,</span> self<span class="hl opt">.</span>featureFunction<span class="hl opt">)</span>
+        data <span class="hl opt">=</span> DATASETS<span class="hl opt">[</span>self<span class="hl opt">.</span>datasetName<span class="hl opt">]()</span>
+        legalLabels <span class="hl opt">=</span> DATASETS_LEGAL_LABELS<span class="hl opt">[</span>self<span class="hl opt">.</span>datasetName<span class="hl opt">]</span>
+
+        classifierClass <span class="hl opt">=</span> <span class="hl kwb">getattr</span><span class="hl opt">(</span>moduleDict<span class="hl opt">[</span>self<span class="hl opt">.</span>classifierModule<span class="hl opt">],</span> self<span class="hl opt">.</span>classifierClass<span class="hl opt">)</span>
+
+        <span class="hl kwa">if</span> self<span class="hl opt">.</span>max_iterations <span class="hl opt">!=</span> <span class="hl kwa">None</span><span class="hl opt">:</span>
+            classifier <span class="hl opt">=</span> <span class="hl kwd">classifierClass</span><span class="hl opt">(</span>legalLabels<span class="hl opt">,</span> self<span class="hl opt">.</span>max_iterations<span class="hl opt">)</span>
+        <span class="hl kwa">else</span><span class="hl opt">:</span>
+            classifier <span class="hl opt">=</span> <span class="hl kwd">classifierClass</span><span class="hl opt">(</span>legalLabels<span class="hl opt">)</span>
+
+        <span class="hl kwa">if</span> self<span class="hl opt">.</span>automaticTuning <span class="hl opt">!=</span> <span class="hl kwa">None</span><span class="hl opt">:</span>
+            classifier<span class="hl opt">.</span>automaticTuning <span class="hl opt">=</span> self<span class="hl opt">.</span>automaticTuning
+
+        <span class="hl kwa">return</span> <span class="hl kwd">getAccuracy</span><span class="hl opt">(</span>data<span class="hl opt">,</span> classifier<span class="hl opt">,</span> featureFunction<span class="hl opt">=</span>featureFunction<span class="hl opt">)</span>
+
+
+    <span class="hl kwa">def</span> <span class="hl kwd">execute</span><span class="hl opt">(</span>self<span class="hl opt">,</span> grades<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> solutionDict<span class="hl opt">):</span>
+        accuracy<span class="hl opt">,</span> guesses <span class="hl opt">=</span> self<span class="hl opt">.</span><span class="hl kwd">grade_classifier</span><span class="hl opt">(</span>moduleDict<span class="hl opt">)</span>
+
+        <span class="hl slc"># Either grade them on the accuracy of their classifer,</span>
+        <span class="hl slc"># or their exact</span>
+        <span class="hl kwa">if</span> self<span class="hl opt">.</span>exactOutput<span class="hl opt">:</span>
+            gold_guesses <span class="hl opt">=</span> solutionDict<span class="hl opt">[</span><span class="hl str">'guesses'</span><span class="hl opt">]</span>
+            <span class="hl kwa">if</span> guesses <span class="hl opt">==</span> gold_guesses<span class="hl opt">:</span>
+                totalPoints <span class="hl opt">=</span> self<span class="hl opt">.</span>maxPoints
+            <span class="hl kwa">else</span><span class="hl opt">:</span>
+                self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">&quot;Incorrect classification after training:&quot;</span><span class="hl opt">)</span>
+                self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">&quot;  student classifications: &quot;</span> <span class="hl opt">+</span> guesses<span class="hl opt">)</span>
+                self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">&quot;  correct classifications: &quot;</span> <span class="hl opt">+</span> gold_guesses<span class="hl opt">)</span>
+                totalPoints <span class="hl opt">=</span> <span class="hl num">0</span>
+        <span class="hl kwa">else</span><span class="hl opt">:</span>
+            <span class="hl slc"># Grade accuracy</span>
+            totalPoints <span class="hl opt">=</span> <span class="hl num">0</span>
+            <span class="hl kwa">for</span> threshold <span class="hl kwa">in</span> self<span class="hl opt">.</span>accuracyThresholds<span class="hl opt">:</span>
+                <span class="hl kwa">if</span> accuracy <span class="hl opt">&gt;=</span> threshold<span class="hl opt">:</span>
+                    totalPoints <span class="hl opt">+=</span> self<span class="hl opt">.</span>accuracyScale
+
+            <span class="hl slc"># Print grading schedule</span>
+            self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">&quot;%s correct (%s of %s points)&quot;</span> <span class="hl opt">% (</span>accuracy<span class="hl opt">,</span> totalPoints<span class="hl opt">,</span> self<span class="hl opt">.</span>maxPoints<span class="hl opt">))</span>
+            self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">&quot;    Grading scheme:&quot;</span><span class="hl opt">)</span>
+            self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">&quot;     &lt; %s:  0 points&quot;</span> <span class="hl opt">% (</span>self<span class="hl opt">.</span>accuracyThresholds<span class="hl opt">[</span><span class="hl num">0</span><span class="hl opt">],))</span>
+            <span class="hl kwa">for</span> idx<span class="hl opt">,</span> threshold <span class="hl kwa">in</span> <span class="hl kwb">enumerate</span><span class="hl opt">(</span>self<span class="hl opt">.</span>accuracyThresholds<span class="hl opt">):</span>
+                self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">&quot;    &gt;= %s:  %s points&quot;</span> <span class="hl opt">% (</span>threshold<span class="hl opt">, (</span>idx<span class="hl opt">+</span><span class="hl num">1</span><span class="hl opt">)*</span>self<span class="hl opt">.</span>accuracyScale<span class="hl opt">))</span>
+
+        <span class="hl kwa">return</span> self<span class="hl opt">.</span><span class="hl kwd">testPartial</span><span class="hl opt">(</span>grades<span class="hl opt">,</span> totalPoints<span class="hl opt">,</span> self<span class="hl opt">.</span>maxPoints<span class="hl opt">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">writeSolution</span><span class="hl opt">(</span>self<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> filePath<span class="hl opt">):</span>
+        handle <span class="hl opt">=</span> <span class="hl kwb">open</span><span class="hl opt">(</span>filePath<span class="hl opt">,</span> <span class="hl str">'w'</span><span class="hl opt">)</span>
+        handle<span class="hl opt">.</span><span class="hl kwd">write</span><span class="hl opt">(</span><span class="hl str">'# This is the solution file for %s.</span><span class="hl esc">\n</span><span class="hl str">'</span> <span class="hl opt">%</span> self<span class="hl opt">.</span>path<span class="hl opt">)</span>
+
+        <span class="hl kwa">if</span> self<span class="hl opt">.</span>exactOutput<span class="hl opt">:</span>
+            _<span class="hl opt">,</span> guesses <span class="hl opt">=</span> self<span class="hl opt">.</span><span class="hl kwd">grade_classifier</span><span class="hl opt">(</span>moduleDict<span class="hl opt">)</span>
+            handle<span class="hl opt">.</span><span class="hl kwd">write</span><span class="hl opt">(</span><span class="hl str">'guesses: &quot;%s&quot;'</span> <span class="hl opt">% (</span>guesses<span class="hl opt">,))</span>
+
+        handle<span class="hl opt">.</span><span class="hl kwd">close</span><span class="hl opt">()</span>
+        <span class="hl kwa">return True</span>
+
+
+
+
+<span class="hl kwa">class</span> <span class="hl kwd">MultipleChoiceTest</span><span class="hl opt">(</span>testClasses<span class="hl opt">.</span>TestCase<span class="hl opt">):</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">__init__</span><span class="hl opt">(</span>self<span class="hl opt">,</span> question<span class="hl opt">,</span> testDict<span class="hl opt">):</span>
+        <span class="hl kwb">super</span><span class="hl opt">(</span>MultipleChoiceTest<span class="hl opt">,</span> self<span class="hl opt">).</span><span class="hl kwd">__init__</span><span class="hl opt">(</span>question<span class="hl opt">,</span> testDict<span class="hl opt">)</span>
+        self<span class="hl opt">.</span>ans <span class="hl opt">=</span> testDict<span class="hl opt">[</span><span class="hl str">'result'</span><span class="hl opt">]</span>
+        self<span class="hl opt">.</span>question <span class="hl opt">=</span> testDict<span class="hl opt">[</span><span class="hl str">'question'</span><span class="hl opt">]</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">execute</span><span class="hl opt">(</span>self<span class="hl opt">,</span> grades<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> solutionDict<span class="hl opt">):</span>
+        studentSolution <span class="hl opt">=</span> <span class="hl kwb">str</span><span class="hl opt">(</span><span class="hl kwb">getattr</span><span class="hl opt">(</span>moduleDict<span class="hl opt">[</span><span class="hl str">'answers'</span><span class="hl opt">],</span> self<span class="hl opt">.</span>question<span class="hl opt">)())</span>
+        encryptedSolution <span class="hl opt">=</span> <span class="hl kwd">sha1</span><span class="hl opt">(</span>studentSolution<span class="hl opt">.</span><span class="hl kwd">strip</span><span class="hl opt">().</span><span class="hl kwd">lower</span><span class="hl opt">()).</span><span class="hl kwd">hexdigest</span><span class="hl opt">()</span>
+        <span class="hl kwa">if</span> encryptedSolution <span class="hl opt">==</span> self<span class="hl opt">.</span>ans<span class="hl opt">:</span>
+            <span class="hl kwa">return</span> self<span class="hl opt">.</span><span class="hl kwd">testPass</span><span class="hl opt">(</span>grades<span class="hl opt">)</span>
+        <span class="hl kwa">else</span><span class="hl opt">:</span>
+            self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">&quot;Solution is not correct.&quot;</span><span class="hl opt">)</span>
+            self<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">&quot;Student solution: %s&quot;</span> <span class="hl opt">%</span> studentSolution<span class="hl opt">)</span>
+            <span class="hl kwa">return</span> self<span class="hl opt">.</span><span class="hl kwd">testFail</span><span class="hl opt">(</span>grades<span class="hl opt">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">writeSolution</span><span class="hl opt">(</span>self<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> filePath<span class="hl opt">):</span>
+        handle <span class="hl opt">=</span> <span class="hl kwb">open</span><span class="hl opt">(</span>filePath<span class="hl opt">,</span> <span class="hl str">'w'</span><span class="hl opt">)</span>
+        handle<span class="hl opt">.</span><span class="hl kwd">write</span><span class="hl opt">(</span><span class="hl str">'# This is the solution file for %s.</span><span class="hl esc">\n</span><span class="hl str">'</span> <span class="hl opt">%</span> self<span class="hl opt">.</span>path<span class="hl opt">)</span>
+        handle<span class="hl opt">.</span><span class="hl kwd">write</span><span class="hl opt">(</span><span class="hl str">'# File intentionally blank.</span><span class="hl esc">\n</span><span class="hl str">'</span><span class="hl opt">)</span>
+        handle<span class="hl opt">.</span><span class="hl kwd">close</span><span class="hl opt">()</span>
+        <span class="hl kwa">return True</span>
+
+
+</pre>
+</body>
+</html>
+<!--HTML generated by highlight 3.8, http://www.andre-simon.de/-->

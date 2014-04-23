@@ -1,0 +1,366 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<title>./autograder.py</title>
+<link rel="stylesheet" type="text/css" href="highlight.css">
+</head>
+<body class="hl">
+<pre class="hl"><span class="hl slc"># autograder.py</span>
+<span class="hl slc"># -------------</span>
+<span class="hl slc"># Licensing Information:  You are free to use or extend these projects for </span>
+<span class="hl slc"># educational purposes provided that (1) you do not distribute or publish </span>
+<span class="hl slc"># solutions, (2) you retain this notice, and (3) you provide clear </span>
+<span class="hl slc"># attribution to UC Berkeley, including a link to </span>
+<span class="hl slc"># http://inst.eecs.berkeley.edu/~cs188/pacman/pacman.html</span>
+<span class="hl slc"># </span>
+<span class="hl slc"># Attribution Information: The Pacman AI projects were developed at UC Berkeley.</span>
+<span class="hl slc"># The core projects and autograders were primarily created by John DeNero </span>
+<span class="hl slc"># (denero&#64;cs.berkeley.edu) and Dan Klein (klein&#64;cs.berkeley.edu).</span>
+<span class="hl slc"># Student side autograding was added by Brad Miller, Nick Hay, and </span>
+<span class="hl slc"># Pieter Abbeel (pabbeel&#64;cs.berkeley.edu).</span>
+
+
+<span class="hl slc"># imports from python standard library</span>
+<span class="hl kwa">import</span> grading
+<span class="hl kwa">import</span> imp
+<span class="hl kwa">import</span> optparse
+<span class="hl kwa">import</span> os
+<span class="hl kwa">import</span> re
+<span class="hl kwa">import</span> sys
+<span class="hl kwa">import</span> projectParams
+<span class="hl kwa">import</span> random
+<span class="hl kwa">from</span> pacman <span class="hl kwa">import</span> GameState
+random<span class="hl opt">.</span><span class="hl kwd">seed</span><span class="hl opt">(</span><span class="hl num">0</span><span class="hl opt">)</span>
+
+<span class="hl slc"># register arguments and set default values</span>
+<span class="hl kwa">def</span> <span class="hl kwd">readCommand</span><span class="hl opt">(</span>argv<span class="hl opt">):</span>
+    parser <span class="hl opt">=</span> optparse<span class="hl opt">.</span><span class="hl kwd">OptionParser</span><span class="hl opt">(</span>description <span class="hl opt">=</span> <span class="hl str">'Run public tests on student code'</span><span class="hl opt">)</span>
+    parser<span class="hl opt">.</span><span class="hl kwd">set_defaults</span><span class="hl opt">(</span>generateSolutions<span class="hl opt">=</span><span class="hl kwa">False</span><span class="hl opt">,</span> edxOutput<span class="hl opt">=</span><span class="hl kwa">False</span><span class="hl opt">,</span> muteOutput<span class="hl opt">=</span><span class="hl kwa">False</span><span class="hl opt">,</span> printTestCase<span class="hl opt">=</span><span class="hl kwa">False</span><span class="hl opt">,</span> noGraphics<span class="hl opt">=</span><span class="hl kwa">False</span><span class="hl opt">,</span> graphics<span class="hl opt">=</span><span class="hl kwa">False</span><span class="hl opt">)</span>
+    parser<span class="hl opt">.</span><span class="hl kwd">add_option</span><span class="hl opt">(</span><span class="hl str">'--test-directory'</span><span class="hl opt">,</span>
+                      dest <span class="hl opt">=</span> <span class="hl str">'testRoot'</span><span class="hl opt">,</span>
+                      default <span class="hl opt">=</span> <span class="hl str">'test_cases'</span><span class="hl opt">,</span>
+                      <span class="hl kwb">help</span> <span class="hl opt">=</span> <span class="hl str">'Root test directory which contains subdirectories corresponding to each question'</span><span class="hl opt">)</span>
+    parser<span class="hl opt">.</span><span class="hl kwd">add_option</span><span class="hl opt">(</span><span class="hl str">'--student-code'</span><span class="hl opt">,</span>
+                      dest <span class="hl opt">=</span> <span class="hl str">'studentCode'</span><span class="hl opt">,</span>
+                      default <span class="hl opt">=</span> projectParams<span class="hl opt">.</span>STUDENT_CODE_DEFAULT<span class="hl opt">,</span>
+                      <span class="hl kwb">help</span> <span class="hl opt">=</span> <span class="hl str">'comma separated list of student code files'</span><span class="hl opt">)</span>
+    parser<span class="hl opt">.</span><span class="hl kwd">add_option</span><span class="hl opt">(</span><span class="hl str">'--code-directory'</span><span class="hl opt">,</span>
+                    dest <span class="hl opt">=</span> <span class="hl str">'codeRoot'</span><span class="hl opt">,</span>
+                    default <span class="hl opt">=</span> <span class="hl str">&quot;&quot;</span><span class="hl opt">,</span>
+                    <span class="hl kwb">help</span> <span class="hl opt">=</span> <span class="hl str">'Root directory containing the student and testClass code'</span><span class="hl opt">)</span>
+    parser<span class="hl opt">.</span><span class="hl kwd">add_option</span><span class="hl opt">(</span><span class="hl str">'--test-case-code'</span><span class="hl opt">,</span>
+                      dest <span class="hl opt">=</span> <span class="hl str">'testCaseCode'</span><span class="hl opt">,</span>
+                      default <span class="hl opt">=</span> projectParams<span class="hl opt">.</span>PROJECT_TEST_CLASSES<span class="hl opt">,</span>
+                      <span class="hl kwb">help</span> <span class="hl opt">=</span> <span class="hl str">'class containing testClass classes for this project'</span><span class="hl opt">)</span>
+    parser<span class="hl opt">.</span><span class="hl kwd">add_option</span><span class="hl opt">(</span><span class="hl str">'--generate-solutions'</span><span class="hl opt">,</span>
+                      dest <span class="hl opt">=</span> <span class="hl str">'generateSolutions'</span><span class="hl opt">,</span>
+                      action <span class="hl opt">=</span> <span class="hl str">'store_true'</span><span class="hl opt">,</span>
+                      <span class="hl kwb">help</span> <span class="hl opt">=</span> <span class="hl str">'Write solutions generated to .solution file'</span><span class="hl opt">)</span>
+    parser<span class="hl opt">.</span><span class="hl kwd">add_option</span><span class="hl opt">(</span><span class="hl str">'--edx-output'</span><span class="hl opt">,</span>
+                    dest <span class="hl opt">=</span> <span class="hl str">'edxOutput'</span><span class="hl opt">,</span>
+                    action <span class="hl opt">=</span> <span class="hl str">'store_true'</span><span class="hl opt">,</span>
+                    <span class="hl kwb">help</span> <span class="hl opt">=</span> <span class="hl str">'Generate edX output files'</span><span class="hl opt">)</span>
+    parser<span class="hl opt">.</span><span class="hl kwd">add_option</span><span class="hl opt">(</span><span class="hl str">'--mute'</span><span class="hl opt">,</span>
+                    dest <span class="hl opt">=</span> <span class="hl str">'muteOutput'</span><span class="hl opt">,</span>
+                    action <span class="hl opt">=</span> <span class="hl str">'store_true'</span><span class="hl opt">,</span>
+                    <span class="hl kwb">help</span> <span class="hl opt">=</span> <span class="hl str">'Mute output from executing tests'</span><span class="hl opt">)</span>
+    parser<span class="hl opt">.</span><span class="hl kwd">add_option</span><span class="hl opt">(</span><span class="hl str">'--print-tests'</span><span class="hl opt">,</span> <span class="hl str">'-p'</span><span class="hl opt">,</span>
+                    dest <span class="hl opt">=</span> <span class="hl str">'printTestCase'</span><span class="hl opt">,</span>
+                    action <span class="hl opt">=</span> <span class="hl str">'store_true'</span><span class="hl opt">,</span>
+                    <span class="hl kwb">help</span> <span class="hl opt">=</span> <span class="hl str">'Print each test case before running them.'</span><span class="hl opt">)</span>
+    parser<span class="hl opt">.</span><span class="hl kwd">add_option</span><span class="hl opt">(</span><span class="hl str">'--test'</span><span class="hl opt">,</span> <span class="hl str">'-t'</span><span class="hl opt">,</span>
+                      dest <span class="hl opt">=</span> <span class="hl str">'runTest'</span><span class="hl opt">,</span>
+                      default <span class="hl opt">=</span> <span class="hl kwa">None</span><span class="hl opt">,</span>
+                      <span class="hl kwb">help</span> <span class="hl opt">=</span> <span class="hl str">'Run one particular test.  Relative to test root.'</span><span class="hl opt">)</span>
+    parser<span class="hl opt">.</span><span class="hl kwd">add_option</span><span class="hl opt">(</span><span class="hl str">'--question'</span><span class="hl opt">,</span> <span class="hl str">'-q'</span><span class="hl opt">,</span>
+                    dest <span class="hl opt">=</span> <span class="hl str">'gradeQuestion'</span><span class="hl opt">,</span>
+                    default <span class="hl opt">=</span> <span class="hl kwa">None</span><span class="hl opt">,</span>
+                    <span class="hl kwb">help</span> <span class="hl opt">=</span> <span class="hl str">'Grade one particular question.'</span><span class="hl opt">)</span>
+    parser<span class="hl opt">.</span><span class="hl kwd">add_option</span><span class="hl opt">(</span><span class="hl str">'--no-graphics'</span><span class="hl opt">,</span>
+                    dest <span class="hl opt">=</span> <span class="hl str">'noGraphics'</span><span class="hl opt">,</span>
+                    action <span class="hl opt">=</span> <span class="hl str">'store_true'</span><span class="hl opt">,</span>
+                    <span class="hl kwb">help</span> <span class="hl opt">=</span> <span class="hl str">'No graphics display for pacman games.'</span><span class="hl opt">)</span>
+    parser<span class="hl opt">.</span><span class="hl kwd">add_option</span><span class="hl opt">(</span><span class="hl str">'--graphics'</span><span class="hl opt">,</span>
+                    dest <span class="hl opt">=</span> <span class="hl str">'graphics'</span><span class="hl opt">,</span>
+                    action <span class="hl opt">=</span> <span class="hl str">'store_true'</span><span class="hl opt">,</span>
+                    <span class="hl kwb">help</span> <span class="hl opt">=</span> <span class="hl str">'Display graphics for pacman games.'</span><span class="hl opt">)</span>
+    <span class="hl opt">(</span>options<span class="hl opt">,</span> args<span class="hl opt">) =</span> parser<span class="hl opt">.</span><span class="hl kwd">parse_args</span><span class="hl opt">(</span>argv<span class="hl opt">)</span>
+    <span class="hl kwa">return</span> options
+
+
+<span class="hl slc"># confirm we should author solution files</span>
+<span class="hl kwa">def</span> <span class="hl kwd">confirmGenerate</span><span class="hl opt">():</span>
+    <span class="hl kwa">print</span> <span class="hl str">'WARNING: this action will overwrite any solution files.'</span>
+    <span class="hl kwa">print</span> <span class="hl str">'Are you sure you want to proceed? (yes/no)'</span>
+    <span class="hl kwa">while True</span><span class="hl opt">:</span>
+        ans <span class="hl opt">=</span> sys<span class="hl opt">.</span>stdin<span class="hl opt">.</span><span class="hl kwd">readline</span><span class="hl opt">().</span><span class="hl kwd">strip</span><span class="hl opt">()</span>
+        <span class="hl kwa">if</span> ans <span class="hl opt">==</span> <span class="hl str">'yes'</span><span class="hl opt">:</span>
+            <span class="hl kwa">break</span>
+        <span class="hl kwa">elif</span> ans <span class="hl opt">==</span> <span class="hl str">'no'</span><span class="hl opt">:</span>
+            sys<span class="hl opt">.</span><span class="hl kwd">exit</span><span class="hl opt">(</span><span class="hl num">0</span><span class="hl opt">)</span>
+        <span class="hl kwa">else</span><span class="hl opt">:</span>
+            <span class="hl kwa">print</span> <span class="hl str">'please answer either &quot;yes&quot; or &quot;no&quot;'</span>
+
+
+<span class="hl slc"># TODO: Fix this so that it tracebacks work correctly</span>
+<span class="hl slc"># Looking at source of the traceback module, presuming it works</span>
+<span class="hl slc"># the same as the intepreters, it uses co_filename.  This is,</span>
+<span class="hl slc"># however, a readonly attribute.</span>
+<span class="hl kwa">def</span> <span class="hl kwd">setModuleName</span><span class="hl opt">(</span>module<span class="hl opt">,</span> filename<span class="hl opt">):</span>
+    functionType <span class="hl opt">=</span> <span class="hl kwb">type</span><span class="hl opt">(</span>confirmGenerate<span class="hl opt">)</span>
+    classType <span class="hl opt">=</span> <span class="hl kwb">type</span><span class="hl opt">(</span>optparse<span class="hl opt">.</span>Option<span class="hl opt">)</span>
+
+    <span class="hl kwa">for</span> i <span class="hl kwa">in</span> <span class="hl kwb">dir</span><span class="hl opt">(</span>module<span class="hl opt">):</span>
+        o <span class="hl opt">=</span> <span class="hl kwb">getattr</span><span class="hl opt">(</span>module<span class="hl opt">,</span> i<span class="hl opt">)</span>
+        <span class="hl kwa">if</span> <span class="hl kwb">hasattr</span><span class="hl opt">(</span>o<span class="hl opt">,</span> <span class="hl str">'__file__'</span><span class="hl opt">):</span> <span class="hl kwa">continue</span>
+
+        <span class="hl kwa">if</span> <span class="hl kwb">type</span><span class="hl opt">(</span>o<span class="hl opt">) ==</span> functionType<span class="hl opt">:</span>
+            <span class="hl kwb">setattr</span><span class="hl opt">(</span>o<span class="hl opt">,</span> <span class="hl str">'__file__'</span><span class="hl opt">,</span> filename<span class="hl opt">)</span>
+        <span class="hl kwa">elif</span> <span class="hl kwb">type</span><span class="hl opt">(</span>o<span class="hl opt">) ==</span> classType<span class="hl opt">:</span>
+            <span class="hl kwb">setattr</span><span class="hl opt">(</span>o<span class="hl opt">,</span> <span class="hl str">'__file__'</span><span class="hl opt">,</span> filename<span class="hl opt">)</span>
+            <span class="hl slc"># TODO: assign member __file__'s?</span>
+        <span class="hl slc">#print i, type(o)</span>
+
+
+<span class="hl slc">#from cStringIO import StringIO</span>
+
+<span class="hl kwa">def</span> <span class="hl kwd">loadModuleString</span><span class="hl opt">(</span>moduleSource<span class="hl opt">):</span>
+    <span class="hl slc"># Below broken, imp doesn't believe its being passed a file:</span>
+    <span class="hl slc">#    ValueError: load_module arg#2 should be a file or None</span>
+    <span class="hl slc">#</span>
+    <span class="hl slc">#f = StringIO(moduleCodeDict[k])</span>
+    <span class="hl slc">#tmp = imp.load_module(k, f, k, (&quot;.py&quot;, &quot;r&quot;, imp.PY_SOURCE))</span>
+    tmp <span class="hl opt">=</span> imp<span class="hl opt">.</span><span class="hl kwd">new_module</span><span class="hl opt">(</span>k<span class="hl opt">)</span>
+    <span class="hl kwa">exec</span> moduleCodeDict<span class="hl opt">[</span>k<span class="hl opt">]</span> <span class="hl kwa">in</span> tmp<span class="hl opt">.</span>__dict__
+    <span class="hl kwd">setModuleName</span><span class="hl opt">(</span>tmp<span class="hl opt">,</span> k<span class="hl opt">)</span>
+    <span class="hl kwa">return</span> tmp
+
+<span class="hl kwa">import</span> py_compile
+
+<span class="hl kwa">def</span> <span class="hl kwd">loadModuleFile</span><span class="hl opt">(</span>moduleName<span class="hl opt">,</span> filePath<span class="hl opt">):</span>
+    with <span class="hl kwb">open</span><span class="hl opt">(</span>filePath<span class="hl opt">,</span> <span class="hl str">'r'</span><span class="hl opt">)</span> <span class="hl kwa">as</span> f<span class="hl opt">:</span>
+        <span class="hl kwa">return</span> imp<span class="hl opt">.</span><span class="hl kwd">load_module</span><span class="hl opt">(</span>moduleName<span class="hl opt">,</span> f<span class="hl opt">,</span> <span class="hl str">&quot;%s.py&quot;</span> <span class="hl opt">%</span> moduleName<span class="hl opt">, (</span><span class="hl str">&quot;.py&quot;</span><span class="hl opt">,</span> <span class="hl str">&quot;r&quot;</span><span class="hl opt">,</span> imp<span class="hl opt">.</span>PY_SOURCE<span class="hl opt">))</span>
+
+
+<span class="hl kwa">def</span> <span class="hl kwd">readFile</span><span class="hl opt">(</span>path<span class="hl opt">,</span> root<span class="hl opt">=</span><span class="hl str">&quot;&quot;</span><span class="hl opt">):</span>
+    <span class="hl str">&quot;Read file from disk at specified path and return as string&quot;</span>
+    with <span class="hl kwb">open</span><span class="hl opt">(</span>os<span class="hl opt">.</span>path<span class="hl opt">.</span><span class="hl kwd">join</span><span class="hl opt">(</span>root<span class="hl opt">,</span> path<span class="hl opt">),</span> <span class="hl str">'r'</span><span class="hl opt">)</span> <span class="hl kwa">as</span> handle<span class="hl opt">:</span>
+        <span class="hl kwa">return</span> handle<span class="hl opt">.</span><span class="hl kwd">read</span><span class="hl opt">()</span>
+
+
+<span class="hl slc">#######################################################################</span>
+<span class="hl slc"># Error Hint Map</span>
+<span class="hl slc">#######################################################################</span>
+
+<span class="hl slc"># TODO: use these</span>
+ERROR_HINT_MAP <span class="hl opt">= {</span>
+  <span class="hl str">'q1'</span><span class="hl opt">: {</span>
+    <span class="hl str">&quot;&lt;type 'exceptions.IndexError'&gt;&quot;</span><span class="hl opt">:</span> <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">      We noticed that your project threw an IndexError on q1.</span>
+<span class="hl str">      While many things may cause this, it may have been from</span>
+<span class="hl str">      assuming a certain number of successors from a state space</span>
+<span class="hl str">      or assuming a certain number of actions available from a given</span>
+<span class="hl str">      state. Try making your code more general (no hardcoded indices)</span>
+<span class="hl str">      and submit again!</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+  <span class="hl opt">},</span>
+  <span class="hl str">'q3'</span><span class="hl opt">: {</span>
+      <span class="hl str">&quot;&lt;type 'exceptions.AttributeError'&gt;&quot;</span><span class="hl opt">:</span> <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">        We noticed that your project threw an AttributeError on q3.</span>
+<span class="hl str">        While many things may cause this, it may have been from assuming</span>
+<span class="hl str">        a certain size or structure to the state space. For example, if you have</span>
+<span class="hl str">        a line of code assuming that the state is (x, y) and we run your code</span>
+<span class="hl str">        on a state space with (x, y, z), this error could be thrown. Try</span>
+<span class="hl str">        making your code more general and submit again!</span>
+<span class="hl str"></span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+  <span class="hl opt">}</span>
+<span class="hl opt">}</span>
+
+<span class="hl kwa">import</span> pprint
+
+<span class="hl kwa">def</span> <span class="hl kwd">splitStrings</span><span class="hl opt">(</span>d<span class="hl opt">):</span>
+    d2 <span class="hl opt">=</span> <span class="hl kwb">dict</span><span class="hl opt">(</span>d<span class="hl opt">)</span>
+    <span class="hl kwa">for</span> k <span class="hl kwa">in</span> d<span class="hl opt">:</span>
+        <span class="hl kwa">if</span> k<span class="hl opt">[</span><span class="hl num">0</span><span class="hl opt">:</span><span class="hl num">2</span><span class="hl opt">] ==</span> <span class="hl str">&quot;__&quot;</span><span class="hl opt">:</span>
+            <span class="hl kwa">del</span> d2<span class="hl opt">[</span>k<span class="hl opt">]</span>
+            <span class="hl kwa">continue</span>
+        <span class="hl kwa">if</span> d2<span class="hl opt">[</span>k<span class="hl opt">].</span><span class="hl kwd">find</span><span class="hl opt">(</span><span class="hl str">&quot;</span><span class="hl esc">\n</span><span class="hl str">&quot;</span><span class="hl opt">) &gt;=</span> <span class="hl num">0</span><span class="hl opt">:</span>
+            d2<span class="hl opt">[</span>k<span class="hl opt">] =</span> d2<span class="hl opt">[</span>k<span class="hl opt">].</span><span class="hl kwd">split</span><span class="hl opt">(</span><span class="hl str">&quot;</span><span class="hl esc">\n</span><span class="hl str">&quot;</span><span class="hl opt">)</span>
+    <span class="hl kwa">return</span> d2
+
+
+<span class="hl kwa">def</span> <span class="hl kwd">printTest</span><span class="hl opt">(</span>testDict<span class="hl opt">,</span> solutionDict<span class="hl opt">):</span>
+    pp <span class="hl opt">=</span> pprint<span class="hl opt">.</span><span class="hl kwd">PrettyPrinter</span><span class="hl opt">(</span>indent<span class="hl opt">=</span><span class="hl num">4</span><span class="hl opt">)</span>
+    <span class="hl kwa">print</span> <span class="hl str">&quot;Test case:&quot;</span>
+    <span class="hl kwa">for</span> line <span class="hl kwa">in</span> testDict<span class="hl opt">[</span><span class="hl str">&quot;__raw_lines__&quot;</span><span class="hl opt">]:</span>
+        <span class="hl kwa">print</span> <span class="hl str">&quot;   |&quot;</span><span class="hl opt">,</span> line
+    <span class="hl kwa">print</span> <span class="hl str">&quot;Solution:&quot;</span>
+    <span class="hl kwa">for</span> line <span class="hl kwa">in</span> solutionDict<span class="hl opt">[</span><span class="hl str">&quot;__raw_lines__&quot;</span><span class="hl opt">]:</span>
+        <span class="hl kwa">print</span> <span class="hl str">&quot;   |&quot;</span><span class="hl opt">,</span> line
+
+
+<span class="hl kwa">def</span> <span class="hl kwd">runTest</span><span class="hl opt">(</span>testName<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> printTestCase<span class="hl opt">=</span><span class="hl kwa">False</span><span class="hl opt">,</span> display<span class="hl opt">=</span><span class="hl kwa">None</span><span class="hl opt">):</span>
+    <span class="hl kwa">import</span> testParser
+    <span class="hl kwa">import</span> testClasses
+    <span class="hl kwa">for</span> module <span class="hl kwa">in</span> moduleDict<span class="hl opt">:</span>
+        <span class="hl kwb">setattr</span><span class="hl opt">(</span>sys<span class="hl opt">.</span>modules<span class="hl opt">[</span>__name__<span class="hl opt">],</span> module<span class="hl opt">,</span> moduleDict<span class="hl opt">[</span>module<span class="hl opt">])</span>
+
+    testDict <span class="hl opt">=</span> testParser<span class="hl opt">.</span><span class="hl kwd">TestParser</span><span class="hl opt">(</span>testName <span class="hl opt">+</span> <span class="hl str">&quot;.test&quot;</span><span class="hl opt">).</span><span class="hl kwd">parse</span><span class="hl opt">()</span>
+    solutionDict <span class="hl opt">=</span> testParser<span class="hl opt">.</span><span class="hl kwd">TestParser</span><span class="hl opt">(</span>testName <span class="hl opt">+</span> <span class="hl str">&quot;.solution&quot;</span><span class="hl opt">).</span><span class="hl kwd">parse</span><span class="hl opt">()</span>
+    test_out_file <span class="hl opt">=</span> os<span class="hl opt">.</span>path<span class="hl opt">.</span><span class="hl kwd">join</span><span class="hl opt">(</span><span class="hl str">'%s.test_output'</span> <span class="hl opt">%</span> testName<span class="hl opt">)</span>
+    testDict<span class="hl opt">[</span><span class="hl str">'test_out_file'</span><span class="hl opt">] =</span> test_out_file
+    testClass <span class="hl opt">=</span> <span class="hl kwb">getattr</span><span class="hl opt">(</span>projectTestClasses<span class="hl opt">,</span> testDict<span class="hl opt">[</span><span class="hl str">'class'</span><span class="hl opt">])</span>
+
+    questionClass <span class="hl opt">=</span> <span class="hl kwb">getattr</span><span class="hl opt">(</span>testClasses<span class="hl opt">,</span> <span class="hl str">'Question'</span><span class="hl opt">)</span>
+    question <span class="hl opt">=</span> <span class="hl kwd">questionClass</span><span class="hl opt">({</span><span class="hl str">'max_points'</span><span class="hl opt">:</span> <span class="hl num">0</span><span class="hl opt">},</span> display<span class="hl opt">)</span>
+    testCase <span class="hl opt">=</span> <span class="hl kwd">testClass</span><span class="hl opt">(</span>question<span class="hl opt">,</span> testDict<span class="hl opt">)</span>
+
+    <span class="hl kwa">if</span> printTestCase<span class="hl opt">:</span>
+        <span class="hl kwd">printTest</span><span class="hl opt">(</span>testDict<span class="hl opt">,</span> solutionDict<span class="hl opt">)</span>
+
+    <span class="hl slc"># This is a fragile hack to create a stub grades object</span>
+    grades <span class="hl opt">=</span> grading<span class="hl opt">.</span><span class="hl kwd">Grades</span><span class="hl opt">(</span>projectParams<span class="hl opt">.</span>PROJECT_NAME<span class="hl opt">, [(</span><span class="hl kwa">None</span><span class="hl opt">,</span><span class="hl num">0</span><span class="hl opt">)])</span>
+    testCase<span class="hl opt">.</span><span class="hl kwd">execute</span><span class="hl opt">(</span>grades<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> solutionDict<span class="hl opt">)</span>
+
+
+<span class="hl slc"># returns all the tests you need to run in order to run question</span>
+<span class="hl kwa">def</span> <span class="hl kwd">getDepends</span><span class="hl opt">(</span>testParser<span class="hl opt">,</span> testRoot<span class="hl opt">,</span> question<span class="hl opt">):</span>
+    allDeps <span class="hl opt">= [</span>question<span class="hl opt">]</span>
+    questionDict <span class="hl opt">=</span> testParser<span class="hl opt">.</span><span class="hl kwd">TestParser</span><span class="hl opt">(</span>os<span class="hl opt">.</span>path<span class="hl opt">.</span><span class="hl kwd">join</span><span class="hl opt">(</span>testRoot<span class="hl opt">,</span> question<span class="hl opt">,</span> <span class="hl str">'CONFIG'</span><span class="hl opt">)).</span><span class="hl kwd">parse</span><span class="hl opt">()</span>
+    <span class="hl kwa">if</span> <span class="hl str">'depends'</span> <span class="hl kwa">in</span> questionDict<span class="hl opt">:</span>
+        depends <span class="hl opt">=</span> questionDict<span class="hl opt">[</span><span class="hl str">'depends'</span><span class="hl opt">].</span><span class="hl kwd">split</span><span class="hl opt">()</span>
+        <span class="hl kwa">for</span> d <span class="hl kwa">in</span> depends<span class="hl opt">:</span>
+            <span class="hl slc"># run dependencies first</span>
+            allDeps <span class="hl opt">=</span> <span class="hl kwd">getDepends</span><span class="hl opt">(</span>testParser<span class="hl opt">,</span> testRoot<span class="hl opt">,</span> d<span class="hl opt">) +</span> allDeps
+    <span class="hl kwa">return</span> allDeps
+
+<span class="hl slc"># get list of questions to grade</span>
+<span class="hl kwa">def</span> <span class="hl kwd">getTestSubdirs</span><span class="hl opt">(</span>testParser<span class="hl opt">,</span> testRoot<span class="hl opt">,</span> questionToGrade<span class="hl opt">):</span>
+    problemDict <span class="hl opt">=</span> testParser<span class="hl opt">.</span><span class="hl kwd">TestParser</span><span class="hl opt">(</span>os<span class="hl opt">.</span>path<span class="hl opt">.</span><span class="hl kwd">join</span><span class="hl opt">(</span>testRoot<span class="hl opt">,</span> <span class="hl str">'CONFIG'</span><span class="hl opt">)).</span><span class="hl kwd">parse</span><span class="hl opt">()</span>
+    <span class="hl kwa">if</span> questionToGrade <span class="hl opt">!=</span> <span class="hl kwa">None</span><span class="hl opt">:</span>
+        questions <span class="hl opt">=</span> <span class="hl kwd">getDepends</span><span class="hl opt">(</span>testParser<span class="hl opt">,</span> testRoot<span class="hl opt">,</span> questionToGrade<span class="hl opt">)</span>
+        <span class="hl kwa">if</span> <span class="hl kwb">len</span><span class="hl opt">(</span>questions<span class="hl opt">) &gt;</span> <span class="hl num">1</span><span class="hl opt">:</span>
+            <span class="hl kwa">print</span> <span class="hl str">'Note: due to dependencies, the following tests will be run: %s'</span> <span class="hl opt">%</span> <span class="hl str">' '</span><span class="hl opt">.</span><span class="hl kwd">join</span><span class="hl opt">(</span>questions<span class="hl opt">)</span>
+        <span class="hl kwa">return</span> questions
+    <span class="hl kwa">if</span> <span class="hl str">'order'</span> <span class="hl kwa">in</span> problemDict<span class="hl opt">:</span>
+        <span class="hl kwa">return</span> problemDict<span class="hl opt">[</span><span class="hl str">'order'</span><span class="hl opt">].</span><span class="hl kwd">split</span><span class="hl opt">()</span>
+    <span class="hl kwa">return</span> <span class="hl kwb">sorted</span><span class="hl opt">(</span>os<span class="hl opt">.</span><span class="hl kwd">listdir</span><span class="hl opt">(</span>testRoot<span class="hl opt">))</span>
+
+
+<span class="hl slc"># evaluate student code</span>
+<span class="hl kwa">def</span> <span class="hl kwd">evaluate</span><span class="hl opt">(</span>generateSolutions<span class="hl opt">,</span> testRoot<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> exceptionMap<span class="hl opt">=</span>ERROR_HINT_MAP<span class="hl opt">,</span> edxOutput<span class="hl opt">=</span><span class="hl kwa">False</span><span class="hl opt">,</span> muteOutput<span class="hl opt">=</span><span class="hl kwa">False</span><span class="hl opt">,</span>
+            printTestCase<span class="hl opt">=</span><span class="hl kwa">False</span><span class="hl opt">,</span> questionToGrade<span class="hl opt">=</span><span class="hl kwa">None</span><span class="hl opt">,</span> display<span class="hl opt">=</span><span class="hl kwa">None</span><span class="hl opt">):</span>
+    <span class="hl slc"># imports of testbench code.  note that the testClasses import must follow</span>
+    <span class="hl slc"># the import of student code due to dependencies</span>
+    <span class="hl kwa">import</span> testParser
+    <span class="hl kwa">import</span> testClasses
+    <span class="hl kwa">for</span> module <span class="hl kwa">in</span> moduleDict<span class="hl opt">:</span>
+        <span class="hl kwb">setattr</span><span class="hl opt">(</span>sys<span class="hl opt">.</span>modules<span class="hl opt">[</span>__name__<span class="hl opt">],</span> module<span class="hl opt">,</span> moduleDict<span class="hl opt">[</span>module<span class="hl opt">])</span>
+
+    questions <span class="hl opt">= []</span>
+    questionDicts <span class="hl opt">= {}</span>
+    test_subdirs <span class="hl opt">=</span> <span class="hl kwd">getTestSubdirs</span><span class="hl opt">(</span>testParser<span class="hl opt">,</span> testRoot<span class="hl opt">,</span> questionToGrade<span class="hl opt">)</span>
+    <span class="hl kwa">for</span> q <span class="hl kwa">in</span> test_subdirs<span class="hl opt">:</span>
+        subdir_path <span class="hl opt">=</span> os<span class="hl opt">.</span>path<span class="hl opt">.</span><span class="hl kwd">join</span><span class="hl opt">(</span>testRoot<span class="hl opt">,</span> q<span class="hl opt">)</span>
+        <span class="hl kwa">if not</span> os<span class="hl opt">.</span>path<span class="hl opt">.</span><span class="hl kwd">isdir</span><span class="hl opt">(</span>subdir_path<span class="hl opt">)</span> <span class="hl kwa">or</span> q<span class="hl opt">[</span><span class="hl num">0</span><span class="hl opt">] ==</span> <span class="hl str">'.'</span><span class="hl opt">:</span>
+            <span class="hl kwa">continue</span>
+
+        <span class="hl slc"># create a question object</span>
+        questionDict <span class="hl opt">=</span> testParser<span class="hl opt">.</span><span class="hl kwd">TestParser</span><span class="hl opt">(</span>os<span class="hl opt">.</span>path<span class="hl opt">.</span><span class="hl kwd">join</span><span class="hl opt">(</span>subdir_path<span class="hl opt">,</span> <span class="hl str">'CONFIG'</span><span class="hl opt">)).</span><span class="hl kwd">parse</span><span class="hl opt">()</span>
+        questionClass <span class="hl opt">=</span> <span class="hl kwb">getattr</span><span class="hl opt">(</span>testClasses<span class="hl opt">,</span> questionDict<span class="hl opt">[</span><span class="hl str">'class'</span><span class="hl opt">])</span>
+        question <span class="hl opt">=</span> <span class="hl kwd">questionClass</span><span class="hl opt">(</span>questionDict<span class="hl opt">,</span> display<span class="hl opt">)</span>
+        questionDicts<span class="hl opt">[</span>q<span class="hl opt">] =</span> questionDict
+
+        <span class="hl slc"># load test cases into question</span>
+        tests <span class="hl opt">=</span> <span class="hl kwb">filter</span><span class="hl opt">(</span><span class="hl kwa">lambda</span> t<span class="hl opt">:</span> re<span class="hl opt">.</span><span class="hl kwd">match</span><span class="hl opt">(</span><span class="hl str">'[^#~.].*\.test\Z'</span><span class="hl opt">,</span> t<span class="hl opt">),</span> os<span class="hl opt">.</span><span class="hl kwd">listdir</span><span class="hl opt">(</span>subdir_path<span class="hl opt">))</span>
+        tests <span class="hl opt">=</span> <span class="hl kwb">map</span><span class="hl opt">(</span><span class="hl kwa">lambda</span> t<span class="hl opt">:</span> re<span class="hl opt">.</span><span class="hl kwd">match</span><span class="hl opt">(</span><span class="hl str">'(.*)\.test\Z'</span><span class="hl opt">,</span> t<span class="hl opt">).</span><span class="hl kwd">group</span><span class="hl opt">(</span><span class="hl num">1</span><span class="hl opt">),</span> tests<span class="hl opt">)</span>
+        <span class="hl kwa">for</span> t <span class="hl kwa">in</span> <span class="hl kwb">sorted</span><span class="hl opt">(</span>tests<span class="hl opt">):</span>
+            test_file <span class="hl opt">=</span> os<span class="hl opt">.</span>path<span class="hl opt">.</span><span class="hl kwd">join</span><span class="hl opt">(</span>subdir_path<span class="hl opt">,</span> <span class="hl str">'%s.test'</span> <span class="hl opt">%</span> t<span class="hl opt">)</span>
+            solution_file <span class="hl opt">=</span> os<span class="hl opt">.</span>path<span class="hl opt">.</span><span class="hl kwd">join</span><span class="hl opt">(</span>subdir_path<span class="hl opt">,</span> <span class="hl str">'%s.solution'</span> <span class="hl opt">%</span> t<span class="hl opt">)</span>
+            test_out_file <span class="hl opt">=</span> os<span class="hl opt">.</span>path<span class="hl opt">.</span><span class="hl kwd">join</span><span class="hl opt">(</span>subdir_path<span class="hl opt">,</span> <span class="hl str">'%s.test_output'</span> <span class="hl opt">%</span> t<span class="hl opt">)</span>
+            testDict <span class="hl opt">=</span> testParser<span class="hl opt">.</span><span class="hl kwd">TestParser</span><span class="hl opt">(</span>test_file<span class="hl opt">).</span><span class="hl kwd">parse</span><span class="hl opt">()</span>
+            <span class="hl kwa">if</span> testDict<span class="hl opt">.</span><span class="hl kwd">get</span><span class="hl opt">(</span><span class="hl str">&quot;disabled&quot;</span><span class="hl opt">,</span> <span class="hl str">&quot;false&quot;</span><span class="hl opt">).</span><span class="hl kwd">lower</span><span class="hl opt">() ==</span> <span class="hl str">&quot;true&quot;</span><span class="hl opt">:</span>
+                <span class="hl kwa">continue</span>
+            testDict<span class="hl opt">[</span><span class="hl str">'test_out_file'</span><span class="hl opt">] =</span> test_out_file
+            testClass <span class="hl opt">=</span> <span class="hl kwb">getattr</span><span class="hl opt">(</span>projectTestClasses<span class="hl opt">,</span> testDict<span class="hl opt">[</span><span class="hl str">'class'</span><span class="hl opt">])</span>
+            testCase <span class="hl opt">=</span> <span class="hl kwd">testClass</span><span class="hl opt">(</span>question<span class="hl opt">,</span> testDict<span class="hl opt">)</span>
+            <span class="hl kwa">def</span> <span class="hl kwd">makefun</span><span class="hl opt">(</span>testCase<span class="hl opt">,</span> solution_file<span class="hl opt">):</span>
+                <span class="hl kwa">if</span> generateSolutions<span class="hl opt">:</span>
+                    <span class="hl slc"># write solution file to disk</span>
+                    <span class="hl kwa">return lambda</span> grades<span class="hl opt">:</span> testCase<span class="hl opt">.</span><span class="hl kwd">writeSolution</span><span class="hl opt">(</span>moduleDict<span class="hl opt">,</span> solution_file<span class="hl opt">)</span>
+                <span class="hl kwa">else</span><span class="hl opt">:</span>
+                    <span class="hl slc"># read in solution dictionary and pass as an argument</span>
+                    testDict <span class="hl opt">=</span> testParser<span class="hl opt">.</span><span class="hl kwd">TestParser</span><span class="hl opt">(</span>test_file<span class="hl opt">).</span><span class="hl kwd">parse</span><span class="hl opt">()</span>
+                    solutionDict <span class="hl opt">=</span> testParser<span class="hl opt">.</span><span class="hl kwd">TestParser</span><span class="hl opt">(</span>solution_file<span class="hl opt">).</span><span class="hl kwd">parse</span><span class="hl opt">()</span>
+                    <span class="hl kwa">if</span> printTestCase<span class="hl opt">:</span>
+                        <span class="hl kwa">return lambda</span> grades<span class="hl opt">:</span> <span class="hl kwd">printTest</span><span class="hl opt">(</span>testDict<span class="hl opt">,</span> solutionDict<span class="hl opt">)</span> <span class="hl kwa">or</span> testCase<span class="hl opt">.</span><span class="hl kwd">execute</span><span class="hl opt">(</span>grades<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> solutionDict<span class="hl opt">)</span>
+                    <span class="hl kwa">else</span><span class="hl opt">:</span>
+                        <span class="hl kwa">return lambda</span> grades<span class="hl opt">:</span> testCase<span class="hl opt">.</span><span class="hl kwd">execute</span><span class="hl opt">(</span>grades<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> solutionDict<span class="hl opt">)</span>
+            question<span class="hl opt">.</span><span class="hl kwd">addTestCase</span><span class="hl opt">(</span>testCase<span class="hl opt">,</span> <span class="hl kwd">makefun</span><span class="hl opt">(</span>testCase<span class="hl opt">,</span> solution_file<span class="hl opt">))</span>
+
+        <span class="hl slc"># Note extra function is necessary for scoping reasons</span>
+        <span class="hl kwa">def</span> <span class="hl kwd">makefun</span><span class="hl opt">(</span>question<span class="hl opt">):</span>
+            <span class="hl kwa">return lambda</span> grades<span class="hl opt">:</span> question<span class="hl opt">.</span><span class="hl kwd">execute</span><span class="hl opt">(</span>grades<span class="hl opt">)</span>
+        <span class="hl kwb">setattr</span><span class="hl opt">(</span>sys<span class="hl opt">.</span>modules<span class="hl opt">[</span>__name__<span class="hl opt">],</span> q<span class="hl opt">,</span> <span class="hl kwd">makefun</span><span class="hl opt">(</span>question<span class="hl opt">))</span>
+        questions<span class="hl opt">.</span><span class="hl kwd">append</span><span class="hl opt">((</span>q<span class="hl opt">,</span> question<span class="hl opt">.</span><span class="hl kwd">getMaxPoints</span><span class="hl opt">()))</span>
+
+    grades <span class="hl opt">=</span> grading<span class="hl opt">.</span><span class="hl kwd">Grades</span><span class="hl opt">(</span>projectParams<span class="hl opt">.</span>PROJECT_NAME<span class="hl opt">,</span> questions<span class="hl opt">,</span> edxOutput<span class="hl opt">=</span>edxOutput<span class="hl opt">,</span> muteOutput<span class="hl opt">=</span>muteOutput<span class="hl opt">)</span>
+    <span class="hl kwa">if</span> questionToGrade <span class="hl opt">==</span> <span class="hl kwa">None</span><span class="hl opt">:</span>
+        <span class="hl kwa">for</span> q <span class="hl kwa">in</span> questionDicts<span class="hl opt">:</span>
+            <span class="hl kwa">for</span> prereq <span class="hl kwa">in</span> questionDicts<span class="hl opt">[</span>q<span class="hl opt">].</span><span class="hl kwd">get</span><span class="hl opt">(</span><span class="hl str">'depends'</span><span class="hl opt">,</span> <span class="hl str">''</span><span class="hl opt">).</span><span class="hl kwd">split</span><span class="hl opt">():</span>
+                grades<span class="hl opt">.</span><span class="hl kwd">addPrereq</span><span class="hl opt">(</span>q<span class="hl opt">,</span> prereq<span class="hl opt">)</span>
+
+    grades<span class="hl opt">.</span><span class="hl kwd">grade</span><span class="hl opt">(</span>sys<span class="hl opt">.</span>modules<span class="hl opt">[</span>__name__<span class="hl opt">],</span> bonusPic <span class="hl opt">=</span> projectParams<span class="hl opt">.</span>BONUS_PIC<span class="hl opt">)</span>
+    <span class="hl kwa">return</span> grades<span class="hl opt">.</span>points
+
+
+
+<span class="hl kwa">def</span> <span class="hl kwd">getDisplay</span><span class="hl opt">(</span>graphicsByDefault<span class="hl opt">,</span> options<span class="hl opt">=</span><span class="hl kwa">None</span><span class="hl opt">):</span>
+    graphics <span class="hl opt">=</span> graphicsByDefault
+    <span class="hl kwa">if</span> options <span class="hl opt">!=</span> <span class="hl kwa">None</span><span class="hl opt">:</span>
+        <span class="hl kwa">if</span> options<span class="hl opt">.</span>graphics<span class="hl opt">:</span>
+            graphics <span class="hl opt">=</span> <span class="hl kwa">True</span>
+        <span class="hl kwa">if</span> options<span class="hl opt">.</span>noGraphics<span class="hl opt">:</span>
+            graphics <span class="hl opt">=</span> <span class="hl kwa">False</span>
+    <span class="hl kwa">if</span> graphics<span class="hl opt">:</span>
+        <span class="hl kwa">import</span> graphicsDisplay
+        <span class="hl kwa">return</span> graphicsDisplay<span class="hl opt">.</span><span class="hl kwd">PacmanGraphics</span><span class="hl opt">(</span><span class="hl num">1</span><span class="hl opt">,</span> frameTime<span class="hl opt">=</span><span class="hl num">.05</span><span class="hl opt">)</span>
+    <span class="hl kwa">else</span><span class="hl opt">:</span>
+        <span class="hl kwa">import</span> textDisplay
+        <span class="hl kwa">return</span> textDisplay<span class="hl opt">.</span><span class="hl kwd">NullGraphics</span><span class="hl opt">()</span>
+
+
+
+
+<span class="hl kwa">if</span> __name__ <span class="hl opt">==</span> <span class="hl str">'__main__'</span><span class="hl opt">:</span>
+    options <span class="hl opt">=</span> <span class="hl kwd">readCommand</span><span class="hl opt">(</span>sys<span class="hl opt">.</span>argv<span class="hl opt">)</span>
+    <span class="hl kwa">if</span> options<span class="hl opt">.</span>generateSolutions<span class="hl opt">:</span>
+        <span class="hl kwd">confirmGenerate</span><span class="hl opt">()</span>
+    codePaths <span class="hl opt">=</span> options<span class="hl opt">.</span>studentCode<span class="hl opt">.</span><span class="hl kwd">split</span><span class="hl opt">(</span><span class="hl str">','</span><span class="hl opt">)</span>
+    <span class="hl slc"># moduleCodeDict = {}</span>
+    <span class="hl slc"># for cp in codePaths:</span>
+    <span class="hl slc">#     moduleName = re.match('.*?([^/]*)\.py', cp).group(1)</span>
+    <span class="hl slc">#     moduleCodeDict[moduleName] = readFile(cp, root=options.codeRoot)</span>
+    <span class="hl slc"># moduleCodeDict['projectTestClasses'] = readFile(options.testCaseCode, root=options.codeRoot)</span>
+    <span class="hl slc"># moduleDict = loadModuleDict(moduleCodeDict)</span>
+
+    moduleDict <span class="hl opt">= {}</span>
+    <span class="hl kwa">for</span> cp <span class="hl kwa">in</span> codePaths<span class="hl opt">:</span>
+        moduleName <span class="hl opt">=</span> re<span class="hl opt">.</span><span class="hl kwd">match</span><span class="hl opt">(</span><span class="hl str">'.*?([^/]*)\.py'</span><span class="hl opt">,</span> cp<span class="hl opt">).</span><span class="hl kwd">group</span><span class="hl opt">(</span><span class="hl num">1</span><span class="hl opt">)</span>
+        moduleDict<span class="hl opt">[</span>moduleName<span class="hl opt">] =</span> <span class="hl kwd">loadModuleFile</span><span class="hl opt">(</span>moduleName<span class="hl opt">,</span> os<span class="hl opt">.</span>path<span class="hl opt">.</span><span class="hl kwd">join</span><span class="hl opt">(</span>options<span class="hl opt">.</span>codeRoot<span class="hl opt">,</span> cp<span class="hl opt">))</span>
+    moduleName <span class="hl opt">=</span> re<span class="hl opt">.</span><span class="hl kwd">match</span><span class="hl opt">(</span><span class="hl str">'.*?([^/]*)\.py'</span><span class="hl opt">,</span> options<span class="hl opt">.</span>testCaseCode<span class="hl opt">).</span><span class="hl kwd">group</span><span class="hl opt">(</span><span class="hl num">1</span><span class="hl opt">)</span>
+    moduleDict<span class="hl opt">[</span><span class="hl str">'projectTestClasses'</span><span class="hl opt">] =</span> <span class="hl kwd">loadModuleFile</span><span class="hl opt">(</span>moduleName<span class="hl opt">,</span> os<span class="hl opt">.</span>path<span class="hl opt">.</span><span class="hl kwd">join</span><span class="hl opt">(</span>options<span class="hl opt">.</span>codeRoot<span class="hl opt">,</span> options<span class="hl opt">.</span>testCaseCode<span class="hl opt">))</span>
+
+
+    <span class="hl kwa">if</span> options<span class="hl opt">.</span>runTest <span class="hl opt">!=</span> <span class="hl kwa">None</span><span class="hl opt">:</span>
+        <span class="hl kwd">runTest</span><span class="hl opt">(</span>options<span class="hl opt">.</span>runTest<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> printTestCase<span class="hl opt">=</span>options<span class="hl opt">.</span>printTestCase<span class="hl opt">,</span> display<span class="hl opt">=</span><span class="hl kwd">getDisplay</span><span class="hl opt">(</span><span class="hl kwa">True</span><span class="hl opt">,</span> options<span class="hl opt">))</span>
+    <span class="hl kwa">else</span><span class="hl opt">:</span>
+        <span class="hl kwd">evaluate</span><span class="hl opt">(</span>options<span class="hl opt">.</span>generateSolutions<span class="hl opt">,</span> options<span class="hl opt">.</span>testRoot<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span>
+            edxOutput<span class="hl opt">=</span>options<span class="hl opt">.</span>edxOutput<span class="hl opt">,</span> muteOutput<span class="hl opt">=</span>options<span class="hl opt">.</span>muteOutput<span class="hl opt">,</span> printTestCase<span class="hl opt">=</span>options<span class="hl opt">.</span>printTestCase<span class="hl opt">,</span>
+            questionToGrade<span class="hl opt">=</span>options<span class="hl opt">.</span>gradeQuestion<span class="hl opt">,</span> display<span class="hl opt">=</span><span class="hl kwd">getDisplay</span><span class="hl opt">(</span>options<span class="hl opt">.</span>gradeQuestion<span class="hl opt">!=</span><span class="hl kwa">None</span><span class="hl opt">,</span> options<span class="hl opt">))</span>
+</pre>
+</body>
+</html>
+<!--HTML generated by highlight 3.8, http://www.andre-simon.de/-->

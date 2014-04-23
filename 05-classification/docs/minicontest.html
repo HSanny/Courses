@@ -1,36 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
-  <head>
-  <title>minicontest.py</title>
-  </head>
-  <body>
-  <h3>minicontest.py (<a href="../minicontest.py">original</a>)</h3>
-  <hr>
-  <pre>
-<span style="color: blue; font-weight: bold">import </span>util
-<span style="color: blue; font-weight: bold">import </span>classificationMethod
+<head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<title>./minicontest.py</title>
+<link rel="stylesheet" type="text/css" href="highlight.css">
+</head>
+<body class="hl">
+<pre class="hl"><span class="hl kwa">import</span> util
+<span class="hl kwa">import</span> classificationMethod
 
-<span style="color: blue; font-weight: bold">class </span>contestClassifier<span style="font-weight: bold">(</span>classificationMethod<span style="font-weight: bold">.</span>ClassificationMethod<span style="font-weight: bold">):
-  </span><span style="color: darkred">"""
-  Create any sort of classifier you want. You might copy over one of your
-  existing classifiers and improve it.
-  """
-  </span><span style="color: blue; font-weight: bold">def </span>__init__<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>legalLabels<span style="font-weight: bold">):
-    </span><span style="color: blue">self</span><span style="font-weight: bold">.</span>guess <span style="font-weight: bold">= </span><span style="color: blue">None
-    self</span><span style="font-weight: bold">.</span>type <span style="font-weight: bold">= </span><span style="color: red">"minicontest"
+<span class="hl kwa">class</span> <span class="hl kwd">contestClassifier</span><span class="hl opt">(</span>classificationMethod<span class="hl opt">.</span>ClassificationMethod<span class="hl opt">):</span>
+  <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">  Create any sort of classifier you want. You might copy over one of your</span>
+<span class="hl str">  existing classifiers and improve it.</span>
+<span class="hl str">  &quot;&quot;&quot;</span>
+  <span class="hl kwa">def</span> <span class="hl kwd">__init__</span><span class="hl opt">(</span>self<span class="hl opt">,</span> legalLabels<span class="hl opt">):</span>
+    self<span class="hl opt">.</span>guess <span class="hl opt">=</span> <span class="hl kwa">None</span>
+    self<span class="hl opt">.</span><span class="hl kwb">type</span> <span class="hl opt">=</span> <span class="hl str">&quot;minicontest&quot;</span>
   
-  </span><span style="color: blue; font-weight: bold">def </span>train<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>data<span style="font-weight: bold">, </span>labels<span style="font-weight: bold">, </span>validationData<span style="font-weight: bold">, </span>validationLabels<span style="font-weight: bold">):
-    </span><span style="color: darkred">"""
-    Please describe your training procedure here.
-    """
-    </span><span style="color: blue; font-weight: bold">raise </span>Exception<span style="font-weight: bold">(</span><span style="color: red">'not implemented'</span><span style="font-weight: bold">)
+  <span class="hl kwa">def</span> <span class="hl kwd">train</span><span class="hl opt">(</span>self<span class="hl opt">,</span> data<span class="hl opt">,</span> labels<span class="hl opt">,</span> validationData<span class="hl opt">,</span> validationLabels<span class="hl opt">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    Please describe your training procedure here.</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+    <span class="hl kwa">raise</span> <span class="hl kwc">Exception</span><span class="hl opt">(</span><span class="hl str">'not implemented'</span><span class="hl opt">)</span>
   
-  </span><span style="color: blue; font-weight: bold">def </span>classify<span style="font-weight: bold">(</span><span style="color: blue">self</span><span style="font-weight: bold">, </span>testData<span style="font-weight: bold">):
-    </span><span style="color: darkred">"""
-    Please describe how data is classified here.
-    """
-    </span><span style="color: blue; font-weight: bold">raise </span>Exception<span style="font-weight: bold">(</span><span style="color: red">'not implemented'</span><span style="font-weight: bold">)
-</span>
-  </pre>
-  </body>
-  </html>
-  
+  <span class="hl kwa">def</span> <span class="hl kwd">classify</span><span class="hl opt">(</span>self<span class="hl opt">,</span> testData<span class="hl opt">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    Please describe how data is classified here.</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+    <span class="hl kwa">raise</span> <span class="hl kwc">Exception</span><span class="hl opt">(</span><span class="hl str">'not implemented'</span><span class="hl opt">)</span>
+</pre>
+</body>
+</html>
+<!--HTML generated by highlight 3.8, http://www.andre-simon.de/-->

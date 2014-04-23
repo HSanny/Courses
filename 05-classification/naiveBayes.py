@@ -14,6 +14,8 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
     self.type = "naivebayes"
     self.k = 1 # this is the smoothing parameter, ** use it in your train method **
     self.automaticTuning = False # Look at this flag to decide whether to choose k automatically ** use this in your train method **
+    self.ConditionalProb = None
+    self.PriorProb = None
     
   def setSmoothing(self, k):
     """
@@ -100,8 +102,7 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
             opt_setting = (PriorProb, ConditionalProb)
             max_accuracy = accuracy
     self.PriorProb, self.ConditionalProb = opt_setting
-
-
+        
   def classify(self, testData):
     """
     Classify the data based on the posterior distribution over labels.
@@ -111,9 +112,9 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
     guesses = []
     self.posteriors = [] # Log posteriors are stored for later data analysis (autograder).
     for datum in testData:
-        posterior = self.calculateLogJointProbabilities(datum)
-        guesses.append(posterior.argMax())
-        self.posteriors.append(posterior)
+      posterior = self.calculateLogJointProbabilities(datum)
+      guesses.append(posterior.argMax())
+      self.posteriors.append(posterior)
     return guesses
       
   def calculateLogJointProbabilities(self, datum):
@@ -133,6 +134,7 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
                 logJoint[label] += math.log(conditional)
             else:
                 logJoint[label] += math.log(1-conditional)
+    
     return logJoint
   
   def findHighOddsFeatures(self, label1, label2):
@@ -152,7 +154,3 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
         # print odds_ratio
         featuresOdds.append(feat)
     return featuresOdds
-    
-
-    
-      

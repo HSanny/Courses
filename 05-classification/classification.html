@@ -7,6 +7,22 @@
 <link href="projects.css" rel="stylesheet" type="text/css"></head>
 
 <body>
+<div>
+<br>
+<br>
+
+<div style="font-size:120%">
+
+<b>Acknowledgement</b>: This assignment is based closely on the one created by <a href="http://www.eecs.berkeley.edu/~klein">Dan Klein</a> and <a href="http://www.eecs.berkeley.edu/~denero">John DeNero</a> that was given as part of the programming assignments of
+<a href="http://inst.eecs.berkeley.edu/~cs188/fa09">Berkeley's CS188 course</a>.
+We thank Dan and John for sharing it with us and for their permission to use it as a part of our course.
+<p>The student side autograding was headed by Nick Hay, Brad Miller, and <a href="http://www.eecs.berkeley.edu/~pabbeel">Pieter Abbeel</a>. 
+<p>We also thank Peter Stone and Daniel Urieli for the initial adaptation of this assignment for the CS343 Artificial Intelligence course at The University of Texas at Austin.
+</div>
+<br>
+<br>
+
+
 <h2>Project 5: Classification</h2>
 <table border="0" cellpadding="10">
 <tr>
@@ -47,7 +63,6 @@
 
 <br>
 <br>
-<em>Due 12/08 at 11:59pm</em>
 
 <h2>Introduction</h2>
 <p>In this project, you will design three classifiers: a naive Bayes classifier, a perceptron 
@@ -72,10 +87,9 @@ presented with an image that has been pre-processed by an edge detection algorit
 to determine whether the edge image is a face or not. There are several systems in use that perform 
 quite well at the face detection task. One good system is the 
 <a href="http://vasc.ri.cmu.edu/NNFaceDetector/">Face Detector</a> by Schneiderman and Kanade. 
-You can even try it out on your own photos in this <a href="http://demo.pittpatt.com/">demo</a>.
 
 <p>The code for this project includes the following files and data, available as a 
-<a href="classification.zip">zip file</a>.&nbsp;</p> 
+<a href="05-classification.zip">zip file</a>.&nbsp;</p> 
 <table border="0" cellpadding="5">
   <tbody>
   <tr>
@@ -136,6 +150,8 @@ You can even try it out on your own photos in this <a href="http://demo.pittpatt
 (only) during the assignment, and submit them. If you do the minicontest, submit
 <code><a href="docs/minicontest.html">minicontest.py</a></code> as well.</p>
 
+<p>This assignment should be submitted via <code>turnin</code> with the assignment name <code>cs343-5-classification</code> using these <a href="http://www.cs.utexas.edu/~grauman/courses/spring2014/submission.htm">submission instructions</a>. 
+
 <p><strong>Evaluation:</strong> Your code will be autograded for technical
 correctness. Please <em>do not</em> change the names of any provided functions
 or classes within the code, or you will wreak havoc on the autograder.
@@ -147,6 +163,14 @@ else's code and submit it with minor changes, we will know. These cheat
 detectors are quite hard to fool, so please don't try. We trust you all to
 submit your own work only; please don't let us down. Instead, contact the course
 staff if you are having trouble.
+
+<p><strong>Getting Help:</strong> You are not alone!  If you find yourself stuck  on something, 
+contact the course staff for help.  Office hours, and Piazza are there for your 
+support; please use them.  If you can't make our office hours, let us know and we will schedule more.  
+We want these projects to be rewarding and instructional, not frustrating and demoralizing.  
+But, we don't know when or how to help unless you ask.  
+One more piece of advice: if you don't know what a variable does or what kind of values it takes, print it out.
+
 
 <h2>Getting Started</h2>
 <p> To try out the classification pipeline, run <code><a href="docs/dataClassifier.html">dataClassifier.py</a></code> 
@@ -343,6 +367,8 @@ prefer the <em>lowest</em> value of <em>k</em>.  Test your classifier with:
     <li> To run on the face recognition dataset, use <code>-d faces</code> (optional).
 </ul>
 
+<p>To run the autograder for this question use the following command (as usual):
+<pre>python autograder.py -q q1</pre>
 
 </p><h4>Odds Ratios</h4>
 One important tool in using classifiers in real domains is being able
@@ -386,9 +412,16 @@ Fill in the function <code>findHighOddsFeatures(self, label1, label2)</code>.
 It should return a list of the 100 features with highest odds ratios for <code>label1</code>
 over <code>label2</code>.
 The option <code>-o</code> activates an odds ratio analysis.
-Use the options <code>-1 label1 -2 label2</code> to specify which labels to compare. Running the following command will show you the 100 pixels that best distinguish between a 3 and a 6.
+Use the options <code>-1 label1 -2 label2</code> to specify which labels to compare. Running the following command will show you the 100 pixels that best distinguish between a 3 and a 2.
 
-<pre>python dataClassifier.py -a -d digits -c naiveBayes -o -1 3 -2 6  </pre>
+<pre>python dataClassifier.py -a -d digits -c naiveBayes -o -1 3 -2 2  </pre>
+
+<p>Which of the following images best represents the distribution of these pixels:
+<p><IMG
+ WIDTH="800" HEIGHT="200" ALIGN="MIDDLE" BORDER="0"
+ SRC="images/q2_choices.png"
+ ALT="$y_2$">.
+<p>Answer the question answers.py in the method q2, returning either 'a', 'b', 'c' or 'd'.
 
 <h2>Perceptron</h2>
 <br/>
@@ -537,12 +570,17 @@ of this issue, we can repeat the visualization exercise from the naive Bayes
 classifier.
 
 <P>
-<em><strong>Question 4 (1 point)</strong></em> Fill in <code>findHighOddsFeatures(self, label1, label2)</code> in <code><a href="docs/perceptron.html">perceptron.py</a></code>. 
-It should return a list of the 100 features with highest difference in feature weights.  You can display the 100 pixels with the largest difference in
-  weights <IMG WIDTH="62" HEIGHT="34" ALIGN="MIDDLE" BORDER="0" SRC="images/img42.png"
- ALT="$w^3 - w^6$"> using the command:
+<em><strong>Question 4 (1 point)</strong></em> Fill in <code>findHighWeightFeatures(self, label)</code> in <code><a href="docs/perceptron.html">perceptron.py</a></code>. 
+It should return a list of the 100 features with highest feature weights for that label.  You can display the 100 pixels with the largest weights using the command:
 
-<pre>python dataClassifier.py -c perceptron -o -1 3 -2 6  </pre>
+<pre>python dataClassifier.py -c perceptron -w   </pre>
+
+Use this command to look at the weights, and answer the following true/false question. Which of the following sequence of weights is most representative of the perceptron?
+<p><IMG
+ WIDTH="800" HEIGHT="400" ALIGN="MIDDLE" BORDER="0"
+ SRC="images/q4_choices.png"
+ ALT="$y_2$">.
+<p>Answer the question answers.py in the method q2, returning either 'a' or 'b'.
 
 <h2>MIRA</h2>
 A skeleton implementation of the MIRA classifier is provided for you in <code><a href="docs/mira.html">mira.py</a></code>. MIRA is an online learner which is closely related to both the support vector machine and perceptron classifiers.  You will fill in the <code>trainAndTune</code> function.
@@ -703,7 +741,7 @@ test performance greater than or equal to 84% with the above command.
 How well can you classify? Fill in code in <code><a href="docs/minicontest.html">minicontest.py</a></code> for training and classification.
 To run your classifier, use:
 
-<pre>python dataClassifier.py -d digits -c minicontest</pre>
+<pre>python dataClassifier.py -d digits -c minicontest -t 5000 -s 1000</pre>
 
 When you specify the minicontest classifier, features are extracted using
 <code>contestFeatureExtractorDigit</code>.
@@ -716,6 +754,8 @@ We will allow your classifier to train on 5000 examples, but will test you on a 
 The 3 teams with the highest classification accuracy will receive 3, 2, and 1 points, respectively.
 Don't forget to describe what you've done in your comments.
 
-<p><em> Congratulations! You're finished with the CS 188 projects.</em>
+<em>Note that there is no autograder module for the minicontest</em>
+
+<p><em> Congratulations! You're finished with the CS 343H projects.</em>
 </body>
 </html>

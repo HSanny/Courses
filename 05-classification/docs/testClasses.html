@@ -1,0 +1,202 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<title>./testClasses.py</title>
+<link rel="stylesheet" type="text/css" href="highlight.css">
+</head>
+<body class="hl">
+<pre class="hl"><span class="hl slc"># testClasses.py</span>
+<span class="hl slc"># --------------</span>
+<span class="hl slc"># Licensing Information:  You are free to use or extend these projects for </span>
+<span class="hl slc"># educational purposes provided that (1) you do not distribute or publish </span>
+<span class="hl slc"># solutions, (2) you retain this notice, and (3) you provide clear </span>
+<span class="hl slc"># attribution to UC Berkeley, including a link to </span>
+<span class="hl slc"># http://inst.eecs.berkeley.edu/~cs188/pacman/pacman.html</span>
+<span class="hl slc"># </span>
+<span class="hl slc"># Attribution Information: The Pacman AI projects were developed at UC Berkeley.</span>
+<span class="hl slc"># The core projects and autograders were primarily created by John DeNero </span>
+<span class="hl slc"># (denero&#64;cs.berkeley.edu) and Dan Klein (klein&#64;cs.berkeley.edu).</span>
+<span class="hl slc"># Student side autograding was added by Brad Miller, Nick Hay, and </span>
+<span class="hl slc"># Pieter Abbeel (pabbeel&#64;cs.berkeley.edu).</span>
+
+
+<span class="hl slc"># import modules from python standard library</span>
+<span class="hl kwa">import</span> inspect
+<span class="hl kwa">import</span> re
+<span class="hl kwa">import</span> sys
+
+
+<span class="hl slc"># Class which models a question in a project.  Note that questions have a</span>
+<span class="hl slc"># maximum number of points they are worth, and are composed of a series of</span>
+<span class="hl slc"># test cases</span>
+<span class="hl kwa">class</span> <span class="hl kwd">Question</span><span class="hl opt">(</span><span class="hl kwb">object</span><span class="hl opt">):</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">raiseNotDefined</span><span class="hl opt">(</span>self<span class="hl opt">):</span>
+        <span class="hl kwa">print</span> <span class="hl str">'Method not implemented: %s'</span> <span class="hl opt">%</span> inspect<span class="hl opt">.</span><span class="hl kwd">stack</span><span class="hl opt">()[</span><span class="hl num">1</span><span class="hl opt">][</span><span class="hl num">3</span><span class="hl opt">]</span>
+        sys<span class="hl opt">.</span><span class="hl kwd">exit</span><span class="hl opt">(</span><span class="hl num">1</span><span class="hl opt">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">__init__</span><span class="hl opt">(</span>self<span class="hl opt">,</span> questionDict<span class="hl opt">,</span> display<span class="hl opt">):</span>
+        self<span class="hl opt">.</span>maxPoints <span class="hl opt">=</span> <span class="hl kwb">int</span><span class="hl opt">(</span>questionDict<span class="hl opt">[</span><span class="hl str">'max_points'</span><span class="hl opt">])</span>
+        self<span class="hl opt">.</span>testCases <span class="hl opt">= []</span>
+        self<span class="hl opt">.</span>display <span class="hl opt">=</span> display
+
+    <span class="hl kwa">def</span> <span class="hl kwd">getDisplay</span><span class="hl opt">(</span>self<span class="hl opt">):</span>
+        <span class="hl kwa">return</span> self<span class="hl opt">.</span>display
+
+    <span class="hl kwa">def</span> <span class="hl kwd">getMaxPoints</span><span class="hl opt">(</span>self<span class="hl opt">):</span>
+        <span class="hl kwa">return</span> self<span class="hl opt">.</span>maxPoints
+
+    <span class="hl slc"># Note that 'thunk' must be a function which accepts a single argument,</span>
+    <span class="hl slc"># namely a 'grading' object</span>
+    <span class="hl kwa">def</span> <span class="hl kwd">addTestCase</span><span class="hl opt">(</span>self<span class="hl opt">,</span> testCase<span class="hl opt">,</span> thunk<span class="hl opt">):</span>
+        self<span class="hl opt">.</span>testCases<span class="hl opt">.</span><span class="hl kwd">append</span><span class="hl opt">((</span>testCase<span class="hl opt">,</span> thunk<span class="hl opt">))</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">execute</span><span class="hl opt">(</span>self<span class="hl opt">,</span> grades<span class="hl opt">):</span>
+        self<span class="hl opt">.</span><span class="hl kwd">raiseNotDefined</span><span class="hl opt">()</span>
+
+<span class="hl slc"># Question in which all test cases must be passed in order to receive credit</span>
+<span class="hl kwa">class</span> <span class="hl kwd">PassAllTestsQuestion</span><span class="hl opt">(</span>Question<span class="hl opt">):</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">execute</span><span class="hl opt">(</span>self<span class="hl opt">,</span> grades<span class="hl opt">):</span>
+        <span class="hl slc"># TODO: is this the right way to use grades?  The autograder doesn't seem to use it.</span>
+        testsFailed <span class="hl opt">=</span> <span class="hl kwa">False</span>
+        grades<span class="hl opt">.</span><span class="hl kwd">assignZeroCredit</span><span class="hl opt">()</span>
+        <span class="hl kwa">for</span> _<span class="hl opt">,</span> f <span class="hl kwa">in</span> self<span class="hl opt">.</span>testCases<span class="hl opt">:</span>
+            <span class="hl kwa">if not</span> <span class="hl kwd">f</span><span class="hl opt">(</span>grades<span class="hl opt">):</span>
+                testsFailed <span class="hl opt">=</span> <span class="hl kwa">True</span>
+        <span class="hl kwa">if</span> testsFailed<span class="hl opt">:</span>
+            grades<span class="hl opt">.</span><span class="hl kwd">fail</span><span class="hl opt">(</span><span class="hl str">&quot;Tests failed.&quot;</span><span class="hl opt">)</span>
+        <span class="hl kwa">else</span><span class="hl opt">:</span>
+            grades<span class="hl opt">.</span><span class="hl kwd">assignFullCredit</span><span class="hl opt">()</span>
+
+
+<span class="hl slc"># Question in which predict credit is given for test cases with a ``points'' property.</span>
+<span class="hl slc"># All other tests are mandatory and must be passed.</span>
+<span class="hl kwa">class</span> <span class="hl kwd">HackedPartialCreditQuestion</span><span class="hl opt">(</span>Question<span class="hl opt">):</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">execute</span><span class="hl opt">(</span>self<span class="hl opt">,</span> grades<span class="hl opt">):</span>
+        <span class="hl slc"># TODO: is this the right way to use grades?  The autograder doesn't seem to use it.</span>
+        grades<span class="hl opt">.</span><span class="hl kwd">assignZeroCredit</span><span class="hl opt">()</span>
+
+        points <span class="hl opt">=</span> <span class="hl num">0</span>
+        passed <span class="hl opt">=</span> <span class="hl kwa">True</span>
+        <span class="hl kwa">for</span> testCase<span class="hl opt">,</span> f <span class="hl kwa">in</span> self<span class="hl opt">.</span>testCases<span class="hl opt">:</span>
+            testResult <span class="hl opt">=</span> <span class="hl kwd">f</span><span class="hl opt">(</span>grades<span class="hl opt">)</span>
+            <span class="hl kwa">if</span> <span class="hl str">&quot;points&quot;</span> <span class="hl kwa">in</span> testCase<span class="hl opt">.</span>testDict<span class="hl opt">:</span>
+                <span class="hl kwa">if</span> testResult<span class="hl opt">:</span> points <span class="hl opt">+=</span> <span class="hl kwb">float</span><span class="hl opt">(</span>testCase<span class="hl opt">.</span>testDict<span class="hl opt">[</span><span class="hl str">&quot;points&quot;</span><span class="hl opt">])</span>
+            <span class="hl kwa">else</span><span class="hl opt">:</span>
+                passed <span class="hl opt">=</span> passed <span class="hl kwa">and</span> testResult
+
+        <span class="hl slc">## FIXME: Below terrible hack to match q3's logic</span>
+        <span class="hl kwa">if</span> <span class="hl kwb">int</span><span class="hl opt">(</span>points<span class="hl opt">) ==</span> self<span class="hl opt">.</span>maxPoints <span class="hl kwa">and not</span> passed<span class="hl opt">:</span>
+            grades<span class="hl opt">.</span><span class="hl kwd">assignZeroCredit</span><span class="hl opt">()</span>
+        <span class="hl kwa">else</span><span class="hl opt">:</span>
+            grades<span class="hl opt">.</span><span class="hl kwd">addPoints</span><span class="hl opt">(</span><span class="hl kwb">int</span><span class="hl opt">(</span>points<span class="hl opt">))</span>
+
+
+<span class="hl kwa">class</span> <span class="hl kwd">Q6PartialCreditQuestion</span><span class="hl opt">(</span>Question<span class="hl opt">):</span>
+    <span class="hl str">&quot;&quot;&quot;Fails any test which returns False, otherwise doesn't effect the grades object.</span>
+<span class="hl str">    Partial credit tests will add the required points.&quot;&quot;&quot;</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">execute</span><span class="hl opt">(</span>self<span class="hl opt">,</span> grades<span class="hl opt">):</span>
+        grades<span class="hl opt">.</span><span class="hl kwd">assignZeroCredit</span><span class="hl opt">()</span>
+
+        results <span class="hl opt">= []</span>
+        <span class="hl kwa">for</span> _<span class="hl opt">,</span> f <span class="hl kwa">in</span> self<span class="hl opt">.</span>testCases<span class="hl opt">:</span>
+            results<span class="hl opt">.</span><span class="hl kwd">append</span><span class="hl opt">(</span><span class="hl kwd">f</span><span class="hl opt">(</span>grades<span class="hl opt">))</span>
+        <span class="hl kwa">if False in</span> results<span class="hl opt">:</span>
+            grades<span class="hl opt">.</span><span class="hl kwd">assignZeroCredit</span><span class="hl opt">()</span>
+
+<span class="hl kwa">class</span> <span class="hl kwd">PartialCreditQuestion</span><span class="hl opt">(</span>Question<span class="hl opt">):</span>
+    <span class="hl str">&quot;&quot;&quot;Fails any test which returns False, otherwise doesn't effect the grades object.</span>
+<span class="hl str">    Partial credit tests will add the required points.&quot;&quot;&quot;</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">execute</span><span class="hl opt">(</span>self<span class="hl opt">,</span> grades<span class="hl opt">):</span>
+        grades<span class="hl opt">.</span><span class="hl kwd">assignZeroCredit</span><span class="hl opt">()</span>
+
+        <span class="hl kwa">for</span> _<span class="hl opt">,</span> f <span class="hl kwa">in</span> self<span class="hl opt">.</span>testCases<span class="hl opt">:</span>
+            <span class="hl kwa">if not</span> <span class="hl kwd">f</span><span class="hl opt">(</span>grades<span class="hl opt">):</span>
+                grades<span class="hl opt">.</span><span class="hl kwd">assignZeroCredit</span><span class="hl opt">()</span>
+                grades<span class="hl opt">.</span><span class="hl kwd">fail</span><span class="hl opt">(</span><span class="hl str">&quot;Tests failed.&quot;</span><span class="hl opt">)</span>
+                <span class="hl kwa">return False</span>
+
+
+
+<span class="hl kwa">class</span> <span class="hl kwd">NumberPassedQuestion</span><span class="hl opt">(</span>Question<span class="hl opt">):</span>
+    <span class="hl str">&quot;&quot;&quot;Grade is the number of test cases passed.&quot;&quot;&quot;</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">execute</span><span class="hl opt">(</span>self<span class="hl opt">,</span> grades<span class="hl opt">):</span>
+        grades<span class="hl opt">.</span><span class="hl kwd">addPoints</span><span class="hl opt">([</span><span class="hl kwd">f</span><span class="hl opt">(</span>grades<span class="hl opt">)</span> <span class="hl kwa">for</span> _<span class="hl opt">,</span> f <span class="hl kwa">in</span> self<span class="hl opt">.</span>testCases<span class="hl opt">].</span><span class="hl kwd">count</span><span class="hl opt">(</span><span class="hl kwa">True</span><span class="hl opt">))</span>
+
+
+
+
+
+<span class="hl slc"># Template modeling a generic test case</span>
+<span class="hl kwa">class</span> <span class="hl kwd">TestCase</span><span class="hl opt">(</span><span class="hl kwb">object</span><span class="hl opt">):</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">raiseNotDefined</span><span class="hl opt">(</span>self<span class="hl opt">):</span>
+        <span class="hl kwa">print</span> <span class="hl str">'Method not implemented: %s'</span> <span class="hl opt">%</span> inspect<span class="hl opt">.</span><span class="hl kwd">stack</span><span class="hl opt">()[</span><span class="hl num">1</span><span class="hl opt">][</span><span class="hl num">3</span><span class="hl opt">]</span>
+        sys<span class="hl opt">.</span><span class="hl kwd">exit</span><span class="hl opt">(</span><span class="hl num">1</span><span class="hl opt">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">getPath</span><span class="hl opt">(</span>self<span class="hl opt">):</span>
+        <span class="hl kwa">return</span> self<span class="hl opt">.</span>path
+
+    <span class="hl kwa">def</span> <span class="hl kwd">__init__</span><span class="hl opt">(</span>self<span class="hl opt">,</span> question<span class="hl opt">,</span> testDict<span class="hl opt">):</span>
+        self<span class="hl opt">.</span>question <span class="hl opt">=</span> question
+        self<span class="hl opt">.</span>testDict <span class="hl opt">=</span> testDict
+        self<span class="hl opt">.</span>path <span class="hl opt">=</span> testDict<span class="hl opt">[</span><span class="hl str">'path'</span><span class="hl opt">]</span>
+        self<span class="hl opt">.</span>messages <span class="hl opt">= []</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">__str__</span><span class="hl opt">(</span>self<span class="hl opt">):</span>
+        self<span class="hl opt">.</span><span class="hl kwd">raiseNotDefined</span><span class="hl opt">()</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">execute</span><span class="hl opt">(</span>self<span class="hl opt">,</span> grades<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> solutionDict<span class="hl opt">):</span>
+        self<span class="hl opt">.</span><span class="hl kwd">raiseNotDefined</span><span class="hl opt">()</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">writeSolution</span><span class="hl opt">(</span>self<span class="hl opt">,</span> moduleDict<span class="hl opt">,</span> filePath<span class="hl opt">):</span>
+        self<span class="hl opt">.</span><span class="hl kwd">raiseNotDefined</span><span class="hl opt">()</span>
+        <span class="hl kwa">return True</span>
+
+    <span class="hl slc"># Tests should call the following messages for grading</span>
+    <span class="hl slc"># to ensure a uniform format for test output.</span>
+    <span class="hl slc">#</span>
+    <span class="hl slc"># TODO: this is hairy, but we need to fix grading.py's interface</span>
+    <span class="hl slc"># to get a nice hierarchical project - question - test structure,</span>
+    <span class="hl slc"># then these should be moved into Question proper.</span>
+    <span class="hl kwa">def</span> <span class="hl kwd">testPass</span><span class="hl opt">(</span>self<span class="hl opt">,</span> grades<span class="hl opt">):</span>
+        grades<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">'PASS: %s'</span> <span class="hl opt">% (</span>self<span class="hl opt">.</span>path<span class="hl opt">,))</span>
+        <span class="hl kwa">for</span> line <span class="hl kwa">in</span> self<span class="hl opt">.</span>messages<span class="hl opt">:</span>
+            grades<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">'    %s'</span> <span class="hl opt">% (</span>line<span class="hl opt">,))</span>
+        <span class="hl kwa">return True</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">testFail</span><span class="hl opt">(</span>self<span class="hl opt">,</span> grades<span class="hl opt">):</span>
+        grades<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">'FAIL: %s'</span> <span class="hl opt">% (</span>self<span class="hl opt">.</span>path<span class="hl opt">,))</span>
+        <span class="hl kwa">for</span> line <span class="hl kwa">in</span> self<span class="hl opt">.</span>messages<span class="hl opt">:</span>
+            grades<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">'    %s'</span> <span class="hl opt">% (</span>line<span class="hl opt">,))</span>
+        <span class="hl kwa">return False</span>
+
+    <span class="hl slc"># This should really be question level?</span>
+    <span class="hl slc">#</span>
+    <span class="hl kwa">def</span> <span class="hl kwd">testPartial</span><span class="hl opt">(</span>self<span class="hl opt">,</span> grades<span class="hl opt">,</span> points<span class="hl opt">,</span> maxPoints<span class="hl opt">):</span>
+        grades<span class="hl opt">.</span><span class="hl kwd">addPoints</span><span class="hl opt">(</span>points<span class="hl opt">)</span>
+        extraCredit <span class="hl opt">=</span> <span class="hl kwb">max</span><span class="hl opt">(</span><span class="hl num">0</span><span class="hl opt">,</span> points <span class="hl opt">-</span> maxPoints<span class="hl opt">)</span>
+        regularCredit <span class="hl opt">=</span> points <span class="hl opt">-</span> extraCredit
+
+        grades<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">'%s: %s (%s of %s points)'</span> <span class="hl opt">% (</span><span class="hl str">&quot;PASS&quot;</span> <span class="hl kwa">if</span> points <span class="hl opt">&gt;=</span> maxPoints <span class="hl kwa">else</span> <span class="hl str">&quot;FAIL&quot;</span><span class="hl opt">,</span> self<span class="hl opt">.</span>path<span class="hl opt">,</span> regularCredit<span class="hl opt">,</span> maxPoints<span class="hl opt">))</span>
+        <span class="hl kwa">if</span> extraCredit <span class="hl opt">&gt;</span> <span class="hl num">0</span><span class="hl opt">:</span>
+            grades<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">'EXTRA CREDIT: %s points'</span> <span class="hl opt">% (</span>extraCredit<span class="hl opt">,))</span>
+
+        <span class="hl kwa">for</span> line <span class="hl kwa">in</span> self<span class="hl opt">.</span>messages<span class="hl opt">:</span>
+            grades<span class="hl opt">.</span><span class="hl kwd">addMessage</span><span class="hl opt">(</span><span class="hl str">'    %s'</span> <span class="hl opt">% (</span>line<span class="hl opt">,))</span>
+
+        <span class="hl kwa">return True</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">addMessage</span><span class="hl opt">(</span>self<span class="hl opt">,</span> message<span class="hl opt">):</span>
+        self<span class="hl opt">.</span>messages<span class="hl opt">.</span><span class="hl kwd">extend</span><span class="hl opt">(</span>message<span class="hl opt">.</span><span class="hl kwd">split</span><span class="hl opt">(</span><span class="hl str">'</span><span class="hl esc">\n</span><span class="hl str">'</span><span class="hl opt">))</span>
+
+</pre>
+</body>
+</html>
+<!--HTML generated by highlight 3.8, http://www.andre-simon.de/-->

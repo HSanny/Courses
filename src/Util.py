@@ -20,16 +20,16 @@ LOAD_SERVER_CMD = "python -u src/Server.py"
 LOAD_CLIENT_CMD = "python -u src/Client.py"
 
 def encode (st, si, rt, ri, title, content):
-    '''
+    """
     API: encode the message by components
-    '''
+    """
     msg = MESSAGE % (st, si, rt, ri, title, content)
     return msg
 
 def decode (msg):
-    '''
+    """
     API: Decode the message to various components
-    '''
+    """
     components = msg.split(MESSAGE_SEP)
     sender_type = components[SENDER_TYPE_IDX];
     sender_index = int(components[SENDER_INDEX_IDX])
@@ -41,9 +41,9 @@ def decode (msg):
             title, content
 
 def printLog (toprint, logHeader):
-    '''
+    """
     API: print log
-    '''
+    """
     string = ""
     string += logHeader + " " + toprint
     if printSwitch:
@@ -51,9 +51,9 @@ def printLog (toprint, logHeader):
     return
 
 def printSentMessage (sentMessage, logHeader):
-    '''
+    """
     API: send message
-    '''
+    """
     if printSwitch:
         components = sentMessage.split(MESSAGE_SEP)
         receiver_type = components[RECEIVER_TYPE_IDX]
@@ -69,9 +69,9 @@ def printSentMessage (sentMessage, logHeader):
     return
 
 def printRecvMessage (recvMessage, logHeader):
-    '''
-    API: send message
-    '''
+    """
+    API: print received message
+    """
     if printSwitch:
         components = recvMessage.split(MESSAGE_SEP)
         sender_type = components[SENDER_TYPE_IDX];
@@ -87,9 +87,9 @@ def printRecvMessage (recvMessage, logHeader):
     return
 
 def printCachedMessage (recvMessage, logHeader, cached=False):
-    '''
-    API: send message
-    '''
+    """
+    API: print cached or uncached message
+    """
     if printSwitch:
         components = recvMessage.split(MESSAGE_SEP)
         sender_type = components[SENDER_TYPE_IDX];
@@ -108,9 +108,9 @@ def printCachedMessage (recvMessage, logHeader, cached=False):
     return
 
 def send (host, port, message, Header):
-    '''
-    API: send message
-    '''
+    """
+    API: send message to (host, port) with Header prefix in output log
+    """
     if port is None:
         port = getPortByMsg(message)
     s = socket.socket()
@@ -121,10 +121,10 @@ def send (host, port, message, Header):
     return True
 
 def broadcastServers (host, sampleMsg, Header, allServers):
-    '''
+    """
     API: broadcast message with $title$ to all given servers
     with empty content
-    '''
+    """
     st, si, _, _, title, content = decode (sampleMsg)
 
     #print allServers
@@ -135,10 +135,10 @@ def broadcastServers (host, sampleMsg, Header, allServers):
     return True
 
 def broadcast (host, sampleMsg, Header, allServers, allClients):
-    '''
+    """
     API: broadcast message with $title$ to all given servers and clients
     with empty content
-    '''
+    """
     st, si, _, _, title, content = decode (sampleMsg)
 
     #print allServers
@@ -156,9 +156,9 @@ def broadcast (host, sampleMsg, Header, allServers, allClients):
     return True
 
 def checkCounterAllTrue (boolCounter, NoneIgnore=True):
-    '''
+    """
     API: determine whether the input counter contains all True value
-    '''
+    """
     assert (boolCounter is not None)
     decision = True
     for idx, bvalue in boolCounter.items():
@@ -171,9 +171,9 @@ def checkCounterAllTrue (boolCounter, NoneIgnore=True):
     return decision
 
 def checkCounterAllNotNone (boolCounter):
-    '''
+    """
     API: determine whether the input counter contains all not NOne
-    '''
+    """
     assert (boolCounter is not None)
     for idx, bvalue in boolCounter.items():
         if bvalue is None:
@@ -181,18 +181,18 @@ def checkCounterAllNotNone (boolCounter):
     return True
 
 def initAllFalseCounter (allIndex):
-    '''
+    """
     API: determine
-    '''
+    """
     counter = {}
     for index in allIndex:
         counter.update({index:False})
     return counter
 
 def initAllNoneCounter (allIndex):
-    '''
+    """
     API: determine
-    '''
+    """
     counter = {}
     for index in allIndex:
         counter.update({index:None})
@@ -218,6 +218,12 @@ def initEmptySemaphore ():
     return threading.Semaphore(0)
 
 def getPortByMsg (msg):
+    """
+    API: derive the port number according to the information provided in the
+    given message. 
+
+    NOTE THAT: this function depends on the src/Protocol.py
+    """
     _, _, receiver_type, receiver_idx, _, _ = decode(msg)
     [base, port] = [-1, -1]
     if receiver_type == MASTER_TYPE:
@@ -230,24 +236,37 @@ def getPortByMsg (msg):
     return port
 
 def set2str (inSet):
+    """
+    API: convert the set to string
+    """
     if len(inSet) == 0:
         return 'None'
     outString = ",".join(str(x) for x in inSet)
     return outString
 
 def str2set (inString):
+    """
+    API: convert the input string to set
+    """
     if inString == 'None' or len(inString) == 0:
         return set([])
     outSet = set([int(x) for x in inString.split(",")])
     return outSet
 
 def args2cmd (args):
+    """
+    API: convert the array with a collection of arguments to connected string
+    """
     cmd = ""
     for arg in args:
         cmd += arg + " "
     return cmd
 
 def bool2str (bvalue):
+    """
+    API: convert bool value to capitalized string
+    NOTE THAT: this conform to the requirement of specs
+    """
     if bvalue is None:
         return "NONE"
     elif bvalue:
@@ -261,11 +280,18 @@ def str2bool (bstr):
     else: return True
 
 def vv2str (versionVector):
+    """
+    API: convert the version vector (dict) to string
+    """
     return str(versionVector)
 
 def str2vv (vvStr):
+    """
+    API: convert the string to version vector (dict) 
+    """
     return eval(vvStr)
 
+## self-defined infinity
 INFINITY = 10e5
 
 def isInf (num):
@@ -273,6 +299,7 @@ def isInf (num):
             
 def setStableBool (oplog, bvalue):
     """
+    Set the STABLE_BOOL field of given oplog to be TRUE.
     NOTE THAT the input log must be valid.
     """
     if bvalue:

@@ -17,8 +17,7 @@ from Util import *
 from Protocol import *
 from Logging import *
 
-## TODO: add more static variable here..
-'''Utitlity'''
+'''Utility'''
 localhost = socket.gethostname()
 logHeader = MASTER_LOG_HEADER
 
@@ -127,6 +126,7 @@ def MasterListener(stdout):
 
         elif title == CHECK_STABILIZATION_RESPONSE_TITLE:
             global stabilizeAcks, csnCollections
+            ## decode the commit sequence number and all-neighbour-known bool
             [csn, bvalue] = content.split(CHECK_STABLE_RESPONSE_SEP)
             [csn, bvalue] = [int(csn), bvalue]
             csnCollections.add(csn)
@@ -139,6 +139,9 @@ def MasterListener(stdout):
                 continue
 
             ## if all not none, we make the decision
+            ## STABLE CONDITION: 
+            #   - all positive feedback from servers
+            #   - sequence number of all servers should be the same
             if checkCounterAllTrue(stabilizeAcks, True) and \
             len(csnCollections) == 1:
                 ## unblock the main/reader thread

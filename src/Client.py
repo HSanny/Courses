@@ -1,6 +1,6 @@
 ############################################################
 ##    FILENAME:   Client.py
-##    VERSION:    1.0
+##    VERSION:    1.3
 ##    SINCE:      2014-04-15
 ##    AUTHOR:
 ##        Jimmy Lin (xl5224) - JimmyLin@utexas.edu
@@ -16,14 +16,14 @@ from Protocol import *
 from Logging import *
 from Util import *
 
-## TODO: static variable here
+## static variable here
 logHeader = None
 clientID = None
 serverToConnect = None
 localhost = socket.gethostname()
 
 def main(argv):
-    ## TODO: initialize static variables
+    ## initialize static variables
     assert len(argv) >= 2, "CLIENT: too less arguments"
     clientID = int(argv[0])
     serverToConnect = int(argv[1])

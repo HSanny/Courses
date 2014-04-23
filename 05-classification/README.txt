@@ -78,3 +78,6 @@ Q6.
 
     By doing the feature extraction above, the validation accuracy improves to
     88% and testing accuracy improves to 84%.
+
+Minicontest.
+

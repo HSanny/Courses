@@ -26,6 +26,7 @@ class contestClassifier(classificationMethod.ClassificationMethod):
 
         """PCA"""
         truncated_data = NP.matrix(random.sample(train_data, 512))
+        print train_data
 
         train_data = NP.matrix(train_data)
 

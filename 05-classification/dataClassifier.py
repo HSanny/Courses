@@ -80,8 +80,8 @@ def enhancedFeatureExtractorDigit(datum):
     features =  basicFeatureExtractorDigit(datum)
 
     "*** YOUR CODE HERE ***"
-    for x in range(DIGIT_DATUM_WIDTH):
-        for y in range(DIGIT_DATUM_HEIGHT):
+    for x in range(0, DIGIT_DATUM_WIDTH, 2):
+        for y in range(0, DIGIT_DATUM_HEIGHT, 2):
             center = datum.getPixel(x, y)
             if x-1 > 0:
                 features[(x, y, 'left', 0)] = 0
@@ -107,7 +107,41 @@ def enhancedFeatureExtractorDigit(datum):
                 features[(x, y, 'down', 1)] = 0
                 down = datum.getPixel(x, y-1)
                 features[(x, y, 'down', stepfunction(down - center))] = 1
+    '''
+    ## horizontal histogram of black pixel
+    for x in range(DIGIT_DATUM_WIDTH):
+        count = 0
+        for y in range(DIGIT_DATUM_HEIGHT):
+            center = datum.getPixel(x,y) 
+            if center > 0:
+                count += 1
+        features[('horizontal_hist', x)] = count
+    ## vertical histogram of black pixel
+    for y in range(DIGIT_DATUM_HEIGHT):
+        count = 0
+        for x in range(DIGIT_DATUM_WIDTH):
+            center = datum.getPixel(x,y) 
+            if center > 0:
+                count += 1
+        features[('vertical_hist', y)] = count
 
+    for x in range(DIGIT_DATUM_WIDTH):
+        for y in range(DIGIT_DATUM_HEIGHT):
+            center = datum.getPixel(x, y)
+            if x-1 > 0:
+                left = datum.getPixel(x-1, y)
+                features[(x, y, 'left')] = stepfunction(left - center)
+            if x+1 < DIGIT_DATUM_WIDTH:
+                right = datum.getPixel(x+1, y)
+                features[(x, y, 'right')] = stepfunction(right - center)
+            if y+1 < DIGIT_DATUM_HEIGHT:
+                up = datum.getPixel(x, y+1)
+                features[(x, y, 'up')] = stepfunction(up - center)
+            if y-1 > 0:
+                down = datum.getPixel(x, y-1)
+                features[(x, y, 'down')] = stepfunction(down - center)
+
+    '''
     return features
 
 def stepfunction (value):

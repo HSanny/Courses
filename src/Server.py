@@ -87,9 +87,25 @@ def anti_entropy (Senderid, Reiceiverid):
     return
 """
 
-def exchange_info (writeLogs, RVV, SCSN, RCSN, SID, RID):
+def complete_vector_val(bayouID, sender_v, receiver_v):
+    if bayouID in receiver_v:
+        return receiver_v[bayouID]
+    elif isinstance(bayouID, int):
+        return float("inf")
+    else:
+        assert isinstance(bayouID, tuple)
+        timestamp, acceptor = bayouID
+        if complete_vector_val(acceptor, sender_v, receiver_v) >= timestamp:
+            return float("inf")
+        else:
+            return float("-inf")
+
+def exchange_info (writeLogs, RVV, SCSN, RCSN, SID, RID, versionVector):
     ## for every write-log of Sender
     global logHeader
+    RCV = {}
+    for bayouID in versionVector:
+        RCV[bayouID] = complete_vector_val(bayouID, versionVector, RVV)
     ## exchange commited write owned by serverID
     print RCSN, SCSN
     if RCSN < SCSN:
@@ -97,7 +113,7 @@ def exchange_info (writeLogs, RVV, SCSN, RCSN, SID, RID):
             if not isInf(csn) and csn > RCSN:
                 # this write is commited but R is not unknown
                 wStr = W_FORMAT % (log_stamp, sid, csn, oplog)
-                if log_stamp <= RVV.get(sid):
+                if log_stamp <= RCV.get(sid):
                     # R has the tentative write but has not commit
                     commitNotifyMsg = encode(SERVER_TYPE, SID, \
                          SERVER_TYPE, RID, COMMIT_NOTIFICATION_TITLE, wStr)
@@ -115,7 +131,7 @@ def exchange_info (writeLogs, RVV, SCSN, RCSN, SID, RID):
         if not isInf(csn):
             continue
         wStr = W_FORMAT % (accept_stamp, sid, csn, oplog)
-        if RVV.get(sid) < accept_stamp:
+        if RCV.get(sid) < accept_stamp:
             # this oplog is new for Receiver
             # send write to receiver
             sendWriteMsg = encode(SERVER_TYPE, SID, SERVER_TYPE, \
@@ -469,7 +485,7 @@ def main (argv):
                 # not up to date
                 stableCounter.update({si:False})
                 # trigger the update
-                exchange_info(writeLogs, RVV, CSN, RCSN, serverID, si)
+                exchange_info(writeLogs, RVV, CSN, RCSN, serverID, si, versionVector)
             elif RVV.get(serverID) == accept_stamp:
                 # up to date
                 stableCounter.update({si:True})

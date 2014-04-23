@@ -196,7 +196,6 @@ def main (argv):
                 send(localhost, port, createMsg, logHeader)
             firstRun = False
 
-
         ## prioritize uncached message if system is non-paused
         if not pause and len(cachedMessages) > 0:
             ## uncached the cached messages
@@ -222,15 +221,27 @@ def main (argv):
                 newBayouID = tuple(newBayouID)
             bayouToMaster[newBayouID] = newServerID
             allServers.add(newServerID)
-            # TODO: Run anti-entropy with new Server so he 'knows' someone
-            #stableVVReqMsg = encode(SERVER_TYPE, serverID,
-                #SERVER_TYPE, bayouToMaster[newBayouID],
-                #STABLE_VV_REQUEST_TITLE, EMPTY_CONTENT)
-            #port = getPortByMsg(stableVVReqMsg)
-            #send (localhost, port, stableVVReqMsg, logHeader)
         elif title == RETIRE_SERVER_TITLE:
             # Send a RETIRE to self
-            pass
+            retireMsg = encode(SERVER_TYPE, serverID, SERVER_TYPE,
+                serverID, PUT_REQUEST_TITLE, RETIRE_CONTENT)
+            port = getPortByMsg(retireMsg)
+            send(localhost, port, retireMsg, logHeader)
+        elif title == NEW_PRIMARY_TITLE:
+            # TODO: Test new primary
+            isPrimary = True
+            # Commit all tentative writes
+            for accept_stamp, serverID, csn, putlog in writeLogs:
+                isPrimaryNewCommit = isPrimary and isInf(csn)
+                if isPrimaryNewCommit:
+                    ## assignment commit sequence number
+                    CSN += 1
+                    csn = CSN
+                    ## set the STABLE_BOOL oplog
+                    oplog = setStableBool(oplog, True)
+                    ## apply log to local data
+                    write = (log_stamp, sid, csn, oplog)
+                    applyWrite(localData, write, writeLogs, versionVector)
         elif title == JOIN_CLIENT_ACK_TITLE:
             deliverAckMsg = encode (SERVER_TYPE, serverID, \
                MASTER_TYPE, 0, JOIN_CLIENT_ACK_TITLE, EMPTY_CONTENT)
@@ -294,6 +305,9 @@ def main (argv):
                 newServerID = (accept_stamp, bayouID)
                 putlog = OPLOG_FORMAT % (CREATE, json.dumps(newServerID),
                                       bool2str(isPrimary))
+            elif content == RETIRE_CONTENT:
+                putlog = OPLOG_FORMAT % (RETIRE, json.dumps(bayouID),
+                                      bool2str(isPrimary))
             else:
                 ## update locallog
                 [sn, URL] = content.split(SU_SEP)
@@ -310,17 +324,20 @@ def main (argv):
             writeLogs.append(write)
             ## update the version vector
             versionVector.update({serverID:accept_stamp})
-            if content == CREATE_CONTENT:
-                ## update the version vector
-                newServerID = (accept_stamp, bayouID)
-                versionVector.update({newServerID:0})
-                putAckMsg = encode(rt, ri, st, si, PUT_ACK_TITLE, json.dumps(newServerID))
+            if content == RETIRE_CONTENT:
+                pass
             else:
-                ## update local datastore
-                localData.update({sn:URL})
-                putAckMsg = encode(rt, ri, st, si, PUT_ACK_TITLE, EMPTY_CONTENT)
-            port = getPortByMsg(putAckMsg)
-            send(localhost, port, putAckMsg, logHeader)
+                if content == CREATE_CONTENT:
+                    ## update the version vector
+                    newServerID = (accept_stamp, bayouID)
+                    versionVector.update({newServerID:0})
+                    putAckMsg = encode(rt, ri, st, si, PUT_ACK_TITLE, json.dumps(newServerID))
+                else:
+                    ## update local datastore
+                    localData.update({sn:URL})
+                    putAckMsg = encode(rt, ri, st, si, PUT_ACK_TITLE, EMPTY_CONTENT)
+                port = getPortByMsg(putAckMsg)
+                send(localhost, port, putAckMsg, logHeader)
 
         elif title == PUT_ACK_TITLE:
             # Server only receives this in response to his own CREATE

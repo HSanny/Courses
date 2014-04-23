@@ -64,6 +64,43 @@ def checkConnClients(id1, id2, servers, clients):
             "CONNECTION: both id are clients."
     return isServer1, isServer2
 
+def stabilize(allClients, serverConnection, localhost, port, logHeader):
+    ## STEP ZERO: initialize global variables
+    global stabilizeSema, stabilizeAcks, csnCollections
+    stabilizeSema = initEmptySemaphore()
+
+    ## STEP ONE: get all servers to which checking request should send
+    directConnectedServers = set([])
+    for cIdx in allClients:
+        directConnectedServers.update([clientConnection.get(cIdx)])
+    # for all
+    oldServers = directConnectedServers
+    while True:
+        newServers = set(oldServers)
+        tmp = set(newServers)
+        for sIdx in newServers:
+            tmp.update(serverConnection.get(sIdx))
+        newServers = tmp
+        if newServers.issubset(oldServers) and \
+           newServers.issuperset(oldServers):
+            break
+    global serversToListen
+    serversToListen = newServers
+    stabilizeAcks = initAllNoneCounter(serversToListen)
+    csnCollections = set([])
+
+    ## STEP TWO: send checking request to all clients
+    global stabilizeCheckRound
+    for cIdx in allClients:
+        checkingReqMsg = encode(MASTER_TYPE, 0, CLIENT_TYPE, cIdx, \
+         CHECK_STABILIZATION_REQUEST_TITLE, str(stabilizeCheckRound))
+        port = getPortByMsg(checkingReqMsg)
+        send(localhost, port, checkingReqMsg, logHeader)
+    stabilizeCheckRound += 1
+    
+    ## STEP THREE: block until recept of all positive message
+    stabilizeSema.acquire()
+
 def MasterListener(stdout):
     '''
     Hold on server socket and listen to all incoming message by infinite loop
@@ -234,18 +271,25 @@ def MasterProcessor():
             Retire the server with the id specified. This should block until
             the server can tell another server of its retirement
             '''
-            retireMsg = encode (MASTER_TYPE, 0, SERVER_TYPE, serverId, \
+            retireMsg = encode (MASTER_TYPE, 0, SERVER_TYPE, serverId,
                                RETIRE_SERVER_TITLE, EMPTY_CONTENT)
             port = getPortByMsg (retireMsg)
             send (localhost, port, retireMsg, logHeader)
-            
-            ## TODO: retirement nonProtocol
-            if primaryServerId == serverId:
-                ## TODO: retire the primary replica
-                pass
-            else:
-                ## retire non-primary replica
-                pass
+            # Ensure anti-entropy passes on the retire message
+            stabilize(allClients, serverConnection, localhost, port, logHeader)
+            # Pass on the primary status to the next non-isolated server
+            if serverId == primaryServerId:
+                # Since system is stabilized, the server we choose
+                # will have an updated CSN and can safely be primary 
+                lowest_server = min(
+                    [server for server in allServers if serverConnection[server]]) 
+                primaryMsg = encode (MASTER_TYPE, 0, SERVER_TYPE, lowest_server,
+                    SET_PRIMARY_TITLE, EMPTY_CONTENT)
+                port = getPortByMsg(primaryMsg)
+                send (localhost, port, retireMsg, logHeader)
+            # Kill the retired server
+            exitMsg = encode (MASTER_TYPE, 0, SERVER_TYPE, serverId, EXIT_TITLE,
+                        EMPTY_CONTENT)
 
         if line[0] ==  "joinClient":
             clientId = int(line[1])
@@ -377,42 +421,7 @@ def MasterProcessor():
             time that this function blocks for should increase linearly with the
             number of servers in the system.
             """
-            ## STEP ZERO: initialize global variables
-            global stabilizeSema, stabilizeAcks, csnCollections
-            stabilizeSema = initEmptySemaphore()
-
-            ## STEP ONE: get all servers to which checking request should send
-            directConnectedServers = set([])
-            for cIdx in allClients:
-                directConnectedServers.update([clientConnection.get(cIdx)])
-            # for all
-            oldServers = directConnectedServers
-            while True:
-                newServers = set(oldServers)
-                tmp = set(newServers)
-                for sIdx in newServers:
-                    tmp.update(serverConnection.get(sIdx))
-                newServers = tmp
-                if newServers.issubset(oldServers) and \
-                   newServers.issuperset(oldServers):
-                    break
-            global serversToListen
-            serversToListen = newServers
-            stabilizeAcks = initAllNoneCounter(serversToListen)
-            csnCollections = set([])
-
-            ## STEP TWO: send checking request to all clients
-            global stabilizeCheckRound
-            for cIdx in allClients:
-                checkingReqMsg = encode(MASTER_TYPE, 0, CLIENT_TYPE, cIdx, \
-                 CHECK_STABILIZATION_REQUEST_TITLE, str(stabilizeCheckRound))
-                port = getPortByMsg(checkingReqMsg)
-                send(localhost, port, checkingReqMsg, logHeader)
-            stabilizeCheckRound += 1
-            
-            ## STEP THREE: block until recept of all positive message
-            stabilizeSema.acquire()
-
+            stabilize(allClients, serverConnection, localhost, port, logHeader)
         if line[0] ==  "printLog":
             serverId = int(line[1])
             global printLogSema

@@ -79,8 +79,6 @@ def exchange_info (writeLogs, RVV, SCSN, RCSN, SID, RID):
     ## exchange commited write owned by serverID
     print RCSN, SCSN
     if RCSN < SCSN:
-        print writeLogs
-        print '...............'
         for log_stamp, sid, csn, oplog in writeLogs:
             if not isInf(csn) and csn > RCSN:
                 # this write is commited but R is not unknown

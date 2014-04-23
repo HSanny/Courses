@@ -16,6 +16,8 @@
             anchorcolor=red,
             citecolor=green
             ]{hyperref}
+\usepackage[procnames]{listings}
+\usepackage{color}
 \usepackage{/Users/JimmyLin/workspace/latexTemplate/UTA_CS/JS}
 \usepackage{/Users/JimmyLin/workspace/latexTemplate/UTA_CS/JSASGN}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -146,6 +148,19 @@ The percentage of infrequent itemsets is $\frac{6}{32} = \frac{3}{16}$
 \newpage
 \appendix
 \section{Codes to count frequency}
+\definecolor{keywords}{RGB}{0,0,0}
+\definecolor{comments}{RGB}{0,0,0}
+\definecolor{red}{RGB}{0,0,0}
+\definecolor{green}{RGB}{0,0,0}
+\lstset{language=Python, 
+        basicstyle=\ttfamily\small, 
+        keywordstyle=\color{keywords},
+        commentstyle=\color{comments},
+        stringstyle=\color{red},
+        showstringspaces=false,
+        identifierstyle=\color{green},
+        procnamekeys={def,class}}
+\lstinputlisting[language=Python]{./count.py}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% General Documentation ends
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

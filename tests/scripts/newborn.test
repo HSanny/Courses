@@ -7,4 +7,5 @@ stabilize
 joinServer 4
 breakConnection 3 1
 restoreConnection 3 4
+stabilize
 get 3 eyesOfTexas

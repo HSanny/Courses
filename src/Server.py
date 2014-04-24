@@ -86,13 +86,13 @@ def exchange_info (writeLogs, RVV, SCSN, RCSN, SID, RID, versionVector, bayouToM
                 wStr = W_FORMAT % (log_stamp, json.dumps(sid), csn, oplog)
                 if log_stamp <= RCV.get(sid):
                     # R has the tentative write but has not commit
-                    commitNotifyMsg = encode(SERVER_TYPE, SID, \
+                    commitNotifyMsg = encode(SERVER_TYPE, bayouToMaster[SID], \
                          SERVER_TYPE, RID, COMMIT_NOTIFICATION_TITLE, wStr)
                     port = getPortByMsg(commitNotifyMsg)
                     send(localhost, port, commitNotifyMsg, logHeader)
                 else:
                     # R does not even know the tentative write
-                    sendWriteMsg = encode(SERVER_TYPE, SID, SERVER_TYPE, \
+                    sendWriteMsg = encode(SERVER_TYPE, bayouToMaster[SID], SERVER_TYPE, \
                               RID, SEND_WRITE_TITLE, wStr)
                     port = getPortByMsg(sendWriteMsg)
                     send(localhost, port, sendWriteMsg, logHeader)

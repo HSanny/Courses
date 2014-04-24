@@ -40,8 +40,9 @@ pauseAcks = None
 stabilizeAcks = None
 
 '''Semaphores'''
-global joinClientSema, joinServerSema, startSema, pauseSema, stabilizeSema
+global joinClientSema, joinServerSema, startSema, pauseSema, stabilizeSema, connectionSema
 joinClientSema = initEmptySemaphore()
+connectionSema = initEmptySemaphore()
 joinServerSema = initEmptySemaphore()
 printLogSema = initEmptySemaphore()
 startSema = None
@@ -77,13 +78,11 @@ def stabilize(allClients, serverConnection, localhost, port, logHeader):
     oldServers = directConnectedServers
     while True:
         newServers = set(oldServers)
-        tmp = set(newServers)
-        for sIdx in newServers:
-            tmp.update(serverConnection.get(sIdx))
-        newServers = tmp
-        if newServers.issubset(oldServers) and \
-           newServers.issuperset(oldServers):
+        for sIdx in oldServers:
+            newServers.update(serverConnection.get(sIdx))
+        if newServers == oldServers:
             break
+        oldServers = newServers
     global serversToListen
     serversToListen = newServers
     stabilizeAcks = initAllNoneCounter(serversToListen)
@@ -92,10 +91,11 @@ def stabilize(allClients, serverConnection, localhost, port, logHeader):
     ## STEP TWO: send checking request to all clients
     global stabilizeCheckRound
     for cIdx in allClients:
-        checkingReqMsg = encode(MASTER_TYPE, 0, CLIENT_TYPE, cIdx, \
-         CHECK_STABILIZATION_REQUEST_TITLE, str(stabilizeCheckRound))
-        port = getPortByMsg(checkingReqMsg)
-        send(localhost, port, checkingReqMsg, logHeader)
+        if clientConnection[cIdx] is not None:
+            checkingReqMsg = encode(MASTER_TYPE, 0, CLIENT_TYPE, cIdx, \
+             CHECK_STABILIZATION_REQUEST_TITLE, str(stabilizeCheckRound))
+            port = getPortByMsg(checkingReqMsg)
+            send(localhost, port, checkingReqMsg, logHeader)
     stabilizeCheckRound += 1
     
     ## STEP THREE: block until recept of all positive message
@@ -119,7 +119,14 @@ def MasterListener(stdout):
         st, si, rt, ri, title, content = decode (recvMsg)
         global allClients, allServers
 
-        if title == JOIN_SERVER_ACK_TITLE:
+        if title == BREAK_ACK_TITLE:
+            global connectionSema
+            connectionSema.release()
+            
+        elif title == RESTORE_ACK_TITLE:
+            connectionSema.release()
+
+        elif title == JOIN_SERVER_ACK_TITLE:
             global joinServerSema, joinServerID
             # Content will be the Bayou ID
             joinServerID = json.loads(content)
@@ -294,6 +301,7 @@ def MasterProcessor():
             # Kill the retired server
             exitMsg = encode (MASTER_TYPE, 0, SERVER_TYPE, serverId, EXIT_TITLE,
                         EMPTY_CONTENT)
+            # TODO: Remove from server connection
 
         if line[0] ==  "joinClient":
             clientId = int(line[1])
@@ -347,6 +355,9 @@ def MasterProcessor():
                                      BREAK_CONNECTION_TITLE, str(id1))
                 port = getPortByMsg(breakConnMsg2)
                 send(localhost, port, breakConnMsg2, logHeader)
+                # Remove entries from serverConnection
+                serverConnection[id1].remove(id2)
+                serverConnection[id2].remove(id1)
 
             ## Case 2: break connection between a client and a server
             if isServer1 and not isServer2:
@@ -354,11 +365,18 @@ def MasterProcessor():
                                      BREAK_CONNECTION_TITLE, str(id1))
                 port = getPortByMsg(breakConnMsg3)
                 send(localhost, port, breakConnMsg3, logHeader)
+                # Remove entries from clientConnection and serverConnection
+                clientConnection[id2] = None
+                connectionSema.acquire()
+
             if not isServer1 and isServer2:
                 breakConnMsg4 = encode(MASTER_TYPE, 0, CLIENT_TYPE, id1, \
                                      BREAK_CONNECTION_TITLE, str(id2))
                 port = getPortByMsg(breakConnMsg4)
                 send(localhost, port, breakConnMsg4, logHeader)
+                # Remove entries from clientConnection and serverConnection
+                clientConnection[id1] = None 
+                connectionSema.acquire()
 
         if line[0] ==  "restoreConnection":
             id1 = int(line[1])
@@ -379,6 +397,8 @@ def MasterProcessor():
                                      RESTORE_CONNECTION_TITLE, str(id1))
                 port = getPortByMsg(restoreConnMsg2)
                 send(localhost, port, restoreConnMsg2, logHeader)
+                serverConnection[id1].pop(id2)
+                serverConnection[id2].pop(id1)
 
             ## Case 2: restore connection between a client and a server
             if isServer1 and not isServer2:
@@ -386,11 +406,16 @@ def MasterProcessor():
                                      RESTORE_CONNECTION_TITLE, str(id1))
                 port = getPortByMsg(restoreConnMsg3)
                 send(localhost, port, restoreConnMsg3, logHeader)
+                clientConnection[id2] = id1
+                connectionSema.acquire()
+
             if not isServer1 and isServer2:
                 restoreConnMsg4 = encode(MASTER_TYPE, 0, CLIENT_TYPE, id1, \
                                      RESTORE_CONNECTION_TITLE, str(id2))
                 port = getPortByMsg(restoreConnMsg4)
                 send(localhost, port, restoreConnMsg4, logHeader)
+                clientConnection[id1] = id2
+                connectionSema.acquire()
 
         if line[0] ==  "pause":
             """

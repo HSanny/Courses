@@ -89,13 +89,19 @@ def main(argv):
             toBreakServerId = int(content)
             assert (serverToConnect == toBreakServerId)
             serverToConnect = None
-            ## TODO: send ack stuff?
+            msg = encode(CLIENT_TYPE, clientID, MASTER_TYPE,
+                0, BREAK_ACK_TITLE, EMPTY_CONTENT)
+            port = getPortByMsg(msg)
+            send(localhost, port, msg, logHeader)
 
         elif title == RESTORE_CONNECTION_TITLE:
             toRestoreServerId = int(content)
             assert (serverToConnect is None)
             serverToConnect = toRestoreServerId
-            ## TODO: send ack stuff?
+            msg = encode(CLIENT_TYPE, clientID, MASTER_TYPE,
+                0, RESTORE_ACK_TITLE, EMPTY_CONTENT)
+            port = getPortByMsg(msg)
+            send(localhost, port, msg, logHeader)
 
         elif title == CHECK_STABILIZATION_REQUEST_TITLE:
             ## deliver to replica it connects to

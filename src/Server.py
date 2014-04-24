@@ -331,21 +331,24 @@ def main (argv):
             port = getPortByMsg(reponseMsg)
             send(localhost, port, reponseMsg, logHeader)
 
+
         elif title == DELETE_REQUEST_TITLE:
-            ## update locallog
+            ## update the local accept stamp
+            accept_stamp += 1
             sn = content
+            url = localData[sn]
+            deletelog = OPLOG_FORMAT % (DELETE, OP_VALUE_FORMAT % (sn, url), bool2str(False))
+            ## update locallog
             if isPrimary:
                 CSN += 1
                 csn = CSN
             else:
                 csn = INFINITY
 
-            deletelog = LOG_FORMAT % (DELETE, sn, csn, bool2str(False))
-            writeLogs.append((accept_stamp, bayouID, deletelog))
+            write = (accept_stamp, bayouID, csn, deletelog)
+            writeLogs.append(write)
             ## update version vector
             versionVector.update({bayouID:accept_stamp})
-            ## update the local accept stamp
-            accept_stamp += 1
             ## update local datastore
             localData.pop(sn, None)
             ## send ack back

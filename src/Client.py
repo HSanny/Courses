@@ -75,7 +75,7 @@ def main(argv):
 
         elif title == DELETE_REQUEST_TITLE:
             deleteRequestMsg = encode(CLIENT_TYPE, clientID, SERVER_TYPE, \
-                                  serverToConnect, GET_REQUEST_TITLE, content)
+                                  serverToConnect, DELETE_REQUEST_TITLE, content)
             port = getPortByMsg(deleteRequestMsg)
             send(localhost, port, deleteRequestMsg, logHeader)
 

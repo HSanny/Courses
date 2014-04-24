@@ -397,8 +397,9 @@ def MasterProcessor():
                                      RESTORE_CONNECTION_TITLE, str(id1))
                 port = getPortByMsg(restoreConnMsg2)
                 send(localhost, port, restoreConnMsg2, logHeader)
-                serverConnection[id1].pop(id2)
-                serverConnection[id2].pop(id1)
+                print serverConnection
+                serverConnection[id1].append(id2)
+                serverConnection[id2].append(id1)
 
             ## Case 2: restore connection between a client and a server
             if isServer1 and not isServer2:

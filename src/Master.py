@@ -301,7 +301,10 @@ def MasterProcessor():
             # Kill the retired server
             exitMsg = encode (MASTER_TYPE, 0, SERVER_TYPE, serverId, EXIT_TITLE,
                         EMPTY_CONTENT)
-            # TODO: Remove from server connection
+            for sIdx in serverConnection:
+                if serverId in serverConnection[sIdx]:
+                    serverConnection[sIdx].remove(serverId)
+            serverConnection.pop(serverId, None)
 
         if line[0] ==  "joinClient":
             clientId = int(line[1])

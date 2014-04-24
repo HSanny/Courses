@@ -19,7 +19,7 @@ from Util import *
 ## TODO: static variable here
 localhost = socket.gethostname()
 
-def applyWrite (localData, write, writeLogs, versionVector):
+def applyWrite (localData, write, writeLogs, versionVector, bayouID):
     (log_stamp, sid, csn, oplog) = write
     [op_type, op_value, stable_bool] = oplog.split(OPLOG_SEP)
     if op_type == PUT:
@@ -47,7 +47,8 @@ def applyWrite (localData, write, writeLogs, versionVector):
         if isinstance(newBayouID, list):
             newBayouID = tuple(newBayouID)
         # Update version vector
-        versionVector[newBayouID] = 0
+        if newBayouID != bayouID:
+            versionVector[newBayouID] = 0
     elif op_type == RETIRE:
         # Get bayouID
         deadBayouID = json.loads(op_value.strip("()"))
@@ -211,7 +212,7 @@ def main (argv):
                     oplog = setStableBool(oplog, True)
                     ## apply log to local data
                     write = (log_stamp, sid, csn, oplog)
-                    applyWrite(localData, write, writeLogs, versionVector)
+                    applyWrite(localData, write, writeLogs, versionVector, bayouID)
         elif title == JOIN_CLIENT_ACK_TITLE:
             deliverAckMsg = encode (SERVER_TYPE, serverID, \
                MASTER_TYPE, 0, JOIN_CLIENT_ACK_TITLE, EMPTY_CONTENT)
@@ -309,6 +310,7 @@ def main (argv):
         elif title == PUT_ACK_TITLE:
             # Server only receives this in response to his own CREATE
             bayouID = tuple(json.loads(content))
+            versionVector[bayouID] = 0
             # Receive Bayou ID and add to version vector
             bayouToMaster[bayouID] = serverID
             # Send Bayou ID to Master
@@ -389,7 +391,7 @@ def main (argv):
                 oplog = setStableBool(oplog, True)
                 ## apply log to local data
                 write = (log_stamp, sid, csn, oplog)
-                applyWrite(localData, write, writeLogs, versionVector)
+                applyWrite(localData, write, writeLogs, versionVector, bayouID)
 
             ## non-primary receives a commited log
             # apply lots of update because it got a committed log
@@ -398,7 +400,7 @@ def main (argv):
                 ## apply log to local data
                 oplog = setStableBool(oplog, True)
                 write = (log_stamp, sid, csn, oplog)
-                applyWrite(localData, write, writeLogs, versionVector)
+                applyWrite(localData, write, writeLogs, versionVector, bayouID)
                 ## update the CSN
                 if csn > CSN:
                     CSN = csn
@@ -413,7 +415,9 @@ def main (argv):
         elif title == COMMIT_NOTIFICATION_TITLE:
             ## decode the content
             [log_stamp, sid, csn, oplog] = content.split(W_SEP)
-            [log_stamp, sid, csn, oplog] = [int(log_stamp), int(sid), int(csn), oplog]
+            [log_stamp, sid, csn, oplog] = [int(log_stamp), json.loads(sid), int(csn), oplog]
+            if isinstance(sid, list):
+                sid = tuple(sid)
             ## TODO: find the piece of log to set its STABLE_BOOL
             for l, sx, c, o  in writeLogs:
                 if l == log_stamp and sx == sid:
@@ -424,12 +428,10 @@ def main (argv):
             if csn > CSN:
                 CSN = csn
             ## apply update on local data
-            applyWrite(localData, write, writeLogs, versionVector)
+            applyWrite(localData, write, writeLogs, versionVector, bayouID)
 
         elif title == CHECK_STABILIZATION_REQUEST_TITLE:
             ## stabilization check has been triggered in this server
-            print "My version vector: " + str(versionVector)
-            print "My writeLog: " + str(writeLogs)
             if int(content) <= stableRound:
                 continue
             ## if this server does not connect to any other servers
@@ -469,8 +471,7 @@ def main (argv):
         elif title == STABLE_VV_RESPONSE_TITLE:
             [RCSN, RVV] = content.split(CSN_VV_SEP)
             [RCSN, RVV] = [int(RCSN), str2vv(RVV)]
-            if RVV.get(serverID) < accept_stamp or CSN > RCSN:
-                print "Not up to date: " + str(RVV.get(bayouID))
+            if RVV.get(bayouID) < accept_stamp or CSN > RCSN:
                 # not up to date
                 stableCounter.update({si:False})
                 # trigger the update

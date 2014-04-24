@@ -78,7 +78,7 @@ def exchange_info (writeLogs, RVV, SCSN, RCSN, SID, RID, versionVector, bayouToM
     for bayouID in versionVector:
         RCV[bayouID] = complete_vector_val(bayouID, versionVector, RVV)
     ## exchange commited write owned by serverID
-    print RCSN, SCSN
+    #print RCSN, SCSN
     if RCSN < SCSN:
         for log_stamp, sid, csn, oplog in writeLogs:
             if not isInf(csn) and csn > RCSN:

@@ -44,7 +44,7 @@ GET_FORMAT = "%s: %s"
 
 SU_SEP = ":" # songName and URL
 W_SEP = "<\w>"
-W_FORMAT = "%d" + W_SEP + "%d" + W_SEP+ "%d" + W_SEP + "%s"
+W_FORMAT = "%d" + W_SEP + "%s" + W_SEP+ "%d" + W_SEP + "%s"
 LOG_SEP = "<\log>"
 
 CSN_VV_SEP = "<\cv>"

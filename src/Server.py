@@ -57,36 +57,6 @@ def applyWrite (localData, write, writeLogs, versionVector):
         versionVector.pop(deadBayouID, None)
     return
 
-"""
-def anti_entropy (Senderid, Reiceiverid):
-    '''
-    Anti_entropy algorithm by fig. 1 of FUG paper
-    '''
-    global logHeader
-    ## send request to ask for receiver's version vector
-    vvRequestMsg = encode(SERVER_TYPE, Senderid, SERVER_TYPE, \
-                Reiceiverid, VERSION_VECTOR_REQUEST_TITLE, EMPTY_CONTENT)
-    port = getPortByMsg(vvRequestMsg)
-    send(localhost, port, vvRequestMsg, logHeader)
-    ## block until response
-    global vvResponseSema, vvResponseContent
-    vvResponseSema = initEmptySemaphore()
-    vvResponseSema.acquire()
-    RVersionVector = str2vv(vvResponseContent)
-
-    ## for every write-log of Sender
-    for accept_stamp, sid, oplog in writeLogs:
-        wStr = W_FORMAT % (accept_stamp, sid, oplog)
-        if RVersionVector.get(sid) < accept_stamp:
-            # this oplog is new for Receiver
-            # send write to receiver
-            sendWriteMsg = encode(SERVER_TYPE, Senderid, SERVER_TYPE, \
-                   Reiceiverid, SEND_WRITE_TITLE, wStr)
-            port = getPortByMsg(sendWriteMsg)
-            send(localhost, port, sendWriteMsg, logHeader)
-    return
-"""
-
 def complete_vector_val(bayouID, sender_v, receiver_v):
     if bayouID in receiver_v:
         return receiver_v[bayouID]
@@ -100,7 +70,7 @@ def complete_vector_val(bayouID, sender_v, receiver_v):
         else:
             return float("-inf")
 
-def exchange_info (writeLogs, RVV, SCSN, RCSN, SID, RID, versionVector):
+def exchange_info (writeLogs, RVV, SCSN, RCSN, SID, RID, versionVector, bayouToMaster):
     ## for every write-log of Sender
     global logHeader
     RCV = {}
@@ -112,7 +82,7 @@ def exchange_info (writeLogs, RVV, SCSN, RCSN, SID, RID, versionVector):
         for log_stamp, sid, csn, oplog in writeLogs:
             if not isInf(csn) and csn > RCSN:
                 # this write is commited but R is not unknown
-                wStr = W_FORMAT % (log_stamp, sid, csn, oplog)
+                wStr = W_FORMAT % (log_stamp, json.dumps(sid), csn, oplog)
                 if log_stamp <= RCV.get(sid):
                     # R has the tentative write but has not commit
                     commitNotifyMsg = encode(SERVER_TYPE, SID, \
@@ -130,11 +100,11 @@ def exchange_info (writeLogs, RVV, SCSN, RCSN, SID, RID, versionVector):
     for accept_stamp, sid, csn, oplog in writeLogs:
         if not isInf(csn):
             continue
-        wStr = W_FORMAT % (accept_stamp, sid, csn, oplog)
+        wStr = W_FORMAT % (accept_stamp, json.dumps(sid), csn, oplog)
         if RCV.get(sid) < accept_stamp:
             # this oplog is new for Receiver
             # send write to receiver
-            sendWriteMsg = encode(SERVER_TYPE, SID, SERVER_TYPE, \
+            sendWriteMsg = encode(SERVER_TYPE, bayouToMaster[SID], SERVER_TYPE, \
                    RID, SEND_WRITE_TITLE, wStr)
             port = getPortByMsg(sendWriteMsg)
             send(localhost, port, sendWriteMsg, logHeader)
@@ -231,7 +201,7 @@ def main (argv):
             # TODO: Test new primary
             isPrimary = True
             # Commit all tentative writes
-            for accept_stamp, serverID, csn, putlog in writeLogs:
+            for accept_stamp, bayouID, csn, putlog in writeLogs:
                 isPrimaryNewCommit = isPrimary and isInf(csn)
                 if isPrimaryNewCommit:
                     ## assignment commit sequence number
@@ -273,9 +243,6 @@ def main (argv):
             toRestoreServerId = int(content)
             assert (toRestoreServerId not in allServers)
             allServers.add(toRestoreServerId)
-            ## add toRestoreServerId to versionVector
-            versionVector.update({toRestoreServerId:0})
-            ## TODO: send ack stuff??
 
         elif title == PAUSE_TITLE:
             ## switch the pause indicator
@@ -320,10 +287,10 @@ def main (argv):
             else:
                 csn = INFINITY
 
-            write = (accept_stamp, serverID, csn, putlog)
+            write = (accept_stamp, bayouID, csn, putlog)
             writeLogs.append(write)
             ## update the version vector
-            versionVector.update({serverID:accept_stamp})
+            versionVector.update({bayouID:accept_stamp})
             if content == RETIRE_CONTENT:
                 pass
             else:
@@ -372,9 +339,9 @@ def main (argv):
                 csn = INFINITY
 
             deletelog = LOG_FORMAT % (DELETE, sn, csn, bool2str(False))
-            writeLogs.append((accept_stamp, serverID, deletelog))
+            writeLogs.append((accept_stamp, bayouID, deletelog))
             ## update version vector
-            versionVector.update({serverID:accept_stamp})
+            versionVector.update({bayouID:accept_stamp})
             ## update the local accept stamp
             accept_stamp += 1
             ## update local datastore
@@ -402,7 +369,9 @@ def main (argv):
         elif title == SEND_WRITE_TITLE:
             ## decode the content
             [log_stamp, sid, csn, oplog] = content.split(W_SEP)
-            [log_stamp, sid, csn, oplog] = [int(log_stamp), int(sid), int(csn), oplog]
+            [log_stamp, sid, csn, oplog] = [int(log_stamp), json.loads(sid), int(csn), oplog]
+            if isinstance(sid, list):
+                sid = tuple(sid)
             write = (log_stamp, sid, csn, oplog)
             if log_stamp > versionVector.get(sid):
                 pass
@@ -459,6 +428,8 @@ def main (argv):
 
         elif title == CHECK_STABILIZATION_REQUEST_TITLE:
             ## stabilization check has been triggered in this server
+            print "My version vector: " + str(versionVector)
+            print "My writeLog: " + str(writeLogs)
             if int(content) <= stableRound:
                 continue
             ## if this server does not connect to any other servers
@@ -499,11 +470,12 @@ def main (argv):
             [RCSN, RVV] = content.split(CSN_VV_SEP)
             [RCSN, RVV] = [int(RCSN), str2vv(RVV)]
             if RVV.get(serverID) < accept_stamp or CSN > RCSN:
+                print "Not up to date: " + str(RVV.get(bayouID))
                 # not up to date
                 stableCounter.update({si:False})
                 # trigger the update
-                exchange_info(writeLogs, RVV, CSN, RCSN, serverID, si, versionVector)
-            elif RVV.get(serverID) == accept_stamp:
+                exchange_info(writeLogs, RVV, CSN, RCSN, bayouID, si, versionVector, bayouToMaster)
+            elif RVV.get(bayouID) == accept_stamp:
                 # up to date
                 stableCounter.update({si:True})
             # check not all none

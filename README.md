@@ -20,7 +20,8 @@ To better test our implementation, we design a series of new tests based on give
     delete.test
     logging.test
     newborn.test
-    retire.test
+    retirePrimary.test
+    retireNonPrimary.test
 
 To run the sample tests, replace test_name with the name of the test and execute the following command:
 
@@ -144,10 +145,6 @@ TODO list
       apply the write with highest commit sequence number (csn) to the local
       data. (that is, to resolve the conflict between the previous committed
       write and currently committed write)
-
-
-Problems
----------------
 
 Implementation Details
 ---------------

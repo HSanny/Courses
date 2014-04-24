@@ -295,7 +295,7 @@ def MasterProcessor():
                 lowest_server = min(
                     [server for server in allServers if serverConnection[server]]) 
                 primaryMsg = encode (MASTER_TYPE, 0, SERVER_TYPE, lowest_server,
-                    SET_PRIMARY_TITLE, EMPTY_CONTENT)
+                    NEW_PRIMARY_TITLE, EMPTY_CONTENT)
                 port = getPortByMsg(primaryMsg)
                 send (localhost, port, retireMsg, logHeader)
             # Kill the retired server

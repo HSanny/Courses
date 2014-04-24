@@ -4,4 +4,4 @@ put 2 eyesOfTexas utexas.edu
 put 2 eyesOfTexas cs.utexas.edu
 stabilize
 get 2 eyesOfTexas
-printLog 1
+printLog 0

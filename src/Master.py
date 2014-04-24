@@ -168,9 +168,13 @@ def MasterListener(stdout):
         elif title == CHECK_STABILIZATION_RESPONSE_TITLE:
             global stabilizeAcks, csnCollections
             ## decode the commit sequence number and all-neighbour-known bool
-            [csn, bvalue] = content.split(CHECK_STABLE_RESPONSE_SEP)
-            [csn, bvalue] = [int(csn), bvalue]
-            csnCollections.add(csn)
+            bvalue = ""
+            if content == str(True):
+                bvalue = content
+            else: 
+                [csn, bvalue] = content.split(CHECK_STABLE_RESPONSE_SEP)
+                [csn, bvalue] = [int(csn), bvalue]
+                csnCollections.add(csn)
             if bvalue in ['True', 'true', 'yes', 'Yes']:
                 stabilizeAcks.update({si:True})
             else:
@@ -183,8 +187,8 @@ def MasterListener(stdout):
             ## STABLE CONDITION: 
             #   - all positive feedback from servers
             #   - sequence number of all servers should be the same
-            if checkCounterAllTrue(stabilizeAcks, True) and \
-            len(csnCollections) == 1:
+            if (checkCounterAllTrue(stabilizeAcks, True) and
+                len(csnCollections) <= 1):
                 ## unblock the main/reader thread
                 stabilizeSema.release()
             else:

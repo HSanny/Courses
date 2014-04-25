@@ -1,0 +1,12 @@
+0 0: all_alive
+1 1: 0_is_dead
+2 0: 0-1_are_dead
+3 1: 1-2_are_dead
+4 0: 2-3_are_dead
+5 1: 3-4_are_dead
+0 0: all_alive
+1 1: 0_is_dead
+2 0: 0-1_are_dead
+3 1: 1-2_are_dead
+4 0: 2-3_are_dead
+5 1: 3-4_are_dead

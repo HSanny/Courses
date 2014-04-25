@@ -1,4 +1,4 @@
-PAXOS Project
+Bayou Project
 =============
 
 ##### Contributors
@@ -29,11 +29,11 @@ To run the sample tests, replace test_name with the name of the test and execute
 
 An alternative is that you can use the RUN script designed by us, the usage is as follows:
 
-    ./RUN -t tests/scripts/[test_name].test
+    ./run -t tests/scripts/[test_name].test
 
 or you can run all tests by simply typing:
 
-    ./RUN
+    ./run
 
 If your output matches the solution, NOTHING will be printed. Otherwise the lines that differ will be shown.
 The output for the run of the test will also be stored in a file temp_output after running the second command.
@@ -125,16 +125,9 @@ TODO list
     - [DONE] extend the naive implementation to committed write.
     - ??? what is ERR\_DEP?  See piazza's answer.
 
-9. implement creation protocol: see paper FUP 4.3
-    - when node enters the system, should be brought up to date, maybe talk to
-      every existing servers and anti-entropy with them
-    - [DONE] initialize accept-stamp
-    - [DONE] initialize local logs
-    - [DONE] initialize version vector (use counter by util function)
-    - [DONE] notify existing server to add a count in version vector
+9. [DONE]implement creation protocol: see paper FUP 4.3
 
-10. implement retirement protocol: see paper FUP 4.3
-    - 
+10. [DONE]implement retirement protocol: see paper FUP 4.3
 
 11. implement conflict resolution: see the test and project specification
     - [DONE] for primary server, there is no conflict because primary is the
@@ -149,6 +142,51 @@ TODO list
 Implementation Details
 ---------------
 
+## Creation and Retirement
+
+Creation and retirement follow the Bayou protocol, meaning that servers other than the first server
+are given a globally unique identifier of the form (T,S). In implementation, servers are also given
+an integer identifier by the Master program, which is also used for communication purposes among
+servers. Thus, each server holds a mapping between the Bayou IDs and "Master" IDS of all other servers;
+as far as the Bayou logic is concerned, the Master IDs do not exist.
+
+Other than the above caveat, creation and retirement follow the Bayou protocol, summarized below:
+
+1. Creation process
+    1:  joinServer creates a new Server process S_i, giving it a list of all servers.
+    2:  If S_i is deemed primary, 
+    3:       then it takes the Master ID as its Bayou ID.
+    4:  Else,
+    5:       the S_i sends a CREATE to a connected Server S_k 
+    6:       S_k adds the CREATE to its write log
+    7:       S_k adds the <T,S> to its version vector
+    8:       S_k sends the Bayou ID <T,S> to S_i
+    9:  S_i initializes its version vector as {0: 0, <T,S>: T+1} # Paper says to do T+1.. why?
+    10: S_i sends an ack to Master with its new ID      
+    11: Master sends a new server message to all other servers with the B->M mapping
+    12: On receipt of new server message, a server adds the B->M mapping to its dict
+2. Log write process
+    When a Server reaches a log which is type CREATE or RETIRE, it needs to add or delete the entry from its
+        version vector instead of doing anything to local data. Otherwise, this is treated as a regular action.
+3. Anti-entropy process
+    Let S_i be the sender, S_k be the receiver
+        1: S_i requests and receives version vector from S_k
+        2: For every server S_m = <T, S_n> in S_i.V, calculate S_k.CV(S_m) as follows:
+        3:      If S_k.V(S_m) exists, then S_k.CV(S_m) = S_k.V(S_m)
+        4:      Else If S_m == 0, the first Server, then S_k.CV(S_m) = +infinity
+        5:      Else If S_k.CV(S_n) >= T, then S_k.CV(S_m) = +infinity
+        6:      Else If S_k.CV(S_n) < T, then S_k.CV(S_m) = -infinity
+        7: If S_k.CV(S_m) < S_i.V(S_m), then send all missing updates.
+4. Retirement process
+    1: Master sends retire to Server S_i
+    2: S_i sends a RETIRE to itself
+    3: S_i processes the RETIRE as a client message
+    4: S_i chooses a Server to run anti-entropy
+    5: When anti-entropy is complete, S_i sends an ack to Master
+    6: S_i terminates
+    If S_i is primary, then the server it runs anti-entropy with becomes the new primary
+5. Print log
+    Print log needs to ignore CREATE or RETIRE logs
 
 References
 ---------------

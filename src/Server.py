@@ -277,8 +277,22 @@ def main (argv):
                 putlog = OPLOG_FORMAT % (RETIRE, json.dumps(bayouID),
                                       bool2str(isPrimary))
             else:
+                request, vector = eval(content)
+                # Check that version vector is up to date
+                dep_satisfied = True
+                for server in vector:
+                    if(server not in versionVector or 
+                        versionVector[server] < vector[server]):
+                        dep_satisfied = False
+                if not dep_satisfied:
+                    # Ignore the request
+                    putAckMsg = encode(rt, ri, st, si, PUT_ACK_TITLE, EMPTY_CONTENT)
+                    port = getPortByMsg(putAckMsg)
+                    send(localhost, port, putAckMsg, logHeader)
+                    return
+                    
                 ## update locallog
-                [sn, URL] = content.split(SU_SEP)
+                [sn, URL] = request.split(SU_SEP)
                 ## putlog: directly stable if this server is primary
                 putlog = OPLOG_FORMAT % (PUT, OP_VALUE_FORMAT % (sn, URL),\
                                       bool2str(isPrimary))
@@ -303,7 +317,7 @@ def main (argv):
                 else:
                     ## update local datastore
                     localData.update({sn:URL})
-                    putAckMsg = encode(rt, ri, st, si, PUT_ACK_TITLE, EMPTY_CONTENT)
+                    putAckMsg = encode(rt, ri, st, si, PUT_ACK_TITLE, str((bayouID, accept_stamp)))
                 port = getPortByMsg(putAckMsg)
                 send(localhost, port, putAckMsg, logHeader)
 
@@ -319,14 +333,23 @@ def main (argv):
             send(localhost, MASTER_PORT, ackMsg, logHeader)
 
         elif title == GET_REQUEST_TITLE: ## look up local data store
-            sn = content
-            response_content = localData.get(sn)
-            if response_content is None:
-                response_content = sn + SU_SEP + ERR_KEY
+            sn, vector = eval(content)
+            # Check that version vector is up to date
+            dep_satisfied = True
+            for server in vector:
+                if(server not in versionVector or 
+                    versionVector[server] < vector[server]):
+                    dep_satisfied = False
+            if not dep_satisfied: 
+                response_content = sn + SU_SEP + ERR_DEP
             else:
-                response_content = sn + SU_SEP + response_content
+                response_content = localData.get(sn)
+                if response_content is None:
+                    response_content = sn + SU_SEP + ERR_KEY
+                else:
+                    response_content = sn + SU_SEP + response_content
             ## send response back
-            reponseMsg = encode(rt, ri, st, si, GET_RESPONSE_TITLE, \
+            reponseMsg = encode(rt, ri, st, si, GET_RESPONSE_TITLE,
                                 response_content)
             port = getPortByMsg(reponseMsg)
             send(localhost, port, reponseMsg, logHeader)

@@ -28,6 +28,7 @@ def main(argv):
     clientID = int(argv[0])
     serverToConnect = int(argv[1])
     logHeader = CLIENT_LOG_HEADER % clientID
+    versionVector = {}
     ## construct server socket
     s = socket.socket()
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -50,20 +51,26 @@ def main(argv):
         if title == '':
             pass
         elif title == PUT_REQUEST_TITLE:
+            msg = str((content, versionVector))
             putRequestMsg = encode(CLIENT_TYPE, clientID, SERVER_TYPE, \
-                                   serverToConnect, PUT_REQUEST_TITLE, content)
+                                   serverToConnect, PUT_REQUEST_TITLE, msg)
             port = getPortByMsg(putRequestMsg)
             send(localhost, port, putRequestMsg, logHeader)
 
         elif title == PUT_ACK_TITLE:
+            # If put went through, update version vector
+            if content != EMPTY_CONTENT:
+                sid, wid = eval(content)
+                versionVector[sid] = int(wid)
             ## send ack to unblock the master
             putAckMsg = encode(CLIENT_TYPE, clientID, MASTER_TYPE, 0, \
                               PUT_ACK_TITLE, EMPTY_CONTENT)
             send(localhost, MASTER_PORT, putAckMsg, logHeader)
 
         elif title == GET_REQUEST_TITLE:
-            getRequestMsg = encode(CLIENT_TYPE, clientID, SERVER_TYPE, \
-                                  serverToConnect, GET_REQUEST_TITLE, content)
+            msg = str((content, versionVector))
+            getRequestMsg = encode(CLIENT_TYPE, clientID, SERVER_TYPE,
+                                  serverToConnect, GET_REQUEST_TITLE, msg)
             port = getPortByMsg(getRequestMsg)
             send(localhost, port, getRequestMsg, logHeader)
 

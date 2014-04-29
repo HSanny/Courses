@@ -40,7 +40,7 @@ OPLOG_SEP = ":"
 OPLOG_FORMAT = "%s:(%s):%s" # OP_TYPE:OP_VALUE:STABLE_BOOL
 OP_VALUE_SEP = ","
 OP_VALUE_FORMAT = "%s" + OP_VALUE_SEP + " %s" # songName, URL
-GET_FORMAT = "%s: %s"
+GET_FORMAT = "%s:%s"
 
 SU_SEP = ":" # songName and URL
 W_SEP = "<\w>"

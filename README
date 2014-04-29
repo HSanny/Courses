@@ -44,12 +44,20 @@ The output for the run of the test will also be stored in a file temp_output aft
 Failed Tests
 ------------------
 1. tests/tests/2_cascadeLeader.test
-    When we sequentially timeBombLeader twice in the scenario of 5 servers and 3 clients, the remained 3 servers cannot make consensus for the following client's request. And hence the whole system hangs there by the allClear Instruction. 
+    When we sequentially timeBombLeader twice in the scenario of 5 servers and
+    3 clients, the remained 3 servers cannot make consensus for the following
+    client's request. And hence the whole system hangs there by the allClear
+    Instruction. 
+
 2. tests/tests/3_fullCascade.test
     Same as above.
 
 3. tests/tests/3_noQuorum.test
-    Problem is same to 2_cascadeLeader tests. If the server cannot make consensus because more than half of servers have been crashed, it needs to send "REJECT" message back to the client, such that the master will receive clear_ack and then allClear instruction will not block the main program.
+    Problem is same to 2_cascadeLeader tests. If the server cannot make
+    consensus because more than half of servers have been crashed, it needs to
+    send "REJECT" message back to the client, such that the master will
+    receive clear_ack and then allClear instruction will not block the main
+    program.
 
 4. tests/tests/5_crazyGap.test
 

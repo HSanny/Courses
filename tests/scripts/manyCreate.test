@@ -1,0 +1,15 @@
+joinServer 0
+joinServer 1
+joinServer 2
+joinServer 3
+joinServer 4
+joinServer 5
+joinServer 6
+joinServer 7
+joinServer 8
+joinServer 9
+joinClient 10 0
+joinClient 11 1
+put 10 eyesOfTexas utexas.edu
+stabilize
+get 11 eyesOfTexas

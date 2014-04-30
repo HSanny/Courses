@@ -168,7 +168,9 @@ Other than the above caveat, creation and retirement follow the Bayou protocol, 
 2. Log write process
     When a Server reaches a log which is type CREATE or RETIRE, it needs to add or delete the entry from its
         version vector instead of doing anything to local data. Otherwise, this is treated as a regular action.
+
 3. Anti-entropy process
+
     Let S_i be the sender, S_k be the receiver
         1: S_i requests and receives version vector from S_k
         2: For every server S_m = <T, S_n> in S_i.V, calculate S_k.CV(S_m) as follows:
@@ -177,7 +179,9 @@ Other than the above caveat, creation and retirement follow the Bayou protocol, 
         5:      Else If S_k.CV(S_n) >= T, then S_k.CV(S_m) = +infinity
         6:      Else If S_k.CV(S_n) < T, then S_k.CV(S_m) = -infinity
         7: If S_k.CV(S_m) < S_i.V(S_m), then send all missing updates.
+
 4. Retirement process
+
     1: Master sends retire to Server S_i
     2: S_i sends a RETIRE to itself
     3: S_i processes the RETIRE as a client message
@@ -185,6 +189,7 @@ Other than the above caveat, creation and retirement follow the Bayou protocol, 
     5: When anti-entropy is complete, S_i sends an ack to Master
     6: S_i terminates
     If S_i is primary, then the server it runs anti-entropy with becomes the new primary
+
 5. Print log
     Print log needs to ignore CREATE or RETIRE logs
 

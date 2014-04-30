@@ -193,6 +193,18 @@ Other than the above caveat, creation and retirement follow the Bayou protocol, 
 5. Print log
     Print log needs to ignore CREATE or RETIRE logs
 
+## Session Guarantees
+
+To ensure the Read Your Writes session guarantee, Clients hold a version vector of all servers, although
+they themselves do not hold entries in the vector. The client version vector only updates on the client's
+own writes - so, after a PUT request, the server will return an ack to the client telling what the accept
+stamp was for its write.
+On every PUT and GET request, the connected server will receive the version vector from the client and 
+compare with their own. If the server knows about all the client's writes, then it proceeds as normal.
+Otherwise, it ignores the PUT request or returns ERR_DEP on the GET request.
+Note that since the Client only knows Master-given IDs, the Server will send its Bayou ID along with the
+accept stamp so the Client version vectors match the Server ones.
+
 References
 ---------------
 [1] K. Petersen, M. J. Spreitzer, D. B. Terry, M. M. Theimer and A. J. Demers.

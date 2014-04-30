@@ -149,7 +149,7 @@ def main (argv):
 
     # TODO: Browse through all uses of Master ID and change to Bayou ID as necessary
     firstRun = True
-    s.listen(5)
+    s.listen(50)
     while True:
         if firstRun:
             if isPrimary:

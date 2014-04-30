@@ -417,7 +417,7 @@ def main (argv):
                 oplog = setStableBool(oplog, True)
                 ## apply log to local data
                 write = (log_stamp, sid, csn, oplog)
-                applyWrite(localData, write, writeLogs, versionVector, bayouID)
+                #applyWrite(localData, write, writeLogs, versionVector, bayouID)
 
             ## non-primary receives a commited log
             # apply lots of update because it got a committed log
@@ -426,11 +426,12 @@ def main (argv):
                 ## apply log to local data
                 oplog = setStableBool(oplog, True)
                 write = (log_stamp, sid, csn, oplog)
-                applyWrite(localData, write, writeLogs, versionVector, bayouID)
+                #applyWrite(localData, write, writeLogs, versionVector, bayouID)
                 ## update the CSN
                 if csn > CSN:
                     CSN = csn
 
+            applyWrite(localData, write, writeLogs, versionVector, bayouID)
             ## update the version vector (this is done for all tentative write)
             versionVector.update({sid:log_stamp})
             ## write to log

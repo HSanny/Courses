@@ -1,0 +1,264 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%  THIS TEX FILE IS TO GENERATE PDF FILE FOR 
+%%% 
+%%%  COPYRIGHT (C) JIMMY LIN, 2013, UT AUSTIN
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[11pt,a4paper]{article}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%  PACKAGES USED IN THIS TEX SOURCE FILE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{geometry,amsthm,amsmath,graphicx,fancyheadings}
+\usepackage[colorlinks,
+            linkcolor=blue,
+            anchorcolor=red,
+            citecolor=green
+            ]{hyperref}
+\usepackage{listings}
+\usepackage[vlined,linesnumbered]{algorithm2e}
+\usepackage{color}
+\usepackage{/Users/JimmyLin/workspace/latexTemplate/UTA_CS/JS}
+\usepackage{/Users/JimmyLin/workspace/latexTemplate/UTA_CS/JSASGN}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\lstset{ %
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+  basicstyle=\footnotesize,        % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{mygreen},    % comment style
+  deletekeywords={...},            % if you want to delete keywords from the given language
+  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+  frame=single,                    % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  language=Octave,                 % the language of the code
+  morekeywords={*,...},            % if you want to add more keywords to the set
+  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  numbersep=5pt,                   % how far the line-numbers are from the code
+  numberstyle=\tiny\color{mygray}, % the style that is used for the line-numbers
+  rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=2,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{mymauve},     % string literal style
+  tabsize=2,                       % sets default tabsize to 2 spaces
+  title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% MACROS CONTAINING THE FILE INFORMATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\COURSE}{CS371D Distributed System}
+\renewcommand{\LECTURER}{Lorenzo Alvisi}
+\renewcommand{\TUTOR}{Chao Xie}
+\renewcommand{\TASK}{Problem Set 03}
+\renewcommand{\RELEASEDATE}{April. 22 2014}
+\renewcommand{\DUEDATE}{May. 02 2014}
+\renewcommand{\TIMECONSUME}{20 hours}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% DOCUMENTATION STARTS FROM HERE 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% TITLE PAGE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{titlepage}
+    \maketitle
+\end{titlepage}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% CONTENT PAGE: TABLEOFCONTENTS, LISTOFTABLES, LISTOFFIGURES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\contentsname}{Contents}
+\begin{center} 
+    \tableofcontents 
+    %\listoftables 
+    %\listoffigures
+\end{center}
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% GENERAL DOCUMENTATION BEGINS 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Problem 1: Leader Election Protocol}
+\subsection{Pseudo-code Representation}
+First of all, we thought of all algorithms that requires the comparison between
+the identity of processes and found that the time complexity was at least
+$O(n log_2(n))$. And we have to give up this approach.
+
+We realize that this question actually involves in the distributed version of
+trade-off between time complexity and space complexity. Since linear space
+complexity is quite tricky, we start to think of protocols with high time
+complexity and finally it pays off.
+
+We develop a multi-round solution for leader election in synchronous
+uni-directional ring network. This is because the communication is
+synchronous. The designed protocol for leader election is as follows. 
+
+Here, we refer the terminology "next" and "prev" to the process that it
+connects to and that are connecting to it, respectively.
+
+\begin{algorithm}[H]
+ \KwIn{$n$ Processes with unique $id$}
+ \KwIn{a ring-shape network with uni-directional and synchronous communication}
+ \KwResult{a system with new leader confirmed by all $n$ processes}
+\end{algorithm}
+
+\noindent \\
+For each replica, 
+
+\begin{itemize}
+    \item{All processes are initially sleeping. }
+    \item{At every round, each process $i$ determines whether it is going to wake up by itself.}
+        \begin{itemize}
+        \item{Process $i$ is not allowed to wake up if it receives a leader
+                request from prev}
+        \item{If waken up, send a leader request with its id $i$ to next.}
+        \item{If not wake up, do nothing.}
+        \end{itemize}
+    \item{In the following round, when each process $i$ receives leader
+            request from process $j$}
+        \begin{itemize}
+            \item{If $j < i$, reject the leader request with id $j$ since the
+                    spread of leader request with id $i$ is slower than that of
+                    process id $j$. And process $j$ propose its leader request
+                to its next.}
+            \item{If $j > i$, retain leader request with id $j$ for $2^j$
+                    rounds. Note that we do this exponential retainment to
+                    distinguish leader request in different message(signal) frequency.}
+            \item{If $j = i$, the leader request returns back to the proposer
+                    and hence process $i$ becomes leader of this distributed
+                    system.}
+        \end{itemize}
+
+\end{itemize}
+
+
+\subsection{Correctness Proof}
+In the case that all processes wakes up in the same round, (actually this is
+the unresolvable scenario for most protocols) all processes send its leader
+request to their respective "next" process. And according to the well-designed
+mechanism, the spread of leader request for different processes lies in
+different frequency period. Specifically, the leader request with lower id
+value will traverse through the ring network faster than those requests with
+higher id value. That is, in this case, the process with lowest $id$ will
+have its leader request message going through the ring network in a fastest
+rate. And hence it defeats all other competing processes, and finally become
+the only new leader. 
+
+Here we justify the fact that the messages used in the above case is linear on
+the total nubmer of processes. For leader request with lowest of id $i$
+traversing the whole ring network, the number of delivery made to the leader
+request with id $j$ is $\frac{n}{2^{j-i}}$. By summing over $j-i$ from $1$ to
+$\infty$, it can be derived that the total number of messages employed are no
+more than 
+
+$$ \sum_{j-i=1}^{+\infty}\frac{n}{2^{j-i}} \leq
+\frac{1-(\frac{1}{2})^{+\infty}}{1-\frac{1}{2}} \cdot n = 2n$$
+
+For other cases, it is obvious to see that the messages required is less than
+the scenario presented above and the lowest awakened process will finally
+become the unique leader.
+
+\newpage
+
+\section{Problem 2: Solvability of S failure detector}
+
+\begin{algorithm}
+$V_p$ := ($\perp$, $\dots$, $\perp$, vp, $\perp$, $\dots$, $\perp$) \{$p$'s
+    estimate of the proposed values\} \\
+
+$\bigtriangleup _p$ := ($\perp$, $\dots$, $\perp$, vp, $\perp$, $\dots$, $\perp$)  \\
+\{phase 1\} \{asynchronous rounds $r_p$, $1 \leq r_p \leq n – 1$\} \\
+\For { $r_p$ := 1 to n-1 } 
+    { send ($r_p$, $\bigtriangleup _p$, $p$) to all \\
+      wait until [$\forall q$: received ($r_p$, $\bigtriangleup_q$, $q$) or
+        $q \in D_p$]  \\
+    Op := $V_p$ \\
+    $V_p$ := $V_p$ $\oplus$ ($\oplus q$ received $\bigtriangleup_q$) \\
+    $\bigtriangleup _p$ := $V_p$ $\star$ $O_p$ {value is only echoed ﬁrst time
+        it is seen}  \\
+    }
+\{phase 2\} \\
+send ($r_p$, $V_p$, $p$) to all \\
+wait until [$\forall q$: received ($r_p$, $V_q$, $q$) or $q \in D_p$] \\
+$V_p$ := $\otimes q$ received $V_q$ \{computes the "intersection", including
+    $V_p$\} \\
+\{phase 3\} \\
+decide on leftmost non-$\perp$ coordinate of $V_p$ \\
+\end{algorithm}
+
+\subsection{Proof for Validity}
+{\bf Uniform validity}: If a process decides a value $v$, then some process
+proposed $v$.
+
+In the phase three, process $p$ make its
+decision based on the first non-$\perp$ element of the $V_p$, which summarizes
+all cumulative responses from other processes over $n-1$ rounds (in phase 1) and those
+responses (in phase 2). Hence, the decision $v$ made by process $p$
+must have been proposed by some process. And it can be concluded that the
+solution provided by S failure detector satisfies the validity property.
+
+\subsection{Proof for Termination}
+{\bf Termination}: Every correct process eventually decides some value. 
+
+For those communication in phase 1 and phase 2, if the process $q$ is faulty,
+it will be detected by the failure detector. Otherwise, the response from
+process $q$ can be guaranteed (eventually). Hence, there will be no blocking on the "wait"
+command. Therefore, it can be fully guaranteed that once the process starts
+executing this protocol, it will eventually reach the terminal state.
+
+\subsection{Proof for Agreement}
+{\bf Agreement}: No two correct processes decide differently.
+
+In phase 2, every process sends messages to ask for response to its decided
+value and proceed to phase 3 with the value resulted by intersecting its own
+decision in phase 1 and others' response in phase 2. In this way, the derived
+$V_p$ would have the same value on its left-most non-$\perp$ position. Hence,
+no two correct would decide differently.
+
+\newpage
+
+\section{Problem 3: Ben-Or Lite}
+After removing the line 12, the algorithm is of the following type.
+
+\begin{algorithm}[H]
+    $a$ := input bit; $r$ := 1 \\
+    repeat forever \\
+    \{phase 1\} \\
+    send ($a_p$,$r$) to all \\
+    Let $A$ be the multiset of the first $n-f$ $a$-values with timestamp $r$ received \\
+    if ($\exists v \in \{0, 1\}: \forall a \in A$) then $b_p$ := $v$ \\
+    else $b_p =\ \perp$ \\
+    \{phase 2\} \\
+    send ($b_p$,$r$) to all \\
+    Let $B$ be the multiset of the first $n-f$ $b$-values with timestamp $r$ received \\
+    if ($\exists v \in \{0, 1\}: \forall b \in B$) then  decide($v$) \\
+    . \\
+    else $a_p := \$ \ \{\$$ is chosen uniformly at random to be 0 or 1\} \\
+    $r$ := $r$ + 1
+    \caption{Ben-Or Lite Algorithm}
+\end{algorithm}
+
+\vspace{0.3cm}
+
+It can be eaisly observed that processes could fail to learn from the values
+decided by other processes without the line of 12. In this way, the agreement
+property will be violated. Hence, we can say that the consensus cannot be
+satisfied by Ben-Or Lite Algorithm.
+
+\section{Problem 4: Disprove consensus solution}
+Disproof: The Validity property will be violated. 
+The decision value may probably be different from the proposed value.
+
+The problem lies in the fact that if two processes propose $b$ and $b'$
+sequentially. The final decided version could be overlapped version by $b$ and
+$b'$, that is, $b_0,b'_1,b'_2,b_3,...,b_n$ and $b'_0,b_1,b_2,b'_3,...,b'_n$. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% General Documentation ends
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}

@@ -1,0 +1,22 @@
+Readings: due Thurs 4/17 (email response due Wed 4/16 by 11:59 pm)
+Reading assignment: Visual Object Detection with Deformable Part Models, by Felzenszwalb et al., CACM 2013.
+Email response: respond to the CACM article linked above following the syllabus guidelines.
+
+=========================================================================
+
+This articile illustrates us a deformable model that represent objects using
+local part templates and geometric constraints on the locations of parts. This
+system reduces object detection problem to classification with latent
+variables. Deformable models such as pictorial structures can capture
+significant variations in appearance but a single deformable model still
+cannot represent many interesting object categories. 
+
+However, it is hard to train deformable part models because of the difficulty
+of obtaining training data with part annotations.
+Besides, the false prediction of this approach mainly comes from the
+similarities among objects in different categories. Another reason for false
+detections are due to the relatively strict bounding box overlap criteria. 
+
+In the result section, the recalls and precisions of this approach with various
+parameters are presented. It can be seen from the indicated result that the
+use of parts can significantly improve the detection accuracy.

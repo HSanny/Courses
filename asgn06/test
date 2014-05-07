@@ -1,6 +1,12 @@
-run input/input501.txt myoutput/myoutput501.txt
-run input/input502.txt myoutput/myoutput502.txt
-run input/input503.txt myoutput/myoutput503.txt
+./run input/input501.txt myoutput/myoutput501.txt
+./run input/input502.txt myoutput/myoutput502.txt
+./run input/input503.txt myoutput/myoutput503.txt
 diff output/output501.txt myoutput/myoutput501.txt
 diff output/output502.txt myoutput/myoutput502.txt                                     
 diff output/output503.txt myoutput/myoutput503.txt 
+./run input/input601.txt myoutput/myoutput601.txt
+./run input/input602.txt myoutput/myoutput602.txt
+./run input/input603.txt myoutput/myoutput603.txt
+diff output/output601.txt myoutput/myoutput601.txt
+diff output/output602.txt myoutput/myoutput602.txt                                     
+diff output/output603.txt myoutput/myoutput603.txt 

@@ -1,0 +1,34 @@
+\relax 
+\providecommand\HyperFirstAtBeginDocument{\AtBeginDocument}
+\HyperFirstAtBeginDocument{\ifx\hyper@anchor\@undefined
+\global\let\oldcontentsline\contentsline
+\gdef\contentsline#1#2#3#4{\oldcontentsline{#1}{#2}{#3}}
+\global\let\oldnewlabel\newlabel
+\gdef\newlabel#1#2{\newlabelxx{#1}#2}
+\gdef\newlabelxx#1#2#3#4#5#6{\oldnewlabel{#1}{{#2}{#3}}}
+\AtEndDocument{\ifx\hyper@anchor\@undefined
+\let\contentsline\oldcontentsline
+\let\newlabel\oldnewlabel
+\fi}
+\fi}
+\global\let\hyper@last\relax 
+\gdef\HyperFirstAtBeginDocument#1{#1}
+\providecommand\HyField@AuxAddToFields[1]{}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Exercise 1}{2}{section.1}}
+\newlabel{tocontra}{{1}{2}{Exercise 1\relax }{equation.1.1}{}}
+\newlabel{tonegate}{{5}{2}{Exercise 1\relax }{equation.1.5}{}}
+\newlabel{tonegate}{{6}{2}{Exercise 1\relax }{equation.1.6}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Exercise 2}{3}{section.2}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Exercise 3}{4}{section.3}}
+\newlabel{cycle:seconproperty}{{11}{4}{Exercise 3\relax }{equation.3.11}{}}
+\newlabel{cycle:observation}{{12}{4}{Exercise 3\relax }{equation.3.12}{}}
+\newlabel{unit:v1}{{15}{5}{Exercise 3\relax }{equation.3.15}{}}
+\newlabel{Unit:foreach}{{16}{5}{Exercise 3\relax }{equation.3.16}{}}
+\newlabel{unit:vn}{{19}{5}{Exercise 3\relax }{equation.3.19}{}}
+\newlabel{unit:origin}{{21}{5}{Exercise 3\relax }{equation.3.21}{}}
+\newlabel{unit:derive1}{{22}{5}{Exercise 3\relax }{equation.3.22}{}}
+\newlabel{unit:derive2}{{23}{5}{Exercise 3\relax }{equation.3.23}{}}
+\newlabel{Item:foreach}{{26}{6}{Exercise 3\relax }{equation.3.26}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Exercise 4}{7}{section.4}}
+\newlabel{e4_eachItem}{{32}{7}{Exercise 4\relax }{equation.4.32}{}}
+\newlabel{e4_eachBidNode}{{33}{7}{Exercise 4\relax }{equation.4.33}{}}

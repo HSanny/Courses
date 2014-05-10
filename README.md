@@ -28,5 +28,15 @@ Exams
 >  
 >  Final: TBD/100
 
-Class Review
------------
+Class Review -----------
+
+#lecture03
+1.  Time and space complexity for the DFS and BFS
+2.  Difference between UCS and Greedy search.
+
+#lecture04
+1. Proof of A\* optimality
+2. dominance of heuristics
+
+#lecture05
+1. 

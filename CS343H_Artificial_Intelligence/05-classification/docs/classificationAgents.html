@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<title>./classificationAgents.py</title>
+<link rel="stylesheet" type="text/css" href="highlight.css">
+</head>
+<body class="hl">
+<pre class="hl"><span class="hl slc"># classificationAgents.py</span>
+<span class="hl slc"># -----------------------</span>
+<span class="hl slc"># Licensing Information:  You are free to use or extend these projects for </span>
+<span class="hl slc"># educational purposes provided that (1) you do not distribute or publish </span>
+<span class="hl slc"># solutions, (2) you retain this notice, and (3) you provide clear </span>
+<span class="hl slc"># attribution to UC Berkeley, including a link to </span>
+<span class="hl slc"># http://inst.eecs.berkeley.edu/~cs188/pacman/pacman.html</span>
+<span class="hl slc"># </span>
+<span class="hl slc"># Attribution Information: The Pacman AI projects were developed at UC Berkeley.</span>
+<span class="hl slc"># The core projects and autograders were primarily created by John DeNero </span>
+<span class="hl slc"># (denero&#64;cs.berkeley.edu) and Dan Klein (klein&#64;cs.berkeley.edu).</span>
+<span class="hl slc"># Student side autograding was added by Brad Miller, Nick Hay, and </span>
+<span class="hl slc"># Pieter Abbeel (pabbeel&#64;cs.berkeley.edu).</span>
+
+
+<span class="hl slc"># pacmanAgents.py</span>
+<span class="hl slc"># ---------------</span>
+<span class="hl slc"># Licensing Information:  You are free to use or extend these projects for </span>
+<span class="hl slc"># educational purposes provided that (1) you do not distribute or publish </span>
+<span class="hl slc"># solutions, (2) you retain this notice, and (3) you provide clear </span>
+<span class="hl slc"># attribution to UC Berkeley, including a link to </span>
+<span class="hl slc"># http://inst.eecs.berkeley.edu/~cs188/pacman/pacman.html</span>
+<span class="hl slc"># </span>
+<span class="hl slc"># Attribution Information: The Pacman AI projects were developed at UC Berkeley.</span>
+<span class="hl slc"># The core projects and autograders were primarily created by John DeNero </span>
+<span class="hl slc"># (denero&#64;cs.berkeley.edu) and Dan Klein (klein&#64;cs.berkeley.edu).</span>
+<span class="hl slc"># Student side autograding was added by Brad Miller, Nick Hay, and </span>
+<span class="hl slc"># Pieter Abbeel (pabbeel&#64;cs.berkeley.edu).</span>
+
+
+<span class="hl kwa">from</span> pacman <span class="hl kwa">import</span> Directions
+<span class="hl kwa">from</span> game <span class="hl kwa">import</span> Agent
+
+<span class="hl kwa">import</span> random
+<span class="hl kwa">import</span> game
+<span class="hl kwa">import</span> util
+
+<span class="hl kwa">class</span> DummyOptions<span class="hl opt">:</span>
+    <span class="hl kwa">def</span> <span class="hl kwd">__init__</span><span class="hl opt">(</span>self<span class="hl opt">):</span>
+        self<span class="hl opt">.</span>data <span class="hl opt">=</span> <span class="hl str">&quot;pacman&quot;</span>
+        self<span class="hl opt">.</span>training <span class="hl opt">=</span> <span class="hl num">25000</span>
+        self<span class="hl opt">.</span>test <span class="hl opt">=</span> <span class="hl num">100</span>
+        self<span class="hl opt">.</span>odds <span class="hl opt">=</span> <span class="hl kwa">False</span>
+        self<span class="hl opt">.</span>weights <span class="hl opt">=</span> <span class="hl kwa">False</span>
+
+
+<span class="hl kwa">import</span> perceptron_pacman
+
+<span class="hl kwa">class</span> <span class="hl kwd">ClassifierAgent</span><span class="hl opt">(</span>Agent<span class="hl opt">):</span>
+    <span class="hl kwa">def</span> <span class="hl kwd">__init__</span><span class="hl opt">(</span>self<span class="hl opt">,</span> trainingData<span class="hl opt">,</span> validationData<span class="hl opt">,</span> classifierType<span class="hl opt">,</span> agentToClone<span class="hl opt">,</span> numTraining<span class="hl opt">=</span><span class="hl num">3</span><span class="hl opt">):</span>
+        <span class="hl kwa">from</span> dataClassifier <span class="hl kwa">import</span> runClassifier<span class="hl opt">,</span> enhancedFeatureExtractorPacman
+        legalLabels <span class="hl opt">= [</span><span class="hl str">'Stop'</span><span class="hl opt">,</span> <span class="hl str">'West'</span><span class="hl opt">,</span> <span class="hl str">'East'</span><span class="hl opt">,</span> <span class="hl str">'North'</span><span class="hl opt">,</span> <span class="hl str">'South'</span><span class="hl opt">]</span>
+        <span class="hl kwa">if</span><span class="hl opt">(</span>classifierType <span class="hl opt">==</span> <span class="hl str">&quot;perceptron&quot;</span><span class="hl opt">):</span>
+            classifier <span class="hl opt">=</span> perceptron_pacman<span class="hl opt">.</span><span class="hl kwd">PerceptronClassifierPacman</span><span class="hl opt">(</span>legalLabels<span class="hl opt">,</span>numTraining<span class="hl opt">)</span>
+        self<span class="hl opt">.</span>classifier <span class="hl opt">=</span> classifier
+        self<span class="hl opt">.</span>featureFunction <span class="hl opt">=</span> enhancedFeatureExtractorPacman
+        args <span class="hl opt">= {</span><span class="hl str">'featureFunction'</span><span class="hl opt">:</span> self<span class="hl opt">.</span>featureFunction<span class="hl opt">,</span>
+                <span class="hl str">'classifier'</span><span class="hl opt">:</span>self<span class="hl opt">.</span>classifier<span class="hl opt">,</span>
+                <span class="hl str">'printImage'</span><span class="hl opt">:</span><span class="hl kwa">None</span><span class="hl opt">,</span>
+                <span class="hl str">'trainingData'</span><span class="hl opt">:</span>trainingData<span class="hl opt">,</span>
+                <span class="hl str">'validationData'</span><span class="hl opt">:</span>validationData<span class="hl opt">,</span>
+                <span class="hl str">'agentToClone'</span><span class="hl opt">:</span> agentToClone<span class="hl opt">,</span>
+        <span class="hl opt">}</span>
+        options <span class="hl opt">=</span> <span class="hl kwd">DummyOptions</span><span class="hl opt">()</span>
+        options<span class="hl opt">.</span>classifier <span class="hl opt">=</span> classifierType
+        <span class="hl kwd">runClassifier</span><span class="hl opt">(</span>args<span class="hl opt">,</span> options<span class="hl opt">)</span>
+    <span class="hl kwa">def</span> <span class="hl kwd">getAction</span><span class="hl opt">(</span>self<span class="hl opt">,</span> state<span class="hl opt">):</span>
+        <span class="hl kwa">from</span> dataClassifier <span class="hl kwa">import</span> runClassifier<span class="hl opt">,</span> enhancedFeatureExtractorPacman
+        features <span class="hl opt">=</span> self<span class="hl opt">.</span><span class="hl kwd">featureFunction</span><span class="hl opt">(</span>state<span class="hl opt">)</span>
+        
+        action <span class="hl opt">=</span>  self<span class="hl opt">.</span>classifier<span class="hl opt">.</span><span class="hl kwd">classify</span><span class="hl opt">([</span>features<span class="hl opt">])[</span><span class="hl num">0</span><span class="hl opt">]</span>
+
+        <span class="hl kwa">return</span> action
+
+<span class="hl kwa">def</span> <span class="hl kwd">scoreEvaluation</span><span class="hl opt">(</span>state<span class="hl opt">):</span>
+    <span class="hl kwa">return</span> state<span class="hl opt">.</span><span class="hl kwd">getScore</span><span class="hl opt">()</span>
+</pre>
+</body>
+</html>
+<!--HTML generated by highlight 3.8, http://www.andre-simon.de/-->

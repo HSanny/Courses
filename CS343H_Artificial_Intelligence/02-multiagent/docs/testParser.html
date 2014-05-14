@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<title>testParser.py</title>
+<link rel="stylesheet" type="text/css" href="highlight.css">
+</head>
+<body class="hl">
+<pre class="hl"><span class="hl slc"># testParser.py</span>
+<span class="hl slc"># -------------</span>
+<span class="hl slc"># Licensing Information: Please do not distribute or publish solutions to this</span>
+<span class="hl slc"># project. You are free to use and extend these projects for educational</span>
+<span class="hl slc"># purposes. The Pacman AI projects were developed at UC Berkeley, primarily by</span>
+<span class="hl slc"># John DeNero (denero&#64;cs.berkeley.edu) and Dan Klein (klein&#64;cs.berkeley.edu).</span>
+<span class="hl slc"># Student side autograding was added by Brad Miller, Nick Hay, and Pieter </span>
+<span class="hl slc"># Abbeel in Spring 2013.</span>
+<span class="hl slc"># For more info, see http://inst.eecs.berkeley.edu/~cs188/pacman/pacman.html</span>
+
+<span class="hl kwa">import</span> re
+<span class="hl kwa">import</span> sys
+
+<span class="hl kwa">class</span> <span class="hl kwd">TestParser</span><span class="hl opt">(</span><span class="hl kwb">object</span><span class="hl opt">):</span>
+    
+    <span class="hl kwa">def</span> <span class="hl kwd">__init__</span><span class="hl opt">(</span>self<span class="hl opt">,</span> path<span class="hl opt">):</span>
+        <span class="hl slc"># save the path to the test file</span>
+        self<span class="hl opt">.</span>path <span class="hl opt">=</span> path
+
+    <span class="hl kwa">def</span> <span class="hl kwd">removeComments</span><span class="hl opt">(</span>self<span class="hl opt">,</span> rawlines<span class="hl opt">):</span>
+        <span class="hl slc"># remove any portion of a line following a '#' symbol</span>
+        fixed_lines <span class="hl opt">= []</span>
+        <span class="hl kwa">for</span> l <span class="hl kwa">in</span> rawlines<span class="hl opt">:</span>
+            idx <span class="hl opt">=</span> l<span class="hl opt">.</span><span class="hl kwd">find</span><span class="hl opt">(</span><span class="hl str">'#'</span><span class="hl opt">)</span>
+            <span class="hl kwa">if</span> idx <span class="hl opt">== -</span><span class="hl num">1</span><span class="hl opt">:</span>
+                fixed_lines<span class="hl opt">.</span><span class="hl kwd">append</span><span class="hl opt">(</span>l<span class="hl opt">)</span>
+            <span class="hl kwa">else</span><span class="hl opt">:</span>
+                fixed_lines<span class="hl opt">.</span><span class="hl kwd">append</span><span class="hl opt">(</span>l<span class="hl opt">[</span><span class="hl num">0</span><span class="hl opt">:</span>idx<span class="hl opt">])</span>
+        <span class="hl kwa">return</span> <span class="hl str">'</span><span class="hl esc">\n</span><span class="hl str">'</span><span class="hl opt">.</span><span class="hl kwd">join</span><span class="hl opt">(</span>fixed_lines<span class="hl opt">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">parse</span><span class="hl opt">(</span>self<span class="hl opt">):</span>
+        <span class="hl slc"># read in the test case and remove comments</span>
+        test <span class="hl opt">= {}</span>
+        with <span class="hl kwb">open</span><span class="hl opt">(</span>self<span class="hl opt">.</span>path<span class="hl opt">)</span> <span class="hl kwa">as</span> handle<span class="hl opt">:</span>
+            raw_lines <span class="hl opt">=</span> handle<span class="hl opt">.</span><span class="hl kwd">read</span><span class="hl opt">().</span><span class="hl kwd">split</span><span class="hl opt">(</span><span class="hl str">'</span><span class="hl esc">\n</span><span class="hl str">'</span><span class="hl opt">)</span>
+        
+        test_text <span class="hl opt">=</span> self<span class="hl opt">.</span><span class="hl kwd">removeComments</span><span class="hl opt">(</span>raw_lines<span class="hl opt">)</span>
+        test<span class="hl opt">[</span><span class="hl str">'__raw_lines__'</span><span class="hl opt">] =</span> raw_lines
+        test<span class="hl opt">[</span><span class="hl str">'path'</span><span class="hl opt">] =</span> self<span class="hl opt">.</span>path
+        test<span class="hl opt">[</span><span class="hl str">'__emit__'</span><span class="hl opt">] = []</span>
+        lines <span class="hl opt">=</span> test_text<span class="hl opt">.</span><span class="hl kwd">split</span><span class="hl opt">(</span><span class="hl str">'</span><span class="hl esc">\n</span><span class="hl str">'</span><span class="hl opt">)</span>
+        i <span class="hl opt">=</span> <span class="hl num">0</span>
+        <span class="hl slc"># read a property in each loop cycle</span>
+        <span class="hl kwa">while</span><span class="hl opt">(</span>i <span class="hl opt">&lt;</span> <span class="hl kwb">len</span><span class="hl opt">(</span>lines<span class="hl opt">)):</span>
+            <span class="hl slc"># skip blank lines</span>
+            <span class="hl kwa">if</span> re<span class="hl opt">.</span><span class="hl kwd">match</span><span class="hl opt">(</span><span class="hl str">'\A\s*\Z'</span><span class="hl opt">,</span> lines<span class="hl opt">[</span>i<span class="hl opt">]):</span>
+                test<span class="hl opt">[</span><span class="hl str">'__emit__'</span><span class="hl opt">].</span><span class="hl kwd">append</span><span class="hl opt">((</span><span class="hl str">&quot;raw&quot;</span><span class="hl opt">,</span> raw_lines<span class="hl opt">[</span>i<span class="hl opt">]))</span>
+                i <span class="hl opt">+=</span> <span class="hl num">1</span>
+                <span class="hl kwa">continue</span>
+            m <span class="hl opt">=</span> re<span class="hl opt">.</span><span class="hl kwd">match</span><span class="hl opt">(</span><span class="hl str">'\A([^&quot;]*?):\s*&quot;([^&quot;]*)&quot;\s*\Z'</span><span class="hl opt">,</span> lines<span class="hl opt">[</span>i<span class="hl opt">])</span>
+            <span class="hl kwa">if</span> m<span class="hl opt">:</span>
+                test<span class="hl opt">[</span>m<span class="hl opt">.</span><span class="hl kwd">group</span><span class="hl opt">(</span><span class="hl num">1</span><span class="hl opt">)] =</span> m<span class="hl opt">.</span><span class="hl kwd">group</span><span class="hl opt">(</span><span class="hl num">2</span><span class="hl opt">)</span>
+                test<span class="hl opt">[</span><span class="hl str">'__emit__'</span><span class="hl opt">].</span><span class="hl kwd">append</span><span class="hl opt">((</span><span class="hl str">&quot;oneline&quot;</span><span class="hl opt">,</span> m<span class="hl opt">.</span><span class="hl kwd">group</span><span class="hl opt">(</span><span class="hl num">1</span><span class="hl opt">)))</span>
+                i <span class="hl opt">+=</span> <span class="hl num">1</span>
+                <span class="hl kwa">continue</span>
+            m <span class="hl opt">=</span> re<span class="hl opt">.</span><span class="hl kwd">match</span><span class="hl opt">(</span><span class="hl str">'\A([^&quot;]*?):\s*&quot;&quot;&quot;\s*\Z'</span><span class="hl opt">,</span> lines<span class="hl opt">[</span>i<span class="hl opt">])</span>
+            <span class="hl kwa">if</span> m<span class="hl opt">:</span>
+                msg <span class="hl opt">= []</span>
+                i <span class="hl opt">+=</span> <span class="hl num">1</span>
+                <span class="hl kwa">while</span><span class="hl opt">(</span><span class="hl kwa">not</span> re<span class="hl opt">.</span><span class="hl kwd">match</span><span class="hl opt">(</span><span class="hl str">'\A\s*&quot;&quot;&quot;\s*\Z'</span><span class="hl opt">,</span> lines<span class="hl opt">[</span>i<span class="hl opt">])):</span>
+                    msg<span class="hl opt">.</span><span class="hl kwd">append</span><span class="hl opt">(</span>raw_lines<span class="hl opt">[</span>i<span class="hl opt">])</span>
+                    i <span class="hl opt">+=</span> <span class="hl num">1</span>
+                test<span class="hl opt">[</span>m<span class="hl opt">.</span><span class="hl kwd">group</span><span class="hl opt">(</span><span class="hl num">1</span><span class="hl opt">)] =</span> <span class="hl str">'</span><span class="hl esc">\n</span><span class="hl str">'</span><span class="hl opt">.</span><span class="hl kwd">join</span><span class="hl opt">(</span>msg<span class="hl opt">)</span>
+                test<span class="hl opt">[</span><span class="hl str">'__emit__'</span><span class="hl opt">].</span><span class="hl kwd">append</span><span class="hl opt">((</span><span class="hl str">&quot;multiline&quot;</span><span class="hl opt">,</span> m<span class="hl opt">.</span><span class="hl kwd">group</span><span class="hl opt">(</span><span class="hl num">1</span><span class="hl opt">)))</span>
+                i <span class="hl opt">+=</span> <span class="hl num">1</span>
+                <span class="hl kwa">continue</span>
+            <span class="hl kwa">print</span> <span class="hl str">'error parsing test file: %s'</span> <span class="hl opt">%</span> self<span class="hl opt">.</span>path
+            sys<span class="hl opt">.</span><span class="hl kwd">exit</span><span class="hl opt">(</span><span class="hl num">1</span><span class="hl opt">)</span>
+        <span class="hl kwa">return</span> test
+
+    
+<span class="hl kwa">def</span> <span class="hl kwd">emitTestDict</span><span class="hl opt">(</span>testDict<span class="hl opt">,</span> handle<span class="hl opt">):</span>
+    <span class="hl kwa">for</span> kind<span class="hl opt">,</span> data <span class="hl kwa">in</span> testDict<span class="hl opt">[</span><span class="hl str">'__emit__'</span><span class="hl opt">]:</span>
+        <span class="hl kwa">if</span> kind <span class="hl opt">==</span> <span class="hl str">&quot;raw&quot;</span><span class="hl opt">:</span>
+            handle<span class="hl opt">.</span><span class="hl kwd">write</span><span class="hl opt">(</span>data <span class="hl opt">+</span> <span class="hl str">&quot;</span><span class="hl esc">\n</span><span class="hl str">&quot;</span><span class="hl opt">)</span>
+        <span class="hl kwa">elif</span> kind <span class="hl opt">==</span> <span class="hl str">&quot;oneline&quot;</span><span class="hl opt">:</span>
+            handle<span class="hl opt">.</span><span class="hl kwd">write</span><span class="hl opt">(</span><span class="hl str">'%s: &quot;%s&quot;</span><span class="hl esc">\n</span><span class="hl str">'</span> <span class="hl opt">% (</span>data<span class="hl opt">,</span> testDict<span class="hl opt">[</span>data<span class="hl opt">]))</span>
+        <span class="hl kwa">elif</span> kind <span class="hl opt">==</span> <span class="hl str">&quot;multiline&quot;</span><span class="hl opt">:</span>
+            handle<span class="hl opt">.</span><span class="hl kwd">write</span><span class="hl opt">(</span><span class="hl str">'%s: &quot;&quot;&quot;</span><span class="hl esc">\n</span><span class="hl str">%s</span><span class="hl esc">\n</span><span class="hl str">&quot;&quot;&quot;</span><span class="hl esc">\n</span><span class="hl str">'</span> <span class="hl opt">% (</span>data<span class="hl opt">,</span> testDict<span class="hl opt">[</span>data<span class="hl opt">]))</span>
+        <span class="hl kwa">else</span><span class="hl opt">:</span>
+            <span class="hl kwa">raise</span> <span class="hl kwc">Exception</span><span class="hl opt">(</span><span class="hl str">&quot;Bad __emit__&quot;</span><span class="hl opt">)</span>
+</pre>
+</body>
+</html>
+<!--HTML generated by highlight 3.8, http://www.andre-simon.de/-->

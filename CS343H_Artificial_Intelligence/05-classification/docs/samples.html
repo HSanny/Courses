@@ -1,0 +1,226 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<title>./samples.py</title>
+<link rel="stylesheet" type="text/css" href="highlight.css">
+</head>
+<body class="hl">
+<pre class="hl"><span class="hl slc"># samples.py</span>
+<span class="hl slc"># ----------</span>
+<span class="hl slc"># Licensing Information:  You are free to use or extend these projects for </span>
+<span class="hl slc"># educational purposes provided that (1) you do not distribute or publish </span>
+<span class="hl slc"># solutions, (2) you retain this notice, and (3) you provide clear </span>
+<span class="hl slc"># attribution to UC Berkeley, including a link to </span>
+<span class="hl slc"># http://inst.eecs.berkeley.edu/~cs188/pacman/pacman.html</span>
+<span class="hl slc"># </span>
+<span class="hl slc"># Attribution Information: The Pacman AI projects were developed at UC Berkeley.</span>
+<span class="hl slc"># The core projects and autograders were primarily created by John DeNero </span>
+<span class="hl slc"># (denero&#64;cs.berkeley.edu) and Dan Klein (klein&#64;cs.berkeley.edu).</span>
+<span class="hl slc"># Student side autograding was added by Brad Miller, Nick Hay, and </span>
+<span class="hl slc"># Pieter Abbeel (pabbeel&#64;cs.berkeley.edu).</span>
+
+
+<span class="hl kwa">import</span> util
+
+<span class="hl slc">## Constants</span>
+DATUM_WIDTH <span class="hl opt">=</span> <span class="hl num">0</span> <span class="hl slc"># in pixels</span>
+DATUM_HEIGHT <span class="hl opt">=</span> <span class="hl num">0</span> <span class="hl slc"># in pixels</span>
+
+<span class="hl slc">## Module Classes</span>
+
+<span class="hl kwa">class</span> Datum<span class="hl opt">:</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    A datum is a pixel-level encoding of digits or face/non-face edge maps.</span>
+<span class="hl str"></span>
+<span class="hl str">    Digits are from the MNIST dataset and face images are from the</span>
+<span class="hl str">    easy-faces and background categories of the Caltech 101 dataset.</span>
+<span class="hl str"></span>
+<span class="hl str"></span>
+<span class="hl str">    Each digit is 28x28 pixels, and each face/non-face image is 60x74</span>
+<span class="hl str">    pixels, each pixel can take the following values:</span>
+<span class="hl str">      0: no edge (blank)</span>
+<span class="hl str">      1: gray pixel (+) [used for digits only]</span>
+<span class="hl str">      2: edge [for face] or black pixel [for digit] (#)</span>
+<span class="hl str"></span>
+<span class="hl str">    Pixel data is stored in the 2-dimensional array pixels, which</span>
+<span class="hl str">    maps to pixels on a plane according to standard euclidean axes</span>
+<span class="hl str">    with the first dimension denoting the horizontal and the second</span>
+<span class="hl str">    the vertical coordinate:</span>
+<span class="hl str"></span>
+<span class="hl str">      28 # # # #      #  #</span>
+<span class="hl str">      27 # # # #      #  #</span>
+<span class="hl str">       .</span>
+<span class="hl str">       .</span>
+<span class="hl str">       .</span>
+<span class="hl str">       3 # # + #      #  #</span>
+<span class="hl str">       2 # # # #      #  #</span>
+<span class="hl str">       1 # # # #      #  #</span>
+<span class="hl str">       0 # # # #      #  #</span>
+<span class="hl str">         0 1 2 3 ... 27 28</span>
+<span class="hl str"></span>
+<span class="hl str">    For example, the + in the above diagram is stored in pixels[2][3], or</span>
+<span class="hl str">    more generally pixels[column][row].</span>
+<span class="hl str"></span>
+<span class="hl str">    The contents of the representation can be accessed directly</span>
+<span class="hl str">    via the getPixel and getPixels methods.</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+    <span class="hl kwa">def</span> <span class="hl kwd">__init__</span><span class="hl opt">(</span>self<span class="hl opt">,</span> data<span class="hl opt">,</span>width<span class="hl opt">,</span>height<span class="hl opt">):</span>
+        <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">        Create a new datum from file input (standard MNIST encoding).</span>
+<span class="hl str">        &quot;&quot;&quot;</span>
+        DATUM_HEIGHT <span class="hl opt">=</span> height
+        DATUM_WIDTH<span class="hl opt">=</span>width
+        self<span class="hl opt">.</span>height <span class="hl opt">=</span> DATUM_HEIGHT
+        self<span class="hl opt">.</span>width <span class="hl opt">=</span> DATUM_WIDTH
+        <span class="hl kwa">if</span> data <span class="hl opt">==</span> <span class="hl kwa">None</span><span class="hl opt">:</span>
+            data <span class="hl opt">= [[</span><span class="hl str">' '</span> <span class="hl kwa">for</span> i <span class="hl kwa">in</span> <span class="hl kwb">range</span><span class="hl opt">(</span>DATUM_WIDTH<span class="hl opt">)]</span> <span class="hl kwa">for</span> j <span class="hl kwa">in</span> <span class="hl kwb">range</span><span class="hl opt">(</span>DATUM_HEIGHT<span class="hl opt">)]</span>
+        self<span class="hl opt">.</span>pixels <span class="hl opt">=</span> util<span class="hl opt">.</span><span class="hl kwd">arrayInvert</span><span class="hl opt">(</span><span class="hl kwd">convertToInteger</span><span class="hl opt">(</span>data<span class="hl opt">))</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">getPixel</span><span class="hl opt">(</span>self<span class="hl opt">,</span> column<span class="hl opt">,</span> row<span class="hl opt">):</span>
+        <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">        Returns the value of the pixel at column, row as 0, or 1.</span>
+<span class="hl str">        &quot;&quot;&quot;</span>
+        <span class="hl kwa">return</span> self<span class="hl opt">.</span>pixels<span class="hl opt">[</span>column<span class="hl opt">][</span>row<span class="hl opt">]</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">getPixels</span><span class="hl opt">(</span>self<span class="hl opt">):</span>
+        <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">        Returns all pixels as a list of lists.</span>
+<span class="hl str">        &quot;&quot;&quot;</span>
+        <span class="hl kwa">return</span> self<span class="hl opt">.</span>pixels
+
+    <span class="hl kwa">def</span> <span class="hl kwd">getAsciiString</span><span class="hl opt">(</span>self<span class="hl opt">):</span>
+        <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">        Renders the data item as an ascii image.</span>
+<span class="hl str">        &quot;&quot;&quot;</span>
+        rows <span class="hl opt">= []</span>
+        data <span class="hl opt">=</span> util<span class="hl opt">.</span><span class="hl kwd">arrayInvert</span><span class="hl opt">(</span>self<span class="hl opt">.</span>pixels<span class="hl opt">)</span>
+        <span class="hl kwa">for</span> row <span class="hl kwa">in</span> data<span class="hl opt">:</span>
+            ascii <span class="hl opt">=</span> <span class="hl kwb">map</span><span class="hl opt">(</span>asciiGrayscaleConversionFunction<span class="hl opt">,</span> row<span class="hl opt">)</span>
+            rows<span class="hl opt">.</span><span class="hl kwd">append</span><span class="hl opt">(</span> <span class="hl str">&quot;&quot;</span><span class="hl opt">.</span><span class="hl kwd">join</span><span class="hl opt">(</span>ascii<span class="hl opt">) )</span>
+        <span class="hl kwa">return</span> <span class="hl str">&quot;</span><span class="hl esc">\n</span><span class="hl str">&quot;</span><span class="hl opt">.</span><span class="hl kwd">join</span><span class="hl opt">(</span>rows<span class="hl opt">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">__str__</span><span class="hl opt">(</span>self<span class="hl opt">):</span>
+        <span class="hl kwa">return</span> self<span class="hl opt">.</span><span class="hl kwd">getAsciiString</span><span class="hl opt">()</span>
+
+
+
+<span class="hl slc"># Data processing, cleanup and display functions</span>
+
+<span class="hl kwa">def</span> <span class="hl kwd">loadDataFile</span><span class="hl opt">(</span>filename<span class="hl opt">,</span> n<span class="hl opt">,</span>width<span class="hl opt">,</span>height<span class="hl opt">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    Reads n data images from a file and returns a list of Datum objects.</span>
+<span class="hl str"></span>
+<span class="hl str">    (Return less then n items if the end of file is encountered).</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+    DATUM_WIDTH<span class="hl opt">=</span>width
+    DATUM_HEIGHT<span class="hl opt">=</span>height
+    fin <span class="hl opt">=</span> <span class="hl kwd">readlines</span><span class="hl opt">(</span>filename<span class="hl opt">)</span>
+    fin<span class="hl opt">.</span><span class="hl kwd">reverse</span><span class="hl opt">()</span>
+    items <span class="hl opt">= []</span>
+    <span class="hl kwa">for</span> i <span class="hl kwa">in</span> <span class="hl kwb">range</span><span class="hl opt">(</span>n<span class="hl opt">):</span>
+        data <span class="hl opt">= []</span>
+        <span class="hl kwa">for</span> j <span class="hl kwa">in</span> <span class="hl kwb">range</span><span class="hl opt">(</span>height<span class="hl opt">):</span>
+            data<span class="hl opt">.</span><span class="hl kwd">append</span><span class="hl opt">(</span><span class="hl kwb">list</span><span class="hl opt">(</span>fin<span class="hl opt">.</span><span class="hl kwd">pop</span><span class="hl opt">()))</span>
+        <span class="hl kwa">if</span> <span class="hl kwb">len</span><span class="hl opt">(</span>data<span class="hl opt">[</span><span class="hl num">0</span><span class="hl opt">]) &lt;</span> DATUM_WIDTH<span class="hl opt">-</span><span class="hl num">1</span><span class="hl opt">:</span>
+            <span class="hl slc"># we encountered end of file...</span>
+            <span class="hl kwa">print</span> <span class="hl str">&quot;Truncating at %d examples (maximum)&quot;</span> <span class="hl opt">%</span> i
+            <span class="hl kwa">break</span>
+        items<span class="hl opt">.</span><span class="hl kwd">append</span><span class="hl opt">(</span><span class="hl kwd">Datum</span><span class="hl opt">(</span>data<span class="hl opt">,</span>DATUM_WIDTH<span class="hl opt">,</span>DATUM_HEIGHT<span class="hl opt">))</span>
+    <span class="hl kwa">return</span> items
+
+<span class="hl kwa">import</span> zipfile
+<span class="hl kwa">import</span> os
+<span class="hl kwa">def</span> <span class="hl kwd">readlines</span><span class="hl opt">(</span>filename<span class="hl opt">):</span>
+    <span class="hl str">&quot;Opens a file or reads it from the zip archive data.zip&quot;</span>
+    <span class="hl kwa">if</span><span class="hl opt">(</span>os<span class="hl opt">.</span>path<span class="hl opt">.</span><span class="hl kwd">exists</span><span class="hl opt">(</span>filename<span class="hl opt">)):</span>
+        <span class="hl kwa">return</span> <span class="hl opt">[</span>l<span class="hl opt">[:-</span><span class="hl num">1</span><span class="hl opt">]</span> <span class="hl kwa">for</span> l <span class="hl kwa">in</span> <span class="hl kwb">open</span><span class="hl opt">(</span>filename<span class="hl opt">).</span><span class="hl kwd">readlines</span><span class="hl opt">()]</span>
+    <span class="hl kwa">else</span><span class="hl opt">:</span>
+        z <span class="hl opt">=</span> zipfile<span class="hl opt">.</span><span class="hl kwd">ZipFile</span><span class="hl opt">(</span><span class="hl str">'data.zip'</span><span class="hl opt">)</span>
+        <span class="hl kwa">return</span> z<span class="hl opt">.</span><span class="hl kwd">read</span><span class="hl opt">(</span>filename<span class="hl opt">).</span><span class="hl kwd">split</span><span class="hl opt">(</span><span class="hl str">'</span><span class="hl esc">\n</span><span class="hl str">'</span><span class="hl opt">)</span>
+
+<span class="hl kwa">def</span> <span class="hl kwd">loadLabelsFile</span><span class="hl opt">(</span>filename<span class="hl opt">,</span> n<span class="hl opt">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    Reads n labels from a file and returns a list of integers.</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+    fin <span class="hl opt">=</span> <span class="hl kwd">readlines</span><span class="hl opt">(</span>filename<span class="hl opt">)</span>
+    labels <span class="hl opt">= []</span>
+    <span class="hl kwa">for</span> line <span class="hl kwa">in</span> fin<span class="hl opt">[:</span><span class="hl kwb">min</span><span class="hl opt">(</span>n<span class="hl opt">,</span> <span class="hl kwb">len</span><span class="hl opt">(</span>fin<span class="hl opt">))]:</span>
+        <span class="hl kwa">if</span> line <span class="hl opt">==</span> <span class="hl str">''</span><span class="hl opt">:</span>
+            <span class="hl kwa">break</span>
+        labels<span class="hl opt">.</span><span class="hl kwd">append</span><span class="hl opt">(</span><span class="hl kwb">int</span><span class="hl opt">(</span>line<span class="hl opt">))</span>
+    <span class="hl kwa">return</span> labels
+
+<span class="hl kwa">def</span> <span class="hl kwd">loadPacmanStatesFile</span><span class="hl opt">(</span>filename<span class="hl opt">,</span> n<span class="hl opt">):</span>
+    f <span class="hl opt">=</span> <span class="hl kwb">open</span><span class="hl opt">(</span>filename<span class="hl opt">,</span> <span class="hl str">'r'</span><span class="hl opt">)</span>
+    result <span class="hl opt">=</span> cPickle<span class="hl opt">.</span><span class="hl kwd">load</span><span class="hl opt">(</span>f<span class="hl opt">)</span>
+    f<span class="hl opt">.</span><span class="hl kwd">close</span><span class="hl opt">()</span>
+    <span class="hl kwa">return</span> result
+
+<span class="hl kwa">import</span> cPickle
+<span class="hl kwa">import</span> pacmanAgents
+<span class="hl kwa">import</span> ghostAgents
+<span class="hl kwa">import</span> textDisplay
+<span class="hl kwa">from</span> pacman <span class="hl kwa">import</span> ClassicGameRules<span class="hl opt">,</span> GameState
+<span class="hl kwa">def</span> <span class="hl kwd">loadPacmanData</span><span class="hl opt">(</span>filename<span class="hl opt">,</span> n<span class="hl opt">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    Return game states from specified recorded games as data, and actions taken as labels</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+    components <span class="hl opt">=</span> <span class="hl kwd">loadPacmanStatesFile</span><span class="hl opt">(</span>filename<span class="hl opt">,</span> n<span class="hl opt">)</span>
+    <span class="hl kwa">return</span> components<span class="hl opt">[</span><span class="hl str">'states'</span><span class="hl opt">][:</span>n<span class="hl opt">],</span> components<span class="hl opt">[</span><span class="hl str">'actions'</span><span class="hl opt">][:</span>n<span class="hl opt">]</span>
+
+<span class="hl kwa">def</span> <span class="hl kwd">asciiGrayscaleConversionFunction</span><span class="hl opt">(</span>value<span class="hl opt">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    Helper function for display purposes.</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+    <span class="hl kwa">if</span><span class="hl opt">(</span>value <span class="hl opt">==</span> <span class="hl num">0</span><span class="hl opt">):</span>
+        <span class="hl kwa">return</span> <span class="hl str">' '</span>
+    <span class="hl kwa">elif</span><span class="hl opt">(</span>value <span class="hl opt">==</span> <span class="hl num">1</span><span class="hl opt">):</span>
+        <span class="hl kwa">return</span> <span class="hl str">'+'</span>
+    <span class="hl kwa">elif</span><span class="hl opt">(</span>value <span class="hl opt">==</span> <span class="hl num">2</span><span class="hl opt">):</span>
+        <span class="hl kwa">return</span> <span class="hl str">'#'</span>
+
+<span class="hl kwa">def</span> <span class="hl kwd">IntegerConversionFunction</span><span class="hl opt">(</span>character<span class="hl opt">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    Helper function for file reading.</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+    <span class="hl kwa">if</span><span class="hl opt">(</span>character <span class="hl opt">==</span> <span class="hl str">' '</span><span class="hl opt">):</span>
+        <span class="hl kwa">return</span> <span class="hl num">0</span>
+    <span class="hl kwa">elif</span><span class="hl opt">(</span>character <span class="hl opt">==</span> <span class="hl str">'+'</span><span class="hl opt">):</span>
+        <span class="hl kwa">return</span> <span class="hl num">1</span>
+    <span class="hl kwa">elif</span><span class="hl opt">(</span>character <span class="hl opt">==</span> <span class="hl str">'#'</span><span class="hl opt">):</span>
+        <span class="hl kwa">return</span> <span class="hl num">2</span>
+
+<span class="hl kwa">def</span> <span class="hl kwd">convertToInteger</span><span class="hl opt">(</span>data<span class="hl opt">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    Helper function for file reading.</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+    <span class="hl kwa">if</span> <span class="hl kwb">type</span><span class="hl opt">(</span>data<span class="hl opt">) !=</span> <span class="hl kwb">type</span><span class="hl opt">([]):</span>
+        <span class="hl kwa">return</span> <span class="hl kwd">IntegerConversionFunction</span><span class="hl opt">(</span>data<span class="hl opt">)</span>
+    <span class="hl kwa">else</span><span class="hl opt">:</span>
+        <span class="hl kwa">return</span> <span class="hl kwb">map</span><span class="hl opt">(</span>convertToInteger<span class="hl opt">,</span> data<span class="hl opt">)</span>
+
+<span class="hl slc"># Testing</span>
+
+<span class="hl kwa">def</span> <span class="hl kwd">_test</span><span class="hl opt">():</span>
+    <span class="hl kwa">import</span> doctest
+    doctest<span class="hl opt">.</span><span class="hl kwd">testmod</span><span class="hl opt">()</span> <span class="hl slc"># Test the interactive sessions in function comments</span>
+    n <span class="hl opt">=</span> <span class="hl num">1</span>
+<span class="hl slc">#  items = loadDataFile(&quot;facedata/facedatatrain&quot;, n,60,70)</span>
+<span class="hl slc">#  labels = loadLabelsFile(&quot;facedata/facedatatrainlabels&quot;, n)</span>
+    items <span class="hl opt">=</span> <span class="hl kwd">loadDataFile</span><span class="hl opt">(</span><span class="hl str">&quot;digitdata/trainingimages&quot;</span><span class="hl opt">,</span> n<span class="hl opt">,</span><span class="hl num">28</span><span class="hl opt">,</span><span class="hl num">28</span><span class="hl opt">)</span>
+    labels <span class="hl opt">=</span> <span class="hl kwd">loadLabelsFile</span><span class="hl opt">(</span><span class="hl str">&quot;digitdata/traininglabels&quot;</span><span class="hl opt">,</span> n<span class="hl opt">)</span>
+    <span class="hl kwa">for</span> i <span class="hl kwa">in</span> <span class="hl kwb">range</span><span class="hl opt">(</span><span class="hl num">1</span><span class="hl opt">):</span>
+        <span class="hl kwa">print</span> items<span class="hl opt">[</span>i<span class="hl opt">]</span>
+        <span class="hl kwa">print</span> items<span class="hl opt">[</span>i<span class="hl opt">]</span>
+        <span class="hl kwa">print</span> <span class="hl opt">(</span>items<span class="hl opt">[</span>i<span class="hl opt">].</span>height<span class="hl opt">)</span>
+        <span class="hl kwa">print</span> <span class="hl opt">(</span>items<span class="hl opt">[</span>i<span class="hl opt">].</span>width<span class="hl opt">)</span>
+        <span class="hl kwa">print</span> <span class="hl kwb">dir</span><span class="hl opt">(</span>items<span class="hl opt">[</span>i<span class="hl opt">])</span>
+        <span class="hl kwa">print</span> items<span class="hl opt">[</span>i<span class="hl opt">].</span><span class="hl kwd">getPixels</span><span class="hl opt">()</span>
+
+<span class="hl kwa">if</span> __name__ <span class="hl opt">==</span> <span class="hl str">&quot;__main__&quot;</span><span class="hl opt">:</span>
+    <span class="hl kwd">_test</span><span class="hl opt">()</span>
+</pre>
+</body>
+</html>
+<!--HTML generated by highlight 3.8, http://www.andre-simon.de/-->

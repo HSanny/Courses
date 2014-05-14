@@ -1,0 +1,445 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<title>./dataClassifier.py</title>
+<link rel="stylesheet" type="text/css" href="highlight.css">
+</head>
+<body class="hl">
+<pre class="hl"><span class="hl slc"># dataClassifier.py</span>
+<span class="hl slc"># -----------------</span>
+<span class="hl slc"># Licensing Information:  You are free to use or extend these projects for </span>
+<span class="hl slc"># educational purposes provided that (1) you do not distribute or publish </span>
+<span class="hl slc"># solutions, (2) you retain this notice, and (3) you provide clear </span>
+<span class="hl slc"># attribution to UC Berkeley, including a link to </span>
+<span class="hl slc"># http://inst.eecs.berkeley.edu/~cs188/pacman/pacman.html</span>
+<span class="hl slc"># </span>
+<span class="hl slc"># Attribution Information: The Pacman AI projects were developed at UC Berkeley.</span>
+<span class="hl slc"># The core projects and autograders were primarily created by John DeNero </span>
+<span class="hl slc"># (denero&#64;cs.berkeley.edu) and Dan Klein (klein&#64;cs.berkeley.edu).</span>
+<span class="hl slc"># Student side autograding was added by Brad Miller, Nick Hay, and </span>
+<span class="hl slc"># Pieter Abbeel (pabbeel&#64;cs.berkeley.edu).</span>
+
+
+<span class="hl slc"># This file contains feature extraction methods and harness</span>
+<span class="hl slc"># code for data classification</span>
+
+<span class="hl kwa">import</span> mostFrequent
+<span class="hl kwa">import</span> naiveBayes
+<span class="hl kwa">import</span> perceptron
+<span class="hl kwa">import</span> perceptron_pacman
+<span class="hl kwa">import</span> mira
+<span class="hl kwa">import</span> minicontest
+<span class="hl kwa">import</span> samples
+<span class="hl kwa">import</span> sys
+<span class="hl kwa">import</span> util
+<span class="hl kwa">from</span> pacman <span class="hl kwa">import</span> GameState
+
+TEST_SET_SIZE <span class="hl opt">=</span> <span class="hl num">100</span>
+DIGIT_DATUM_WIDTH<span class="hl opt">=</span><span class="hl num">28</span>
+DIGIT_DATUM_HEIGHT<span class="hl opt">=</span><span class="hl num">28</span>
+FACE_DATUM_WIDTH<span class="hl opt">=</span><span class="hl num">60</span>
+FACE_DATUM_HEIGHT<span class="hl opt">=</span><span class="hl num">70</span>
+
+
+<span class="hl kwa">def</span> <span class="hl kwd">basicFeatureExtractorDigit</span><span class="hl opt">(</span>datum<span class="hl opt">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    Returns a set of pixel features indicating whether</span>
+<span class="hl str">    each pixel in the provided datum is white (0) or gray/black (1)</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+    a <span class="hl opt">=</span> datum<span class="hl opt">.</span><span class="hl kwd">getPixels</span><span class="hl opt">()</span>
+
+    features <span class="hl opt">=</span> util<span class="hl opt">.</span><span class="hl kwd">Counter</span><span class="hl opt">()</span>
+    <span class="hl kwa">for</span> x <span class="hl kwa">in</span> <span class="hl kwb">range</span><span class="hl opt">(</span>DIGIT_DATUM_WIDTH<span class="hl opt">):</span>
+        <span class="hl kwa">for</span> y <span class="hl kwa">in</span> <span class="hl kwb">range</span><span class="hl opt">(</span>DIGIT_DATUM_HEIGHT<span class="hl opt">):</span>
+            <span class="hl kwa">if</span> datum<span class="hl opt">.</span><span class="hl kwd">getPixel</span><span class="hl opt">(</span>x<span class="hl opt">,</span> y<span class="hl opt">) &gt;</span> <span class="hl num">0</span><span class="hl opt">:</span>
+                features<span class="hl opt">[(</span>x<span class="hl opt">,</span>y<span class="hl opt">)] =</span> <span class="hl num">1</span>
+            <span class="hl kwa">else</span><span class="hl opt">:</span>
+                features<span class="hl opt">[(</span>x<span class="hl opt">,</span>y<span class="hl opt">)] =</span> <span class="hl num">0</span>
+    <span class="hl kwa">return</span> features
+
+<span class="hl kwa">def</span> <span class="hl kwd">basicFeatureExtractorFace</span><span class="hl opt">(</span>datum<span class="hl opt">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    Returns a set of pixel features indicating whether</span>
+<span class="hl str">    each pixel in the provided datum is an edge (1) or no edge (0)</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+    a <span class="hl opt">=</span> datum<span class="hl opt">.</span><span class="hl kwd">getPixels</span><span class="hl opt">()</span>
+
+    features <span class="hl opt">=</span> util<span class="hl opt">.</span><span class="hl kwd">Counter</span><span class="hl opt">()</span>
+    <span class="hl kwa">for</span> x <span class="hl kwa">in</span> <span class="hl kwb">range</span><span class="hl opt">(</span>FACE_DATUM_WIDTH<span class="hl opt">):</span>
+        <span class="hl kwa">for</span> y <span class="hl kwa">in</span> <span class="hl kwb">range</span><span class="hl opt">(</span>FACE_DATUM_HEIGHT<span class="hl opt">):</span>
+            <span class="hl kwa">if</span> datum<span class="hl opt">.</span><span class="hl kwd">getPixel</span><span class="hl opt">(</span>x<span class="hl opt">,</span> y<span class="hl opt">) &gt;</span> <span class="hl num">0</span><span class="hl opt">:</span>
+                features<span class="hl opt">[(</span>x<span class="hl opt">,</span>y<span class="hl opt">)] =</span> <span class="hl num">1</span>
+            <span class="hl kwa">else</span><span class="hl opt">:</span>
+                features<span class="hl opt">[(</span>x<span class="hl opt">,</span>y<span class="hl opt">)] =</span> <span class="hl num">0</span>
+    <span class="hl kwa">return</span> features
+
+<span class="hl kwa">def</span> <span class="hl kwd">enhancedFeatureExtractorDigit</span><span class="hl opt">(</span>datum<span class="hl opt">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    Your feature extraction playground.</span>
+<span class="hl str"></span>
+<span class="hl str">    You should return a util.Counter() of features</span>
+<span class="hl str">    for this datum (datum is of type samples.Datum).</span>
+<span class="hl str"></span>
+<span class="hl str">    ## DESCRIBE YOUR ENHANCED FEATURES HERE...</span>
+<span class="hl str"></span>
+<span class="hl str">    ##</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+    features <span class="hl opt">=</span>  <span class="hl kwd">basicFeatureExtractorDigit</span><span class="hl opt">(</span>datum<span class="hl opt">)</span>
+
+    <span class="hl str">&quot;*** YOUR CODE HERE ***&quot;</span>
+    util<span class="hl opt">.</span><span class="hl kwd">raiseNotDefined</span><span class="hl opt">()</span>
+
+    <span class="hl kwa">return</span> features
+
+
+
+<span class="hl kwa">def</span> <span class="hl kwd">basicFeatureExtractorPacman</span><span class="hl opt">(</span>state<span class="hl opt">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    A basic feature extraction function.</span>
+<span class="hl str"></span>
+<span class="hl str">    You should return a util.Counter() of features</span>
+<span class="hl str">    for each (state, action) pair along with a list of the legal actions</span>
+<span class="hl str"></span>
+<span class="hl str">    ##</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+    features <span class="hl opt">=</span> util<span class="hl opt">.</span><span class="hl kwd">Counter</span><span class="hl opt">()</span>
+    <span class="hl kwa">for</span> action <span class="hl kwa">in</span> state<span class="hl opt">.</span><span class="hl kwd">getLegalActions</span><span class="hl opt">():</span>
+        successor <span class="hl opt">=</span> state<span class="hl opt">.</span><span class="hl kwd">generateSuccessor</span><span class="hl opt">(</span><span class="hl num">0</span><span class="hl opt">,</span> action<span class="hl opt">)</span>
+        foodCount <span class="hl opt">=</span> successor<span class="hl opt">.</span><span class="hl kwd">getFood</span><span class="hl opt">().</span><span class="hl kwd">count</span><span class="hl opt">()</span>
+        featureCounter <span class="hl opt">=</span> util<span class="hl opt">.</span><span class="hl kwd">Counter</span><span class="hl opt">()</span>
+        featureCounter<span class="hl opt">[</span><span class="hl str">'foodCount'</span><span class="hl opt">] =</span> foodCount
+        features<span class="hl opt">[</span>action<span class="hl opt">] =</span> featureCounter
+    <span class="hl kwa">return</span> features<span class="hl opt">,</span> state<span class="hl opt">.</span><span class="hl kwd">getLegalActions</span><span class="hl opt">()</span>
+
+<span class="hl kwa">def</span> <span class="hl kwd">enhancedFeatureExtractorPacman</span><span class="hl opt">(</span>state<span class="hl opt">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    Your feature extraction playground.</span>
+<span class="hl str"></span>
+<span class="hl str">    You should return a util.Counter() of features</span>
+<span class="hl str">    for each (state, action) pair along with a list of the legal actions</span>
+<span class="hl str"></span>
+<span class="hl str">    ##</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+
+    features <span class="hl opt">=</span> <span class="hl kwd">basicFeatureExtractorPacman</span><span class="hl opt">(</span>state<span class="hl opt">)[</span><span class="hl num">0</span><span class="hl opt">]</span>
+    <span class="hl kwa">for</span> action <span class="hl kwa">in</span> state<span class="hl opt">.</span><span class="hl kwd">getLegalActions</span><span class="hl opt">():</span>
+        features<span class="hl opt">[</span>action<span class="hl opt">] =</span> util<span class="hl opt">.</span><span class="hl kwd">Counter</span><span class="hl opt">(</span>features<span class="hl opt">[</span>action<span class="hl opt">], **</span><span class="hl kwd">enhancedPacmanFeatures</span><span class="hl opt">(</span>state<span class="hl opt">,</span> action<span class="hl opt">))</span>
+    <span class="hl kwa">return</span> features<span class="hl opt">,</span> state<span class="hl opt">.</span><span class="hl kwd">getLegalActions</span><span class="hl opt">()</span>
+
+<span class="hl kwa">def</span> <span class="hl kwd">enhancedPacmanFeatures</span><span class="hl opt">(</span>state<span class="hl opt">,</span> action<span class="hl opt">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    For each state, this function is called with each legal action.</span>
+<span class="hl str">    It should return a counter with { &lt;feature name&gt; : &lt;feature value&gt;, ... }</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+    features <span class="hl opt">=</span> util<span class="hl opt">.</span><span class="hl kwd">Counter</span><span class="hl opt">()</span>
+    <span class="hl str">&quot;*** YOUR CODE HERE ***&quot;</span>
+    util<span class="hl opt">.</span><span class="hl kwd">raiseNotDefined</span><span class="hl opt">()</span>
+    <span class="hl kwa">return</span> features
+
+
+<span class="hl kwa">def</span> <span class="hl kwd">contestFeatureExtractorDigit</span><span class="hl opt">(</span>datum<span class="hl opt">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    Specify features to use for the minicontest</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+    features <span class="hl opt">=</span>  <span class="hl kwd">basicFeatureExtractorDigit</span><span class="hl opt">(</span>datum<span class="hl opt">)</span>
+    <span class="hl kwa">return</span> features
+
+<span class="hl kwa">def</span> <span class="hl kwd">enhancedFeatureExtractorFace</span><span class="hl opt">(</span>datum<span class="hl opt">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    Your feature extraction playground for faces.</span>
+<span class="hl str">    It is your choice to modify this.</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+    features <span class="hl opt">=</span>  <span class="hl kwd">basicFeatureExtractorFace</span><span class="hl opt">(</span>datum<span class="hl opt">)</span>
+    <span class="hl kwa">return</span> features
+
+<span class="hl kwa">def</span> <span class="hl kwd">analysis</span><span class="hl opt">(</span>classifier<span class="hl opt">,</span> guesses<span class="hl opt">,</span> testLabels<span class="hl opt">,</span> testData<span class="hl opt">,</span> rawTestData<span class="hl opt">,</span> printImage<span class="hl opt">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    This function is called after learning.</span>
+<span class="hl str">    Include any code that you want here to help you analyze your results.</span>
+<span class="hl str"></span>
+<span class="hl str">    Use the printImage(&lt;list of pixels&gt;) function to visualize features.</span>
+<span class="hl str"></span>
+<span class="hl str">    An example of use has been given to you.</span>
+<span class="hl str"></span>
+<span class="hl str">    - classifier is the trained classifier</span>
+<span class="hl str">    - guesses is the list of labels predicted by your classifier on the test set</span>
+<span class="hl str">    - testLabels is the list of true labels</span>
+<span class="hl str">    - testData is the list of training datapoints (as util.Counter of features)</span>
+<span class="hl str">    - rawTestData is the list of training datapoints (as samples.Datum)</span>
+<span class="hl str">    - printImage is a method to visualize the features</span>
+<span class="hl str">    (see its use in the odds ratio part in runClassifier method)</span>
+<span class="hl str"></span>
+<span class="hl str">    This code won't be evaluated. It is for your own optional use</span>
+<span class="hl str">    (and you can modify the signature if you want).</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+
+    <span class="hl slc"># Put any code here...</span>
+    <span class="hl slc"># Example of use:</span>
+    <span class="hl kwa">for</span> i <span class="hl kwa">in</span> <span class="hl kwb">range</span><span class="hl opt">(</span><span class="hl kwb">len</span><span class="hl opt">(</span>guesses<span class="hl opt">)):</span>
+        prediction <span class="hl opt">=</span> guesses<span class="hl opt">[</span>i<span class="hl opt">]</span>
+        truth <span class="hl opt">=</span> testLabels<span class="hl opt">[</span>i<span class="hl opt">]</span>
+        <span class="hl kwa">if</span> <span class="hl opt">(</span>prediction <span class="hl opt">!=</span> truth<span class="hl opt">):</span>
+            <span class="hl kwa">print</span> <span class="hl str">&quot;===================================&quot;</span>
+            <span class="hl kwa">print</span> <span class="hl str">&quot;Mistake on example %d&quot;</span> <span class="hl opt">%</span> i
+            <span class="hl kwa">print</span> <span class="hl str">&quot;Predicted %d; truth is %d&quot;</span> <span class="hl opt">% (</span>prediction<span class="hl opt">,</span> truth<span class="hl opt">)</span>
+            <span class="hl kwa">print</span> <span class="hl str">&quot;Image: &quot;</span>
+            <span class="hl kwa">print</span> rawTestData<span class="hl opt">[</span>i<span class="hl opt">]</span>
+            <span class="hl kwa">break</span>
+
+
+<span class="hl slc">## =====================</span>
+<span class="hl slc">## You don't have to modify any code below.</span>
+<span class="hl slc">## =====================</span>
+
+
+<span class="hl kwa">class</span> ImagePrinter<span class="hl opt">:</span>
+    <span class="hl kwa">def</span> <span class="hl kwd">__init__</span><span class="hl opt">(</span>self<span class="hl opt">,</span> width<span class="hl opt">,</span> height<span class="hl opt">):</span>
+        self<span class="hl opt">.</span>width <span class="hl opt">=</span> width
+        self<span class="hl opt">.</span>height <span class="hl opt">=</span> height
+
+    <span class="hl kwa">def</span> <span class="hl kwd">printImage</span><span class="hl opt">(</span>self<span class="hl opt">,</span> pixels<span class="hl opt">):</span>
+        <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">        Prints a Datum object that contains all pixels in the</span>
+<span class="hl str">        provided list of pixels.  This will serve as a helper function</span>
+<span class="hl str">        to the analysis function you write.</span>
+<span class="hl str"></span>
+<span class="hl str">        Pixels should take the form</span>
+<span class="hl str">        [(2,2), (2, 3), ...]</span>
+<span class="hl str">        where each tuple represents a pixel.</span>
+<span class="hl str">        &quot;&quot;&quot;</span>
+        image <span class="hl opt">=</span> samples<span class="hl opt">.</span><span class="hl kwd">Datum</span><span class="hl opt">(</span><span class="hl kwa">None</span><span class="hl opt">,</span>self<span class="hl opt">.</span>width<span class="hl opt">,</span>self<span class="hl opt">.</span>height<span class="hl opt">)</span>
+        <span class="hl kwa">for</span> pix <span class="hl kwa">in</span> pixels<span class="hl opt">:</span>
+            <span class="hl kwa">try</span><span class="hl opt">:</span>
+            <span class="hl slc"># This is so that new features that you could define which</span>
+            <span class="hl slc"># which are not of the form of (x,y) will not break</span>
+            <span class="hl slc"># this image printer...</span>
+                x<span class="hl opt">,</span>y <span class="hl opt">=</span> pix
+                image<span class="hl opt">.</span>pixels<span class="hl opt">[</span>x<span class="hl opt">][</span>y<span class="hl opt">] =</span> <span class="hl num">2</span>
+            <span class="hl kwa">except</span><span class="hl opt">:</span>
+                <span class="hl kwa">print</span> <span class="hl str">&quot;new features:&quot;</span><span class="hl opt">,</span> pix
+                <span class="hl kwa">continue</span>
+        <span class="hl kwa">print</span> image
+
+<span class="hl kwa">def</span> <span class="hl kwd">default</span><span class="hl opt">(</span><span class="hl kwb">str</span><span class="hl opt">):</span>
+    <span class="hl kwa">return</span> <span class="hl kwb">str</span> <span class="hl opt">+</span> <span class="hl str">' [Default: %default]'</span>
+
+USAGE_STRING <span class="hl opt">=</span> <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">  USAGE:      python dataClassifier.py &lt;options&gt;</span>
+<span class="hl str">  EXAMPLES:   (1) python dataClassifier.py</span>
+<span class="hl str">                  - trains the default mostFrequent classifier on the digit dataset</span>
+<span class="hl str">                  using the default 100 training examples and</span>
+<span class="hl str">                  then test the classifier on test data</span>
+<span class="hl str">              (2) python dataClassifier.py -c naiveBayes -d digits -t 1000 -f -o -1 3 -2 6 -k 2.5</span>
+<span class="hl str">                  - would run the naive Bayes classifier on 1000 training examples</span>
+<span class="hl str">                  using the enhancedFeatureExtractorDigits function to get the features</span>
+<span class="hl str">                  on the faces dataset, would use the smoothing parameter equals to 2.5, would</span>
+<span class="hl str">                  test the classifier on the test data and performs an odd ratio analysis</span>
+<span class="hl str">                  with label1=3 vs. label2=6</span>
+<span class="hl str">                 &quot;&quot;&quot;</span>
+
+
+<span class="hl kwa">def</span> <span class="hl kwd">readCommand</span><span class="hl opt">(</span> argv <span class="hl opt">):</span>
+    <span class="hl str">&quot;Processes the command used to run from the command line.&quot;</span>
+    <span class="hl kwa">from</span> optparse <span class="hl kwa">import</span> OptionParser
+    parser <span class="hl opt">=</span> <span class="hl kwd">OptionParser</span><span class="hl opt">(</span>USAGE_STRING<span class="hl opt">)</span>
+
+    parser<span class="hl opt">.</span><span class="hl kwd">add_option</span><span class="hl opt">(</span><span class="hl str">'-c'</span><span class="hl opt">,</span> <span class="hl str">'--classifier'</span><span class="hl opt">,</span> <span class="hl kwb">help</span><span class="hl opt">=</span><span class="hl kwd">default</span><span class="hl opt">(</span><span class="hl str">'The type of classifier'</span><span class="hl opt">),</span> choices<span class="hl opt">=[</span><span class="hl str">'mostFrequent'</span><span class="hl opt">,</span> <span class="hl str">'nb'</span><span class="hl opt">,</span> <span class="hl str">'naiveBayes'</span><span class="hl opt">,</span> <span class="hl str">'perceptron'</span><span class="hl opt">,</span> <span class="hl str">'mira'</span><span class="hl opt">,</span> <span class="hl str">'minicontest'</span><span class="hl opt">],</span> default<span class="hl opt">=</span><span class="hl str">'mostFrequent'</span><span class="hl opt">)</span>
+    parser<span class="hl opt">.</span><span class="hl kwd">add_option</span><span class="hl opt">(</span><span class="hl str">'-d'</span><span class="hl opt">,</span> <span class="hl str">'--data'</span><span class="hl opt">,</span> <span class="hl kwb">help</span><span class="hl opt">=</span><span class="hl kwd">default</span><span class="hl opt">(</span><span class="hl str">'Dataset to use'</span><span class="hl opt">),</span> choices<span class="hl opt">=[</span><span class="hl str">'digits'</span><span class="hl opt">,</span> <span class="hl str">'faces'</span><span class="hl opt">,</span> <span class="hl str">'pacman'</span><span class="hl opt">],</span> default<span class="hl opt">=</span><span class="hl str">'digits'</span><span class="hl opt">)</span>
+    parser<span class="hl opt">.</span><span class="hl kwd">add_option</span><span class="hl opt">(</span><span class="hl str">'-t'</span><span class="hl opt">,</span> <span class="hl str">'--training'</span><span class="hl opt">,</span> <span class="hl kwb">help</span><span class="hl opt">=</span><span class="hl kwd">default</span><span class="hl opt">(</span><span class="hl str">'The size of the training set'</span><span class="hl opt">),</span> default<span class="hl opt">=</span><span class="hl num">100</span><span class="hl opt">,</span> <span class="hl kwb">type</span><span class="hl opt">=</span><span class="hl str">&quot;int&quot;</span><span class="hl opt">)</span>
+    parser<span class="hl opt">.</span><span class="hl kwd">add_option</span><span class="hl opt">(</span><span class="hl str">'-f'</span><span class="hl opt">,</span> <span class="hl str">'--features'</span><span class="hl opt">,</span> <span class="hl kwb">help</span><span class="hl opt">=</span><span class="hl kwd">default</span><span class="hl opt">(</span><span class="hl str">'Whether to use enhanced features'</span><span class="hl opt">),</span> default<span class="hl opt">=</span><span class="hl kwa">False</span><span class="hl opt">,</span> action<span class="hl opt">=</span><span class="hl str">&quot;store_true&quot;</span><span class="hl opt">)</span>
+    parser<span class="hl opt">.</span><span class="hl kwd">add_option</span><span class="hl opt">(</span><span class="hl str">'-o'</span><span class="hl opt">,</span> <span class="hl str">'--odds'</span><span class="hl opt">,</span> <span class="hl kwb">help</span><span class="hl opt">=</span><span class="hl kwd">default</span><span class="hl opt">(</span><span class="hl str">'Whether to compute odds ratios'</span><span class="hl opt">),</span> default<span class="hl opt">=</span><span class="hl kwa">False</span><span class="hl opt">,</span> action<span class="hl opt">=</span><span class="hl str">&quot;store_true&quot;</span><span class="hl opt">)</span>
+    parser<span class="hl opt">.</span><span class="hl kwd">add_option</span><span class="hl opt">(</span><span class="hl str">'-1'</span><span class="hl opt">,</span> <span class="hl str">'--label1'</span><span class="hl opt">,</span> <span class="hl kwb">help</span><span class="hl opt">=</span><span class="hl kwd">default</span><span class="hl opt">(</span><span class="hl str">&quot;First label in an odds ratio comparison&quot;</span><span class="hl opt">),</span> default<span class="hl opt">=</span><span class="hl num">0</span><span class="hl opt">,</span> <span class="hl kwb">type</span><span class="hl opt">=</span><span class="hl str">&quot;int&quot;</span><span class="hl opt">)</span>
+    parser<span class="hl opt">.</span><span class="hl kwd">add_option</span><span class="hl opt">(</span><span class="hl str">'-2'</span><span class="hl opt">,</span> <span class="hl str">'--label2'</span><span class="hl opt">,</span> <span class="hl kwb">help</span><span class="hl opt">=</span><span class="hl kwd">default</span><span class="hl opt">(</span><span class="hl str">&quot;Second label in an odds ratio comparison&quot;</span><span class="hl opt">),</span> default<span class="hl opt">=</span><span class="hl num">1</span><span class="hl opt">,</span> <span class="hl kwb">type</span><span class="hl opt">=</span><span class="hl str">&quot;int&quot;</span><span class="hl opt">)</span>
+    parser<span class="hl opt">.</span><span class="hl kwd">add_option</span><span class="hl opt">(</span><span class="hl str">'-w'</span><span class="hl opt">,</span> <span class="hl str">'--weights'</span><span class="hl opt">,</span> <span class="hl kwb">help</span><span class="hl opt">=</span><span class="hl kwd">default</span><span class="hl opt">(</span><span class="hl str">'Whether to print weights'</span><span class="hl opt">),</span> default<span class="hl opt">=</span><span class="hl kwa">False</span><span class="hl opt">,</span> action<span class="hl opt">=</span><span class="hl str">&quot;store_true&quot;</span><span class="hl opt">)</span>
+    parser<span class="hl opt">.</span><span class="hl kwd">add_option</span><span class="hl opt">(</span><span class="hl str">'-k'</span><span class="hl opt">,</span> <span class="hl str">'--smoothing'</span><span class="hl opt">,</span> <span class="hl kwb">help</span><span class="hl opt">=</span><span class="hl kwd">default</span><span class="hl opt">(</span><span class="hl str">&quot;Smoothing parameter (ignored when using --autotune)&quot;</span><span class="hl opt">),</span> <span class="hl kwb">type</span><span class="hl opt">=</span><span class="hl str">&quot;float&quot;</span><span class="hl opt">,</span> default<span class="hl opt">=</span><span class="hl num">2.0</span><span class="hl opt">)</span>
+    parser<span class="hl opt">.</span><span class="hl kwd">add_option</span><span class="hl opt">(</span><span class="hl str">'-a'</span><span class="hl opt">,</span> <span class="hl str">'--autotune'</span><span class="hl opt">,</span> <span class="hl kwb">help</span><span class="hl opt">=</span><span class="hl kwd">default</span><span class="hl opt">(</span><span class="hl str">&quot;Whether to automatically tune hyperparameters&quot;</span><span class="hl opt">),</span> default<span class="hl opt">=</span><span class="hl kwa">False</span><span class="hl opt">,</span> action<span class="hl opt">=</span><span class="hl str">&quot;store_true&quot;</span><span class="hl opt">)</span>
+    parser<span class="hl opt">.</span><span class="hl kwd">add_option</span><span class="hl opt">(</span><span class="hl str">'-i'</span><span class="hl opt">,</span> <span class="hl str">'--iterations'</span><span class="hl opt">,</span> <span class="hl kwb">help</span><span class="hl opt">=</span><span class="hl kwd">default</span><span class="hl opt">(</span><span class="hl str">&quot;Maximum iterations to run training&quot;</span><span class="hl opt">),</span> default<span class="hl opt">=</span><span class="hl num">3</span><span class="hl opt">,</span> <span class="hl kwb">type</span><span class="hl opt">=</span><span class="hl str">&quot;int&quot;</span><span class="hl opt">)</span>
+    parser<span class="hl opt">.</span><span class="hl kwd">add_option</span><span class="hl opt">(</span><span class="hl str">'-s'</span><span class="hl opt">,</span> <span class="hl str">'--test'</span><span class="hl opt">,</span> <span class="hl kwb">help</span><span class="hl opt">=</span><span class="hl kwd">default</span><span class="hl opt">(</span><span class="hl str">&quot;Amount of test data to use&quot;</span><span class="hl opt">),</span> default<span class="hl opt">=</span>TEST_SET_SIZE<span class="hl opt">,</span> <span class="hl kwb">type</span><span class="hl opt">=</span><span class="hl str">&quot;int&quot;</span><span class="hl opt">)</span>
+    parser<span class="hl opt">.</span><span class="hl kwd">add_option</span><span class="hl opt">(</span><span class="hl str">'-g'</span><span class="hl opt">,</span> <span class="hl str">'--agentToClone'</span><span class="hl opt">,</span> <span class="hl kwb">help</span><span class="hl opt">=</span><span class="hl kwd">default</span><span class="hl opt">(</span><span class="hl str">&quot;Pacman agent to copy&quot;</span><span class="hl opt">),</span> default<span class="hl opt">=</span><span class="hl kwa">None</span><span class="hl opt">,</span> <span class="hl kwb">type</span><span class="hl opt">=</span><span class="hl str">&quot;str&quot;</span><span class="hl opt">)</span>
+
+    options<span class="hl opt">,</span> otherjunk <span class="hl opt">=</span> parser<span class="hl opt">.</span><span class="hl kwd">parse_args</span><span class="hl opt">(</span>argv<span class="hl opt">)</span>
+    <span class="hl kwa">if</span> <span class="hl kwb">len</span><span class="hl opt">(</span>otherjunk<span class="hl opt">) !=</span> <span class="hl num">0</span><span class="hl opt">:</span> <span class="hl kwa">raise</span> <span class="hl kwc">Exception</span><span class="hl opt">(</span><span class="hl str">'Command line input not understood: '</span> <span class="hl opt">+</span> <span class="hl kwb">str</span><span class="hl opt">(</span>otherjunk<span class="hl opt">))</span>
+    args <span class="hl opt">= {}</span>
+
+    <span class="hl slc"># Set up variables according to the command line input.</span>
+    <span class="hl kwa">print</span> <span class="hl str">&quot;Doing classification&quot;</span>
+    <span class="hl kwa">print</span> <span class="hl str">&quot;--------------------&quot;</span>
+    <span class="hl kwa">print</span> <span class="hl str">&quot;data:</span><span class="hl esc">\t\t</span><span class="hl str">&quot;</span> <span class="hl opt">+</span> options<span class="hl opt">.</span>data
+    <span class="hl kwa">print</span> <span class="hl str">&quot;classifier:</span><span class="hl esc">\t\t</span><span class="hl str">&quot;</span> <span class="hl opt">+</span> options<span class="hl opt">.</span>classifier
+    <span class="hl kwa">if not</span> options<span class="hl opt">.</span>classifier <span class="hl opt">==</span> <span class="hl str">'minicontest'</span><span class="hl opt">:</span>
+        <span class="hl kwa">print</span> <span class="hl str">&quot;using enhanced features?:</span><span class="hl esc">\t</span><span class="hl str">&quot;</span> <span class="hl opt">+</span> <span class="hl kwb">str</span><span class="hl opt">(</span>options<span class="hl opt">.</span>features<span class="hl opt">)</span>
+    <span class="hl kwa">else</span><span class="hl opt">:</span>
+        <span class="hl kwa">print</span> <span class="hl str">&quot;using minicontest feature extractor&quot;</span>
+    <span class="hl kwa">print</span> <span class="hl str">&quot;training set size:</span><span class="hl esc">\t</span><span class="hl str">&quot;</span> <span class="hl opt">+</span> <span class="hl kwb">str</span><span class="hl opt">(</span>options<span class="hl opt">.</span>training<span class="hl opt">)</span>
+    <span class="hl kwa">if</span><span class="hl opt">(</span>options<span class="hl opt">.</span>data<span class="hl opt">==</span><span class="hl str">&quot;digits&quot;</span><span class="hl opt">):</span>
+        printImage <span class="hl opt">=</span> <span class="hl kwd">ImagePrinter</span><span class="hl opt">(</span>DIGIT_DATUM_WIDTH<span class="hl opt">,</span> DIGIT_DATUM_HEIGHT<span class="hl opt">).</span>printImage
+        <span class="hl kwa">if</span> <span class="hl opt">(</span>options<span class="hl opt">.</span>features<span class="hl opt">):</span>
+            featureFunction <span class="hl opt">=</span> enhancedFeatureExtractorDigit
+        <span class="hl kwa">else</span><span class="hl opt">:</span>
+            featureFunction <span class="hl opt">=</span> basicFeatureExtractorDigit
+        <span class="hl kwa">if</span> <span class="hl opt">(</span>options<span class="hl opt">.</span>classifier <span class="hl opt">==</span> <span class="hl str">'minicontest'</span><span class="hl opt">):</span>
+            featureFunction <span class="hl opt">=</span> contestFeatureExtractorDigit
+    <span class="hl kwa">elif</span><span class="hl opt">(</span>options<span class="hl opt">.</span>data<span class="hl opt">==</span><span class="hl str">&quot;faces&quot;</span><span class="hl opt">):</span>
+        printImage <span class="hl opt">=</span> <span class="hl kwd">ImagePrinter</span><span class="hl opt">(</span>FACE_DATUM_WIDTH<span class="hl opt">,</span> FACE_DATUM_HEIGHT<span class="hl opt">).</span>printImage
+        <span class="hl kwa">if</span> <span class="hl opt">(</span>options<span class="hl opt">.</span>features<span class="hl opt">):</span>
+            featureFunction <span class="hl opt">=</span> enhancedFeatureExtractorFace
+        <span class="hl kwa">else</span><span class="hl opt">:</span>
+            featureFunction <span class="hl opt">=</span> basicFeatureExtractorFace
+    <span class="hl kwa">elif</span><span class="hl opt">(</span>options<span class="hl opt">.</span>data<span class="hl opt">==</span><span class="hl str">&quot;pacman&quot;</span><span class="hl opt">):</span>
+        printImage <span class="hl opt">=</span> <span class="hl kwa">None</span>
+        <span class="hl kwa">if</span> <span class="hl opt">(</span>options<span class="hl opt">.</span>features<span class="hl opt">):</span>
+            featureFunction <span class="hl opt">=</span> enhancedFeatureExtractorPacman
+        <span class="hl kwa">else</span><span class="hl opt">:</span>
+            featureFunction <span class="hl opt">=</span> basicFeatureExtractorPacman
+    <span class="hl kwa">else</span><span class="hl opt">:</span>
+        <span class="hl kwa">print</span> <span class="hl str">&quot;Unknown dataset&quot;</span><span class="hl opt">,</span> options<span class="hl opt">.</span>data
+        <span class="hl kwa">print</span> USAGE_STRING
+        sys<span class="hl opt">.</span><span class="hl kwd">exit</span><span class="hl opt">(</span><span class="hl num">2</span><span class="hl opt">)</span>
+
+    <span class="hl kwa">if</span><span class="hl opt">(</span>options<span class="hl opt">.</span>data<span class="hl opt">==</span><span class="hl str">&quot;digits&quot;</span><span class="hl opt">):</span>
+        legalLabels <span class="hl opt">=</span> <span class="hl kwb">range</span><span class="hl opt">(</span><span class="hl num">10</span><span class="hl opt">)</span>
+    <span class="hl kwa">else</span><span class="hl opt">:</span>
+        legalLabels <span class="hl opt">= [</span><span class="hl str">'Stop'</span><span class="hl opt">,</span> <span class="hl str">'West'</span><span class="hl opt">,</span> <span class="hl str">'East'</span><span class="hl opt">,</span> <span class="hl str">'North'</span><span class="hl opt">,</span> <span class="hl str">'South'</span><span class="hl opt">]</span>
+
+    <span class="hl kwa">if</span> options<span class="hl opt">.</span>training <span class="hl opt">&lt;=</span> <span class="hl num">0</span><span class="hl opt">:</span>
+        <span class="hl kwa">print</span> <span class="hl str">&quot;Training set size should be a positive integer (you provided: %d)&quot;</span> <span class="hl opt">%</span> options<span class="hl opt">.</span>training
+        <span class="hl kwa">print</span> USAGE_STRING
+        sys<span class="hl opt">.</span><span class="hl kwd">exit</span><span class="hl opt">(</span><span class="hl num">2</span><span class="hl opt">)</span>
+
+    <span class="hl kwa">if</span> options<span class="hl opt">.</span>smoothing <span class="hl opt">&lt;=</span> <span class="hl num">0</span><span class="hl opt">:</span>
+        <span class="hl kwa">print</span> <span class="hl str">&quot;Please provide a positive number for smoothing (you provided: %f)&quot;</span> <span class="hl opt">%</span> options<span class="hl opt">.</span>smoothing
+        <span class="hl kwa">print</span> USAGE_STRING
+        sys<span class="hl opt">.</span><span class="hl kwd">exit</span><span class="hl opt">(</span><span class="hl num">2</span><span class="hl opt">)</span>
+
+    <span class="hl kwa">if</span> options<span class="hl opt">.</span>odds<span class="hl opt">:</span>
+        <span class="hl kwa">if</span> options<span class="hl opt">.</span>label1 <span class="hl kwa">not in</span> legalLabels <span class="hl kwa">or</span> options<span class="hl opt">.</span>label2 <span class="hl kwa">not in</span> legalLabels<span class="hl opt">:</span>
+            <span class="hl kwa">print</span> <span class="hl str">&quot;Didn't provide a legal labels for the odds ratio: (%d,%d)&quot;</span> <span class="hl opt">% (</span>options<span class="hl opt">.</span>label1<span class="hl opt">,</span> options<span class="hl opt">.</span>label2<span class="hl opt">)</span>
+            <span class="hl kwa">print</span> USAGE_STRING
+            sys<span class="hl opt">.</span><span class="hl kwd">exit</span><span class="hl opt">(</span><span class="hl num">2</span><span class="hl opt">)</span>
+
+    <span class="hl kwa">if</span><span class="hl opt">(</span>options<span class="hl opt">.</span>classifier <span class="hl opt">==</span> <span class="hl str">&quot;mostFrequent&quot;</span><span class="hl opt">):</span>
+        classifier <span class="hl opt">=</span> mostFrequent<span class="hl opt">.</span><span class="hl kwd">MostFrequentClassifier</span><span class="hl opt">(</span>legalLabels<span class="hl opt">)</span>
+    <span class="hl kwa">elif</span><span class="hl opt">(</span>options<span class="hl opt">.</span>classifier <span class="hl opt">==</span> <span class="hl str">&quot;naiveBayes&quot;</span> <span class="hl kwa">or</span> options<span class="hl opt">.</span>classifier <span class="hl opt">==</span> <span class="hl str">&quot;nb&quot;</span><span class="hl opt">):</span>
+        classifier <span class="hl opt">=</span> naiveBayes<span class="hl opt">.</span><span class="hl kwd">NaiveBayesClassifier</span><span class="hl opt">(</span>legalLabels<span class="hl opt">)</span>
+        classifier<span class="hl opt">.</span><span class="hl kwd">setSmoothing</span><span class="hl opt">(</span>options<span class="hl opt">.</span>smoothing<span class="hl opt">)</span>
+        <span class="hl kwa">if</span> <span class="hl opt">(</span>options<span class="hl opt">.</span>autotune<span class="hl opt">):</span>
+            <span class="hl kwa">print</span> <span class="hl str">&quot;using automatic tuning for naivebayes&quot;</span>
+            classifier<span class="hl opt">.</span>automaticTuning <span class="hl opt">=</span> <span class="hl kwa">True</span>
+        <span class="hl kwa">else</span><span class="hl opt">:</span>
+            <span class="hl kwa">print</span> <span class="hl str">&quot;using smoothing parameter k=%f for naivebayes&quot;</span> <span class="hl opt">%</span>  options<span class="hl opt">.</span>smoothing
+    <span class="hl kwa">elif</span><span class="hl opt">(</span>options<span class="hl opt">.</span>classifier <span class="hl opt">==</span> <span class="hl str">&quot;perceptron&quot;</span><span class="hl opt">):</span>
+        <span class="hl kwa">if</span> options<span class="hl opt">.</span>data <span class="hl opt">!=</span> <span class="hl str">'pacman'</span><span class="hl opt">:</span>
+            classifier <span class="hl opt">=</span> perceptron<span class="hl opt">.</span><span class="hl kwd">PerceptronClassifier</span><span class="hl opt">(</span>legalLabels<span class="hl opt">,</span>options<span class="hl opt">.</span>iterations<span class="hl opt">)</span>
+        <span class="hl kwa">else</span><span class="hl opt">:</span>
+            classifier <span class="hl opt">=</span> perceptron_pacman<span class="hl opt">.</span><span class="hl kwd">PerceptronClassifierPacman</span><span class="hl opt">(</span>legalLabels<span class="hl opt">,</span>options<span class="hl opt">.</span>iterations<span class="hl opt">)</span>
+    <span class="hl kwa">elif</span><span class="hl opt">(</span>options<span class="hl opt">.</span>classifier <span class="hl opt">==</span> <span class="hl str">&quot;mira&quot;</span><span class="hl opt">):</span>
+        <span class="hl kwa">if</span> options<span class="hl opt">.</span>data <span class="hl opt">!=</span> <span class="hl str">'pacman'</span><span class="hl opt">:</span>
+            classifier <span class="hl opt">=</span> mira<span class="hl opt">.</span><span class="hl kwd">MiraClassifier</span><span class="hl opt">(</span>legalLabels<span class="hl opt">,</span> options<span class="hl opt">.</span>iterations<span class="hl opt">)</span>
+        <span class="hl kwa">if</span> <span class="hl opt">(</span>options<span class="hl opt">.</span>autotune<span class="hl opt">):</span>
+            <span class="hl kwa">print</span> <span class="hl str">&quot;using automatic tuning for MIRA&quot;</span>
+            classifier<span class="hl opt">.</span>automaticTuning <span class="hl opt">=</span> <span class="hl kwa">True</span>
+        <span class="hl kwa">else</span><span class="hl opt">:</span>
+            <span class="hl kwa">print</span> <span class="hl str">&quot;using default C=0.001 for MIRA&quot;</span>
+    <span class="hl kwa">elif</span><span class="hl opt">(</span>options<span class="hl opt">.</span>classifier <span class="hl opt">==</span> <span class="hl str">'minicontest'</span><span class="hl opt">):</span>
+        <span class="hl kwa">import</span> minicontest
+        classifier <span class="hl opt">=</span> minicontest<span class="hl opt">.</span><span class="hl kwd">contestClassifier</span><span class="hl opt">(</span>legalLabels<span class="hl opt">)</span>
+    <span class="hl kwa">else</span><span class="hl opt">:</span>
+        <span class="hl kwa">print</span> <span class="hl str">&quot;Unknown classifier:&quot;</span><span class="hl opt">,</span> options<span class="hl opt">.</span>classifier
+        <span class="hl kwa">print</span> USAGE_STRING
+
+        sys<span class="hl opt">.</span><span class="hl kwd">exit</span><span class="hl opt">(</span><span class="hl num">2</span><span class="hl opt">)</span>
+
+    args<span class="hl opt">[</span><span class="hl str">'agentToClone'</span><span class="hl opt">] =</span> options<span class="hl opt">.</span>agentToClone
+
+    args<span class="hl opt">[</span><span class="hl str">'classifier'</span><span class="hl opt">] =</span> classifier
+    args<span class="hl opt">[</span><span class="hl str">'featureFunction'</span><span class="hl opt">] =</span> featureFunction
+    args<span class="hl opt">[</span><span class="hl str">'printImage'</span><span class="hl opt">] =</span> printImage
+
+    <span class="hl kwa">return</span> args<span class="hl opt">,</span> options
+
+<span class="hl slc"># Dictionary containing full path to .pkl file that contains the agent's training, validation, and testing data.</span>
+MAP_AGENT_TO_PATH_OF_SAVED_GAMES <span class="hl opt">= {</span>
+    <span class="hl str">'FoodAgent'</span><span class="hl opt">: (</span><span class="hl str">'pacmandata/food_training.pkl'</span><span class="hl opt">,</span><span class="hl str">'pacmandata/food_validation.pkl'</span><span class="hl opt">,</span><span class="hl str">'pacmandata/food_test.pkl'</span> <span class="hl opt">),</span>
+    <span class="hl str">'StopAgent'</span><span class="hl opt">: (</span><span class="hl str">'pacmandata/stop_training.pkl'</span><span class="hl opt">,</span><span class="hl str">'pacmandata/stop_validation.pkl'</span><span class="hl opt">,</span><span class="hl str">'pacmandata/stop_test.pkl'</span> <span class="hl opt">),</span>
+    <span class="hl str">'SuicideAgent'</span><span class="hl opt">: (</span><span class="hl str">'pacmandata/suicide_training.pkl'</span><span class="hl opt">,</span><span class="hl str">'pacmandata/suicide_validation.pkl'</span><span class="hl opt">,</span><span class="hl str">'pacmandata/suicide_test.pkl'</span> <span class="hl opt">),</span>
+    <span class="hl str">'GoodReflexAgent'</span><span class="hl opt">: (</span><span class="hl str">'pacmandata/good_reflex_training.pkl'</span><span class="hl opt">,</span><span class="hl str">'pacmandata/good_reflex_validation.pkl'</span><span class="hl opt">,</span><span class="hl str">'pacmandata/good_reflex_test.pkl'</span> <span class="hl opt">),</span>
+    <span class="hl str">'ContestAgent'</span><span class="hl opt">: (</span><span class="hl str">'pacmandata/contest_training.pkl'</span><span class="hl opt">,</span><span class="hl str">'pacmandata/contest_validation.pkl'</span><span class="hl opt">,</span> <span class="hl str">'pacmandata/contest_test.pkl'</span> <span class="hl opt">)</span>
+<span class="hl opt">}</span>
+<span class="hl slc"># Main harness code</span>
+
+
+
+<span class="hl kwa">def</span> <span class="hl kwd">runClassifier</span><span class="hl opt">(</span>args<span class="hl opt">,</span> options<span class="hl opt">):</span>
+    featureFunction <span class="hl opt">=</span> args<span class="hl opt">[</span><span class="hl str">'featureFunction'</span><span class="hl opt">]</span>
+    classifier <span class="hl opt">=</span> args<span class="hl opt">[</span><span class="hl str">'classifier'</span><span class="hl opt">]</span>
+    printImage <span class="hl opt">=</span> args<span class="hl opt">[</span><span class="hl str">'printImage'</span><span class="hl opt">]</span>
+    
+    <span class="hl slc"># Load data</span>
+    numTraining <span class="hl opt">=</span> options<span class="hl opt">.</span>training
+    numTest <span class="hl opt">=</span> options<span class="hl opt">.</span>test
+
+    <span class="hl kwa">if</span><span class="hl opt">(</span>options<span class="hl opt">.</span>data<span class="hl opt">==</span><span class="hl str">&quot;pacman&quot;</span><span class="hl opt">):</span>
+        agentToClone <span class="hl opt">=</span> args<span class="hl opt">.</span><span class="hl kwd">get</span><span class="hl opt">(</span><span class="hl str">'agentToClone'</span><span class="hl opt">,</span> <span class="hl kwa">None</span><span class="hl opt">)</span>
+        trainingData<span class="hl opt">,</span> validationData<span class="hl opt">,</span> testData <span class="hl opt">=</span> MAP_AGENT_TO_PATH_OF_SAVED_GAMES<span class="hl opt">.</span><span class="hl kwd">get</span><span class="hl opt">(</span>agentToClone<span class="hl opt">, (</span><span class="hl kwa">None</span><span class="hl opt">,</span> <span class="hl kwa">None</span><span class="hl opt">,</span> <span class="hl kwa">None</span><span class="hl opt">))</span>
+        trainingData <span class="hl opt">=</span> trainingData <span class="hl kwa">or</span> args<span class="hl opt">.</span><span class="hl kwd">get</span><span class="hl opt">(</span><span class="hl str">'trainingData'</span><span class="hl opt">,</span> <span class="hl kwa">False</span><span class="hl opt">)</span> <span class="hl kwa">or</span> MAP_AGENT_TO_PATH_OF_SAVED_GAMES<span class="hl opt">[</span><span class="hl str">'ContestAgent'</span><span class="hl opt">][</span><span class="hl num">0</span><span class="hl opt">]</span>
+        validationData <span class="hl opt">=</span> validationData <span class="hl kwa">or</span> args<span class="hl opt">.</span><span class="hl kwd">get</span><span class="hl opt">(</span><span class="hl str">'validationData'</span><span class="hl opt">,</span> <span class="hl kwa">False</span><span class="hl opt">)</span> <span class="hl kwa">or</span> MAP_AGENT_TO_PATH_OF_SAVED_GAMES<span class="hl opt">[</span><span class="hl str">'ContestAgent'</span><span class="hl opt">][</span><span class="hl num">1</span><span class="hl opt">]</span>
+        testData <span class="hl opt">=</span> testData <span class="hl kwa">or</span> MAP_AGENT_TO_PATH_OF_SAVED_GAMES<span class="hl opt">[</span><span class="hl str">'ContestAgent'</span><span class="hl opt">][</span><span class="hl num">2</span><span class="hl opt">]</span>
+        rawTrainingData<span class="hl opt">,</span> trainingLabels <span class="hl opt">=</span> samples<span class="hl opt">.</span><span class="hl kwd">loadPacmanData</span><span class="hl opt">(</span>trainingData<span class="hl opt">,</span> numTraining<span class="hl opt">)</span>
+        rawValidationData<span class="hl opt">,</span> validationLabels <span class="hl opt">=</span> samples<span class="hl opt">.</span><span class="hl kwd">loadPacmanData</span><span class="hl opt">(</span>validationData<span class="hl opt">,</span> numTest<span class="hl opt">)</span>
+        rawTestData<span class="hl opt">,</span> testLabels <span class="hl opt">=</span> samples<span class="hl opt">.</span><span class="hl kwd">loadPacmanData</span><span class="hl opt">(</span>testData<span class="hl opt">,</span> numTest<span class="hl opt">)</span>
+    <span class="hl kwa">else</span><span class="hl opt">:</span>
+        rawTrainingData <span class="hl opt">=</span> samples<span class="hl opt">.</span><span class="hl kwd">loadDataFile</span><span class="hl opt">(</span><span class="hl str">&quot;digitdata/trainingimages&quot;</span><span class="hl opt">,</span> numTraining<span class="hl opt">,</span>DIGIT_DATUM_WIDTH<span class="hl opt">,</span>DIGIT_DATUM_HEIGHT<span class="hl opt">)</span>
+        trainingLabels <span class="hl opt">=</span> samples<span class="hl opt">.</span><span class="hl kwd">loadLabelsFile</span><span class="hl opt">(</span><span class="hl str">&quot;digitdata/traininglabels&quot;</span><span class="hl opt">,</span> numTraining<span class="hl opt">)</span>
+        rawValidationData <span class="hl opt">=</span> samples<span class="hl opt">.</span><span class="hl kwd">loadDataFile</span><span class="hl opt">(</span><span class="hl str">&quot;digitdata/validationimages&quot;</span><span class="hl opt">,</span> numTest<span class="hl opt">,</span>DIGIT_DATUM_WIDTH<span class="hl opt">,</span>DIGIT_DATUM_HEIGHT<span class="hl opt">)</span>
+        validationLabels <span class="hl opt">=</span> samples<span class="hl opt">.</span><span class="hl kwd">loadLabelsFile</span><span class="hl opt">(</span><span class="hl str">&quot;digitdata/validationlabels&quot;</span><span class="hl opt">,</span> numTest<span class="hl opt">)</span>
+        rawTestData <span class="hl opt">=</span> samples<span class="hl opt">.</span><span class="hl kwd">loadDataFile</span><span class="hl opt">(</span><span class="hl str">&quot;digitdata/testimages&quot;</span><span class="hl opt">,</span> numTest<span class="hl opt">,</span>DIGIT_DATUM_WIDTH<span class="hl opt">,</span>DIGIT_DATUM_HEIGHT<span class="hl opt">)</span>
+        testLabels <span class="hl opt">=</span> samples<span class="hl opt">.</span><span class="hl kwd">loadLabelsFile</span><span class="hl opt">(</span><span class="hl str">&quot;digitdata/testlabels&quot;</span><span class="hl opt">,</span> numTest<span class="hl opt">)</span>
+
+
+    <span class="hl slc"># Extract features</span>
+    <span class="hl kwa">print</span> <span class="hl str">&quot;Extracting features...&quot;</span>
+    trainingData <span class="hl opt">=</span> <span class="hl kwb">map</span><span class="hl opt">(</span>featureFunction<span class="hl opt">,</span> rawTrainingData<span class="hl opt">)</span>
+    validationData <span class="hl opt">=</span> <span class="hl kwb">map</span><span class="hl opt">(</span>featureFunction<span class="hl opt">,</span> rawValidationData<span class="hl opt">)</span>
+    testData <span class="hl opt">=</span> <span class="hl kwb">map</span><span class="hl opt">(</span>featureFunction<span class="hl opt">,</span> rawTestData<span class="hl opt">)</span>
+
+    <span class="hl slc"># Conduct training and testing</span>
+    <span class="hl kwa">print</span> <span class="hl str">&quot;Training...&quot;</span>
+    classifier<span class="hl opt">.</span><span class="hl kwd">train</span><span class="hl opt">(</span>trainingData<span class="hl opt">,</span> trainingLabels<span class="hl opt">,</span> validationData<span class="hl opt">,</span> validationLabels<span class="hl opt">)</span>
+    <span class="hl kwa">print</span> <span class="hl str">&quot;Validating...&quot;</span>
+    guesses <span class="hl opt">=</span> classifier<span class="hl opt">.</span><span class="hl kwd">classify</span><span class="hl opt">(</span>validationData<span class="hl opt">)</span>
+    correct <span class="hl opt">= [</span>guesses<span class="hl opt">[</span>i<span class="hl opt">] ==</span> validationLabels<span class="hl opt">[</span>i<span class="hl opt">]</span> <span class="hl kwa">for</span> i <span class="hl kwa">in</span> <span class="hl kwb">range</span><span class="hl opt">(</span><span class="hl kwb">len</span><span class="hl opt">(</span>validationLabels<span class="hl opt">))].</span><span class="hl kwd">count</span><span class="hl opt">(</span><span class="hl kwa">True</span><span class="hl opt">)</span>
+    <span class="hl kwa">print</span> <span class="hl kwb">str</span><span class="hl opt">(</span>correct<span class="hl opt">), (</span><span class="hl str">&quot;correct out of &quot;</span> <span class="hl opt">+</span> <span class="hl kwb">str</span><span class="hl opt">(</span><span class="hl kwb">len</span><span class="hl opt">(</span>validationLabels<span class="hl opt">)) +</span> <span class="hl str">&quot; (%.1f%%).&quot;</span><span class="hl opt">) % (</span><span class="hl num">100.0</span> <span class="hl opt">*</span> correct <span class="hl opt">/</span> <span class="hl kwb">len</span><span class="hl opt">(</span>validationLabels<span class="hl opt">))</span>
+    <span class="hl kwa">print</span> <span class="hl str">&quot;Testing...&quot;</span>
+    guesses <span class="hl opt">=</span> classifier<span class="hl opt">.</span><span class="hl kwd">classify</span><span class="hl opt">(</span>testData<span class="hl opt">)</span>
+    correct <span class="hl opt">= [</span>guesses<span class="hl opt">[</span>i<span class="hl opt">] ==</span> testLabels<span class="hl opt">[</span>i<span class="hl opt">]</span> <span class="hl kwa">for</span> i <span class="hl kwa">in</span> <span class="hl kwb">range</span><span class="hl opt">(</span><span class="hl kwb">len</span><span class="hl opt">(</span>testLabels<span class="hl opt">))].</span><span class="hl kwd">count</span><span class="hl opt">(</span><span class="hl kwa">True</span><span class="hl opt">)</span>
+    <span class="hl kwa">print</span> <span class="hl kwb">str</span><span class="hl opt">(</span>correct<span class="hl opt">), (</span><span class="hl str">&quot;correct out of &quot;</span> <span class="hl opt">+</span> <span class="hl kwb">str</span><span class="hl opt">(</span><span class="hl kwb">len</span><span class="hl opt">(</span>testLabels<span class="hl opt">)) +</span> <span class="hl str">&quot; (%.1f%%).&quot;</span><span class="hl opt">) % (</span><span class="hl num">100.0</span> <span class="hl opt">*</span> correct <span class="hl opt">/</span> <span class="hl kwb">len</span><span class="hl opt">(</span>testLabels<span class="hl opt">))</span>
+    <span class="hl kwd">analysis</span><span class="hl opt">(</span>classifier<span class="hl opt">,</span> guesses<span class="hl opt">,</span> testLabels<span class="hl opt">,</span> testData<span class="hl opt">,</span> rawTestData<span class="hl opt">,</span> printImage<span class="hl opt">)</span>
+
+    <span class="hl slc"># do odds ratio computation if specified at command line</span>
+    <span class="hl kwa">if</span><span class="hl opt">((</span>options<span class="hl opt">.</span>odds<span class="hl opt">) &amp; (</span>options<span class="hl opt">.</span>classifier <span class="hl opt">==</span> <span class="hl str">&quot;naiveBayes&quot;</span> <span class="hl kwa">or</span> <span class="hl opt">(</span>options<span class="hl opt">.</span>classifier <span class="hl opt">==</span> <span class="hl str">&quot;nb&quot;</span><span class="hl opt">)) ):</span>
+        label1<span class="hl opt">,</span> label2 <span class="hl opt">=</span> options<span class="hl opt">.</span>label1<span class="hl opt">,</span> options<span class="hl opt">.</span>label2
+        features_odds <span class="hl opt">=</span> classifier<span class="hl opt">.</span><span class="hl kwd">findHighOddsFeatures</span><span class="hl opt">(</span>label1<span class="hl opt">,</span>label2<span class="hl opt">)</span>
+        <span class="hl kwa">if</span><span class="hl opt">(</span>options<span class="hl opt">.</span>classifier <span class="hl opt">==</span> <span class="hl str">&quot;naiveBayes&quot;</span> <span class="hl kwa">or</span> options<span class="hl opt">.</span>classifier <span class="hl opt">==</span> <span class="hl str">&quot;nb&quot;</span><span class="hl opt">):</span>
+            string3 <span class="hl opt">=</span> <span class="hl str">&quot;=== Features with highest odd ratio of label %d over label %d ===&quot;</span> <span class="hl opt">% (</span>label1<span class="hl opt">,</span> label2<span class="hl opt">)</span>
+        <span class="hl kwa">else</span><span class="hl opt">:</span>
+            string3 <span class="hl opt">=</span> <span class="hl str">&quot;=== Features for which weight(label %d)-weight(label %d) is biggest ===&quot;</span> <span class="hl opt">% (</span>label1<span class="hl opt">,</span> label2<span class="hl opt">)</span>
+
+        <span class="hl kwa">print</span> string3
+        <span class="hl kwd">printImage</span><span class="hl opt">(</span>features_odds<span class="hl opt">)</span>
+
+    <span class="hl kwa">if</span><span class="hl opt">((</span>options<span class="hl opt">.</span>weights<span class="hl opt">) &amp; (</span>options<span class="hl opt">.</span>classifier <span class="hl opt">==</span> <span class="hl str">&quot;perceptron&quot;</span><span class="hl opt">)):</span>
+        <span class="hl kwa">for</span> l <span class="hl kwa">in</span> classifier<span class="hl opt">.</span>legalLabels<span class="hl opt">:</span>
+            features_weights <span class="hl opt">=</span> classifier<span class="hl opt">.</span><span class="hl kwd">findHighWeightFeatures</span><span class="hl opt">(</span>l<span class="hl opt">)</span>
+            <span class="hl kwa">print</span> <span class="hl opt">(</span><span class="hl str">&quot;=== Features with high weight for label %d ===&quot;</span><span class="hl opt">%</span>l<span class="hl opt">)</span>
+            <span class="hl kwd">printImage</span><span class="hl opt">(</span>features_weights<span class="hl opt">)</span>
+
+<span class="hl kwa">if</span> __name__ <span class="hl opt">==</span> <span class="hl str">'__main__'</span><span class="hl opt">:</span>
+    <span class="hl slc"># Read input</span>
+    args<span class="hl opt">,</span> options <span class="hl opt">=</span> <span class="hl kwd">readCommand</span><span class="hl opt">(</span> sys<span class="hl opt">.</span>argv<span class="hl opt">[</span><span class="hl num">1</span><span class="hl opt">:] )</span>
+    <span class="hl slc"># Run classifier</span>
+    <span class="hl kwd">runClassifier</span><span class="hl opt">(</span>args<span class="hl opt">,</span> options<span class="hl opt">)</span>
+</pre>
+</body>
+</html>
+<!--HTML generated by highlight 3.8, http://www.andre-simon.de/-->

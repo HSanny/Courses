@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<title>./perceptron.py</title>
+<link rel="stylesheet" type="text/css" href="highlight.css">
+</head>
+<body class="hl">
+<pre class="hl"><span class="hl slc"># perceptron.py</span>
+<span class="hl slc"># -------------</span>
+<span class="hl slc"># Licensing Information:  You are free to use or extend these projects for </span>
+<span class="hl slc"># educational purposes provided that (1) you do not distribute or publish </span>
+<span class="hl slc"># solutions, (2) you retain this notice, and (3) you provide clear </span>
+<span class="hl slc"># attribution to UC Berkeley, including a link to </span>
+<span class="hl slc"># http://inst.eecs.berkeley.edu/~cs188/pacman/pacman.html</span>
+<span class="hl slc"># </span>
+<span class="hl slc"># Attribution Information: The Pacman AI projects were developed at UC Berkeley.</span>
+<span class="hl slc"># The core projects and autograders were primarily created by John DeNero </span>
+<span class="hl slc"># (denero&#64;cs.berkeley.edu) and Dan Klein (klein&#64;cs.berkeley.edu).</span>
+<span class="hl slc"># Student side autograding was added by Brad Miller, Nick Hay, and </span>
+<span class="hl slc"># Pieter Abbeel (pabbeel&#64;cs.berkeley.edu).</span>
+
+
+<span class="hl slc"># Perceptron implementation</span>
+<span class="hl kwa">import</span> util
+PRINT <span class="hl opt">=</span> <span class="hl kwa">True</span>
+
+<span class="hl kwa">class</span> PerceptronClassifier<span class="hl opt">:</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    Perceptron classifier.</span>
+<span class="hl str"></span>
+<span class="hl str">    Note that the variable 'datum' in this code refers to a counter of features</span>
+<span class="hl str">    (not to a raw samples.Datum).</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+    <span class="hl kwa">def</span> <span class="hl kwd">__init__</span><span class="hl opt">(</span> self<span class="hl opt">,</span> legalLabels<span class="hl opt">,</span> max_iterations<span class="hl opt">):</span>
+        self<span class="hl opt">.</span>legalLabels <span class="hl opt">=</span> legalLabels
+        self<span class="hl opt">.</span><span class="hl kwb">type</span> <span class="hl opt">=</span> <span class="hl str">&quot;perceptron&quot;</span>
+        self<span class="hl opt">.</span>max_iterations <span class="hl opt">=</span> max_iterations
+        self<span class="hl opt">.</span>weights <span class="hl opt">= {}</span>
+        <span class="hl kwa">for</span> label <span class="hl kwa">in</span> legalLabels<span class="hl opt">:</span>
+            self<span class="hl opt">.</span>weights<span class="hl opt">[</span>label<span class="hl opt">] =</span> util<span class="hl opt">.</span><span class="hl kwd">Counter</span><span class="hl opt">()</span> <span class="hl slc"># this is the data-structure you should use</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">setWeights</span><span class="hl opt">(</span>self<span class="hl opt">,</span> weights<span class="hl opt">):</span>
+        <span class="hl kwa">assert</span> <span class="hl kwb">len</span><span class="hl opt">(</span>weights<span class="hl opt">) ==</span> <span class="hl kwb">len</span><span class="hl opt">(</span>self<span class="hl opt">.</span>legalLabels<span class="hl opt">);</span>
+        self<span class="hl opt">.</span>weights <span class="hl opt">=</span> weights<span class="hl opt">;</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">train</span><span class="hl opt">(</span> self<span class="hl opt">,</span> trainingData<span class="hl opt">,</span> trainingLabels<span class="hl opt">,</span> validationData<span class="hl opt">,</span> validationLabels <span class="hl opt">):</span>
+        <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">        The training loop for the perceptron passes through the training data several</span>
+<span class="hl str">        times and updates the weight vector for each label based on classification errors.</span>
+<span class="hl str">        See the project description for details.</span>
+<span class="hl str"></span>
+<span class="hl str">        Use the provided self.weights[label] data structure so that</span>
+<span class="hl str">        the classify method works correctly. Also, recall that a</span>
+<span class="hl str">        datum is a counter from features to values for those features</span>
+<span class="hl str">        (and thus represents a vector a values).</span>
+<span class="hl str">        &quot;&quot;&quot;</span>
+
+        self<span class="hl opt">.</span>features <span class="hl opt">=</span> trainingData<span class="hl opt">[</span><span class="hl num">0</span><span class="hl opt">].</span><span class="hl kwd">keys</span><span class="hl opt">()</span> <span class="hl slc"># could be useful later</span>
+        <span class="hl slc"># DO NOT ZERO OUT YOUR WEIGHTS BEFORE STARTING TRAINING, OR</span>
+        <span class="hl slc"># THE AUTOGRADER WILL LIKELY DEDUCT POINTS.</span>
+
+        <span class="hl kwa">for</span> iteration <span class="hl kwa">in</span> <span class="hl kwb">range</span><span class="hl opt">(</span>self<span class="hl opt">.</span>max_iterations<span class="hl opt">):</span>
+            <span class="hl kwa">print</span> <span class="hl str">&quot;Starting iteration &quot;</span><span class="hl opt">,</span> iteration<span class="hl opt">,</span> <span class="hl str">&quot;...&quot;</span>
+            <span class="hl kwa">for</span> i <span class="hl kwa">in</span> <span class="hl kwb">range</span><span class="hl opt">(</span><span class="hl kwb">len</span><span class="hl opt">(</span>trainingData<span class="hl opt">)):</span>
+                <span class="hl str">&quot;*** YOUR CODE HERE ***&quot;</span>
+                util<span class="hl opt">.</span><span class="hl kwd">raiseNotDefined</span><span class="hl opt">()</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">classify</span><span class="hl opt">(</span>self<span class="hl opt">,</span> data <span class="hl opt">):</span>
+        <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">        Classifies each datum as the label that most closely matches the prototype vector</span>
+<span class="hl str">        for that label.  See the project description for details.</span>
+<span class="hl str"></span>
+<span class="hl str">        Recall that a datum is a util.counter...</span>
+<span class="hl str">        &quot;&quot;&quot;</span>
+        guesses <span class="hl opt">= []</span>
+        <span class="hl kwa">for</span> datum <span class="hl kwa">in</span> data<span class="hl opt">:</span>
+            vectors <span class="hl opt">=</span> util<span class="hl opt">.</span><span class="hl kwd">Counter</span><span class="hl opt">()</span>
+            <span class="hl kwa">for</span> l <span class="hl kwa">in</span> self<span class="hl opt">.</span>legalLabels<span class="hl opt">:</span>
+                vectors<span class="hl opt">[</span>l<span class="hl opt">] =</span> self<span class="hl opt">.</span>weights<span class="hl opt">[</span>l<span class="hl opt">] *</span> datum
+            guesses<span class="hl opt">.</span><span class="hl kwd">append</span><span class="hl opt">(</span>vectors<span class="hl opt">.</span><span class="hl kwd">argMax</span><span class="hl opt">())</span>
+        <span class="hl kwa">return</span> guesses
+
+
+    <span class="hl kwa">def</span> <span class="hl kwd">findHighWeightFeatures</span><span class="hl opt">(</span>self<span class="hl opt">,</span> label<span class="hl opt">):</span>
+        <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">        Returns a list of the 100 features with the greatest weight for some label</span>
+<span class="hl str">        &quot;&quot;&quot;</span>
+        featuresWeights <span class="hl opt">= []</span>
+
+        <span class="hl str">&quot;*** YOUR CODE HERE ***&quot;</span>
+        util<span class="hl opt">.</span><span class="hl kwd">raiseNotDefined</span><span class="hl opt">()</span>
+
+        <span class="hl kwa">return</span> featuresWeights
+</pre>
+</body>
+</html>
+<!--HTML generated by highlight 3.8, http://www.andre-simon.de/-->

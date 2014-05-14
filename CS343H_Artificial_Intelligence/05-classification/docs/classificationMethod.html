@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<title>./classificationMethod.py</title>
+<link rel="stylesheet" type="text/css" href="highlight.css">
+</head>
+<body class="hl">
+<pre class="hl"><span class="hl slc"># classificationMethod.py</span>
+<span class="hl slc"># -----------------------</span>
+<span class="hl slc"># Licensing Information:  You are free to use or extend these projects for </span>
+<span class="hl slc"># educational purposes provided that (1) you do not distribute or publish </span>
+<span class="hl slc"># solutions, (2) you retain this notice, and (3) you provide clear </span>
+<span class="hl slc"># attribution to UC Berkeley, including a link to </span>
+<span class="hl slc"># http://inst.eecs.berkeley.edu/~cs188/pacman/pacman.html</span>
+<span class="hl slc"># </span>
+<span class="hl slc"># Attribution Information: The Pacman AI projects were developed at UC Berkeley.</span>
+<span class="hl slc"># The core projects and autograders were primarily created by John DeNero </span>
+<span class="hl slc"># (denero&#64;cs.berkeley.edu) and Dan Klein (klein&#64;cs.berkeley.edu).</span>
+<span class="hl slc"># Student side autograding was added by Brad Miller, Nick Hay, and </span>
+<span class="hl slc"># Pieter Abbeel (pabbeel&#64;cs.berkeley.edu).</span>
+
+
+<span class="hl slc"># This file contains the abstract class ClassificationMethod</span>
+
+<span class="hl kwa">class</span> ClassificationMethod<span class="hl opt">:</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    ClassificationMethod is the abstract superclass of</span>
+<span class="hl str">     - MostFrequentClassifier</span>
+<span class="hl str">     - NaiveBayesClassifier</span>
+<span class="hl str">     - PerceptronClassifier</span>
+<span class="hl str">     - MiraClassifier</span>
+<span class="hl str"></span>
+<span class="hl str">    As such, you need not add any code to this file.  You can write</span>
+<span class="hl str">    all of your implementation code in the files for the individual</span>
+<span class="hl str">    classification methods listed above.</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+    <span class="hl kwa">def</span> <span class="hl kwd">__init__</span><span class="hl opt">(</span>self<span class="hl opt">,</span> legalLabels<span class="hl opt">):</span>
+        <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">        For digits dataset, the set of legal labels will be 0,1,..,9</span>
+<span class="hl str">        For faces dataset, the set of legal labels will be 0 (non-face) or 1 (face)</span>
+<span class="hl str">        &quot;&quot;&quot;</span>
+        self<span class="hl opt">.</span>legalLabels <span class="hl opt">=</span> legalLabels
+
+
+    <span class="hl kwa">def</span> <span class="hl kwd">train</span><span class="hl opt">(</span>self<span class="hl opt">,</span> trainingData<span class="hl opt">,</span> trainingLabels<span class="hl opt">,</span> validationData<span class="hl opt">,</span> validationLabels<span class="hl opt">):</span>
+        <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">        This is the supervised training function for the classifier.  Two sets of</span>
+<span class="hl str">        labeled data are passed in: a large training set and a small validation set.</span>
+<span class="hl str"></span>
+<span class="hl str">        Many types of classifiers have a common training structure in practice: using</span>
+<span class="hl str">        training data for the main supervised training loop but tuning certain parameters</span>
+<span class="hl str">        with a small held-out validation set.</span>
+<span class="hl str"></span>
+<span class="hl str">        For some classifiers (naive Bayes, MIRA), you will need to return the parameters'</span>
+<span class="hl str">        values after training and tuning step.</span>
+<span class="hl str"></span>
+<span class="hl str">        To make the classifier generic to multiple problems, the data should be represented</span>
+<span class="hl str">        as lists of Counters containing feature descriptions and their counts.</span>
+<span class="hl str">        &quot;&quot;&quot;</span>
+        abstract
+
+    <span class="hl kwa">def</span> <span class="hl kwd">classify</span><span class="hl opt">(</span>self<span class="hl opt">,</span> data<span class="hl opt">):</span>
+        <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">        This function returns a list of labels, each drawn from the set of legal labels</span>
+<span class="hl str">        provided to the classifier upon construction.</span>
+<span class="hl str"></span>
+<span class="hl str">        To make the classifier generic to multiple problems, the data should be represented</span>
+<span class="hl str">        as lists of Counters containing feature descriptions and their counts.</span>
+<span class="hl str">        &quot;&quot;&quot;</span>
+        abstract
+</pre>
+</body>
+</html>
+<!--HTML generated by highlight 3.8, http://www.andre-simon.de/-->

@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<title>./naiveBayes.py</title>
+<link rel="stylesheet" type="text/css" href="highlight.css">
+</head>
+<body class="hl">
+<pre class="hl"><span class="hl kwa">import</span> util
+<span class="hl kwa">import</span> classificationMethod
+<span class="hl kwa">import</span> math
+
+<span class="hl kwa">class</span> <span class="hl kwd">NaiveBayesClassifier</span><span class="hl opt">(</span>classificationMethod<span class="hl opt">.</span>ClassificationMethod<span class="hl opt">):</span>
+  <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">  See the project description for the specifications of the Naive Bayes classifier.</span>
+<span class="hl str">  </span>
+<span class="hl str">  Note that the variable 'datum' in this code refers to a counter of features</span>
+<span class="hl str">  (not to a raw samples.Datum).</span>
+<span class="hl str">  &quot;&quot;&quot;</span>
+  <span class="hl kwa">def</span> <span class="hl kwd">__init__</span><span class="hl opt">(</span>self<span class="hl opt">,</span> legalLabels<span class="hl opt">):</span>
+    self<span class="hl opt">.</span>legalLabels <span class="hl opt">=</span> legalLabels
+    self<span class="hl opt">.</span><span class="hl kwb">type</span> <span class="hl opt">=</span> <span class="hl str">&quot;naivebayes&quot;</span>
+    self<span class="hl opt">.</span>k <span class="hl opt">=</span> <span class="hl num">1</span> <span class="hl slc"># this is the smoothing parameter, ** use it in your train method **</span>
+    self<span class="hl opt">.</span>automaticTuning <span class="hl opt">=</span> <span class="hl kwa">False</span> <span class="hl slc"># Look at this flag to decide whether to choose k automatically ** use this in your train method **</span>
+    
+  <span class="hl kwa">def</span> <span class="hl kwd">setSmoothing</span><span class="hl opt">(</span>self<span class="hl opt">,</span> k<span class="hl opt">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    This is used by the main method to change the smoothing parameter before training.</span>
+<span class="hl str">    Do not modify this method.</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+    self<span class="hl opt">.</span>k <span class="hl opt">=</span> k
+
+  <span class="hl kwa">def</span> <span class="hl kwd">train</span><span class="hl opt">(</span>self<span class="hl opt">,</span> trainingData<span class="hl opt">,</span> trainingLabels<span class="hl opt">,</span> validationData<span class="hl opt">,</span> validationLabels<span class="hl opt">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    Outside shell to call your method. Do not modify this method.</span>
+<span class="hl str">    &quot;&quot;&quot;</span>  
+      
+    self<span class="hl opt">.</span>features <span class="hl opt">=</span> trainingData<span class="hl opt">[</span><span class="hl num">0</span><span class="hl opt">].</span><span class="hl kwd">keys</span><span class="hl opt">()</span> <span class="hl slc"># this could be useful for your code later...</span>
+    
+    <span class="hl kwa">if</span> <span class="hl opt">(</span>self<span class="hl opt">.</span>automaticTuning<span class="hl opt">):</span>
+        kgrid <span class="hl opt">= [</span><span class="hl num">0.001</span><span class="hl opt">,</span> <span class="hl num">0.01</span><span class="hl opt">,</span> <span class="hl num">0.05</span><span class="hl opt">,</span> <span class="hl num">0.1</span><span class="hl opt">,</span> <span class="hl num">0.5</span><span class="hl opt">,</span> <span class="hl num">1</span><span class="hl opt">,</span> <span class="hl num">5</span><span class="hl opt">,</span> <span class="hl num">10</span><span class="hl opt">,</span> <span class="hl num">20</span><span class="hl opt">,</span> <span class="hl num">50</span><span class="hl opt">]</span>
+    <span class="hl kwa">else</span><span class="hl opt">:</span>
+        kgrid <span class="hl opt">= [</span>self<span class="hl opt">.</span>k<span class="hl opt">]</span>
+        
+    self<span class="hl opt">.</span><span class="hl kwd">trainAndTune</span><span class="hl opt">(</span>trainingData<span class="hl opt">,</span> trainingLabels<span class="hl opt">,</span> validationData<span class="hl opt">,</span> validationLabels<span class="hl opt">,</span> kgrid<span class="hl opt">)</span>
+      
+  <span class="hl kwa">def</span> <span class="hl kwd">trainAndTune</span><span class="hl opt">(</span>self<span class="hl opt">,</span> trainingData<span class="hl opt">,</span> trainingLabels<span class="hl opt">,</span> validationData<span class="hl opt">,</span> validationLabels<span class="hl opt">,</span> kgrid<span class="hl opt">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    Trains the classifier by collecting counts over the training data, and</span>
+<span class="hl str">    stores the Laplace smoothed estimates so that they can be used to classify.</span>
+<span class="hl str">    Evaluate each value of k in kgrid to choose the smoothing parameter </span>
+<span class="hl str">    that gives the best accuracy on the held-out validationData.</span>
+<span class="hl str">    </span>
+<span class="hl str">    trainingData and validationData are lists of feature Counters.  The corresponding</span>
+<span class="hl str">    label lists contain the correct label for each datum.</span>
+<span class="hl str">    </span>
+<span class="hl str">    To get the list of all possible features or labels, use self.features and </span>
+<span class="hl str">    self.legalLabels.</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+
+    <span class="hl str">&quot;*** YOUR CODE HERE ***&quot;</span>
+    util<span class="hl opt">.</span><span class="hl kwd">raiseNotDefined</span><span class="hl opt">()</span>
+        
+  <span class="hl kwa">def</span> <span class="hl kwd">classify</span><span class="hl opt">(</span>self<span class="hl opt">,</span> testData<span class="hl opt">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    Classify the data based on the posterior distribution over labels.</span>
+<span class="hl str">    </span>
+<span class="hl str">    You shouldn't modify this method.</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+    guesses <span class="hl opt">= []</span>
+    self<span class="hl opt">.</span>posteriors <span class="hl opt">= []</span> <span class="hl slc"># Log posteriors are stored for later data analysis (autograder).</span>
+    <span class="hl kwa">for</span> datum <span class="hl kwa">in</span> testData<span class="hl opt">:</span>
+      posterior <span class="hl opt">=</span> self<span class="hl opt">.</span><span class="hl kwd">calculateLogJointProbabilities</span><span class="hl opt">(</span>datum<span class="hl opt">)</span>
+      guesses<span class="hl opt">.</span><span class="hl kwd">append</span><span class="hl opt">(</span>posterior<span class="hl opt">.</span><span class="hl kwd">argMax</span><span class="hl opt">())</span>
+      self<span class="hl opt">.</span>posteriors<span class="hl opt">.</span><span class="hl kwd">append</span><span class="hl opt">(</span>posterior<span class="hl opt">)</span>
+    <span class="hl kwa">return</span> guesses
+      
+  <span class="hl kwa">def</span> <span class="hl kwd">calculateLogJointProbabilities</span><span class="hl opt">(</span>self<span class="hl opt">,</span> datum<span class="hl opt">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    Returns the log-joint distribution over legal labels and the datum.</span>
+<span class="hl str">    Each log-probability should be stored in the log-joint counter, e.g.    </span>
+<span class="hl str">    logJoint[3] = &lt;Estimate of log( P(Label = 3, datum) )&gt;</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+    logJoint <span class="hl opt">=</span> util<span class="hl opt">.</span><span class="hl kwd">Counter</span><span class="hl opt">()</span>
+    
+    <span class="hl str">&quot;*** YOUR CODE HERE ***&quot;</span>
+    util<span class="hl opt">.</span><span class="hl kwd">raiseNotDefined</span><span class="hl opt">()</span>
+    
+    <span class="hl kwa">return</span> logJoint
+  
+  <span class="hl kwa">def</span> <span class="hl kwd">findHighOddsFeatures</span><span class="hl opt">(</span>self<span class="hl opt">,</span> label1<span class="hl opt">,</span> label2<span class="hl opt">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    Returns the 100 best features for the odds ratio:</span>
+<span class="hl str">            P(feature=1 | label1)/P(feature=1 | label2) </span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+    featuresOdds <span class="hl opt">= []</span>
+        
+    <span class="hl str">&quot;*** YOUR CODE HERE ***&quot;</span>
+    util<span class="hl opt">.</span><span class="hl kwd">raiseNotDefined</span><span class="hl opt">()</span>
+
+    <span class="hl kwa">return</span> featuresOdds
+    
+
+    
+      
+</pre>
+</body>
+</html>
+<!--HTML generated by highlight 3.8, http://www.andre-simon.de/-->

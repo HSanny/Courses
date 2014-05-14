@@ -1,0 +1,115 @@
+Class Reading for 02/18
+Textbook Chapter 16.1-16.3
+Textbook Chapter 17.1-17.3
+[optional] Chapters 3 and 4 of Sutton and Barto give a good introduction to MDPs.
+Email response: write a solution for Exercise 16.1, 16.17, and 17.7 (a-b)
+***********************************************************************
+16.1
+First round:
+    a. high 
+    b. high
+    c. low
+    d. high
+    e. low
+    f. low 
+    g. high
+    h. high
+    i. low
+    j. low
+
+Second round:
+    a. low
+    b. high
+    c. high
+    d. high
+    e. low
+    f. high
+    g. low
+    h. low
+    i. low
+    j. high
+
+16.17
+a.
+    BUY <--- TEST <--- SHAPE
+      \        |        /
+       \       |       /
+        \      |      / 
+         \     |     /
+          \    |    /
+           \   |   /
+            \  |  /
+             V V V
+               U
+
+b.
+    gain = 500 * 0.7 - 200 * 0.3 = 350 - 60 = 290
+
+c.
+    Given: 
+        P(pass(c1,t1)|q+(c1)) = 0.8
+        P(pass(c1,t1)|q−(c1)) = 0.35
+        P(q+(c1)) = 0.7
+
+    It is easy to have:
+        P(fail(c1,t1)|q+(c1)) = 1 - P(pass(c1,t1)|q+(c1)) = 0.2
+        P(fail(c1,t1)|q-(c1)) = 1 - P(pass(c1,t1)|q-(c1)) = 0.65
+    By sum rule: 
+        P(pass(c1,t1)) = P(pass(c1,t1)|q+(c1)) * P(q+(c1)) 
+                    + P(pass(c1,t1)|q-(c1)) * P(q-(c1))
+                       = 0.8 * 0.7 + 0.35 * 0.3 
+                       = 0.665
+        P(fail(c1,t1)) = 1 - P(pass(c1,t1)) = 0.335
+    By Bayes's rule:
+        P(q+(c1)|pass(c1,t1)) = P(pass(c1,t1)|q+(c1)) * P(q+(c1)) / P(pass(c1,t1))
+                              = 0.8 * 0.7 / 0.665 = 0.84
+        P(q-(c1)|pass(c1,t1)) = 1 - P(q+(c1)|pass(c1,t1)) = 0.16
+        
+    Similarly:
+        P(q+(c1)|fail(c1,t1)) = P(fail(c1,t1)|q+(c1)) * P(q+(c1)) / P(fail(c1,t1))
+                              = 0.35 * 0.3 / 0.335  = 0.31
+        P(q-(c1)|fail(c1,t1)) = 1 - P(q+(c1)|fail(c1,t1)) = 0.69
+
+d.
+    Given the test fails, 
+        EU(buy|fail) = 0.31 * 2000 + 0.69 * (2000 - 700) - 1500 - 50 = -33
+        EU(not buy|fail) = -50 
+        Since EU(buy|fail) > EU(not buy|fail),
+            optimal solution is to buy even if the test fails.
+
+    Given the test passes, 
+        EU(buy|pass) = 0.84 * 2000 + 0.16 * (2000 - 700) - 1500 - 50 = 338
+        EU(not buy|pass) = -50
+        Since EU(buy|pass) > EU(not buy|pass), the optimal decision is to buy
+            if the test passes.
+
+e. 
+    If test is not done,
+        EU(buy) = 0.7 * 2000 + 0.3 * 1300 - 1500 = 1400 + 390 - 1500 = 290
+        EU(not buy) = 0 
+
+    Conditional plan for the buyer is, 
+        if 
+
+
+17.7 
+
+
+a. Let UA(s) be the utility of state s when it is A’s turn to move in s, and
+let UB(s) be the utility of state s when it is B’s turn to move in s. All
+rewards and utilities are calculated from A’s point of view (just as in a
+minimax game tree). Write down Bellman equations defining UA(s) and UB(s).  
+
+b.  Explain how to do two-player value iteration with these equations, and
+define a suitable termination criterion.
+
+c. Consider the game described in Figure 5.17 on page 197. Draw the state
+space (rather than the game tree), showing the moves by A as solid lines and
+moves by B as dashed lines. Mark each state with R(s). You will find it
+helpful to arrange the states (sA,sB) on a two-dimensional grid, using sA and
+sB as “coordinates.”
+
+d. Now apply two-player value iteration to solve this game, and derive the
+optimal policy.
+
+

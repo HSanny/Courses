@@ -1,0 +1,197 @@
+Readings: due Tues 3/25 (email response due Mon 3/24 by 8 pm)
+Textbook Chapter 14.5
+Email response: write a solution for either 14.15 (a)-(c) --OR--14.17 (a)-(b),
+and respond to the reading
+======================================================================
+
+Reading Response:
+    
+Section 14.5 illustrates us several methods of approximate inference over
+Bayesian Network. One family approach is through sampling. The most basic one
+is Direct Sampling. To deal with hard-to-sample probability distribution,
+Rejected Sampling method is illustrated. Likelihood Weighting is presented
+further to tackle the inefficiency problem caused by rejected sampling. It is
+a particular case of a general statistical technique called importance
+sampling, tailored for inference in Bayesian networks.  Another family of
+approach is to employ Markov Chain Monto Carlo (MCMC) Method.  One particular
+form of MCMC method introduced here is Gibbs Sampling.  The sampling process
+in Gibbs sampling satisfies "dynamic equilibrium", thus it must return consistent
+estimates for posterior probabilities. 
+
+Insight: 
+     The reject sampling requires the target distribution to be easily
+     evaluated on its domain. Otherwise, the computation of p(x) would be
+     hard and we cannot easily derive another distribution to be upper bound
+     of target distribution p(x).
+
+
+I choose to write solution 14.15.
+Given the query P(Burglary | JohnCalls = true, MaryCalls = true). 
+(a) Perform the calculations indicated and check that the answer is correct.
+####################################
+By provided variable elimination:
+    P(B |j,m) = α P(B) \sum_{E} P(E) \sum_{A} P(A|B,E) P(j |A) P(m|A) 
+
+STEP 1.
+    F'(A,B,E,j,m) = P(A|B,E)* P(j |A) * P(m|A)  
+
+    A B E J M      F'(A,B,E,j,m) 
+    t t t t t  0.95*0.9*0.7=0.5985
+    t t f t t  0.94*0.9*0.7=0.5922
+    t f t t t  0.29*0.9*0.7=0.1827
+    t f f t t  0.001*0.9*0.7=0.00063
+    f t t t t  0.05*0.05*0.01=0.000025
+    f t f t t  0.06*0.05*0.01=0.00003
+    f f t t t  0.71*0.05*0.01=0.000355
+    f f f t t  0.999*0.05*0.01=0.0004995
+    
+    #Multiplications = 8 * 2 = 16
+
+STEP 2. 
+    F'_1(B,E,j,m) = \sum_{A} P(A,B,E,j,m)
+
+    B E J M  F'_1(B,E,j,m)
+    t t j m  0.598525
+    t f j m  0.59223
+    f t j m  0.183055
+    f f j m  0.0011295
+
+    #Additions: 4
+
+STEP 3.
+    F'_2(B,E,j,m) = P(E) * F'_1(B,E,j,m)
+
+    B E J M     F'_2(B,E,j,m)
+    t t j m  0.598525*0.002=0.00119705
+    t f j m  0.59223*0.998=0.59104554
+    f t j m  0.183055*0.002=0.00036611
+    f f j m  0.0011295*0.998=0.001127241
+
+    #Multiplications = 4
+
+STEP 4. 
+    F'_3(B,j,m) = \sum_{E} F'_2(B,E,j,m) 
+
+    B J M   F'_3(B,j,m)
+    t t t   0.59224259
+    f t t   0.001493351
+
+    #Additions = 2
+
+STEP 5.
+    F'_3(B,j,m) = P(B) * F'_3(B,j,m) 
+
+    B J M   F'_3(B,j,m)
+    t t t   0.001*0.59224259=0.00059224259
+    f t t   0.998*0.001493351=0.00149036429
+
+    #Multiplications = 2
+
+STEP 6. Normalization
+    P(B|j,m) = F'_3(B,j,m)/(\sum_{B} F'_3(B,j,m))
+
+    B J M   P(B|j,m)
+    t t t   0.28437560429
+    f t t   0.7156243957
+
+    #Additions = 1
+    #Divisions = 2
+
+    Thus, we have that
+    P(Burglary = true | JohnCalls = true, MaryCalls = true) = 28.4%
+    P(Burglary = false | JohnCalls = true, MaryCalls = true) = 71.6%
+    
+####################################
+Check it by method of enumeration:
+
+STEP 1. Derive joint distribution
+    P(A,B,E,j,m) = P(B) P(E) P(A|B,E) P(j |A) P(m|A)  
+
+    A B E J M       P(A,B,E,j,m) 
+    t t t t t 0.95*0.001*0.002*0.9*0.7
+    t t f t t 0.94*0.001*0.998*0.9*0.7
+    t f t t t 0.29*0.999*0.002*0.9*0.7
+    t f f t t 0.001*0.999*0.998*0.9*0.7
+    f t t t t 0.05*0.001*0.002*0.05*0.01
+    f t f t t 0.06*0.001*0.998*0.05*0.01
+    f f t t t 0.71*0.999*0.002*0.05*0.01
+    f f f t t 0.999*0.999*0.998*0.05*0.01
+
+    #Multiplication operations: 8 * 4 = 32
+
+STEP 2. Derive marginals P(B,j,m)
+    P(B,j,m) = \sum_{A,E} P(A,B,E,j,m)
+
+    B J M    P(B,j,m)
+    t t t    0.00059224259
+    f t t    0.00149185764
+
+    #Addition Operations: 2 * 3 = 6
+
+STEP 3. Derive marginals P(j,m)
+    P(j,m) = \sum_{B} P(B,j,m)
+
+    J M   P(j,m)
+    t t   0.00208410023
+    
+    #Addition Operations: 1
+
+STEP 4. Derive conditional P(B|j,m)
+    P(B|j,m) = P(B,j,m) / P(j,m)
+
+    B J M    P(B|j,m) 
+    t t t     0.28417183659
+    f t t     0.7158281634
+
+    #Division Operation: 2
+
+    Thus, we successfully verify that
+    P(Burglary = true | JohnCalls = true, MaryCalls = true) = 28.4%
+    P(Burglary = false | JohnCalls = true, MaryCalls = true) = 71.6%
+
+(b) Count the number of arithmetic operations performed, and compare it with
+the number performed by the enumeration algorithm.
+
+Variable Elimination Algorithm:
+    #Multiplication: 22
+    #Addition: 7
+    #Division: 2
+
+Enumeration Algorithm:
+    #Multiplication: 32
+    #Addition: 7
+    #Division: 2
+
+As shown above, the number of multiplications operation is lower for VE
+algorithm than enumeration algorithm, while additions and divisions equal.
+
+(c) Suppose a network has the form of a chain: a sequence of Boolean variables
+X1,...,Xn where P arents(Xi) = {Xi−1} for i = 2, . . . , n. What is the
+complexity of computing P(X1 | Xn = true ) using enumeration? Using variable
+elimination?
+
+Enumeration:
+    O((n-1)*2^n) = O(n*2^n)
+
+    Binary variable, k = 2. Thus, 2^n entries in joint distribution table,
+    each entry requires (n-1) multiplications.
+
+Variable Elimination:
+    O(4 + 2 + (8+4)*(n-3) + 2 + 2) = O(n)
+
+    n-1 directed edges in total. For tail of chain, two multiplications and two
+    additions. For head of chain, four multiplications and two additions. For
+    each of mediate n-3 edges, eight multiplications and four additions.
+
+
+Readings: due Thurs 3/27 (email response due Wed 3/26 by 8 pm)
+Textbook Chapter 16.5-16.7
+Email response: write a solution for either 16.5 --OR-- 16.15, and respond to
+the reading.
+======================================================================
+
+
+
+
+
+

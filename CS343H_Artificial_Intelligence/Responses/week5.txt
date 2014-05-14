@@ -1,0 +1,192 @@
+Class Reading for 2/11
+Textbook Chapter 13.1-13.5
+Email response: write solutions to Exercises 13.3, 13.10a-b, and 13.21. 
+
+
+13.3 For each of the following statements, either prove it is true or give a counterexample.
+a. If P(a|b,c) = P(b|a,c), then P(a|c) = P(b|c) 
+b. If P(a|b,c) = P(a), then P(b|c) = P(b)
+c. If P(a|b) = P(a), then P(a|b,c) = P(a|c)
+
+a. It is true. 
+
+    According to the product rule, 
+        P(a,b,c) = P(a|b,c)*P(b,c)
+        P(a,b,c) = P(b|a,c)*P(a,c)
+    That is to say, 
+        P(a|b,c) = P(a,b,c) / P(b,c)
+        P(b|a,c) = P(a,b,c) / P(a,c)
+    Since P(a|b,c) = P(b|a,c), we have
+        P(a,c) = P(b,c)
+    Thus, 
+        P(a,c)/P(c) = P(b,c)/P(c)
+    that is,
+        P(a|c) = P(b|c)
+
+b. Obviously, it is false.
+
+    Consider variables a,b,c are all binary.
+        a b c   P
+        0 0 0  0.15
+        0 0 1  0.1
+        0 1 0  0.1
+        0 1 1  0.15
+        1 0 0  0.15
+        1 0 1  0.1
+        1 1 0  0.1
+        1 1 1  0.15
+    where, 
+        a  P
+        0 0.5
+        1 0.5
+    and 
+        b c  P
+        0 0 0.3
+        0 1 0.2
+        1 0 0.2
+        1 1 0.3
+
+    In this counterexample, 
+        P(a|b,c) = P(a) 
+    But 
+        P(b|c) != P(b)
+
+c. Obviously, it is false. 
+Independence does not imply conditional independence.
+    
+    Consider variables a,b,c are all binary.
+        a b c    P 
+        0 0 0   0.32
+        0 0 1   0.32
+        0 1 0   0.08
+        0 1 1   0.08
+        1 0 0   0.08
+        1 0 1   0.08
+        1 1 0   0.004
+        1 1 1   0.036
+    while 
+                         P(c|a,b)
+        a = 0, b = 0      0.5/0.5
+        a = 0, b = 1      0.5/0.5
+        a = 1, b = 0      0.5/0.5     
+        a = 1, b = 1      0.1/0.9
+
+        a  P 
+        0 0.8
+        1 0.2
+
+        b  P
+        0 0.8
+        1 0.2
+
+        a b  P
+        0 0 0.64
+        0 1 0.16
+        1 0 0.16
+        1 1 0.04
+
+13.10 Deciding to put probability theory to good use, we encounter a slot
+machine with three independent wheels, each producing one of the four symbols
+BAR, BELL, LEMON, or CHERRY with equal probability. The slot machine has the
+following payout scheme for a bet of 1 coin (where “?” denotes that we don’t
+care what comes up for that wheel):
+
+    BAR/BAR/BAR pays 20 coins 
+    BELL/BELL/BELL pays 15 coins 
+    LEMON/LEMON/LEMON pays 5 coins 
+    CHERRY/CHERRY/CHERRY pays 3 coins 
+    CHERRY/CHERRY/? pays 2 coins
+    CHERRY/?/? pays 1 coin 
+
+a. Compute the expected “payback” percentage of the machine. In other words,
+for each coin played, what is the expected coin return?  
+
+    P(BAR/BAR/BAR) = 0.25**3 = 0.015625
+    P(BELL/BELL/BELL) = 0.25**3 = 0.015625
+    P(LEMON/LEMON/LEMON) = 0.25**3 = 0.015625
+    P(CHERRY/CHERRY/CHERRY) = 0.25**3 = 0.015625
+    P(CHERRY/CHERRY/?) = 0.25**3 * 3 = 0.046875
+    P(CHERRY/?/?) = 0.25**3 * 12 = 0.1875
+
+    E = (-1) + 0.015625*(20+15+5+3) + 0.046875 * 2 + 0.1875
+      = -0.046875
+
+b. Compute the probability that playing the slot machine once will
+result in a win.
+    P(win) = 0.015625 * (3 + 16) = 0.296875
+
+c. Estimate the mean and median number of plays you can expect to make until
+you go broke, if you start with 10 coins. You can run a simulation to estimate
+this, rather than trying to compute an exact answer.
+    
+    In my simulation of running games, the result I derive is as follows:
+        mean = 24
+        median = 20
+
+13.21 Suppose you are a witness to a nighttime hit-and-run accident involving a taxi
+in Athens. All taxis in Athens are blue or green. You swear, under oath, that
+the taxi was blue. Extensive testing shows that, under the dim lighting
+conditions, discrimination between blue and green is 75% reliable.
+
+a. Is it possible to calculate the most likely color for the taxi? (Hint:
+distinguish carefully between the proposition that the taxi is blue and the
+proposition that it appears blue.)
+
+    Here, we use T to represent the real color of that taxi, O represents the
+    color perceived by the witness.
+
+    P(T=blue|O=blue) = 0.75 and P(T=green|O=blue) = 0.25
+
+    P(T) = sum_O (P(T|O) * P(O))
+    
+    It is impossible since we do not know P(O). 
+
+b. What if you know that 9 out of 10 Athenian taxis are green?
+
+    Since we know that 90% of taxis are green, we have exact information of
+    P(O). P(O=green) = 0.9 and P(O=blue) = 0.1.
+
+    Thus, we can evaluate P(T) by the following
+        P(T) = sum_O (P(T|O) * P(O))
+
+=====================================================================
+Class Reading for 2/13
+Textbook Chapter 14.1-14.2
+Email response: write a solution for Exercise 14.1 (describe the network in
+14.1(a); no drawing needed)
+
+We have a bag of three biased coins a, b, and c with probabilities of coming
+up heads of 20%, 60%, and 80%, respectively. One coin is drawn randomly from
+the bag (with equal likelihood of drawing each of the three coins), and then
+the coin is flipped three times to generate the outcomes X1, X2, and X3.  
+
+a.  Draw the Bayesian network corresponding to this setup and define the
+necessary CPTs. 
+
+       coin       
+       / | \      
+      /  |  \     
+     V   V   V         
+    X1   X2  X3
+
+ P(Xn|coin)  head   tail
+     a        20%    80%
+     b        60%    40%
+     c        80%    20%
+
+b. Calculate which coin was most likely to have been drawn from the bag if the
+observed flips come out heads twice and tails once.
+
+    H is used to indicate the number of heads in one play.
+
+    The objective is to compute P(coin|H=2).
+
+    P(H=2) = P(H=2,coin=a) + P(H=2,coin=b) + P(H=2,coin=c)
+           = P(H=2|coin=a) * P(coin=a) + P(H=2|coin=b) * P(coin=b) +
+             P(H=2|coin=c) * P(coin=c)
+           = 0.096 * 0.333 + 0.432 * 0.333 + 0.384 * 0.333
+           = 0.303696
+
+    P(coin=a|H=2) = P(H=2,coin=a) / P(H=2) = 10.5%
+    P(coin=b|H=2) = P(H=2,coin=b) / P(H=2) = 47.4%
+    P(coin=c|H=2) = P(H=2,coin=c) / P(H=2) = 42.1%

@@ -1,0 +1,255 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%  THIS TEX FILE IS TO GENERATE PDF FILE FOR 
+%%%     DATA MINING HOMEWORK 04
+%%%  COPYRIGHT (C) JIMMY LIN, 2013, UT AUSTIN
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[11pt,a4paper]{article}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%  PACKAGES USED IN THIS TEX SOURCE FILE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{geometry,amsthm,amsmath,graphicx,fancyheadings,framed}
+\usepackage{tikz}
+\usepackage{fancybox}
+\usetikzlibrary{automata,positioning}
+\usepackage[colorlinks,
+            linkcolor=blue,
+            anchorcolor=red,
+            citecolor=green
+            ]{hyperref}
+\usepackage{/Users/JimmyLin/workspace/latexTemplate/UTA_CS/JS}
+\usepackage{/Users/JimmyLin/workspace/latexTemplate/UTA_CS/JSASGN}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% MACROS CONTAINING THE FILE INFORMATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\COURSE}{CS363D Statistical Learning and Data Mining}
+\renewcommand{\LECTURER}{Pradeep Ravikumar}
+\renewcommand{\TUTOR}{Adarsh Prasad}
+\renewcommand{\TASK}{Homework 04}
+\renewcommand{\RELEASEDATE}{March. 25 2014}
+\renewcommand{\DUEDATE}{April. 16 2014}
+\renewcommand{\TIMECONSUME}{7 hours}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% DOCUMENTATION STARTS FROM HERE 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% TITLE PAGE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{titlepage}
+    \maketitle
+\end{titlepage}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% CONTENT PAGE: TABLEOFCONTENTS, LISTOFTABLES, LIST OF FIGURES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\contentsname}{Contents}
+\begin{center} 
+    \tableofcontents 
+    %\listoftables 
+    \listoffigures
+\end{center}
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% GENERAL DOCUMENTATION BEGINS 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\xii}{\ensuremath{x_i}}
+\newcommand{\xbar}{\ensuremath{\bar{x}}}
+\newcommand{\xihat}{\ensuremath{\hat{\xii}}}
+
+\newcommand{\X}{\ensuremath{\mathbf{X}}}
+\newcommand{\Xhat}{\ensuremath{\hat{\mathbf{X}} }}
+\newcommand{\Y}{\ensuremath{\mathbf{Y}}}
+\newcommand{\Yhat}{\ensuremath{\hat{\mathbf{Y}}}}
+
+\newcommand{\yii}{\ensuremath{y_i}}
+\newcommand{\yihat}{\ensuremath{\hat{\yii}}}
+
+\newcommand{\wxs}{\ensuremath{w_{(\X)}^*}}
+\newcommand{\wzs}{\ensuremath{w_0^*}}
+\newcommand{\wos}{\ensuremath{w_1^*}}
+\newcommand{\sxi}{\ensuremath{\Sigma_{i=1}^{n} \xii}}
+\newcommand{\sxis}{\ensuremath{\Sigma_{i=1}^{n} \xii^2}}
+\newcommand{\sxihat}{\ensuremath{\Sigma_{i=1}^{n} \xihat}}
+\newcommand{\sxihats}{\ensuremath{\Sigma_{i=1}^{n} \xihat^2}}
+\newcommand{\sy}{\ensuremath{\Sigma_{i=1}^{n} y_i}}
+\newcommand{\sxy}{\ensuremath{\Sigma_{i=1}^{n} \xii y_i}}
+\newcommand{\sxhaty}{\ensuremath{\Sigma_{i=1}^{n} \xihat y_i}}
+\newcommand{\deta}{\ensuremath{\frac{1}{\sxis - (\sxi)^2}}}
+\newcommand{\detahat}{\ensuremath{\frac{1}{\sxihats - (\sxihat)^2}}}
+\renewcommand{\sin}{\ensuremath{\Sigma_1^n}}
+\newcommand{\ximxbar}{\ensuremath{(\xii - \xbar)}}
+
+\newcommand{\syhat}{\ensuremath{\Sigma_{i=1}^{n} \yihat}}
+\newcommand{\sxyhat}{\ensuremath{\Sigma_{i=1}^{n} \xii \yihat}}
+\section{Variation of Linear Regression}
+In the scenario of one-dimensional input, we have input matrix $\X$ to be
+\begin{align} \label{1:xandy}
+    \X = 
+    \begin{pmatrix}
+        1 & x_1 \\
+        1 & x_2 \\
+        \vdots & \vdots \\
+        1 & x_n 
+    \end{pmatrix} \hspace{0.5cm}
+        \Xhat = 
+    \begin{pmatrix}
+        1 & \hat{x}_1 \\
+        1 & \hat{x}_2 \\
+        \vdots & \vdots \\
+        1 & \hat{x}_n 
+    \end{pmatrix} \hspace{0.5cm}
+    \Y = 
+    \begin{pmatrix}
+        y_1 \\
+        y_2 \\
+        \vdots \\
+        y_n 
+    \end{pmatrix}
+\end{align}
+According to the normal equation, we have
+\begin{align}
+    \wxs = (\X^T \X)^{-1} \X^{T} \Y
+\end{align}
+By \eqref{1:xandy}, we have
+\begin{align}
+    \X^T \X = 
+    \begin{pmatrix}
+        1 & \sxi \\
+        \sxi & \sxis 
+    \end{pmatrix}
+\end{align}
+By inverting above equation, we have
+\begin{align}
+    (\X^T \X)^{-1} = \deta
+    \begin{pmatrix}
+        \sxis & -\sxi \\
+        -\sxi & 1
+    \end{pmatrix} 
+\end{align}
+And for representational convenience, we compute $\X^{T} \Y$ first as follows,
+\begin{align}
+    \X^{T} \Y = 
+    \begin{pmatrix}
+        \sy \\ \sxy 
+    \end{pmatrix}
+\end{align}
+From above series of computatoin, we have
+\begin{align}
+    w_{0(\X)}^* = w_{0(\Y)}^* &= \deta  \big(\sxis \ \sy - \sxi \ \sxy\big) \\
+    w_{1(\X)}^* = w_{1(\X)}^* &= \deta  \big(\sxi \ \sy -  \sxy\big) 
+\end{align}
+Similarly, for $\Xhat$, we have
+\begin{align} \label{1:w0xhat}
+    w_{0(\Xhat)}^* &= \detahat  \big(\sxihats \ \sy - \sxihat \ \sxhaty \big) \\
+    w_{1(\Xhat)}^* &= \detahat  \big(\sxihat \ \sy -  \sxhaty \big)
+    \label{1:w1xhat}
+\end{align}
+And similar for $\Yhat$, we have
+\begin{align}
+    w_{0(\Yhat)}^* &= \detahat  \big(\sxis \ \syhat - \sxi \ \sxyhat \big) \\
+    w_{1(\Yhat)}^* &= \detahat  \big(\sxi \ \syhat -  \sxyhat \big)
+\end{align}
+
+\newpage
+\subsection{$\xihat = \xii - \xbar$}
+By taking $\xihat = \xii - \xbar$ and $\xbar = \frac{1}{n} \sxi$ into \eqref{1:w0xhat} and \eqref{1:w1xhat},
+we have 
+\begin{align}
+    w_{0(\Xhat)}^* &= \sy  \neq w_{0(\X)}^* \\
+    w_{1(\Xhat)}^* &=  \frac{\sxi \ \sy -  \sxy}{\sxis - n \xihat^2} 
+    = w_{1(\X)}^*
+\end{align}
+We will get {\bf different $\wzs$ but the same $\wos$}.
+
+\newcommand{\at}{\alpha^2}
+\subsection{$\xihat = \alpha \xii$}
+
+\begin{align}
+    w_{0(\Xhat)}^* &= \frac{\at \sxis \ \sy - \at \sxi \ \sxy}{\at \sxis - \at
+        (\sxi)^2} \\
+        &= \frac{ \sxis \ \sy - \sxi \ \sxy}{\sxis - (\sxi)^2} \\
+        &= w_{0(\X)}^* \\
+    w_{1(\Xhat)}^* &= \frac{\alpha \sxis \ \sy - \alpha \sxi \ \sxy}{\at \sxis - \at
+        (\sxi)^2} \\
+    &= \frac{1}{\alpha} \frac{ \sxis \ \sy - \sxi \ \sxy}{\sxis -  (\sxi)^2} \\
+        &= \frac{1}{\alpha} w_{1(\X)}^* 
+\end{align}
+Hence, we can conclude that the {\bf $\wzs$ remain unchanged and $\wos$ becomes
+    $\frac{1}{\alpha}$ of original}, in the case of $\xihat = \alpha \xii$.
+
+\subsection{$\yii = \alpha \yii$}
+\begin{align}
+    w_{0(\Yhat)}^* &= \frac{\alpha \sxis \ \sy - \alpha \sxi \ \sxy}{ \sxis -
+        (\sxi)^2} \\
+    &= \alpha \frac{ \sxis \ \sy - \sxi \ \sxy}{\sxis - (\sxi)^2} \\
+        &= \alpha w_{0(\Y)}^* \\
+    w_{1(\Yhat)}^* &= \frac{\alpha \sxis \ \sy - \alpha \sxi \ \sxy}{ \sxis -
+        (\sxi)^2} \\
+    &= \alpha \frac{ \sxis \ \sy - \sxi \ \sxy}{\sxis - (\sxi)^2} \\
+        &= \alpha w_{1(\Y)}^* \\
+\end{align}
+
+Hence, we can conclude that {\bf the $\wzs$ and $\wos$ increase to $\alpha$
+    multiples of original}.
+
+\newpage
+\section{Why not $k$-means?}
+\textbf{Observation}: entities of two different classes approximately
+form two circles of distinct radius. 
+
+\noindent
+\textbf{Conclusion}: $k$-means algorithm will not discover two clusters.
+
+\noindent
+\textbf{Explanation}: 
+
+Logically, we provide the explicit explanation by two conditions. We first
+use notation $s$ to denote the scenario of two clusters are precisely
+discovered by $k$-means algorithm.
+
+Suppose that by execution of $k$-means algorithm, $s$ is not reachable.
+Without any doubt, the two clusters cannot be precisely discovered in this
+case because we postulate that $s$ is not reachable.
+
+Suppose that $s$ is reachable by $k$-means algorithm, $s$ is not stable state
+(not the state to which algorithm will converged).  Put it another
+way, given those two clusters ("o" and "+") are discovered,
+they will not after recomputation of centroid, and reassignment of data points
+(two stages in $k$-means algorithm). The centroids of two clusters will be in
+the center of the diagram, according to the recomputation of cluster
+centroid, which takes the means of all cluster members. Based on our
+observation above, both blue "o" and red "+" points will be segregated by new
+cluster membership after the reassignment of these data points.
+
+\newpage
+\section{Hierarchical Clustering}
+\subsection{Single-Link Clustering}
+For MIN Hierarchical Clustering,
+\begin{itemize}
+    \item{Step one: merge p2, p5 by Similarity 0.98}
+    \item{Step two: merge p3, (p2,p5) by Similarly 0.85}
+    \item{Step three: merge p4, (p2,p3,p5) by Similarity 0.76}
+    \item{Step four: merge p1, (p2,p3,p5) by Similarity 0.55}
+\end{itemize}
+
+The resulting clusters are (p1), (p2,p3,p5). 
+
+The dendrogram is in the attachment.
+
+\subsection{Complete-Link Clustering}
+For MAX Hierarchical Clustering,
+\begin{itemize}
+    \item{Step one: merge p2, p5 by Similarity 0.98}
+    \item{Step two: merge p3, (p2,p5) by Similarly 0.64}
+    \item{Step three: merge p1, p4 by Similarity 0.55}
+    \item{Step four: merge (p1,p4), (p2,p3,p5) by similarity 0.1}
+\end{itemize}
+
+The resulting clusters are (p1,p4), (p2,p3,p5).
+
+The dendrogram is in the attachment.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% General Documentation ends
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}

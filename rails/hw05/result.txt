@@ -1,0 +1,32 @@
+() 10 True
+('a',) 5 True
+('b',) 7 True
+('c',) 5 True
+('d',) 9 True
+('e',) 6 True
+('a', 'b') 3 True
+('a', 'c') 2 False
+('a', 'd') 4 True
+('a', 'e') 4 True
+('b', 'c') 3 True
+('b', 'd') 6 True
+('b', 'e') 4 True
+('c', 'd') 4 True
+('c', 'e') 2 False
+('d', 'e') 6 True
+('a', 'b', 'c') 1 False
+('a', 'b', 'd') 2 False
+('a', 'b', 'e') 2 False
+('a', 'c', 'd') 1 False
+('a', 'c', 'e') 1 False
+('a', 'd', 'e') 4 True
+('b', 'c', 'd') 2 False
+('b', 'c', 'e') 1 False
+('b', 'd', 'e') 4 True
+('c', 'd', 'e') 2 False
+('a', 'b', 'c', 'd') 0 False
+('a', 'b', 'c', 'e') 0 False
+('a', 'b', 'd', 'e') 2 False
+('a', 'c', 'd', 'e') 1 False
+('b', 'c', 'd', 'e') 1 False
+# Frequent Items:  16

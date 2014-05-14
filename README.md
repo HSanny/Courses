@@ -11,16 +11,15 @@ Beijing Institute of Technology:
 List of Courses 
 ------------
 
-#### Taken at UT Austin: 
+Taken at UT Austin: 
 
     CS331_Algorithm_And_Complexity
     CS343H_Artificial_Intelligence
     CS363D_Statistical_Learning_And_Data_Mining
     CS371D_Distributed_System
 
-#### Taken at ANU:
+Taken at ANU:
 
-#### Taken at BIT:
 
 List of Operations
 -------------
@@ -30,3 +29,4 @@ Merge a new repository
 
 Fetch files of one repository
 
+    svn export https://github.com/JimmyLin192/[repository_name]/trunk

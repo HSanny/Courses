@@ -1,0 +1,30 @@
+1996-08-06,a1071009@abc.def.net,Mindy Brooks
+1997-02-04,a1926011@abc.def.net,Amy Carroll
+1997-02-12,a1970022@abc.def.net,Judy Brittain
+1997-03-19,a1971024@abc.def.net,RW Burchfield
+1927-10-16,greta@gmail.net.au,Greta Garbo 
+1992-04-01,freda@nurkes.com,Freda Nurke
+1905-10-16,chuck@cs.anu.edu.au,Charlie Chaplin 
+1848-04-01,cwj@cs,Chris W. Johnson
+2000-02-28,xmaspere@north.pole.net,Santa Claus
+1997-05-13,a1971025@abc.def.net,Ida-Merete Erlandsen
+1997-03-21,a1972029@abc.def.net,Akiko Busch
+1996-12-05,a1974032@abc.def.net,Richard Bird
+1997-02-05,a1976040@abc.def.net,Dante Alighieri
+1996-11-12,a1977043@abc.def.net,Sylvia Cosh
+1997-01-05,a1978046@abc.def.net,Jacqueline M Atkins
+1996-11-03,a1979053@abc.def.net,Pam Dawson
+1997-02-03,a1981061@abc.def.net,Janet De Boer
+1996-10-28,a1982066@abc.def.net,Matsuo Basho
+1997-03-15,a1982067@abc.def.net,Jeanette Cook
+1996-07-03,a1982068@abc.def.net,Molly Duncan
+1997-04-23,a1985087@abc.def.net,Paige Gilchrist Blomgren
+1997-02-20,a1985088@abc.def.net,Jenny Dowde
+1976-10-21,a1986096@abc.def.net,Celeste Marie Adams
+1996-10-21,a1987110@abc.def.net,Gil Docking
+1997-05-11,a1987111@abc.def.net,Kaffe Fassett
+1977-04-15,a1988124@abc.def.net,Charlotte Warr Andersen
+1997-05-01,a1988125@abc.def.net,Tom Ang
+1997-01-07,a1988126@abc.def.net,Glynda Black
+1997-03-14,a1988127@abc.def.net,Phillip Cave
+1997-04-17,a1988128@abc.def.net,Pamela Clabburn

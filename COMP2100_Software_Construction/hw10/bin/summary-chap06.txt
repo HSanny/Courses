@@ -1,0 +1,18 @@
+CHAPTER
+
+6
+
+Multi-format calculator
+
+Synthesis This stand-alone application is a mathematical calculator
+that supports multiple numbering bases (binary, decimal, hexadecimal)
+and formats (fixed point, floating point, rational). The application
+converts operands and result in/from the current base and format upon user
+requests. Focus: this case study exemplifies the use of UML interaction
+diagrams and Use Cases to describe the exchange of messages among objects
+representing different bases and formats. OO techniques: inheritance and
+polymorphism. Java features: exception handling Background: the reader
+is required to know the basic OO techniques, which are exemplified in
+previous chapters.
+
+

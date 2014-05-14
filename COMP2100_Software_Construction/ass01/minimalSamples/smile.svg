@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg">
+  <title>Big Smiley face</title>
+  <!-- smile without the entity construct -->
+
+<!-- transform by hand to scale original up by factor of 10 -->
+    <rect x="5" y="5" width="290" height="390" fill="#000000" stroke="#FF0000"/>
+    <g transform="translate(0, 5)">
+    <circle cx="150" cy="150" r="100" fill="#FFFF00"/>
+    <circle cx="120" cy="120" r="15" fill="#000000"/>
+    <circle cx="170" cy="120" r="15" fill="#000000"/>
+
+  <!-- expand the path to lines: d="M 10 19 L 15 23 20 19" -->
+    <line stroke="#000000" stroke-width="20" x1="100" y1="190" x2="150" y2="230"/>
+    <line stroke="#000000" stroke-width="20" x1="150" y1="230" x2="200" y2="190"/>
+    </g>
+
+</svg>

@@ -1,0 +1,8 @@
+Bugs and Progress Notes for Gaga
+
+DEVELOPMENT NOTES
+9/3/2011 compiled and minimal tested gaga4 + comments
+9/3/2011 gaga4+comments loaded into repository as gaga/trunk for distribution
+
+BUGS
+8/3/11	colours in 3 digit form #579 interpreted as #000579 not as browsers appear to do #050709 (check whether this is the truth) -- cwj

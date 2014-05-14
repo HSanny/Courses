@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- saved from url=(0063)http://cs.anu.edu.au/student/comp2100/homeworks/hw-01-2013.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Homework hwNN Software Construction COMP2100/2500/6442 ANU</title>
+  <meta name="GENERATOR" content="Quanta Plus">
+  
+	<style>
+	.codeblock {background-color:lightgrey;margin-right:60%}
+	OL.alpha { list-style-type: lower-alpha }
+	.highlight {background-color:yellow}
+	dt {font-weight:bold}
+	.VCS {white-space:pre; font-size:smaller;
+		border:thin solid black; padding: 2pt; margin-left:60%} <!-- version control info block -->
+	</style>
+</head>
+<body><div style="position: absolute; top: 0px; left: 0px; width: 1px; height: 1px; z-index: 2147483647;" id="_GPL_e6a00_parent_div"><object type="application/x-shockwave-flash" id="_GPL_e6a00_swf" data="http://savingsslider-a.akamaihd.net/items/e6a00/storage.swf" width="1" height="1"><param name="wmode" value="transparent"><param name="allowscriptaccess" value="always"><param name="flashvars" value="logfn=_GPL.items.e6a00.log&amp;onload=_GPL.items.e6a00.onload&amp;onerror=_GPL.items.e6a00.onerror&amp;LSOName=gpl"></object></div>
+    <h1 align="CENTER"><font color="#931515">
+COMP2100/2500/6442<br>
+Homework Task 
+hw-<span style="color:red">01</span> 2013</font></h1>
+<h2 align="center">
+Gentle revision: an ordered array 
+    </h2>
+
+<div class="VCS">$Revision: 1159 $ 
+$LastChangedDate: 2013-01-23 16:08:54 +1100 (Wed, 23 Jan 2013) $ 
+$LastChangedBy: cwj $
+</div>
+
+<h2>Brief description</h2>
+<dl>
+<dt>Name:</dt>
+	<dd>isOrdered</dd>
+<dt>Description:</dt>
+	<dd>gentle revision: write and test a method to check whether an int array's values are non-decreasing order as the index increases, or as it decreases  </dd>
+<dt>Estimated size in lines &amp; NCNB</dt>
+	<dd>75 lines, 55 non-comment non-blank</dd>
+<dt>Estimated classes &amp; methods</dt>
+	<dd>1 class, 2 methods</dd>
+<dt>Tests:</dt>
+	<dd>the program must include test calls of <code>isOrdered</code>from a main method. The tests are required to include (at least) 
+<ul>
+   <li>an empty array (expect result: <strong>true</strong> for both directions)
+</li>
+<li>
+    a single element array with element value 0 (expect result: <strong>true</strong> for both directions)
+</li>
+<li> an array that is in order upwards (with both negative and positive values, and including zero) (expect result: <strong>true</strong> when <code>up</code> is true; false when <code>up</code> is false)
+  </li>
+<li> out of order at the start (expect result: <strong>false</strong> for both directions)</li>
+  <li> out of order at the end (expect result: <strong>false</strong> for both directions)</li>
+  <li> out of order somewhere in the middle (expect result: <strong>false</strong> for both directions)
+</li>
+</ul>
+</dd>
+<dt>Other deliverables</dt>
+<dd>A copy of your developer's log recording your estimates, progress, and defects encountered during the development of your solution.<br>
+Use the <a href="http://cs.anu.edu.au/student/comp2100/DeveloperLog/DeveloperLogTemplate.ods">Open Document Format template</a>
+ or<a href="http://cs.anu.edu.au/student/comp2100/DeveloperLog/DeveloperLogTemplate.xls"> Excel Spreadsheet template</a><br>
+and the <a href="http://cs.anu.edu.au/student/comp2100/DeveloperLog/DefectTypes.pdf">Classification of Defect Types</a>.</dd>
+</dl>
+
+<h2>Constraints and requirements</h2>
+<p>Submission must be one Java source file named <code>Ordered.java</code> containing 2 or more methods. Two required methds are:</p>
+<pre>/**
+ * determine whether an array is in non-decreasing order upwards or downwards
+ * @param values an array of ints of any length
+ * @return true if the elements of values are in non-decreasing order
+ * that is, each element is equal to or greater than its predecessor-
+ * as the array index increases, if up is true; or as it decreases, if up is false
+ * otherwise return false
+ */
+public static boolean isOrdered (int values[], boolean up )
+
+/**
+ * test the isOrdered method
+ * @param args is ignored
+ * @return exit  value shall is 1 if any test fails, otherwise exit value is 0
+ */
+public static void main(String args[])
+</pre>
+
+<h3>Input</h3>
+<p>The program shall require <strong>no</strong> input from console or any other file.<br>
+ The program shall require <strong>no</strong> execution arguments.</p>
+<h3>Output</h3>
+<p>
+The <code>isOrdered</code> method shall have <strong>no</strong> output to console or error streams. (any array of int is acceptable parameter to the method).<br>
+The <code>main</code> method shall output results of its tests, as the implementor chooses.
+</p>
+<h2>Academic honesty and code reuse</h2>
+<p> This homework task is simple. It is expected that you can  write it  by yourself from first principles.
+<br>
+If you reuse code from any source, including other students, other programmers you know or communicate with, textbooks, websites, tutorials or blogs, whether you include the code with no changes or with changes to identifiers: </p>
+<ul>
+<li>you must acknowledge the source of your code at the point it appears in your program</li>
+<li>(for this task) you may receive a lower mark, because the task is so simple.</li>
+</ul>
+<p>Reusing program code without acknowledging the source is serious, and may be Poor Academic Practice. Repeated or extended poor practice amounts to Academic Dishonesty, which may be regarded as misconduct under the university's discipline rules. Penalties of zero marks and a comment on your university record may follow.
+</p>
+<h2>Coding style and standards</h2>
+<p>The program is required to be of good standard and good style. The standard will get stronger as you proceed through the course. For this first homework, here are suggested style and standards.</p>
+<h3>Source code style</h3>
+<dl>
+<dt>
+Identifiers</dt>
+<dd>identifiers shall be meaningful to the reader, preferably several characters long ( a single letter is usually not a good choice) formed from English words or phrases that indicate the role of the variable, class or method in the solution. Multiple words in an identifier should be indicated by changes of letter case (such as isOrdered, rather than isordered). Abbreviated phrases are expected where the meaning is still clear: the result should at least have mnemonic relationship.<br>
+All upper case is preferred for names of CONSTANT values (and the body of the program code should have no “magic numbers”, only named constants.)<br>
+Array index variable (such as  <code><em>i</em></code> in <code>for (int i ; i &lt; values.length; i++)...</code>) can often be eliminated by using the for-each version of the loop: <code>for (int v: values)...</code> (which is also less code to type, is clearer to read becuase it states the intention of the dcode directly, and carries less risk of making an error in covering all elements of the array). If it is necessary to have an index variable because the body of the loop or the following code refers to it explicitly, a single-letter identifier may suit a mathematical-style algorithm; a short word, or a name related to the array identifier, may be better when an algorithm is traversing a data structure.
+</dd>
+<dt>Comments</dt>
+<dd>every method and every class shall be preceded by usage documentation in javadoc style (see the examples in this homework specification, and examples of programs in Horstmann <em>Big Java</em>. Schildt <em>Java the complete reference</em>is a bad example, most code fragments and programs are not sufficiently documented).
+<br>
+Inline comments should be used to label sections within the coding, and briefly explain any unusual or particularly smart program steps.
+<br>
+Test cases should be coded or documented (with comments) in order to be self-explanatory to someone reading the testcases, without reading the implementation of the method being tested.</dd>
+<dt>Layout</dt>
+<dd>Source code should be formatted similar to the indented layout in Eclipse (see the recommended<a href="http://www.oracle.com/technetwork/java/javase/documentation/codeconvtoc-136057.html"> Java Code Conventions</a>.</dd>
+</dl>
+<h3>Coding standards</h3>
+<dl>
+<dt>Code length, generality of solution</dt>
+<dd>Algorithms and data structures should be chosen to make the program short, and handle as many cases and values as possible in a suitably small number of separate cases: without being too short and “tricky”.<br>
+Using enhanced loops, library methods, and other code-saving techniques is good style.</dd>
+<dt>Detecting errors and exceptional cases</dt>
+<dd>Errors such as the program arguments not meeting the program specification, or method parameters not meeting the requirements that are documented for the method, shall be detected and reported appropriately. How this is handled: whether an exception is thrown, or an error message output, or a warning, is determined by the specifications given for the program or method. In cases where the specifications are not complete, handling exceptions is determined by the good judgment of the programmer, within the overall specified behavioural constraints and requirements.</dd>
+<dt>Clarity and elegance</dt>
+<dd>Good program code communicates to the human reader, as well as specifying actions to a computer.  Like clear writing in a natural language, readable programs need to have clear identifiers and clear operations. They need the programmer to use wordy forms to spell out conditions and choices rather than relying on obscure properties of arithmetic operators; benefit from over-bracketing, and clearly laying out, boolean expressions; and especially from using and creating good abstractions. The tools in IDEs that allow quick and safe renaming of parts of the program are very useful. </dd>
+<dt>Performance and efficiency</dt>
+<dd>Good runtime performance and space perfomance are important, but take second place to clear description and abstraction. But algorithmic efficiency is an important design property: <em>O(n)</em> will nearly always be preferred to <em>O(n<sup>2)</sup></em>. But saving a single method call, even in an inner loop executed thousands of times, is not worthwhile (the compiler may provide this optimisation: the programmer should not obscure the clarity of the program coding to make such small gains, in ordinary programs. Special purpose high performance work is different). 
+</dd>
+</dl>
+
+<h2>Submission</h2>
+<h3>required files</h3>
+<ol>
+	<li>java source file named <code>Ordered.java</code></li>
+	<li>updated Developer's Log for your work on this task (PDF or ODF (.osp) or XLS)</li>
+</ol>
+<h3>How to submit</h3>
+<p>Homework must be submitted as a Wattle assignment.</p>
+<p style="font-style:italic">Note: the later homeworks will be submitted using SVN. Homework 01 is the only one with a Wattle submision.</p>
+<h3>Deadline</h3>
+<p>8:00am Monday week 2 (Monday 25 February 2013) </p>
+
+<h2>Background introduction</h2>
+
+<p>The signature of the methods, and their behaviour, must be exactly what is specified. This specification is the contract between you and the client (in this case, the lecturer), and the tutors will carry out further tests on your method: so the signature must be exactly matched. This includes that it is public, static, is silent (no output to any stream), and returns a boolean value.
+<br>
+The signature of the method is
+</p>
+<pre>    /**
+     * @param values an int array of any length (including empty)
+     * @param up the direction of traversing the array's index values
+     * @return true if the elements in values are in order of non-decreasing (rising) value in the diretion of increasing index (if up is true) or decreasing index (if up is false)
+     **/
+    public static boolean isOrdered(int[] values, boolean up)
+</pre>
+<p>
+You should write several calls from your main method to test your implementation of <code>isOrdered</code>: see above. Design tests, and making choices of test values,  is a topic in this course, and this will be discussed  in the problem class after submission. 
+</p>
+
+<h3>Hints and reminders</h3>
+<p>It is  always important to remember that you must provide what the client actually
+requires. It may not be what you think is <em>the</em> solution to the
+problem that you saw in when you read the specification— so read the requirements specification again. Then make any modifications to your program that you need to match the specifed requirements.</p>
+<p>Check what you are asked to deliver:</p>
+<ul>
+	<li>what form of program</li>
+	<li>what function of program</li>
+	<li>anything else you have been asked to submit (developer's log, test cases, reports, etc.)</li>
+</ul>
+
+<h2>Extension exercise (no additional marks)</h2>
+<p>If you thought that was so easy...<br>
+rewrite (a new version, in the same <code>Ordered</code> class, named <code>isOrderedG</code>). The new method has a generic parameter: it accepts an array of any type that has ordered values (i.e. a Comparable type, that implements the <code>Comparable</code> interface). You will need to research in textbook or Java specification. Test it, and include suitable test cases in your main method.
+</p>
+
+<hr>
+<p style="font-size:smaller;color:darkgrey">$Revision: 1159 $ $ LastChangedDate: $</p>
+<address style="font-size:smaller;font-style:italic">
+Copyright © Australian National University   <br>
+Chris Johnson Course Convener<br>
+N322 CSIT Building 108, North Road, ANU@Acton <br>
+ Research School of Computer Science, CECS, ANU
+<br>
+<b>p</b>: 6125 4509   ANU x 4509<br>
+<b>e</b>: comp2100@cs.anu.edu.au SUBJECT: comp2100.2500-6442 homework<br>
+<b>w</b>: <a href="http://wattlecourses.anu.edu.au/course/view.php?id=425">Software Construction on Wattle</a>
+</address>
+  
+
+</body></html>

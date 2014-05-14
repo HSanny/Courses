@@ -1,0 +1,83 @@
+% -----
+% COMP 3630 Assignment 02
+% Jimmy Lin
+% -----
+% -
+\documentclass[11pt,a4paper]{article}
+\usepackage{geometry}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage[colorlinks,
+            linkcolor=blue,
+            anchorcolor=red,
+            citecolor=green
+            ]{hyperref}
+\usepackage{fancyheadings}
+\usepackage{graphicx}
+\geometry{top=18mm,bottom=18mm,left=20mm,right=20mm}
+% new command list
+\newcommand{\AUTHOR}{Jimmy Lin}
+\newcommand{\UID}{u5223173}
+\newcommand{\UNIVERSITY}{Australian National University}
+\newcommand{\COLLEGE}{College of Engineering and Computer Science}
+\newcommand{\COURSE}{COMP2100 Software Construction}
+\newcommand{\LECTURER}{Christopher Johnson}
+\newcommand{\TASK}{Assignment 02}
+\newcommand{\RELEASEDATE}{April. 20th 2013}
+\newcommand{\DUEDATE}{May. 11th 2013}
+\newcommand{\TIMECONSUME}{10h}
+
+\newcommand{\htab}{\hspace*{0.63cm}}
+\newcommand{\ba}{\hspace*{0.2cm} | \hspace*{0.2cm}}
+% -
+\pagestyle{fancyplain}
+\lhead{\COURSE}     
+\rhead{\TASK}  
+\lfoot{\copyright \AUTHOR (\UID)}
+\rfoot{\UNIVERSITY}
+% - 
+\begin{document}
+% ---------------------------
+\begin{titlepage}
+    \begin{center}
+        \vspace*{0.8cm}
+% add uni photo here.
+\includegraphics[width=0.2\textwidth]{/Users/JimmyLin/ANU.png}\\[1cm]
+\textsc{\LARGE \UNIVERSITY}\\[1.5cm]
+
+% Title
+\rule{\linewidth}{0.5mm} \\[0.4cm]
+{ \textsc{\Large \COURSE}\\[0.5cm]
+ \huge \bfseries \TASK}\\[0.4cm]
+ \footnotesize Edited by \LaTeX \\[0.25cm]
+ \normalsize{\COLLEGE}
+\rule{\linewidth}{0.5mm} \\[1.5cm]
+
+% other information
+\begin{center}
+\copyright \emph{\large Author} \\
+\Large \textbf{\AUTHOR} \\ \UID \vspace*{0.6cm}
+
+\P \emph{ Lecturer} \\
+\Large \textbf{\LECTURER} \vspace*{0.6cm}
+
+$\dagger$ \emph{Release Date}  \\
+\Large \textbf{\RELEASEDATE} \vspace*{0.6cm} 
+
+$\ddagger$ \emph{Due Date}  \\
+\Large \textbf{\DUEDATE} \vspace*{0.6cm}
+
+$\tau$ \emph{Time Spent} \\
+\Large \textbf{\TIMECONSUME} \vspace*{0.6cm} 
+\end{center}
+% foot
+\vfill
+{\large \today}
+\end{center}
+\end{titlepage}
+
+% table of content
+\begin{center} \tableofcontents \end{center}
+ \newpage
+
+\end{document}

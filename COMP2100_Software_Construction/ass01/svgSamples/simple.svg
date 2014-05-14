@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+onload="alert('message')" >
+<circle cx="100" cy="100" r="50" fill="#8f8"/>
+<line x1="10" y1="10" x2="500" y2="500" stroke-width="15" 
+stroke="blue" stroke-linecap="round"/>
+<line x1="10" y1="10" x2="500" y2="500" stroke-width="15" 
+stroke="orange" stroke-dasharray="8,3,2,20,10"/>
+<circle cx="500" cy="500" r="60" fill="none" stroke="#579" stroke-width="30"
+stroke-dasharray="3,5,8,13"/>
+<!--<path stroke="black"
+stroke-width="3" fill="#eec1c2"
+d="M 99 192
+C 137 160 204 133 141 124
+C 78 115 34 167 47 129
+C 60 91 20 65 77 71
+C 134 77 206 43 196 101
+C 186 159 118 368 119 299
+C 120 230 201 169 138 206
+C 75 243 53 231 99 192" />-->
+<def>
+<g id = "SDali">
+<path stroke="black" stroke-width ="2" opacity=".6" fill="#c77"
+d = "M 150 220
+C 145 244 146 251 135 260 C 124 269 114 287 134 282
+C 154 277 162 279 159 288 C 156 297 135 305 148 308
+C 161 311 185 315 172 315 C 159 315 150 309 147 314
+C 144 319 159 322 156 327 C 153 332 141 348 153 354
+C 165 360 185 361 194 354 C 203 347 214 357 212 368
+C 210 379 196 400 204 400 C 212 400 237 396 250 394
+C 263 392 279 374 276 353 C 273 332 276 308 286 289
+C 296 270 325 240 321 215 C 317 190 304 179 286 158
+C 268 137 253 111 216 120 C 179 129 163 144 150 170
+C 137 196 150 210 160 212 C 170 214 160 222 150 220
+" />
+</g>
+</def>
+<use xlink:href="#SDali" 
+transform="translate(100,250),scale(.75),rotate(90,200,250)"/>
+
+<text x="0" y="100" font-family="Hoefler Text" font-size="50" fill="blue">
+Doing text... works! Why the image doesn't?</text>
+<text x="0" y="180" font-family="Comic Sans MS" font-size="40" fill="red"
+text-decoration="line-through" >
+It's not image, it's xlink:href attribute which cannot be handled!</text>
+<image xlink:href="Soccer_ball_animated.svg" height="200" width="200" 
+x="700" y="400" />
+<defs>
+<path id="curve" d="M 10 100 C 200 30 300 250 350 50"
+stroke="black" fill="none" stroke-width="5" />
+</defs>
+<!--<path xlink:href="curve"/>-->
+<text id="T" style="font-family:ariel;font-size:16">
+<textPath xlink:href="curve">Hello, here is some text lying along a bezier curve.</textPath>
+</text>
+</svg>

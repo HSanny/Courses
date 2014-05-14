@@ -1,0 +1,20 @@
+CHAPTER
+
+8
+
+Code Documentation
+
+Synthesis The application developed throughout this chapter is aimed at
+generating customizable documentation for source code. The format chosen
+for the documentation is HTML. The architecture of the application mainly
+addresses extensibility requirements. Focus: this case study exemplifies
+the application of the “Composite” design pattern which is widely used
+when representation of hierarchical structure is required. OO techniques:
+separation of concerns and delegation. Java features: A graphical user
+interface is developed to provide ease of use for the application. The
+GUI is developed by means of the swing set of components; in particular
+a component is used, which is able to render HTML code. Background:
+The reader is required to know the basic OO concepts and fundamental
+Java programming techniques and to have a basic knowledge of HTML.
+
+

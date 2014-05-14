@@ -1,0 +1,4 @@
+all: SortnCount.java
+	javac -verbose SortnCount.java
+clean:
+	rm -f -v ./*.class

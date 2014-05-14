@@ -16,9 +16,11 @@ Course Performance:
 > 
 > Homework 04: 10/10
 > 
-> Homework 05: 
+> Homework 05: 8.5/10
 >
-> Final: 
+> Final: 24/25
+>
+> Projects: 
 
 
 Questions on Review
@@ -37,4 +39,3 @@ NOTE before exam
 1. [lec06] ROC curve
 2. [lec08] lowest-k rank approximation
 3. [lec08] LSI
-4.  

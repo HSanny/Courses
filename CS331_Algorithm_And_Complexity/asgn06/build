@@ -1,0 +1,1 @@
+javac Bidding.java 

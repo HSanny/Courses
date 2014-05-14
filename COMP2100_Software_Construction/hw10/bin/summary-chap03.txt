@@ -1,0 +1,19 @@
+CHAPTER
+
+3
+
+Scheduler
+
+Synthesis This chapter addresses the problem of building a tool
+for activities scheduling. The scheduling tool offers essential
+functionalities, such as creating activities and tasks, assigning
+resources to activities, devising a time plan that enforces temporal
+and resource constraints, and displaying the results in a graphical
+interface. Focus: this case study emphasizes the role of domain models
+and the mapping between entities of the problem and objects of the
+solution. OO techniques: inclusion and separation of concerns. Java
+features: Collections, AWT and Swing components. Background: The reader
+is required to know the basic OO concepts and fundamental Java programming
+techniques.
+
+

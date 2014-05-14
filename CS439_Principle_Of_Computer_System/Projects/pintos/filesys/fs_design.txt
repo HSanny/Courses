@@ -1,0 +1,262 @@
+                    +-------------------------+
+                    |           CS 439        |
+                    | PROJECT 4: FILE SYSTEMS |
+                    |      DESIGN DOCUMENT    |
+                    +-------------------------+
+
+****EACH student submits a (unique) design document.****
+
+
+---- Name ----
+
+>> Fill your name, UT EID, CS login, email address, and unique number:
+
+Name: XIN LIN
+EID: xl5224
+CS login: jimmylin
+Email: jimmylin@utexas.edu
+Unique Number: 53910
+
+Slip days used on this project: 2 day
+
+---- GROUP ----
+
+>> Fill the names, UT EIDs, CS logins, email addresses, and unique numbers
+>> of your group members.  Also fill in each person's ranking on the 
+>> partner evaluation scale, as determined by you.
+
+Name1: Sharon Hom
+EID1: smh3556
+CS login: sharon
+Email: hom.sharon@gmail.com
+Unique Number: 53915
+Ranking (scale below): Excellent
+
+Name2: Meng Yan
+EID2: my4574
+CS login: veronica
+Email: yanmeng911@gmail.com
+Unique Number: 53920
+Ranking (scale below): Excellent
+
+Name3: Bochao Zhan
+EID2: bz2892
+CS login: bzhan
+Email: bzhan927@gmail.com
+Unique Number:53900
+Ranking (scale below): Excellent
+
+
+---- PARTNER EVALUATION SCALE ----
+
+>> Excellent: Consistently went above and beyond - tutored others, carried
+>> more than his/her fair share of the load.
+
+>> Very Good: Consistently did what he/she was supposed to do, very well
+>> prepared and cooperative.
+
+>> Satisfactory: Usually did what he/she was supposed to do, minimally
+>> prepared and cooperative.
+
+>> Marginal: Sometimes failed to show up, rarely prepared.
+
+>> Deficient: Often failed to show up, rarely prepared.
+
+>> Unsatisfactory: Consistently failed to show up, unprepared.
+
+>> Superficial: Practically no participation.
+
+>> No Show: No participation at all.
+
+
+
+
+---- PRELIMINARIES ----
+
+>> If you have any preliminary comments on your submission, notes for the
+>> TAs, or extra credit, please give them here.
+
+>> Please cite any offline or online sources you consulted while
+>> preparing your submission, other than the Pintos documentation, course
+>> text, lecture notes, and course staff.
+
+		     INDEXED AND EXTENSIBLE FILES
+		     ============================
+
+---- DATA STRUCTURES ----
+
+>> A1: Copy here the declaration of each new or changed `struct' or
+>> `struct' member, global or static variable, `typedef', or
+>> enumeration.  Identify the purpose of each in 25 words or less.
+
+>> A2: What is the maximum size of a file supported by your inode
+>> structure?  Show your work.
+
+---- SYNCHRONIZATION ----
+
+>> A3: Explain how your code avoids a race if two processes attempt to
+>> extend a file at the same time.
+
+>> A4: Suppose processes A and B both have file F open, both
+>> positioned at end-of-file.  If A reads and B writes F at the same
+>> time, A may read all, part, or none of what B writes.  However, A
+>> may not read data other than what B writes, e.g. if B writes
+>> nonzero data, A is not allowed to see all zeros.  Explain how your
+>> code avoids this race.
+
+>> A5: Explain how your synchronization design provides "fairness".
+>> File access is "fair" if readers cannot indefinitely block writers
+>> or vice versa.  That is, many processes reading from a file cannot
+>> prevent forever another process from writing the file, and many
+>> processes writing to a file cannot prevent another process forever
+>> from reading the file.
+
+---- RATIONALE ----
+
+>> A6: Is your inode structure a multilevel index?  If so, why did you
+>> choose this particular combination of direct, indirect, and doubly
+>> indirect blocks?  If not, why did you choose an alternative inode
+>> structure, and what advantages and disadvantages does your
+>> structure have, compared to a multilevel index?
+
+			    SUBDIRECTORIES
+			    ==============
+
+---- DATA STRUCTURES ----
+
+>> B1: Copy here the declaration of each new or changed `struct' or
+>> `struct' member, global or static variable, `typedef', or
+>> enumeration.  Identify the purpose of each in 25 words or less.
+
+**********************
+For FILESYS.C
+    #define MAX_LEVEL 15 
+        the upper bound on # components of the user-specified pathname
+    #define MAX_LENGTH_EACH_LEVEL 15
+        the maximum number of characters at each components
+
+**********************
+
+**********************
+For THREAD structure:
+
+    struct dir * cwd;  
+        cache the current working directory of this thread, initialized to be
+        the root directory.
+**********************
+
+**********************
+For INODE structure:
+    
+    bool isdir;
+        keep track of whether this inode refers to a directory
+    block_sector_t parent;
+        keep track of the parent directory if this inode refers to a directory
+**********************
+
+**********************
+Within SYSCALL.C:
+    We extend the process_file structure, from
+
+    struct process_file {
+        struct file * file; 
+        int fd;
+        struct list_elem elem; 
+    };
+
+    to be
+
+    struct process_file {
+        struct file * file; 
+            used only when isdir is false
+        int fd;
+        struct list_elem elem; 
+
+        struct dir * dir;
+            store the directory, used only when isdir is true
+        bool isdir; 
+            keep track of whether the opened "file" is a directory
+    };
+
+**********************
+
+---- ALGORITHMS ----
+
+>> B2: Describe your code for traversing a user-specified path.  How
+>> do traversals of absolute and relative paths differ?
+
+We first use separate_pathname() to separate the user-specified pathname to a
+set of individual directory name at each level and put the last component (usually
+file name but sometimes it could be directory name) at the end. And then we
+have another function named enter_dir(), which takes the return value of
+separate_pathname() as argument and find the directory specified by user.
+(NOTE that this returned directory does not count the last component.)
+Lastly, various file system operations, such as create, remove and lookup,
+take its role based on the returned directory and the last component.
+
+The difference of traversal between absolute and relative path differs in the
+enter_dir() function. If the first character of user-specified pathname is
+'/', it starts traversing from the root directory. Otherwise, it is relative
+addressing and starts from the current working directory, which is cached
+in each thread structure.
+
+---- SYNCHRONIZATION ----
+
+>> B4: How do you prevent races on directory entries?  For example,
+>> only one of two simultaneous attempts to remove a single file
+>> should succeed, as should only one of two simultaneous attempts to
+>> create a file with the same name, and so on.
+
+Each inode has a specific lock. And when one thread or process apply
+modification operation on a directory or file under that directory, we lock
+the directory's inode and unlock it only after the operation. In this way,
+other threads and processes are not allowed to apply the modification on that
+directory, such as file/directory removal and creation.
+
+>> B5: Does your implementation allow a directory to be removed if it
+>> is open by a process or if it is in use as a process's current
+>> working directory?  If so, what happens to that process's future
+>> file system operations?  If not, how do you prevent it?
+
+Our implementation allows the currently opened or used directory to be
+removed, as indicated in the test case named dir-rm-cwd. After the removal, 
+opening that directory or its parent will cause failure. Needless to say, any
+file/directory creation and removal would be disabled on that directory.
+
+---- RATIONALE ----
+
+>> B6: Explain why you chose to represent the current directory of a
+>> process the way you did.
+
+In our design, the way we keep track of the current directory of a process is
+to add a new member "cwd" in thread structure, that is, a pointer to directory
+structure. One significant reason we choose this strategy is to avoid
+complicated string manipulation (complex if we cache the path name of the
+current working directory in each process) when we change the current working
+directory. By recording the dir structure, the uniquely identified inode
+could be reached and thus trace its parent directory.
+
+
+			   SURVEY QUESTIONS
+			   ================
+
+Answering these questions is optional, but it will help us improve the
+course in future quarters.  Feel free to tell us anything you
+want--these questions are just to spur your thoughts.  You may also
+choose to respond anonymously in the course evaluations at the end of
+the quarter.
+
+>> In your opinion, was this assignment, or any one of the three problems
+>> in it, too easy or too hard?  Did it take too long or too little time?
+
+>> Did you find that working on a particular part of the assignment gave
+>> you greater insight into some aspect of OS design?
+
+>> Is there some particular fact or hint we should give students in
+>> future quarters to help them solve the problems?  Conversely, did you
+>> find any of our guidance to be misleading?
+
+>> Do you have any suggestions for the TAs to more effectively assist
+>> students in future quarters?
+
+>> Any other comments?

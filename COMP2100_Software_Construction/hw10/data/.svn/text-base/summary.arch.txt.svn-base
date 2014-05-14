@@ -1,0 +1,131 @@
+@@ summary-chap03.txt @@
+CHAPTER
+
+3
+
+Scheduler
+
+Synthesis This chapter addresses the problem of building a tool
+for activities scheduling. The scheduling tool offers essential
+functionalities, such as creating activities and tasks, assigning
+resources to activities, devising a time plan that enforces temporal
+and resource constraints, and displaying the results in a graphical
+interface. Focus: this case study emphasizes the role of domain models
+and the mapping between entities of the problem and objects of the
+solution. OO techniques: inclusion and separation of concerns. Java
+features: Collections, AWT and Swing components. Background: The reader
+is required to know the basic OO concepts and fundamental Java programming
+techniques.
+
+
+@@ summary-chap04.txt @@
+CHAPTER
+
+4
+
+Classifier
+
+Synthesis This chapter presents the development of a classifier
+tool, which assigns a category label to items based on their
+characteristics. The application developed here is intended to
+support decision making at insurance companies. The categories in this
+case are the risk levels and the items are insured objects, such as
+cars. Focus: this case study exemplifies the mapping between entities
+of the problem and objects of the solution, and the use of UML class
+diagrams. OO techniques: inclusion and inheritance. Java features:
+Collections. Background: The reader is required to know the basic OO
+concepts and fundamental Java programming techniques.
+
+
+@@ summary-chap05.txt @@
+CHAPTER
+
+5
+
+Hardware Description Language
+
+Synthesis This chapter investigates the use of Java as a Hardware
+Description Language (HDL). The program simulates a typical computer
+that adopts the Von Neumann architecture. The basic components are the
+RAM memory that stores the programs and the data, the Keyboard that reads
+input data from the command-line, the Monitor that displays the results,
+the CPU that process the elementary operations (load, store, add, jump,
+etc.), and the Bus that interconnects the basic components. Focus: this
+case study exemplifies the exchange of data between objects and the use
+of state transition diagrams to describe the behaviour of the CPU. OO
+techniques: inclusion. Java features: Vectors, Files. Background: the
+reader is required to know the basic OO concepts and fundamental Java
+programming techniques.
+
+
+@@ summary-chap06.txt @@
+CHAPTER
+
+6
+
+Multi-format calculator
+
+Synthesis This stand-alone application is a mathematical calculator
+that supports multiple numbering bases (binary, decimal, hexadecimal)
+and formats (fixed point, floating point, rational). The application
+converts operands and result in/from the current base and format upon user
+requests. Focus: this case study exemplifies the use of UML interaction
+diagrams and Use Cases to describe the exchange of messages among objects
+representing different bases and formats. OO techniques: inheritance and
+polymorphism. Java features: exception handling Background: the reader
+is required to know the basic OO techniques, which are exemplified in
+previous chapters.
+
+
+@@ summary-chap08.txt @@
+CHAPTER
+
+8
+
+Code Documentation
+
+Synthesis The application developed throughout this chapter is aimed at
+generating customizable documentation for source code. The format chosen
+for the documentation is HTML. The architecture of the application mainly
+addresses extensibility requirements. Focus: this case study exemplifies
+the application of the “Composite” design pattern which is widely used
+when representation of hierarchical structure is required. OO techniques:
+separation of concerns and delegation. Java features: A graphical user
+interface is developed to provide ease of use for the application. The
+GUI is developed by means of the swing set of components; in particular
+a component is used, which is able to render HTML code. Background:
+The reader is required to know the basic OO concepts and fundamental
+Java programming techniques and to have a basic knowledge of HTML.
+
+
+@@ summary-chap09.txt @@
+CHAPTER
+
+9
+
+Manufacturing Work Cell
+
+Synthesis Any complex application requires prototyping and
+simulation. Simulation is typically used in three different situations:
+When part of the application's functionality is in time-consuming
+computations, or is not ready yet. When the application is a distributed
+system and needs to be tested locally on a single computer. When the
+application interacts with real devices, which can not be used for
+testing and debugging. A typical example is a manufacturing work cell
+made up of a number of physical devices (robots, machines, transporters)
+and a work cell controller, which coordinates and synchronizes the
+concurrent activities of the work cell system (e.g. moving piece,
+machining, loading). The prototype that simulates the work cell system
+is an executable specification on a single processor of the naturally
+concurrent reality. This chapter addresses the problem of building a
+discrete event simulation environment for testing the correct behavior
+of a work cell controller. Focus: The emphasis is on the software
+architecture of the simulator that is general enough to be applied in a
+variety of application scenarios. OO techniques: finite state automata
+to model the components’ dynamics Java features: information hiding
+and inheritance Background: The chapter refers to well known domain
+models for event communication, synchronization, and time simulation.
+
+1
+
+

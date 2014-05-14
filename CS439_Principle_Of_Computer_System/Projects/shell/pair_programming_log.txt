@@ -1,0 +1,71 @@
+9/11, 7:00p-11:00p, Jimmy Lin and Bochao Zhan, 4 hours
+Bochao, 30 minutes
+Jimmy, 30 minutes
+Bochao, 30 minutes
+Jimmy, 30 minutes
+Bochao, 30 minutes
+Jimmy, 30 minutes
+Bochao, 30 minutes
+Jimmy, 30 minutes
+
+9/12, 8:00p-11:30p, Jimmy Lin and Bochao Zhan, 3.5 hours
+Driver Order and Time Length:
+Jimmy, 30 minutes
+Bochao, 30 minutes
+Jimmy, 30 minutes
+Bochao, 30 minutes
+Jimmy, 30 minutes
+Bochao, 30 minutes
+jimmy, 30 minutes
+
+9/14, 10:00a-12:00p, Jimmy Lin and Bochao Zhan, 2 hours
+Driver Order and Time Length:
+Jimmy, 30 minutes
+Bochao, 30 minutes
+Jimmy, 30 minutes
+Bochao, 30 minutes
+
+9/15, 8:00p-0:00a, Jimmy Lin and Bochao Zhan, 3 hours
+Driver Order and Time Length:
+Bochao, 30 minutes
+Jimmy, 30 minutes
+Jimmy, 30 minutes
+Bochao, 30 minutes
+Jimmy, 30 minutes
+Bochao, 30 minutes
+
+9/16, 8:00p-10:30p, Jimmy Lin and Bochao Zhan 2.5 hours
+Driver Order and Time Length:
+Jimmy, 60 minutes
+Bochao, 30 minutes
+Jimmy, 30 minutes
+Bochao, 30 minutes
+
+9/17, 9:00p-11:00p, Jimmy Lin and Bochao Zhan, 2 hours
+Driver Order and Time Length:
+Jimmy, 30 minutes
+Bochao, 30 minutes
+Jimmy, 30 minutes
+Bochao, 30 minutes
+
+9/18, 0:00a-6:00a, Jimmy Lin and Bochao Zhan, 6 hours
+Driver Order and Time Length:
+Bochao, 30 minutes
+Jimmy, 30 minutes
+Bochao, 30 minutes
+Jimmy, 30 minutes
+Bochao, 30 minutes
+Jimmy, 30 minutes
+Bochao, 30 minutes
+Jimmy, 30 minutes
+Bochao, 60 minutes
+Jimmy, 30 minutes
+Bochao, 30 minutes
+
+9/19, 10:30a-2:00p, Jimmy Lin and Bochao Zhan, 3.5 hours
+Driver Order and Time Length:
+Jimmy, 30 minutes
+Bochao, 30 minutes
+Jimmy, 30 minutes
+Bochao, 60 minutes
+Jimmy, 60 minutes

@@ -1,0 +1,20 @@
+CHAPTER
+
+5
+
+Hardware Description Language
+
+Synthesis This chapter investigates the use of Java as a Hardware
+Description Language (HDL). The program simulates a typical computer
+that adopts the Von Neumann architecture. The basic components are the
+RAM memory that stores the programs and the data, the Keyboard that reads
+input data from the command-line, the Monitor that displays the results,
+the CPU that process the elementary operations (load, store, add, jump,
+etc.), and the Bus that interconnects the basic components. Focus: this
+case study exemplifies the exchange of data between objects and the use
+of state transition diagrams to describe the behaviour of the CPU. OO
+techniques: inclusion. Java features: Vectors, Files. Background: the
+reader is required to know the basic OO concepts and fundamental Java
+programming techniques.
+
+

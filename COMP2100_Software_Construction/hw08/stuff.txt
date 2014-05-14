@@ -1,0 +1,11 @@
+Eiffel! eiffel? eiffel `EIFFEL' eiFfeL
+java Java "JAVA" java
+pascal Pascal%$#@!&*PASCAL
+C, C; C.
+bash-bash
+BASIC
+COBOL
+Fortran66
+Fortran77
+Fortran90
+SQL

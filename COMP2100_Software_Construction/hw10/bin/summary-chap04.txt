@@ -1,0 +1,18 @@
+CHAPTER
+
+4
+
+Classifier
+
+Synthesis This chapter presents the development of a classifier
+tool, which assigns a category label to items based on their
+characteristics. The application developed here is intended to
+support decision making at insurance companies. The categories in this
+case are the risk levels and the items are insured objects, such as
+cars. Focus: this case study exemplifies the mapping between entities
+of the problem and objects of the solution, and the use of UML class
+diagrams. OO techniques: inclusion and inheritance. Java features:
+Collections. Background: The reader is required to know the basic OO
+concepts and fundamental Java programming techniques.
+
+

@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" onload="startup(evt)" onclick="Boo=T(Boo);">
+<script>
+<![CDATA[
+var xmlns="http://www.w3.org/2000/svg"
+var Doc;
+var O;
+var Boo=false
+function T(Boo){
+	if (Boo)O.pauseAnimations()
+	else O.unpauseAnimations()
+	return !Boo
+}
+
+function startup(evt){
+	O=evt.target
+	Doc=O.ownerDocument
+	SVGRoot = Doc.documentElement;
+	O.setAttribute("onclick","Boo=T(Boo);")
+	O.pauseAnimations()
+}
+
+//]]>
+</script>
+<radialGradient id="g" fy=".9">
+<stop offset="0" stop-color="#f14"/> <stop offset="1" stop-color="black"/>
+</radialGradient>
+
+<rect x="0" y="0" height="100%" width="100%" fill="white"/>
+<rect x="322" y="0" height="200" width="20" fill="url(#g)"/>
+
+<text x="310" y="215" font-size="17" kerning="2" font-family="impact" fill="url(#g)">
+Click</text>
+<clipPath id="CP">
+
+<ellipse cx="335" cy="25" rx="70" ry="25"/>
+<ellipse cx="335" cy="80" rx="90" ry="25">
+<animateTransform attributeName="transform" type="rotate" dur="4s" from="0 335 80" to="360 335 80" repeatCount="indefinite"/>
+</ellipse>
+<path d="M 270 140 A 65 30 0 1 1 270 141 M  308 128  A 25 7 0 1 1  308 129" clip-rule="evenodd"/>
+</clipPath>
+<image xlink:href="clipPath1_files/thesoul2.jpg" y="0" x="200" opacity="1" width="35%" height="40%" clip-path="url(#CP)">
+</image>   
+
+</svg>

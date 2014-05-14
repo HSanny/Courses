@@ -1,0 +1,95 @@
+Homework #: 9
+Student Name: XIN LIN
+EID: xl5224
+CS login: jimmylin
+Email address: JimmyLin@utexas.edu
+Unique Number: 53910
+
+-----------------------------------------------------------------------------
+1. Describe the steps necessary to prepare a server to accept connections. How
+does it accept a connection?
+
+a. Preparation: set up the server socket, use bind() to construct the socket
+with its particular property, and call listen() to wait for the request from
+clients.
+
+b. Connection acceptance: accept() blocks waiting for a connection request.
+
+c. When the client-server connection is created and ready for data transfers,
+accept() returns a connected descriptor(connfd), which share the same properties as
+the listening descriptor(listenfd). 
+
+-----------------------------------------------------------------------------
+2. Which is the best (fastest) network on which to implement a remote-memory
+read that sends a 100 byte packet from machine A to machine B and then sends a
+8000 byte packet from machine B to machine A?  
+
+    100 bytes = 0.1 KB = 0.0001 MB
+    8000 bytes = 8 KB = 0.008 MB
+
+    10 MB/s = 0.01 MB/ms
+    1 MB/s = 0.001 MB/ms
+
+a. A network with 200 microsecond overhead, 10 Mbyte/s bandwidth, 20
+microsecond latency 
+    
+    200ms + 0.0001/0.01 ms + 20ms + 200ms + 0.008/(0.01) ms + 20ms = 440.81 ms
+
+b. A network with 20 microsecond overhead, 10 Mbyte/s bandwidth, 200
+microsecond latency 
+    20ms + 0.0001/0.01 ms + 200ms + 20ms +  0.008/(0.01) ms + 200ms = 440.81 ms
+
+c. A network with 20 microsecond overhead, 1 Mbyte/s bandwidth, 2 microsecond
+latency 
+    20ms + 0.0001/0.001 ms + 2ms + 20ms + 0.008/0.001 ms + 2ms = 52.1 ms
+
+d. A network with 2 microsecond overhead, 1 Mbyte/s bandwidth, 20 microsecond
+latency
+    2ms +  0.0001/0.001 ms + 20ms + 2ms + 0.008/0.001 ms+ 20ms = 52.1 ms
+
+    D is the optimal choice.
+-----------------------------------------------------------------------------
+3. In class, we covered the idea of remote procedure calls. We discussed
+difficulties encountered when one attempts to implement a remote procedure
+call. Name the four of the difficulties. There are additional complications
+when the procedure executes a system call. What are the complications and how
+might you fix them? (Adapted from Tanenbaum page 607.)
+
+    Four difficulties: 
+        global variable,
+        pointer parameters,
+        parameters of indeterminate size,
+        parameters of unknown type.
+
+    The complication lies in the fact that process state cannot be determined
+    if the call doesn't originate from that process. The way to handle this is
+    to handle all signals and send it back to originating process.
+
+-----------------------------------------------------------------------------
+4. Using the traceroute command, trace the hops a packet takes from one of the
+UTCS machines to a website in Europe. Inspect the trace. What do you notice?
+Do you see any machines you recognize? ISPs? Cities? Please be sure to tell us
+what website you used.  Perform the trace again. How does the second time
+affect the output?
+
+The visiting to www.google.co.uk is as follows:
+1. leaves CS gateway routes through ACES
+2. then utexas gateway to Austin network and then Houston
+3. in the middle through lots of unknown ip addresses
+4. then connects England google.
+
+The second time should be noticeably faster.
+    
+-----------------------------------------------------------------------------
+5. Considering all the pieces of the operating system we have discussed,
+describe the steps the OS takes when performing a context switch. Assume that
+processes are waiting in the ready queue.
+
+    a. Restore all the registers value on PCB (Process Control Block), which
+    resides in kernel memory
+    b. Push the current thread to the end of ready queue, go to blockesd queue
+    if it is I/O interrupt or system call
+    c. Pass control flow to kernel mode
+    d. Immediately after it is waken up, recover all the register values from PCB 
+    e. Reset program counter to the interrupted place and then continue the
+    execution.

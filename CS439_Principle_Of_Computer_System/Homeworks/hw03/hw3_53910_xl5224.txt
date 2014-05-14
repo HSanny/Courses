@@ -1,0 +1,158 @@
+Homework #: 3
+Student Name: XIN LIN
+EID: xl5224
+CS login: jimmylin
+Email address: JimmyLin@utexas.edu
+Unique Number: 53910
+
+------------------------------------------------------------------------
+1. Most round-robin schedulers use a fixed size quantum. Give an argument
+in favor of and against a small quantum.
+
+Affirmative Aspect of small-size window: 
+    a. Avoid unnecessary waiting time. If the cost of context switch is trivial, 
+    the average waiting time could approximate the Short Job First Algortihm,
+    which is the theoretically best but impractical.
+    b. Practical Algorithm, no need to roughly estimate running time of 
+    each process.
+
+Opposite side of small size:
+    a. Small-size windows will definitely cause frequent context switch
+    in some system, such that a costly overhead would be resulted.
+
+------------------------------------------------------------------------
+2. Compare and contrast user threads and kernel threads.
+
+User thread: unknown by the operating system, has compulsory system call and
+no context switch (much faster), scheduler is customizable. 
+However, it is blocked by system call.
+
+Kernel thread: also called lightweight process (scheduled individually like 
+a process), keep known by the operating system, scheduler not customizable. 
+However, inefficient to use.
+
+------------------------------------------------------------------------
+3. What does the function pthread_detach() do? What default behavior of
+threads does it alter? When might it be useful?
+
+    Functionality: free the space (stack, registers) occupied by the given thread.
+    If pthread_detach() is applied, the storage for the given thread will 
+be reclaimed when the thread has already terminated. But nothing would happen if the 
+given thread does not terminate before the invocation of pthread_detach(). 
+    This function is useful when we want to deallocate the resources owned
+by certain thread. The usage of pthread_detach() can be regarded as reaping 
+the given thread.
+
+
+------------------------------------------------------------------------
+4. When executing system or library calls from multi-threaded code, it is
+important to know which calls are re-entrant and which are not.
+    What is the meaning of re-entrant?
+    How does a re-entrant call behave differently from a call that is not re-entrant?
+    Why is this an important consideration for multi-threaded code?
+
+    One routine is re-entrant if one execution is interrupted and another complete 
+execution of that routine will not affect the correctness of the previous execution, 
+which could be resumed later.
+    This requires the saving of state information in variables local to each execution,
+usually on a stack, instead of in static or global variables or other non-local state.
+    Re-entrancy is one of the primary challenges to avoid the race condition.
+
+------------------------------------------------------------------------
+5. A standardized C language threads programming interface has been developed
+for UNIX systems, IEEE POSIX 1003.1c. Thread implementations that adhere to
+this standard are known as POSIX threads, or Pthreads. Using Pthreads, write
+a C program that creates three threads and assigns each of them a number.
+Each thread should print the numbers 1-10, one per line, with its number
+beginning the line, so that the beginning output from thread 1 would look
+like the following:
+    1: 1
+    1: 2
+    1: 3
+    The original thread should wait for the new threads to finish and then print a
+statement notifying the user that the application is finished.
+    Explain the output. Turn in your code, output, and explanation.
+Hint: man 7 pthreads provides an overview of pthreads and should help you get started.
+
+########################################################################
+### CODE
+########################################################################
+
+#include <stdio.h>
+#include <pthread.h>
+#include <stdlib.h>
+
+void *threadPrint(void *);
+
+int STARTNUM = 1;
+int ENDNUM = 10;
+
+int main() {
+    int tnum = 1, tnum1 = 2, tnum2 = 3;
+    pthread_t tid;
+    pthread_create(&tid, NULL, threadPrint, &tnum);
+    pthread_t tid1;
+    pthread_create(&tid1, NULL, threadPrint, &tnum1);
+    pthread_t tid2;
+    pthread_create(&tid2, NULL, threadPrint, &tnum2);
+    
+    pthread_join(tid, NULL);
+    printf("tid (%d) is finished..\n", tnum);
+    pthread_join(tid1, NULL);
+    printf("tid (%d) is finished..\n", tnum1);
+    pthread_join(tid2, NULL);
+    printf("tid (%d) is finished..\n", tnum2);
+
+    return 0;
+}
+
+void *threadPrint(void * tnum) {
+    int i;
+    for (i = STARTNUM; i <= ENDNUM; i ++) {
+        printf("%d:%2d\n", * (int*) tnum, i);
+    }
+    return NULL;
+}
+
+########################################################################
+### OUTPUT
+########################################################################
+3: 1
+1: 1
+2: 1
+3: 2
+1: 2
+2: 2
+3: 3
+1: 3
+2: 3
+3: 4
+1: 4
+2: 4
+3: 5
+1: 5
+2: 5
+3: 6
+1: 6
+2: 6
+3: 7
+1: 7
+2: 7
+3: 8
+1: 8
+2: 8
+3: 9
+1: 9
+2: 9
+3:10
+1:10
+2:10
+
+########################################################################
+### EXPLANATION
+########################################################################
+Each thread executes its own routines without annoying others. Since such 
+independence, those three routines are asynchronous to each other. As we 
+can see from the OUTPUT, the thread 1 starts first but did not give out its
+result first.
+

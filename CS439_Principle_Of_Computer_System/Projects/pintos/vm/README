@@ -1,0 +1,35 @@
+################
+TEAM INFO
+################
+
+Name1: XIN LIN
+EID1: xl5224
+CS login: jimmylin
+Email: jimmylin@utexas.edu
+Unique Number: 53910
+
+Name2: Meng Yan
+EID2: my4574
+CS login: veronica
+Email: yanmeng911@gmail.com
+Unique Number: 53920
+
+Name3: Sharon Hom
+EID3: smh3556
+CS login: sharon
+Email: hom.sharon@gmail.com
+Unique Number: 53915
+
+Name4: Bochao Zhan
+EID3: bz2892
+CS login: bzhan
+Email: bzhan927@gmail.com
+Unique Number: 53900
+
+Slip days used: 2 days
+
+################
+
+We create a series of new files to meet the requirement of project 3:
+    frame.c frame.h page.c page.h swap.c swap.h mmap.h mmap.c
+

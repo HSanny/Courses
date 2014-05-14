@@ -1,0 +1,84 @@
+Homework #: 5
+Student Name: XIN LIN
+EID: XL5224
+CS login: jimmylin
+Email address: JimmyLin@utexas.edu
+Unique Number: 53910
+
+
+------------------------------------------------------------------------
+1. What are overlays? How and why were they created?
+
+Overlaying means replacement of sections of stored instructions or data". 
+
+This is achieved by treating main memory as a cache of hard disk.
+
+Overlays are created since the size of main memory is limited. To allow
+memory-consuming program to proceed, we have to swap out the data or
+instructions that are not used any more and swap in those to be used.
+
+
+------------------------------------------------------------------------
+2. What is a virtual address? What is a physical address? How do they relate
+to each other?
+
+Virtual Address (VA) is the address used by CPU. It represents the location of
+the data in virtual space (stored in hard disk), which is divided into
+multiple equal-sized virtual pages. 
+
+Physical Address (PA) represents the location of data in main memory. It
+represents offset of the referenced physical page.
+
+Translation between physical address and virtual address is supported by
+memory management unit (MMU). Specifically, MMU deal with the page tables that
+restores the correspondence of PA and VA.
+
+------------------------------------------------------------------------
+3. What causes a memory exception? What is the end result for the running
+process?
+
+a. segmentation fault:
+    Caused by accessing data that is not owned by calling process or
+    attempting to access an illegal memory area. 
+    The program will abort.
+
+
+b. protection fault:
+    Caused by permission denied. The caller has no right to write or read the
+    specified block of data.  
+    The program will abort.
+    
+
+c. normal page fault: 
+    Caused by cache miss. That is, the required data is not memory-resident.
+    This will trigger a cache miss interrupt handler, after which the program
+    will continue to proceed if the required data is later successfully loaded
+    to memory.
+
+------------------------------------------------------------------------
+4. What causes a page fault? What is the end result for the running process?
+
+   Cache miss causes a page fault. 
+
+   The running process will proceed after the required data is loaded from
+   virtual space to physical space.
+
+------------------------------------------------------------------------
+5. Consider a paging system with 16 pages and a page size of 256 bytes. The
+system has 1024 bytes of physical memory.
+
+    a. How many bits are in a physical address?
+        1024 / 256 = 4 physical pages, as basic unit of physical addressing
+        log2(4) = 2 bits
+
+    b. How many bits represent the page number?
+        log2(16) = 4 bits
+
+    c. How many bits are in the complete virtual address?
+        4 bits, since one page in a system means one virtual page.
+
+    d. What size are the page frames?
+        256 * 16 = 4096 bytes  
+
+
+

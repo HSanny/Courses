@@ -1,0 +1,163 @@
+This is 0repetition:
+Initilisation of parameters:
+\begin{align} \bs{\mu}_{0} = \begin{pmatrix} 
+4.74122040 & 3.15279417 & 1.77909908 & 0.80293032 
+ \end{pmatrix}  \end{align} 
+\begin{align} \bs{\Sigma}_{0}\begin{pmatrix} 
+1.00000000 & 0.00000000 & 0.00000000 & 0.00000000 \\ 
+0.00000000 & 1.00000000 & 0.00000000 & 0.00000000 \\ 
+0.00000000 & 0.00000000 & 1.00000000 & 0.00000000 \\ 
+0.00000000 & 0.00000000 & 0.00000000 & 1.00000000 \\ 
+\end{pmatrix} \end{align}
+Initilisation of parameters:
+\begin{align} \bs{\mu}_{1} = \begin{pmatrix} 
+6.36558270 & 4.20423977 & 4.12724521 & 1.24996769 
+ \end{pmatrix}  \end{align} 
+\begin{align} \bs{\Sigma}_{1}\begin{pmatrix} 
+1.00000000 & 0.00000000 & 0.00000000 & 0.00000000 \\ 
+0.00000000 & 1.00000000 & 0.00000000 & 0.00000000 \\ 
+0.00000000 & 0.00000000 & 1.00000000 & 0.00000000 \\ 
+0.00000000 & 0.00000000 & 0.00000000 & 1.00000000 \\ 
+\end{pmatrix} \end{align}
+Initilisation of parameters:
+\begin{align} \bs{\mu}_{2} = \begin{pmatrix} 
+7.34388669 & 3.54991993 & 4.39371314 & 2.05949636 
+ \end{pmatrix}  \end{align} 
+\begin{align} \bs{\Sigma}_{2}\begin{pmatrix} 
+1.00000000 & 0.00000000 & 0.00000000 & 0.00000000 \\ 
+0.00000000 & 1.00000000 & 0.00000000 & 0.00000000 \\ 
+0.00000000 & 0.00000000 & 1.00000000 & 0.00000000 \\ 
+0.00000000 & 0.00000000 & 0.00000000 & 1.00000000 \\ 
+\end{pmatrix} \end{align}
+[ 0.02053414  0.0965958   0.88287006]
+Current Criteria: -246.969040373
+Criteria: previous - > current -246.969040373 -> -215.560118272
+Continues...
+Criteria: previous - > current -215.560118272 -> -212.817466786
+Continues...
+Criteria: previous - > current -212.817466786 -> -210.05948835
+Continues...
+Criteria: previous - > current -210.05948835 -> -204.948160301
+Continues...
+Criteria: previous - > current -204.948160301 -> -196.812599986
+Continues...
+Criteria: previous - > current -196.812599986 -> -189.393782161
+Continues...
+Criteria: previous - > current -189.393782161 -> -186.236366461
+Continues...
+Criteria: previous - > current -186.236366461 -> -185.525263095
+Continues...
+Criteria: previous - > current -185.525263095 -> -185.321332984
+Continues...
+Criteria: previous - > current -185.321332984 -> -185.205531131
+Continues...
+Criteria: previous - > current -185.205531131 -> -185.114240396
+Continues...
+Criteria: previous - > current -185.114240396 -> -185.033122988
+Continues...
+Criteria: previous - > current -185.033122988 -> -184.951375519
+Continues...
+Criteria: previous - > current -184.951375519 -> -184.85219413
+Continues...
+Criteria: previous - > current -184.85219413 -> -184.702127622
+Continues...
+Criteria: previous - > current -184.702127622 -> -184.440686122
+Continues...
+Criteria: previous - > current -184.440686122 -> -184.066890875
+Continues...
+Criteria: previous - > current -184.066890875 -> -183.788425468
+Continues...
+Criteria: previous - > current -183.788425468 -> -183.659478608
+Continues...
+Criteria: previous - > current -183.659478608 -> -183.579035688
+Continues...
+Criteria: previous - > current -183.579035688 -> -183.515932829
+Continues...
+Criteria: previous - > current -183.515932829 -> -183.464622288
+Continues...
+Criteria: previous - > current -183.464622288 -> -183.42238126
+Continues...
+Criteria: previous - > current -183.42238126 -> -183.386570765
+Continues...
+Criteria: previous - > current -183.386570765 -> -183.354483535
+Continues...
+Criteria: previous - > current -183.354483535 -> -183.323365428
+Continues...
+Criteria: previous - > current -183.323365428 -> -183.290238092
+Continues...
+Criteria: previous - > current -183.290238092 -> -183.251423784
+Continues...
+Criteria: previous - > current -183.251423784 -> -183.201661328
+Continues...
+Criteria: previous - > current -183.201661328 -> -183.132566188
+Continues...
+Criteria: previous - > current -183.132566188 -> -183.030007807
+Continues...
+Criteria: previous - > current -183.030007807 -> -182.870243473
+Continues...
+Criteria: previous - > current -182.870243473 -> -182.61864762
+Continues...
+Criteria: previous - > current -182.61864762 -> -182.251419021
+Continues...
+Criteria: previous - > current -182.251419021 -> -181.817686365
+Continues...
+Criteria: previous - > current -181.817686365 -> -181.430227961
+Continues...
+Criteria: previous - > current -181.430227961 -> -181.136153474
+Continues...
+Criteria: previous - > current -181.136153474 -> -180.903464834
+Continues...
+Criteria: previous - > current -180.903464834 -> -180.691473699
+Continues...
+Criteria: previous - > current -180.691473699 -> -180.490236384
+Continues...
+Criteria: previous - > current -180.490236384 -> -180.330279485
+Continues...
+Criteria: previous - > current -180.330279485 -> -180.240095603
+Continues...
+Criteria: previous - > current -180.240095603 -> -180.203577655
+Continues...
+Criteria: previous - > current -180.203577655 -> -180.191255165
+Continues...
+Criteria: previous - > current -180.191255165 -> -180.187316527
+Continues...
+Criteria: previous - > current -180.187316527 -> -180.186064223
+Continues...
+Criteria: previous - > current -180.186064223 -> -180.18566482
+Continues...
+Criteria: previous - > current -180.18566482 -> -180.185537167
+Convergence Threshold reached..
+Iteration Quantity: 49
+Parameters of resulted Guassians:
+\begin{align} \bs{\mu}_{0} = \begin{pmatrix} 
+5.00600000 & 3.42800000 & 1.46200000 & 0.24600000 
+ \end{pmatrix}  \end{align} 
+\begin{align} \bs{\Sigma}_{0}\begin{pmatrix} 
+0.12176400 & 0.09723200 & 0.01602800 & 0.01012400 \\ 
+0.09723200 & 0.14081600 & 0.01146400 & 0.00911200 \\ 
+0.01602800 & 0.01146400 & 0.02955600 & 0.00594800 \\ 
+0.01012400 & 0.00911200 & 0.00594800 & 0.01088400 \\ 
+\end{pmatrix} \end{align}
+
+\begin{align} \bs{\mu}_{1} = \begin{pmatrix} 
+5.91484076 & 2.77783583 & 4.20129188 & 1.29686598 
+ \end{pmatrix}  \end{align} 
+\begin{align} \bs{\Sigma}_{1}\begin{pmatrix} 
+0.27531479 & 0.09697069 & 0.18462390 & 0.05437052 \\ 
+0.09697069 & 0.09265277 & 0.09115580 & 0.04299921 \\ 
+0.18462390 & 0.09115580 & 0.20053150 & 0.06093600 \\ 
+0.05437052 & 0.04299921 & 0.06093600 & 0.03197655 \\ 
+\end{pmatrix} \end{align}
+
+\begin{align} \bs{\mu}_{2} = \begin{pmatrix} 
+6.54438345 & 2.94859425 & 5.47921795 & 1.98439211 
+ \end{pmatrix}  \end{align} 
+\begin{align} \bs{\Sigma}_{2}\begin{pmatrix} 
+0.38703762 & 0.09221031 & 0.30286958 & 0.06172628 \\ 
+0.09221031 & 0.11033498 & 0.08432941 & 0.05603638 \\ 
+0.30286958 & 0.08432941 & 0.32798018 & 0.07468452 \\ 
+0.06172628 & 0.05603638 & 0.07468452 & 0.08588114 \\ 
+\end{pmatrix} \end{align}
+
+Mixture Coefficient (pi):
+[ 0.33333333  0.29903553  0.36763114]

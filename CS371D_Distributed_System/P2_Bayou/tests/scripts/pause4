@@ -1,0 +1,22 @@
+joinServer 0
+joinServer 1
+joinServer 3
+joinClient 2 0
+put 2 eminem piratebay.org
+stabilize
+pause
+breakConnection 2 0
+restoreConnection 2 1
+put 2 bieber youtube.com
+put 2 something else
+get 2 eminem
+printLog 1
+breakConnection 0 1
+breakConnection 0 3
+printLog 3
+start
+stabilize
+breakConnection 2 1
+restoreConnection 2 3
+get 2 bieber
+printLog 3

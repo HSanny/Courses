@@ -1,0 +1,8 @@
+joinServer 0
+joinClient 2 0
+put 2 eyesOfTexas utexas.edu
+put 2 UTCS utexas.edu
+stabilize
+get 2 UTCS
+get 2 eyesOfTexas
+printLog 0

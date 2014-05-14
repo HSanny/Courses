@@ -1,0 +1,258 @@
+;*********************************************
+; CourseCode: COMP2300
+; Task: Assignment 02
+; Version: 1.0
+;
+; Name: Jimmy Lin
+; UID: U5223173
+; Email: 
+;   - linxin@gmail.com
+;   - u5223173@uds.anu.edu.au
+;
+; Edited by MacVim 
+;*********************************************
+
+;test: RPI004004B0111101111011110
+0x0100 : 
+Init: ; set to zero for initialization
+    load #0 R0
+	load #0 R1
+	load #0 R2
+	load #0 R3
+	load #0 R4
+	load #0 R5
+	load #0 R6
+	load #0 R7
+    jump checkFormat
+    jump end 
+
+;*********************************************
+;checkFormat: check validity of first 3 chars 
+;   R2 for loading data from input stream
+;   R3 for storing expected character constant
+;   R4 for storing result of subtraction
+;*********************************************
+checkFormat: 
+    load 0xFFF0 R2
+    load #'R' R3
+    sub R2 R3 R4
+    jumpnz R4 end
+    store R3 0xFFF0 ;  test
+
+    load 0xFFF0 R2
+    load #'P' R3
+    sub R2 R3 R4
+    jumpnz R4 end
+    store R3 0xFFF0 ; test
+
+    load 0xFFF0 R2
+    load #'I' R3
+    sub R2 R3 R4
+    jumpnz R4 end 
+    store R3 0xFFF0 ; test
+
+    load #'\n' R3
+    store R3 0xFFF0 ;test
+
+    jump readWidth
+
+;*********************************************
+;readWidth: get width of this image
+;   R2 for loading data from input stream
+;   R3 for accumulator
+;   R4 for storing constant 10
+;   R5 for storing constant 48
+;     (for conversion between char and int)
+;   R6 for width of the image
+;*********************************************
+readWidth:
+    load #10 R4
+    load #48 R5
+
+    load 0xFFF0 R2
+    sub R2 R5 R2
+    mult R2 R4 R3
+
+    load 0xFFF0 R2
+    sub R2 R5 R2
+    add R2 R3 R3
+    mult R3 R4 R3
+
+    load 0xFFF0 R2
+    sub R2 R5 R2
+    add R2 R3 R3
+
+    move R3 R6
+    ;add R6 R5 R6
+    ;store R6 0xFFF0
+    ;load #'\n' R0
+    ;store R0 0xFFF0
+    ;sub R6 R5 R6
+
+    jump readHeight 
+
+;*********************************************
+;readHeight: get height of this image
+;   R2 for loading data from input stream
+;   R3 for accumulator
+;   R4 for storing constant 10
+;   R5 for storing constant 48
+;     (for conversion between char and int)
+;   R7 for height of the image
+;*********************************************
+readHeight:
+    load #10 R4
+    load #48 R5
+
+    load 0xFFF0 R2
+    sub R2 R5 R2
+    mult R2 R4 R3
+
+    load 0xFFF0 R2
+    sub R2 R5 R2
+    add R2 R3 R3
+    mult R3 R4 R3
+
+    load 0xFFF0 R2
+    sub R2 R5 R2
+    add R2 R3 R3
+
+    move R3 R7
+    ;add R7 R5 R7
+    ;store R7 0xFFF0
+    ;load #'\n' R0
+    ;store R0 0xFFF0
+    ;sub R7 R5 R7
+
+    jump readMode
+
+;*********************************************
+;readMode: get height of this image
+;   R2 for loading data from input stream
+;   R5 for storing expected char constant
+;      and subtraction result
+;*********************************************
+readMode:
+    load 0xFFF0 R2
+    store R2 0xFFF0
+    load #'\n' R0
+    store R0 0xFFF0
+
+    load #'B' R5
+    sub R2 R5 R5
+    jumpz R5 readBinary
+
+    load #'X' R5
+    sub R2 R5 R5
+    jumpz R5 readHexdecimal
+
+    load #'R' R5
+    sub R2 R5 R5
+    jumpz R5 readRunLength
+
+;*********************************************
+;readBinary: read binary image to memory
+;*********************************************
+readBinary:
+    ;Initialization for reading binary image
+    load #0 R1 ; index of x
+    load #0 R2 ; index of y
+
+loopBinary:
+    load 0xFFF0 R0
+    load #48 R5  ; for conversion
+
+    sub R0 R5 R0 ; 0 or 1
+
+    jumpz R0 incrementX ; no need to change data, continue
+    jumpnz R0 alterMemory
+
+alterMemory:
+    load #32 R5 
+    div R1 R5 R3 ;  x / 32
+    load #6 R5
+    mult R2 R5 R4 ;  y * 6
+
+    load #0x7C40 R5
+    add R4 R5 R5
+    add R3 R5 R5
+    load R5 R4 ; value in dest address
+
+    ; get times of left shift
+    load #32 R3
+    mod R1 R3 R3 
+
+    load #0x01 R0
+    push R6
+    push R7
+    load #2 R7
+    load #1 R6
+
+Shift:
+    jumpz R3 shiftDone
+    mult R0 R7 R0
+    sub R3 R6 R3; time--
+    jumpnz R3 Shift
+
+shiftDone:
+    pop R7
+    pop R6
+    or R0 R4 R4 ; R4 is expected image unit
+
+    store R4 R5
+    jump incrementX
+
+
+incrementX:
+    load #1 R3
+    add R1 R3 R1 ; x++
+    sub R6 R1 R4
+    
+    load #48 R0
+    add R0 R1 R0
+    store R0 0xFFF0
+
+    jumpz R4 incrementY
+    jumpnz R4 loopBinary
+
+incrementY:
+    sub R1 R1 R1 ; x index clear to 0
+    load #1 R3
+    add R2 R3 R2 ; y ++
+    sub R7 R2 R4
+
+    ;load #48 R0
+    ;add R0 R4 R0
+    ;store R0 0xFFF0
+
+    ;load #48 R0
+    ;add R0 R7 R0
+    ;store R0 0xFFF0
+
+    jumpz R4 endBinary
+    jumpnz R4 loopBinary
+    
+endBinary: 
+    load #'E' R0
+    store R0 0xFFF0
+    jump end
+
+
+;*********************************************
+;readHexdecimal: 
+;   read hexdecimal image to memory
+;*********************************************
+readHexdecimal:
+
+    jump end
+
+;*********************************************
+;readRunLength: 
+;   read run-length image to memory
+;*********************************************
+readRunLength:
+
+    jump end
+
+end: halt
+

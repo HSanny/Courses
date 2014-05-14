@@ -1,0 +1,50 @@
+################
+TEAM INFO
+################
+Name1: XIN LIN
+EID1: xl5224
+CS login: jimmylin
+Email: JimmyLin@utexas.edu
+Unique Number: 53910
+
+Name2: Bochao Zhan 
+EID2: BZ2892
+CS login: bzhan
+Email: bzhan927@gmail.com
+Unique Number: 53900
+
+Slip days used: 0 day
+
+################
+
+
+
+
+################
+CS:APP Thread Lab
+################
+
+Files:
+
+Makefile	# Compiles your shell program and runs the tests
+README		# This file
+
+#Files for 2.2.1 Design Documentation
+design_doc.txt  # Provide your answers to questions and explanations here
+
+#Files for 2.2.2 Alarm Clock
+devices/timer.c # for time sleep
+
+#Files for 2.2.3 Priority Scheduling
+threads/thread.c
+threads/thread.h
+
+#Files for 2.2.4 Priority Donation
+
+
+#Files for 2.2.5 Advanced Scheduler
+
+# The remaining files are used to test your shell
+
+# Little C programs that are called by the trace files
+

@@ -1,0 +1,170 @@
+Homework #: 6
+Student Name: XIN LIN
+EID: xl5224
+CS login: jimmylin
+Email address: JimmyLin@utexas.edu
+Unique Number: 53910
+
+------------------------------------------------------------------------
+1. Pages have (at least) the following three bits associated with them: the
+resident bit, the clock/reference bit, and the dirty bit. Describe each bit
+and its use.
+
+Resident bit: also called valid bit and present bit, true if the corresponding
+virtual page is in physical (main) memory. 
+
+Reference bit: set by hardware on read/write. If set, the corresponding page
+frame is used. It forms the bedrock of clock page replacement algorithm.
+
+Dirty bit: set by hardware if the corresponding page frame is modified. If
+set, the page frame has to be written back to the hard disk.
+
+------------------------------------------------------------------------
+2. In class, we discussed that paging may increase internal fragmentation. What
+is internal fragmentation? What steps could you take to reduce it?
+
+Internal fragmentation: spatial overhead within basic unit of allocation
+That is, the memory waste within one page if one process request
+23-byte memory space (or generally not exactly exponential of 2). OS has
+to assign the integer number of pages to the process.
+
+The way to reduce internal fragmentation is to decrease the size of each page.
+That would increase bits used in the page number but reduce the bits in page
+offset in both virtual address and physical address. To illustrate this,
+imagine a process request 23-byte memory space. If page size is of 32-byte, 9
+bytes of memory has to be wasted. But if one OS has 8-byte page size, it only
+wastes 1 byte with 3 pages used.
+
+------------------------------------------------------------------------
+3. Sam P. Hacker is a Head Guru in a software company known for operating systems
+with very sorry quality. Hacker suggested a trick to reduce the pressure on
+the swap space. Instead of swapping out pages that belong to code texts into
+the swap area, the operating system could just take away the memory frames. If
+the code page is needed later, it could be paged directly from its binary
+file. Hacker's argument is that the operating system will save time by not
+storing the code page into the swap space, and will save space in the swap
+area. The code text exists on disk anyway, and could be fetched from there.
+Would you approve of this design? Why or why not?
+
+I disapprove this design. This design does not distinguish the memory-resident
+process and program codes. 
+If we directly use the file in the disk to run a script, we cannot recompile
+the program codes until its execution terminated, since we need to maintain
+the consistency of program routines. 
+
+------------------------------------------------------------------------
+4. In a 32-bit machine we subdivide the virtual address into 4 segments as
+follows: 
+    10-bit   8-bit   6-bit   8 bit
+We use a 3-level page table, such that the first 10-bits are for the first
+level and so on.
+a. What is the page size in such a system?
+
+    The page size depends on the bits used for representing page offset. 
+    The former three sections of address identifies a particular page.
+    Assume it is a byte-addressible system, that is 
+        2^8 = 256 bytes
+
+b. What is the size of a page table for a process that has 256KB of memory
+starting at address 0?
+
+    256 KB / 256 bytes = 1024 pages
+    
+    One first-level page table points to 1024 second-level page tables.
+    One second-level page table points to 256 third-level page tables. 
+    One third-level page table points to 64 pages in virtual memory.
+
+    Thus 1024 pages require 1024 / 64 = 16 second-level page table entries.
+
+------------------------------------------------------------------------
+5. Belady's anomaly: Intuitively, it seems that the more frames the memory
+has, the fewer page faults a program will get. Surprisingly enough, this is
+not always true. Belady (1969) discovered an example in which FIFO page
+replacement causes more faults with four page frames than with three. This
+strange situation has become known as Belady's anomaly. To illustrate, a
+program with five virtual pages numbered from 0 to 4 references its pages in
+the order: 
+     0 1 2 3 0 1 4 0 1 2 3 4
+
+a. Using FIFO replacement and assuming demand paging, compute the number of
+page faults with 3 frames. Repeat for 4 frames.
+
+For the case of 3 frames:
+  PF\P   0 1 2 3 0 1 4 0 1 2 3 4
+   a     0 0 0 3 3 3 4 4 4 4 4 4
+   b     - 1 1 1 0 0 0 0 0 2 2 2
+   c     - - 2 2 2 1 1 1 1 1 3 3
+  Fault  Y Y Y Y Y Y Y N N Y Y N
+# of page faults = 9
+
+For the case of 4 frames:
+  PF\P   0 1 2 3 0 1 4 0 1 2 3 4
+   a     0 0 0 0 0 0 4 4 4 4 3 3
+   b     - 1 1 1 1 1 1 0 0 0 0 4
+   c     - - 2 2 2 2 2 2 1 1 1 1
+   d     - - - 3 3 3 3 3 3 2 2 2
+ Fault   Y Y Y Y N N Y Y Y Y Y Y
+# of page faults = 10
+
+b. Compute the number of page faults under LRU, the clock algorithm, and the
+optimal algorithm. What do you notice? 
+
+For the least recently used (LRU) algorithm:
+  PF\P   0 1 2 3 0 1 4 0 1 2 3 4
+   a     0 0 0 3 3 3 4 4 4 2 4 4
+   b     - 1 1 1 0 0 0 0 0 0 3 3
+   c     - - 2 2 2 1 1 1 1 1 1 1
+ Fault   Y Y Y Y Y Y Y N N Y Y N
+# of page faults = 9
+
+  PF\P   0 1 2 3 0 1 4 0 1 2 3 4
+   a     0 0 0 0 0 0 0 0 0 0 0 4
+   b     - 1 1 1 1 1 1 1 1 1 1 1
+   c     - - 2 2 2 2 4 4 4 4 3 3
+   d     - - - 3 3 3 3 3 3 2 2 2
+ Fault   Y Y Y Y N N Y N N Y Y Y
+# of page faults = 8 
+
+             ------------------------------------
+   
+For the clock algorithm:
+  PF\P   0  1  2  3  0  1  4  0  1  2  3  4
+   a    *0 *0 *0 *3 *3 *3 *4 *4 *4 *2 *2 *2
+   b     - *1 *1  1 *0 *0  0 *0 *0  0 *3 *3
+   c     -  - *2  2  2 *1  1  1 *1  1  1 *4
+ Fault   Y  Y  Y  Y  Y  Y  Y  N  N  Y  Y  Y
+# of page faults = 10
+ NOTE: * means reference bit is set.
+   
+  PF\P   0  1  2  3  0  1  4  0  1  2  3  4
+   a    *0 *0 *0 *0 *0 *0  0 *0 *0 *0 *3 *3
+   b     - *1 *1 *1 *1 *1  1  1 *1 *1  1  1
+   c     -  - *2 *2 *2 *2 *4 *4 *4 *4  4 *4
+   d     -  -  - *3 *3 *3  3  3  3 *2  2  2
+ Fault   Y  Y  Y  Y  N  N  Y  N  N  Y  Y  N
+# of page faults = 7
+ NOTE: * means reference bit is set.
+
+             ------------------------------------
+
+For the optimal algorithm:
+  PF\P   0 1 2 3 0 1 4 0 1 2 3 4
+   a     0 0 0 0 0 0 0 0 0 2 3 3
+   b     - 1 1 1 1 1 1 1 1 1 1 1
+   c     - - 2 3 3 3 4 4 4 4 4 4
+ Fault   Y Y Y Y N N Y N N Y Y N
+# of page faults = 7
+
+For the optimal algorithm:
+  PF\P   0 1 2 3 0 1 4 0 1 2 3 4
+   a     0 0 0 0 0 0 0 0 0 0 3 3
+   b     - 1 1 1 1 1 1 1 1 1 1 1
+   c     - - 2 2 2 2 2 2 2 2 2 2
+   d     - - - 3 3 3 4 4 4 4 4 4
+ Fault   Y Y Y Y N N Y N N N Y N
+# of page faults = 6
+
+             ------------------------------------
+What I note is that Belady's anomaly only holds for FIFO algorithm.
+That is to say, for most of replacement algorithms except FIFO, there does not
+exist Belady's anomaly.

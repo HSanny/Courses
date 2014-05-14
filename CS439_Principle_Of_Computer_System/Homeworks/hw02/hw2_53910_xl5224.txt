@@ -1,0 +1,119 @@
+Homework #: 1
+Student Name: XIN LIN
+EID: xl5224
+CS login: jimmylin
+Email address: JimmyLin@utexas.edu
+Unique Number: 53910
+
+------------------------------------------------------------------------
+1. What differentiates a program, an executable, and a process?
+
+Answer: 
+    Program is the script containing the routines specified by programmers,
+that is, programs convey what human wants machine to do. One program, after
+being compiled, can be run on more than one process.
+
+    Executable stands for the Executable Object File. The executable is the 
+product of compilation and can be directly executed by computer since it is 
+in the form of machine code.
+
+    Process is one of abstract computational resources. It can be regarded 
+as a basic unit of execution. Multiple processes may execute different 
+instance of executable of one program.
+
+------------------------------------------------------------------------
+2. Define three styles of switching from user mode to supervisor mode.
+
+Answer:
+    a. interrupts: a signal giving to OS kernal that requires immediate attention.
+    b. traps/system calls: invoked when user application requires service from OS kernel.
+    c. faults: occurs when program causes hardware exception, such as divided by 0, 
+and memory access problem.
+
+------------------------------------------------------------------------
+3. From Anderson and Dahlin, Ch1 question 1:
+    Suppose a computer system and all of its applications are completely
+bug free. Suppose further that everyone in the world is completely honest 
+and trustworthy. In other words, we do not need to consider fault isolation.
+    How should the operating system allocate the processor? Should it give
+all of the processor to each application until it no longer needs it? If
+there are multiple tasks ready to execute at the same time, should it
+schedule the task with the least amount of work to do or the most? 
+Justify your answer. 
+    You may assume a uniprocessor.
+
+Answer:
+    The operating system should not allocate the whole processor to certain
+program until it is not needed any more. 
+Reason: 
+    Based on the multiprogramming design pattern, the operating system should be
+able to manipulate the context switch between different process. One program
+should occupy the whole CPU until it is terminated. Thus, in order to achieve
+context switch (perhaps exploit the Round Robin Algorithm), OS kernel should 
+regain its controll to the machine regularly even though there is no need
+for OS to provide protection to machine hardware.
+    
+
+
+------------------------------------------------------------------------
+4. Given the following piece of code:
+main(int argc, char**argv)
+{
+   int child=fork();
+   int c=5;
+   
+   if(child==0)
+   {
+      c+=5;
+   }
+   else
+   {
+      child=fork();
+      c+=10;
+      if(child)
+         c+=5;
+   }
+How many different copies of the variable c are there? What are their values?
+
+Answer: 3 copies in total.
+Reason: 
+    There are two fork function invoked in the provided code. 
+The first fork() function duplicates the original (main) process, thus 
+the first child process is generated and within that child process, variable 
+child = 0. However, the variable child in the main process is non-zero since
+fork return pid of child process to parent process.
+    And the second fork() function is only invoked by the main process, within 
+which, as previously mentioned, the variable child is non-zero, and thus the 
+else part of conditioning statement is executed. 
+    To summarize, the main process is duplicated twice while all the child 
+processes are not copied. Therefore, there are three copies of variable c.
+
+Postcondition of variable c in each process:
+    c in main process: c = 5 + 10 = 15
+    c in first generated child process: c = 5 + 5 = 10
+    c in secon generated child process: c = 5 + 10 + 5 = 20
+
+
+------------------------------------------------------------------------
+5. System Calls vs. Procedure Calls: How much more expensive is a system call
+than a procedure call? Write a simple test program to compare the cost of a
+simple procedure call to a simple system call ("getuid()" is a good candidate
+on UNIX; see the man page.) (Note: be careful to prevent the optimizing compiler
+from "optimizing out" your procedure calls. Do not compile with optimization on.)
+
+Explain the difference (if any) between the time required by your simple procedure
+call and simple system call by discussing what work each call must do (be specific).
+[Note: Do not provide the source code for your program, just the results].
+
+Hint: You should use system calls such as gethrtime() or gettimeofday() for time
+measurements. Design your code such that the measurement overhead is negligible.
+Also, be aware that timer values in some systems have limited resolution 
+(e.g., millisecond resolution).
+
+Answer: 
+    A procedure call directly executes the codes in user mode without giving the control
+to kernel mode. In contrast, to execute a system call, the program has to switch 
+to kernel mode first, execute the routine in OS code and finally return back to user mode.
+In summary, the overhead of system calls lies in the mode switching.
+    Specific example, 
+

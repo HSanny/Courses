@@ -20,7 +20,7 @@ Course Performance:
 >
 > Final: 24/25
 >
-> Projects: 
+> Projects:  /20
 
 
 Questions on Review

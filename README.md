@@ -1,11 +1,18 @@
 Courses
 =======
 
-UT Austin: 
+The University of Texas at Austin:
+
+    EID: xl5224
+    cs login: jimmylin
 
 Australian National University:
+    
+    UID: 5223173
 
 Beijing Institute of Technology:
+
+    UID: 1120100961
 
 
 List of Courses 
@@ -13,6 +20,7 @@ List of Courses
 
 Taken at UT Austin: 
 
+    CS439_Principle_Of_Computer_System
     CS331_Algorithm_And_Complexity
     CS343H_Artificial_Intelligence
     CS363D_Statistical_Learning_And_Data_Mining
@@ -20,6 +28,10 @@ Taken at UT Austin:
 
 Taken at ANU:
 
+    COMP2100_Software_Construction
+    COMP2300_Computer_System
+    COMP3600_Theory_Of_Computation
+    COMP4670_Machine_learning
 
 List of Operations
 -------------

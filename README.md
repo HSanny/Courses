@@ -22,9 +22,11 @@ List of Courses
 
 #### Taken at BIT:
 
-Directory Operations
+List of Operations
 -------------
-#### merge a new repository
+Merge a new repository
 
-#### fetch files of one repository
+    git subtree add --prefix=[dir_name] [git_URL:~.git] [branch_name:master]
+
+Fetch files of one repository
 

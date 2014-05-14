@@ -1,0 +1,441 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%  THIS TEX FILE IS TO GENERATE PDF FILE FOR 
+%%% 
+%%%  COPYRIGHT (C) JIMMY LIN, 2013, UT AUSTIN
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[11pt,a4paper]{article}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%  PACKAGES USED IN THIS TEX SOURCE FILE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{geometry,amsthm,amsmath,graphicx,fancyheadings}
+\usepackage[colorlinks,
+            linkcolor=blue,
+            anchorcolor=red,
+            citecolor=green
+            ]{hyperref}
+\usepackage{/Users/JimmyLin/workspace/latexTemplate/UTA_CS/JS}
+\usepackage{/Users/JimmyLin/workspace/latexTemplate/UTA_CS/JSASGN}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% MACROS CONTAINING THE FILE INFORMATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\COURSE}{CS371D Distributed System}
+\renewcommand{\LECTURER}{Lorenzo Alvisi}
+\renewcommand{\TUTOR}{Chao Xie}
+\renewcommand{\TASK}{Problem Set 01}
+\renewcommand{\RELEASEDATE}{Feb. 8 2014}
+\renewcommand{\DUEDATE}{Feb. 12 2014}
+\renewcommand{\TIMECONSUME}{20 hours}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% DOCUMENTATION STARTS FROM HERE 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% TITLE PAGE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{titlepage}
+    \maketitle
+\end{titlepage}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% CONTENT PAGE: TABLEOFCONTENTS, LISTOFTABLES, LISTOFFIGURES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\contentsname}{Contents}
+\begin{center} 
+    \tableofcontents 
+    %\listoftables 
+    %\listoffigures
+\end{center}
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% GENERAL DOCUMENTATION BEGINS 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Problem 1: Snapshot Protocol}
+\subsection{Problem Analysis}
+If we relax the FIFO assumption under the asynchronous system, the problems
+introduced are as follows: 
+\begin{itemize}
+    \item{Messages in channel will reach destination process after the "take a
+            snapshot" message (the marker message) is delivered to end up
+            channel recording. That is, some messages may stay in
+            channel over the whole snapshot collection period, such that we
+            cannot collect complete channel state. Our strategy to tackle this
+            problem is to delay the reporting of one process to the snapshot
+            initiator, so as to reserve enough time waiting for the arrival of
+            messages in channel. }
+    \item{Messages sent after the delivery of "take a snapshot" message may
+            arrive at destination process prior to it. That is, some redundant
+            messages may be mistaken as component of channel state. Our
+            strategy of dealing with this problem is to use timestamp.} 
+\end{itemize}
+
+\subsection{Algorithm}
+The new snapshot protocol is designed as follows:
+here we choose process $p_0$ as a snapshot initiator.
+\begin{itemize}
+    \item{processor $p_0$ sends "take a snapshot to itself" with timestamp
+            $TS(m)$}
+    \item{if process $p_i$ receives "take a snapshot" \textbf{for first time} from $pj$ }
+        \begin{itemize}
+            \item{records its local state $\sigma_i$}
+            \item{sends "take a snapshot" with timestamp $TS(m)$ along its outgoing channels}
+            \item{starts recording messages received on each incoming channel}
+            \item{stops recording a channel \textbf{after the delay time
+                        $\tau$}}
+        \end{itemize}
+    \item{when $p_i$ receive "take a snapshot" with timestamp $TS(m)$ from
+            \textbf{not for first time}}
+        \begin{itemize}
+            \item{ignore all received messages with timestamp greater than
+                    $TS(m)$. That is, do not report these messages as part of
+                    channel state.}
+        \end{itemize}
+    \item{when $p_i$ stops recording all its incoming channel, it sends
+            collected state to $p_0$ and then stops}
+\end{itemize}
+
+
+
+\newpage
+\section{Problem 2: Property Specification}
+\subsection{Concepts Interpretation}
+%{{{
+Before providing solutions for these statement, we need first clarify the
+semantics of safety and liveness property:
+
+\begin{itemize}
+    \item{\textbf{Liveness}. Even liveness property does not hold now, it will hold
+            in one future state.}
+
+    \item{\textbf{Safety}. Once saftey property holds, that property holds for all
+            prefix state.}
+\end{itemize}
+%}}}
+\subsection{Ultimate Answers}
+%{{{
+1. \textbf{Safety}. 
+Once we know that another general will follow the attack decision within five
+minutes, such decision delay will hold in all previous global state. Thus,
+this is safety property. This is not liveness property because once another
+general follows the attack decision over 5 minutes, this property would never
+hold in the future.
+
+2. \textbf{Safety}. If the statement that no general decide to attack holds, no
+general can decide to attack in the previous state. Hence, this is safety
+property. But this is not liveness property because once there is one general
+decides to attack, this statement cannot hold in any future state.
+
+3. \textbf{A combination of safety and liveness}. If both generals will eventually
+decide on the same value, such tendency also holds for all previous states.
+Therefore, this is safety property. This is also liveness property because
+even though two generals do not tend to reach the same decision in one state,
+they may tend to reach the same decision since new decision is made and
+communication does not fail.
+
+4. \textbf{No property at all}. The statement of "Not to attack is a possible
+decision" does not satisfy any property. Possibility of not attacking at the
+moment does not indicate the same possibility in the previous state.
+Impossibility of not attacking does not indicate possibility of not attacking
+in the future state.
+
+5. \textbf{Safety}. This is safety property because one general in previous
+states can only have less number of messages. No more than 10 messages now
+indicates no more than 10 messages in the previous states. This is not
+liveness property because the general may send more than 10 messages in the
+future.
+
+6. \textbf{Liveness}. This statement satisfy liveness property because the
+even the general B does send 5 messages now, it may sends at least 5 messages
+in the future. This is not safety property because general will send less
+messages in the past. Thus, the lower bound of number of messages may not be
+satisfied in previous states.
+%}}}
+\newpage
+
+\section{Problem 3}
+\subsection{Under Bounded Loss Assumption}
+%{{{
+The algorithm is as follows: 
+\begin{itemize} 
+    \item{If one general $g$ are ready to attack, and he does not receive "Yes"
+        message from the other general before: }
+        \begin{itemize}
+            \item{General $g$ should send eleven "Yes" messages to the other general}
+            \item{General $g$ decides to attack once it receives "Yes" message
+                    from the other general}
+            \item{General $g$ decides "not to attack" if it receives "No" message
+                    from the other general}
+        \end{itemize}
+    \item{If one general $g$ are ready to attack, and he did receive "Yes"
+        message from the other general before: }
+        \begin{itemize}
+            \item{$g$ should send eleven "Yes" messages to the other general.
+                    (acknowledgement)}
+            \item{General $g$ make up its decision to "attack".}
+        \end{itemize}
+    \item{If one general $g$ are not ready to attack, and did not receive one "Yes"
+            message from the other general}
+        \begin{itemize}
+            \item{General $g$ make up its decision "not to attack".}
+            \item{If received "Yes" message from the other general, $g$ should
+                    send eleven "No" messages to the other general}
+            \item{If received "No" message from the other general, $g$ should
+                    send eleven "No" messages to the other general as
+                    acknowledgement. }
+        \end{itemize}
+\end{itemize}
+
+\textbf{Proof for Agreement}. 
+
+If general A is ready to attack, it should send 11 "Yes" messages to
+the other general. And general B must receive at least one message
+according to the assumption that at most 10 messages are lossy. Then if
+general B is ready, he should also send more than 10 "Yes" messages to general A.
+In this manner, general A is guaranteed to receive general B's decision. And
+both general decides to attack. (vice versa)
+
+In all other cases, general A and general B will both decide not to attack
+based on the algorithm shown above.
+
+\textbf{Proof for Validity}. 
+
+1. If both generals are not ready, each general will decide "not to attack"
+by himself without communicating with each other. In this case, no one decides
+to attack.
+
+2. If both generals are ready, both of them will send 11 "Yes" messages to the other
+general. And it is guaranteed that each general will at least receive one
+"Yes" message. And since both of them are ready and did not send "No" messages
+to the other, neither generals will decide "not to attack" for sure. 
+
+In summary, since the point 1 and point 2 hold, the Validity Property
+holds for the provided algorithm.
+
+\textbf{Proof for Termination}. 
+
+If one general are not ready, it will decide "not to attack" at the moment. 
+
+If one general are ready, it will send 11 "Yes" message and these messages
+will be received for sure. The receiver general will respond with 11 messages.
+If these messages are "Yes" , the sender general will decide to "attack",
+otherwise, it will decides "not to attack".  Thus, since every general
+eventually make decision as shown above, the termination property for this
+algorithm holds. 
+
+\newpage%}}}
+
+\subsection{Under Eventual Delivery Assumption}
+%{{{
+The difference of this question lies in the fact that each general has no
+prior knowledge about the number of messages that would be lost. We can
+first let two generals send redundant messages to fail the channel until it is
+reliable. 
+
+The algorithms designed are as follows:
+\begin{itemize}
+    \item{If one general is not ready to attack}
+        \begin{itemize}
+        \item{keeps on sending "No" message to the other general}
+        \item{decide "not to attack" no matter what it received}
+        \end{itemize}
+    \item{If one general is ready to attack}
+        \begin{itemize}
+        \item{keeps on sending "Yes" to the other general}
+        \item{decide "not to attack" if "No" message is received}
+        \item{decide "attack" if "Yes" message is received}
+        \end{itemize}
+\end{itemize}
+
+\textbf{Proof for Agreement}. 
+
+If both general A and general B are ready to attack, it will continuously send
+"Yes" messages to the other general. And general B must eventually receive at
+least one "Yes" message according to the eventual delivery assumption. General B
+follows the same analysis. Since general A and B will eventually receive "Yes"
+message and are both ready to attack, they will both decide to "attack".
+Therefore, both generals decide the same value if both are ready.
+
+According to the algorithm, if one of two generals (say, general A) is not
+ready to attack, he will keeps on sending "No" messages to the other general
+(general B) and he will decide "not to attack". Even if general (B) is ready
+to attack, since it receives "No" message, it will also decide "not to
+attack". Hence, two generals decide the same value if either one is not ready.
+
+If both generals are not ready to attack, they will stick to sending "No"
+message and directly decide "not to attack". Thus, two generals decide the
+same value if none of them is ready.
+
+In summary, the given algorithm satisfies Agreement Property.
+
+\textbf{Proof for Validity}. 
+
+1. If both generals are not ready, they will directly decide "not to attack"
+and telling the other general their decision. Hence, in this case, no general
+would decide "attack".
+
+2. If both generals are ready, they both keep on sending "Yes" message to the
+other general and eventually they will receive "Yes" message sent by the other
+general. After the recept of "Yes" message, since they are both ready, neither
+of them will decide "not to attack".
+
+In summary, since the point 1 and point 2 hold, the Validity Property
+holds for the provided algorithm.
+
+\textbf{Proof for Termination}. 
+
+Apparently, the Termination Property holds for the algorithm. This is because
+no matter whether one general is ready or not, he will keep on sending message
+to the other general. The other general will eventually receive one of those
+message and make decision in terms of the recept message and its own readiness.
+
+\newpage%}}}
+
+\section{Problem 4}
+\textbf{Proof}:
+$$ VC (\Sigma_{min}^{\sigma_i^k}) = VC (\sigma_i^k)$$
+
+By defintion, 
+$ \Sigma_{min}^{\sigma_{i}^{k}}$ is the earliest consistent state that  $
+\sigma_i^k$ (event $k$ at process $i$) can belong to. Thus, we divide the
+entire proof into two parts. For the first part we show that
+$VC(\sigma_{i}^{k})$ represents a consistent global state. On the second part , we 
+show that each component in $VC(\sigma_{i}^{k})$ is earliest.
+
+\subsection{$VC(\sigma_i^k)$ is earliest}
+%{{{
+First of all, we prove that 
+    \textbf{the global state represented by $VC(\sigma_i^k)$ is consistent}.
+    Actually, we can refer to, for convenience, the conclusion made in class
+    note that a vector clock of one event correspond to a consistent global
+    state. But we still provide detailed proof by contradiction.
+
+    Assume that the global state represented by $VC(\sigma_i^k)$ is
+    \textbf{not} consistent. That is to say,
+
+    \begin{align}
+     \exists \sigma_j^{s^*}, \sigma_j^{s^*} \rightarrow \sigma_i^k, s.t. 
+    \end{align}
+    \begin{align}
+     \sigma_i^k \in C, \sigma_j^{s*} \notin C 
+    \end{align}
+
+    According to the VC property, the happen-before relation above indicates
+    $$ VC(\sigma_j^{s^*}) < VC(\sigma_i^{k})$$
+
+    That is,
+    \begin{align}
+    VC(\sigma_j^{s^*}) \neq VC(\sigma_i^{k}) \ and \ \forall x,
+    VC(\sigma_j^{s^*})[x] \leq VC(\sigma_i^{k})[x]  \label{instan}
+    \end{align}
+
+    However, if we take an event at process $j$ happening before
+    $\sigma_j^{s*}$ and belong to the consistent cut, let's call it
+    $\sigma_j^s$. According the update rule of vector clock, we have
+    \begin{align}
+    VC(\sigma_j^s)[j] < VC(\sigma_j^{s^*})[j]
+    \end{align}
+
+    Instantiate the formula \eqref{instan}, we have
+    \begin{align}
+        (\sigma_j^{s^*})[j] \leq VC(\sigma_i^{k})[j]
+    \end{align}
+
+    Hence, we have 
+    \begin{align} \label{vio1}
+    VC(\sigma_j^s)[j] < VC(\sigma_j^{s^*})[j] \leq VC(\sigma_i^{k})[j]
+    \end{align}
+
+    However, according to the property of consistent cut (see the class note),
+    the event $\sigma_j^s$ and $\sigma_i^{k}$ are in one consistent cut and
+    should satisfy
+    \begin{align} \label{vio2}
+     VC (\sigma_j^s)[j] \geq VC (\sigma_i^{k})[j] 
+    \end{align}
+
+    Obviously, the conflict lies in \eqref{vio1} and \eqref{vio2}. Hence, we
+    should negate the assumption proposed at the very beginning and conclude
+    that \textbf{the global state represented by $VC(\sigma_i^k)$ is
+        consistent}.
+
+\newpage
+%}}}
+
+\subsection{$VC(\sigma_i^k)$ is earliest}
+%{{{
+Then, we prove that 
+    \textbf{for arbitrary $\sigma_i^k$, those each local state in
+        $VC(\sigma_i^k)$ is earliest among all possible ones consistent with
+        $\sigma_i^k$}.
+
+    We prove this by mathematical induction on number of events $E$. 
+
+    \textbf{For base case of $E = 1$}, there is only one event (say, at process $i$), the vector
+    clock of that event 
+        
+    \begin{eqnarray}
+        \forall j, 1 \leq j \leq n,\ VC(\sigma_i^1)[j] =
+        \begin{cases}
+        0                   & j \neq i \\
+        1                   & j = i
+        \end{cases}
+    \end{eqnarray}
+    
+    Obviously, the claim to be proven is true for the case of $E = 1$ since all local
+    states are earliest.
+
+    \textbf{For base case of $E = 2$}, we consider two possible derivation according to the update
+    rule of vector clock. One is local update rule, and the other is
+    happen-before update rule. And third possibility is one independent event,
+    regardless of the update rule.
+
+    \begin{itemize}
+
+        \item{For local update rule, we have: }
+    \begin{eqnarray}
+       \forall j, 1 \leq j \leq n,\ VC(\sigma_i^2)[j] = 
+        \begin{cases}
+            0   & j \neq i \\
+            2   & j = i
+        \end{cases}
+    \end{eqnarray}
+
+    Apparently, this vector clock is earliest.
+    
+\item{For happen-before update rule, we introduce a event $e_k^1$ at process
+        $k$, ($k \neq i,\ 1 \leq k \leq n$) s.t. $e_i^1
+        \rightarrow e_k^1$, and have: }
+    \begin{eqnarray}
+       \forall j, 1 \leq j \leq n,\  VC(\sigma_k^1)[j] = 
+        \begin{cases}
+            1   & j = i\ or\ j = k \\
+            0   & otherwise
+        \end{cases}
+    \end{eqnarray}
+
+    By observation, this vector clock is earliest as well.
+
+\item{For introducing an independent event, it is obvious that the vector clock
+        of new event is still earliest. Here we omit the detail for convenience.}
+    \end{itemize}
+
+    Now we can conclude that the claim to be proven is true for $E = 2$.
+
+    \textbf{Generalization cases}. We assume that for $E = k$, all components
+    in $VC(\sigma_i^k)$ is earliest for any $\sigma_i^k$. And prove that for
+    $E = k + 1$, the same property holds. Similarly, we only needs to consider
+    newly introduced event. The detailed proof follows the generalization from
+    $E = 1$ to $E = 2$, involving the case of two VC update rule and one
+    independent case. 
+    %}}}
+
+\subsection{Sum Up}
+Since we have proven that the global state corresponding to $VC(\sigma_i^k)$
+is consistent and also earliest reachable state, it is reasonable to conclude
+that 
+\begin{align}
+ VC (\Sigma_{min}^{\sigma_i^k}) = VC (\sigma_i^k)
+\end{align}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% General Documentation ends
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}

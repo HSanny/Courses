@@ -1,0 +1,5 @@
+#!/bin/bash
+for x in $(seq $1 $2)
+do
+lp -d lw27 -o number-up-layout=btlr -o number-up=6 -o portrait lecture${x}.pdf
+done

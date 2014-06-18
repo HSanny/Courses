@@ -1,0 +1,346 @@
+Andrew Nguyen
+an9395
+anguyen1
+anguyen11@utexas.edu
+
+Lecture 1
+1) Information security, homeland security, communications security, network 
+   security, system security
+
+2) All involve protection of something from something else.
+
+3) Yes, received a new credit card after my old one was possibly compromised
+
+4) Hopefully fairly low. I pay attention to which sites I visit and which 
+   links I click to minimize the threat to my laptop. Malware checks rarely
+   find threats.
+
+5) Regularly run malware checks on my laptop. Be sure to not accidently 
+   download random .exe files.
+
+6) For the most part, yes. They regularly update to keep up with newest
+   threats.
+
+7) No I do not. Almost everything, from energy to defense, is handled via
+   computer systems. If any of theses systems were to be compromised, the
+   millions of people who depend on them would be in a lot of trouble.
+
+8) Even if perfect security is impossible, we need to make computer systems
+   are as secure as possible. Learning the fundamentals of computer security
+   will allow security to be implemented early on in the development of
+   computer systems rather than be tacked on later. It is better to prevent
+   attacks from happening than to recover after an attack has occurred.
+
+Lecture 2
+1) Another reason is that it might not always be readily apparent that a 
+   vulnerability is being exploited. You might not realize right away that
+   an attacker has access to certain data, and that attacker could continue
+   to read the confidential data until you discover the leak.
+
+2) No, there are many different methods to attack a system, and even more
+   potential places within a system to try each method to enumerate every
+   single "bad thing" that can happen.
+
+3) Defender must protect against attack of all kinds. Attack must only find
+   one attack that works.
+
+4) Yes, it is impossible to protect against every kind of attack. And even
+   if there was a perfectly secure system, attackers will always be able to
+   attack the human component.
+
+5) Security requires the devotion of development time and computing resources
+   that take away from other project goals. 
+
+Lecture 3
+1) Risk is the possibility that a particular threat will adversely impact an
+   information system by exploiting a particular vulnerability.
+
+2) Yes. It is impossible to protect everything perfectly, so certain threats
+   should be focused on more heavily than others.
+
+3) I accept that buying things online makes my credit card info vulnerable.
+   I avoid giving out my password to other people to use my accounts.
+   I mitigate the risk of someone discovering my password by using different
+     passwords for different accounts.
+   I transfer risk on my apartment by getting renter's insurance.
+
+4) While ALE is a handy tool for risk management, it is not all-encompassing.
+   It is unable to differentiate a single huge loss from a series of smaller
+   losses. 
+
+5) Technical, economic, psychological, 
+
+Lecture 4
+1) The items on slide 3 are mechanisms to protect the items on slide 2.
+
+2) Integrity. The one thing I don't want an attacker to be able to do is to
+   change my computer. I don't purchase much online so hiding my info is not
+   as important to me as being sure that my laptop's integrity has been
+   preserved.
+
+3) Grouping and categorizing data refers to determining what needs to be
+   protected the most and how to seperate it from less important data.
+
+4) For example if someone switches jobs, that person should no longer be
+   able to access what they could before at their old job.
+
+5) If a transaction cannot be relied upon to execute the same way every time
+   then that is a security threat. If you don't know what to expect then 
+   you can't tell when your system has been compromised.
+
+6) Online transactions, writing files
+
+Lecture 5
+1) cell phone network - ensure that cell phone users are able to get their 
+     calls/messages through to the correct person
+   military database - ensure that enemies cannot look at confidential info
+
+2) A policy provides well-defined rules to achieve the metapolicy goals.
+
+3) 1. A student's grades may only be revealed to that particular student
+   2. Final grades are due on _____
+   3. All grade changes after _____ must go through a dean
+
+4) Yes. A student might want to be able to change his/her grade, but the
+   school would not want students to have that ability.
+
+5) Protect SSNs of students from getting into the wrong hands.
+
+6) If you can't understand the security goals, then you can't understand the
+   rules that are meant to ensure those goals are met. Without a clear
+   metapolicy, a policy's rules are just arbitrary rules.
+
+Lecture 6
+1) Military security's primary concern is that only the right people are able
+   to see information. They don't want anything to be leaked or any spies to 
+   see something confidential . Integrity comes in when only the right people
+   are able to change information. Availability is when people can get the info
+   they need in a timely manner.
+
+2) The major threat is someone having access to info that they aren't supposed
+   to. 
+
+3) Because the rules we establish don't account for integrity at all.
+
+4) Labels are structured with a hierarchical component and a set of need-to-know
+   categories
+
+5) It's not our decision who is allowed to look at what. We are only concerned
+   with whether or not a this person is allowed to look at something or not.
+
+6) 1. Normandy invasion			most important
+   2. broken German codes
+   3. Col. Jones raise
+   4. Col. Smith no raise
+   5. chopped beef on toast today
+   6. softball game tomorrow		least important
+
+7) 1. tactical				numbers correspond to above
+   2. crypto
+   3. personnel
+   4. personnel
+   5. base
+   6. base
+
+8) A document that contains information in two differnt categories requires both
+   security levels to be satisfied because we don't want someone from one group
+   to have access to the other group's info if they aren't supposed to see it.
+
+Lecture 7
+1) Authorization levels
+
+2) Labels on documents indicate the sensitivity of the contained info, while
+   authorization levels indicate classes of info that a person is authorized 
+   to access.
+
+3) documents = files, humans = users
+
+4) If you don't give info to someone then they can't leak it. No reason to add
+   unnecessary risk.
+
+5) 1. If they are trusted enough to see Secret then they are trusted enough to
+      see Confidential
+   2. They are only cleared to Secret, so they shouldn't be able to see Top
+      Secret
+   3. Anyone should be able to see Unclassified
+
+Lecture 8
+1) So that this particular thought experiment can be generalized later on.
+
+2) Reflexive - for all x, x dominates x
+   Transitive - if a dominates b AND b dominates c, then a dominates c
+   Antisymmetric -  the only way for a to dominate b AND b dominate a is that
+     a = b
+
+3) Neither "Top Secret Crypto" nor "Top Secret Nuclear" dominates the other 
+
+4) They would have to be the exact same label. 
+
+5) A subject can only be granted read access to an object only if its level
+   dominates the level of the object.
+
+6) "Only if" allows for other constraints to be factored into whether or not
+   read access is granted.
+
+Lecuture 9
+1) Also need to consider write access.
+
+2) Can read Top Secret and write to Unclassified. This does not violate Simple
+   Security and results in information moving down the chain.
+
+3) Computer provides privilege to not only the human user but also to every
+   program running, benign or malicious.
+
+4) A subject can only be granted write access to an object only if its level
+   is dominated by the level of the object.
+
+5) The subject and the object must be at the same exact level.
+
+6) Make the general move down to the Unclassifed level to send the message.
+
+7) Yes. Either limit writes to only your exact level or eliminate writes all
+   together.
+
+Lecutre 10
+1) Changing a subject's level up results in a low-level subject being able to
+   look at high-level info so that would be bad. Lowering the level of a
+   subject is fine so long as it doesn't retain any of the high-level info
+   that it no longer has access to.
+
+2) Less functionality
+
+3) Now low-level subjects will be able to view high-level information.
+
+4) Need to ensure that no extraneoud info is being downgraded and that only
+   what you want to downgrade is being downgraded.
+
+Lecture 11
+1) Subjects have high security level, objects have low security level
+
+2) Too big 
+
+Lecture 12
+
+1) Located in other file
+
+                ( H, {A} )
+              ^          ^     
+             /            \       
+           /               \       
+       (H, {} )        (L, {A} )
+              ^         ^              
+               \       /                 
+                \     /      
+               ( L, {} )
+
+
+
+2) To find the LUB, find the point from which no information can flow up.
+   To find the GLB, find the point from which all information can flow up
+
+3) In BLP, information can only flow upwards
+
+Lecture 13
+1) According to BLP, you can only read below your level or write above it.
+   This should limit the flow of information to only from low to high.
+
+2) Subjects can only READ if their level dominates that of the object. This
+   follows simple security. Subjects may only WRITE if their level is
+   dominated by that of the object. This satisfies the *-property. Thus
+   READ and WRITE satisfy BLP.
+
+3) CREATE simply does nothing if the object already exists so it satisfies
+   BLP. DESTROY is similar to WRITE and it only does something if the level
+   of the object dominates that of the subject. So it also satisfies BLP.
+
+4) Both the high and low level subject need to be colluding together.
+
+5) So that it can be put into a loop.
+
+6) No. The low level subject can write to both high and low level objects.
+
+7) Yes. Because it can't know what the high level subject has done yet.
+
+8) If it wants to actually communicate information then yes, it must act
+   differently.
+
+9) If the low level subject can observe a change based on the actions of
+   a high level subject, then the change can be used to signify either a
+   1 or a 0, and thus communication is possible between the two.
+
+Lecture 14
+1) They are not a part of the system.
+
+2) No. If F0 is a high level object then the low level subject can't read
+   it. If F0 is a low level object then the high level subject can't write
+   it. 
+
+3) Whether or not the object exists.
+
+4) The system clock could be used to know how much time was used by
+   process p.
+
+5) Which cylinder the read head is closer to
+
+6) What value variable l is set to
+
+7) Because it has to turn back on to communicate more info, thus taking a
+   long time and having low bandwidth.
+
+8) You would need to be able to view how much power has been consumed.
+
+9) Laptops
+
+Lecture 15
+1) Because processors operate very quickly and can still transmit 
+   thousands of bits per second.
+
+2) There are too many of them, and there are probably times when they
+   simply can't be avoided.
+
+3) You can either eliminate it, reduce the bandwidth by introducing
+   noise, or monitor it for use.
+
+4) Example from earlier slideset. High level subject can create (or not) an
+   object that the low level object can then write to. Whether or not it is
+   allowed to read determines the bit transferred.
+
+5) Sender creates (or not) an object. Receiver tries to create same object.
+   Receiver writes to that object. Receiver tries to read the object. Whether
+   or not it is successful determines the bit transferred. Destroy the object
+   and repeat.
+
+Lecture 16
+1) CREATE doesn't tell you whether or not there was a file. It only tells you
+   that there is now a file there. Thus you didn't learn any information.
+
+2) That means that some attribute of the system can be both modified and 
+   read. This provides an avenue for communication based on the value of that 
+   attribute.
+
+3) No. That means that a single command affects different system attributes
+   in different ways. For a there to be a potential covert channel, there 
+   would need to be a way to both modify AND read a single attribute.
+
+4) It provides a systematic way to look at potential covert channels
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

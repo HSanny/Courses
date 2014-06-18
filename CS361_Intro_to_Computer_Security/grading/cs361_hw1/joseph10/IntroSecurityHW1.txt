@@ -1,0 +1,434 @@
+Lecture 1
+1)
+  Security in online purchases, secuity in knowing that the website I intend to go to is the one I end up at.
+
+2)
+  They both have in common that they have to do with computer security in relation to internet access.
+3)
+  Yes somehow the two times I bought something from Best Buy online my credit card information was stolen.
+4)
+  I think that there is a 30% chance that my laptop is infected. I decided this by the measures I take in order to keep my computer safe.
+
+5)
+  I have both Avast and Malwarebytes installed on my computer as anti virus software as well as ocaisonally looking in my control panel to see if I know all of the programs installed though I know some virus' can hide from this it is something little that I do as a habit. I also make sure to not click on banner ads as well as sticking to normal popular and trusted websites
+6)
+  I think they are at least mostly effective. The only issue would be that if one day I am lax in updating my virus software or accidentally click on something or if someone I know was using my computer and did so.
+7)
+  No I do not see this as an overstatement because of the amount of thins which are done on the internet. It would just take a concerted effort from a large group of enimies in order to slow or disrupt internet sales, which is a multi-billion dollar market which could then disrupt wallstreet easily. If some disturbance such as that continued long enough our ecomony could suffer greatly and harm the counrty as a whole.
+8)
+  The importance in learning about computer security is in being able to identify how to go about solving a
+  particular issue in security in a manner that is appropriate. Not all computer security issues can be solved
+  in the same way so therfore we must be able to understand the differences in risk.
+
+Lecture 2
+1)
+  Cost of proper security could be more thant a company or a person is willing to pay. People don't think
+  that the little things they don't do could ever come back and be used in a bad way.
+
+2)
+  There is not a way to enumerate all the bad things that could happen to a program. There is always some new strange way of manipulation that could break a program in a way you never thought of. You can systematicaly go through and look for issues you are worried about but that doesn't mean you have thought up of every way someone could break a program.
+
+3)
+  The asymetry between the defender and the attacker is that the defender has to think of and protect against every single possible way that an attacker  could try to use to get in. While the attacker only needs to find one way that they could get in to do what they wanted therfore all of the defenders work is automatically useless.
+
+4)
+  I do aggree with their statements becuase there is no way you could effectively and cost effieciently create an OS that had no vulneralbilities then write a bunch of useful programs for it with each being entirely secure.
+
+5)
+  The statement is talking about how in th real world doing what is most secure is not always the most
+  convient or the most cost effective. Therefore corners will be cut and decisions on what corners to do so 
+  on would have to be made.
+
+Lecture 3
+
+1)
+   Risk is the possibility of something going wrong and costing someone one way or another.
+
+2)
+  Yes not all avenues will be able to be covered especially when it comes to the idea of cost. So therfore a person should look at what they want to be most careful
+  about and cover those areas in a lot more detail.
+
+3)
+  I accept the risk of driving at any time of the day. I aviod the risk of getting hit by a car by crossing the road when the lights say so. I mitigate the risk of
+  getting my credit card information stolen online by using virus protection software in my broswer. I transfer the risk of having to pay for car damage through
+  insurance.
+
+4)
+  Annualized loss expectance as a risk managment tool is very useful becuase it can show information in a way that allows for informed decisions about which risks
+  a group would want to really watch for based on the potential cost of not doing so.
+
+5)
+  Factors that are relevent to rational risk assessment are the potential cost of not covering the risk, the likelyhood of a given risk, the cost of doing what is
+  needed to cover the risk, and the value of what is being considered to be covered are some relevent factors.
+
+Lecture 4
+
+1)
+  The difference between the two slides are that the first list is a list of goals which computer security can be defined in while the second list contains tools 
+  which can be used in order to obtain the general goals in the first list.
+
+2)
+  In my life right now I would say that availability is the most important. Very little of what I use is stored on my personal computer and most is in the cloud. 
+  This means that I need the internet available in order to get to things that I had not worked on for a while or just didn't need for a while. 
+
+3)
+  To group and catagorize data means that you look at what data you have and match them with other things which are of the same importance and need to be
+  protected with a similar amount of urgency. This allows someone to look at the groups and devise a plan on how everything should be protected and how access
+  is allowed to those things.
+
+4)
+  Authorization could change over time through either promotions, firings, retirements, or changes of jobs. There is no guarentee that the same person is always going to have the same or any responsibilities with sensitive information. 
+
+5)
+  Reliability and security are related in the same way that a lock on a safe must be relied upon to open when the correct code is inputed. It is a means to an end. 
+  A different example would be with an online retailer, availability is part of security because the sales of their products are what keep the business running and 
+  is therfore part of the safety of the online retailer.
+
+6)
+  Acess of private information such as medical records online would be a reason for authentication to be important so that other people cannot just go and view
+  your medical history. Online sales are a reason that non-repudiation is important because the retailer doesn't want the customer to lie and say it did not buy the product that was sent to them and the customer doesn't want its' money taken then told by the retailer that they did not buy anything.
+
+Lecture 5
+
+1)
+  A possible metapolicy for a cell phone network would be, everyone who has subscribed to our network is allowed to use it and not have their network usage or personal data monitored by a third part. A possible metapolicy for a military base coud be, That only authorized personnel are allowed in to certain areas within 
+  or around the base at all times and cannot leave the base with anything that is deemed sensitive or secret.
+
+2)
+  You need a policy to shape the way in which people go about following the metapolicy. This is so that there is a more uniform way across a group to achieve
+  the desired security.
+
+3)
+  Student academic records cannot be viewed by anyone but an administrator, the student or the student's legal guardians without with a students' consent.
+  Student academic records cannot be stored in anything but a secure and lockable space.
+  Student academic records cannot be printed and handed to anyone but the student or the student's legal guardians without with a students' consent.
+
+4)
+  Yes a stake holders' interest could conflict in a policy such as a teacher wanting easier acess in changing a grade but the policy only allowing other 
+  administration to do such a thing. 
+
+5)
+  The likely metapolicy is, Personally identifying information of a student cannot be used in manner that would allow third parties to steal a students' identity
+
+6)
+  This statement means that if you don't understand the goal of the system and what it is trying to protect you cannot fully understand why all the policies are in place.
+
+Lecture 6
+
+1) 
+  Military security is mainly about condfidentiality because a lot of the 
+  information with which they work is not meant for everyone to see and 
+  not everyone is allowed to see the same level of security for all
+  catagories. There are some aspects of integrity and availability but 
+  with the partitioning of confidentiality it is generally assumed that 
+  a person could be allowed to edit information and availability is an
+  issue that takes a back seat to confidentiality
+
+2)
+  The major threat is in people seeing information that is highly
+  sensitive and could change the course of a war and accidentally
+  or intentionally letting the information getting into the wrong hands.
+
+3)
+  I think the provisio is there to let us know we are only looking
+  at one aspect of security to consider in this thought experiment
+  so we can keep in mind that this is not a final solution but only
+  part of a final solution.
+
+4)
+  The form uses one of four key words to describe the authorization level
+  required to view the information than potentially multiple key words 
+  that describe what subject the information covers.
+
+5)
+  We are not concerned with how the labels get there because we are only
+  designing the security system and how it will work overall not 
+  implementing every single aspect.
+
+6)
+  Unclassified:
+    the base softball team has a game tomorrow at 3pm
+    the cafeteria is serving chopped beef on toast today
+  confidential:
+    Col. Jones just got a raise
+    Col. Smith didn't get a raise
+  Secret:
+    The British have broken the German Enigma codes
+  Top Secret:
+    The Normandy invasion is scheduled for June 6
+
+7)
+  Unclassified{Bases daily activities}
+  Confidential{Personnel salaries}
+  Secret{Crypto}
+  Top Secret{War}
+
+8)
+  It makes sense to make a document as classified as the most secret
+  information in it because no one below the classification level is
+  allowed to see the most secret information but everyone on the same or 
+  higher level is allowed to see lower classification levels.
+
+Lecture 7
+
+1)
+  Labels could be affixed to humans through id's with the corresponding 
+  clearance level on them
+
+2)
+  The labels for documents tell someonewhat sort of sensitive subjects
+  are discussed in a document and exactly how sensitive the material is,
+  while the labels for people tell how much trust the organization gives
+  someone on certain subjects.
+
+3)
+  Documents are analagous to files, and the labels are analagous to the
+  clearance level needed to view them. Humans are analagous to users of 
+  a computer and what their digital id gives them access to on a network
+
+4)
+  The Principle of Least Privilege makes sense because there is no need
+  to add more risk to other things that a person does not need to
+  absolutely know in order to complete their work. Any extra information
+  they know is just information that they can accidentily leak
+
+5)
+  The first pair:
+    it makes sense because the person has a higher level of clearance for
+    the particular subject than the document they are trying to look at.
+  The second pair:
+    it makes sense because the person does not have high enough clearance 
+    and they do not have any clearance for one of the subjects at all.
+  The third pair:
+    it makes sense because the information is not classified so anyone 
+    should be allowed to view it because it was not deemed sensitive
+
+Lecture 8
+
+1)
+  I think that the vocabulary was introduced so that relations to computer
+  applications of the thought process could be confirmed and formalized.
+
+2)
+  Confidential >= Confidential
+  Ls1 >= Ls1 True
+  Secret{Crypto} <= Secret{Nuclear} and Secret{Nuclear} <= Secret{crypto}
+  Ls1 <= Ls2 and Ls2<=1 Ls1 then Ls2 = Ls1 True
+  Confidential <= Secret and Secret <= Top Secret then Confidentail <= Top Secret
+  True
+
+4)
+  They would have to be of different levels with different subject matter
+
+5)
+  The simple security property states that only greater or matching levels of subject and clearance are allowed to access something
+
+6)
+  It is only if so that the rule has some flexability to only say that 
+  someone may be allowed to see something of a certain security level
+  but they are not guarrenteed if other information comes to light such as
+  spying.
+
+Lecture 9
+
+1)
+  It isn't enough because simple security only deals with whether a person
+  should be allowed to read somethinhg to write and has no design for 
+  writing.
+
+2)
+  We need constraints so that no one can write higher level security
+  information to a lower level.
+
+3)
+  The fact that programs are being run with a persons' permissions and
+  that the person doesn't have to individually authorize each program to 
+  edit files.
+
+4)
+  The *Property says that a person can write if their level of security is
+  either lower or equal to the level of the thing they are trying to write
+  to.
+
+5)
+  A subject must be of the same level as an object to have both read and
+  write access.
+
+6)
+  We could create seperate accounts with different access levels for the
+  general. One so he can view and edit top secret stuff and another
+  to send out messages on an unclassified level
+
+7)
+  It is a problem. This can be dealt with by only allowing write access to
+  the level of security of the person. This does however present other issues.
+
+Lecture 10
+
+1)
+  Changing a subject level up would violate simple security because
+  a person could arbitrarily change their level to look at sensitive 
+  information. Changing a subjects' level down would violate the *Property
+  and could potentially allow information to leak down.
+
+2)
+  You cannot use strong trainquility all of the time because information
+  can become more sensitive and should be allowed to only be viewed by a
+  higher security level.
+
+3)
+  Lowering a level of an object may be dangerous because you have to be 
+  absolutely certain that no infromation in the document is revealing 
+  anything about a higher security level than it is being lowered to.
+
+4)
+  For a downgrade to be secure the object must contain nothing about a 
+  higher level at all.
+
+Lecture 11
+
+1)
+  with 0 being the lowest level. I would give the files in the system a
+  level 0 and everyone else level 1 or above. This would allow the people
+  to read the lower level files but not to write to them.
+
+2)
+  You wouldn't because BLP system doesn't let you change permissions 
+  after they have intitially been set.
+
+Lecture 12
+
+1)
+  H{} <---> H{A}
+  ^          ^
+  |          |
+  L{} <---> L{A}
+
+2)
+  To find any LUB you have to follow the latice to it's highest connecting
+  path for any particular label. To find its' GLB is easy because it is whatever label you start at.
+
+3)
+  Upward flow is really the metapolicy for BLP because that is what all of
+  its' rules are producing. That is the general idea of what is happening
+  when you look at what the rules are leading the system to do.
+
+Lecture 13
+
+1) 
+  They allow information to flow from lower levels to higher levels and 
+  they don't allow information to go from higher levels to lower levels.
+
+2)
+  The READ and WRITE satisfy BLP because they only allow information
+  to be written from lower levels to higher levels or on the same level. 
+  And Reads can only occur on the same level or lower levels which is
+  exactly what BLP wants.
+
+3)
+  The CREATE and DESTROY operations satisfy BLP because they only allow the
+  same or higher levels to create or destroy but don't allow higher levels to 
+  DESTROY or CREATE on lower levels.
+
+4)
+  For the covert channel to work both the higher and lower level have to work
+  together in order to coordinate the passing of information.
+
+5)
+  The DESTROY statement is there in order to reset the covert channel to get a response 
+  from the higher level by it either creating a file of the same name or not.
+
+6)
+  No they are not different in either path.
+
+7)
+  It does the same thing to check to see what information it is meant to recieve
+  by the existence of a file or not. It must do the same thing in order to recieve 
+  the response.
+
+8)
+  SH is doing different things in order to send a different message to SL. It must vary 
+  what it does to send a message over time.
+
+9)
+  The statement is true because SL could use the zeros and ones from the confirmation or
+  denial of file creation to recive a message in binary form to be decoded later.
+
+Lecture 14
+
+1)
+  It is not a covert channel because it is a normal channel of communication being utilized.
+  A covert channel uses something that was not created to be a way to communicate and then
+  communicates along it.
+
+2)
+  No the example is not a covert channel because it is trying to use the information in a 
+  file to communicate which is a normal way. This would also not work since the lower level
+  would only ever recieve a cannot read flag.
+
+3)
+  The information comes from whether or not a file was allowed to be created with a certain name.
+
+4)
+  The information is transmitted through the amount of time it has been since the process itself
+  had been run.
+
+5)
+  The information is transmitted through the order of which information is read off the disk.
+
+6)
+  The information is read off the value that a variable returns in response to some other computation.
+
+7)
+  A termination channel might have a low bandwidth because the process it is watching to see if it is
+  terminated might either not terminate for a long time or it might not start for a long time.
+
+8)
+  In order to implement a power channel a device would have to have a way to quantify how much energy it is
+  using at the moment and compound the data constantly over time for a reference.
+
+9)
+  A laptop or a phone would be good for a power channel because the require the device to keep watch over 
+  how long the battery could last at the current usage rate and the overal usage rate of the device for some 
+  time period.
+
+Lecture 15
+
+1)
+  They can be potentially harmful though seemingly having low bandwidth because a processor can do millions
+  of things in less than a second so in the time span of one second millions of single bits of information can be sent.
+
+2)
+  It would be infeasable to eliminate every potential covert channel because there are countless ways to do it and
+  would add significant amounts of time to the production of a product.
+
+3)
+  If a covert channel is detected a person could destroy the channel by changing how things interact or add noise to the
+  channel to make it almost impossible to tell what is real information and what is noise.
+
+4)
+  A covert storage channel can exist if two processes are scheduled one after another and they both have acess to a way
+  to tell what order information is being read and to be able to start both processes so that they are scheduled next
+  to each other.
+
+5)
+  The covert channel could be used in order to send information by looking at the order information is being read in based on
+  where one end left the headers on the disk.
+
+Lecture 16
+
+1)
+  The create option would not have an R because the create operation itself is not doing something in order to tell someone
+  whether or not it is there. So in order to it to be used covertly an inference on the recievers side would have to occur.
+
+2)
+  R and M in the same channel indicates the possible existence of a covert channel because there is a way for something to
+  modify a file and a reciever to check and see if a modificatin happened.
+
+3)
+  No it does not becuase that would only be something that a particular process itself could look at and not another process.
+
+4)
+  Someone would want to go through the trouble of creating an SRMM table in order to make their system more secure by either
+  destroying a potential channel or watching a likely channel for intrustion alarms.
+  

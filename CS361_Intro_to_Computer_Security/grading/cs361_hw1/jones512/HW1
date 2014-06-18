@@ -1,0 +1,47 @@
+Jesse Jones
+CS id: jones512
+email: jessear5890@yahoo.com
+Summer 2014
+
+
+Lecture 1:
+
+1. Software and Hardware Computer security, Homeland Security. Security on a personal level and institutional level,
+
+2. Both represent important assets that are valuable and in need of some type of protection to combat threats to them. 
+
+3. Yes i have been a victim of lax security. 
+
+4. Not likely laptop is infected. I assume this because most of the malware, adware, and virus threats are geared at attacking pcs.
+
+5. I have a login password to access the home screen and password is required any time software is update or new software is installed. 
+
+6. I believe they are effective in deterring less experienced users from posing viable threat of the integrity of the computer. 
+
+7. I think it slightly overstates the case because even though the capabilities for such an attack exist. It would take a lot of experience and organization in multiple fields other than just hacking to pose a real threat to national securtiy. 
+
+8. It is important to learn about computer security to protect yourself and others from the dangers of careless computer usage and data transfer. 
+
+Lecture 2:
+
+1. The pace at which new technology is discovered always comes with a new set of vulnerabilities that can be exploited. 
+
+2. No there is not a systematic way to enumerate the "bad things" because no matter how many brillian programmers get to together to come up with all the bad things. There will at least be 1 more that they failed to realize given the complexity of computer systems. 
+ 
+3. A defender has to think about all the possible vulnerabilities that can be exploited and develop a mechanism to prevent it. An attacker only has to find one of the vulnerabilities that is not properly secured or think of a new vulnerability that the programmer failed to realize and exploit it. 
+
+4. I agree because it is impossible to have a computer that is incapable of being exploited due to the number of possible attacks that can be used on any one computer. 
+
+5. Since every possible attack can not be secured against or would require a security mechanism that cripples the systems functionality, a tradeoff has to be made between security and functionaliy. And/or a tradeoff has to occur between the type of threats you want to protect against and the type you are leaving open exploitation. 
+
+Lecture 3:
+
+1. Risk is the possibility that a particular threat will advesely impact an information system by exploiting a partiular vulnerability. 
+
+2. Yes i agree software security is about managing risk because having security protocols can reduce the number of successful attacks on software. 
+
+3. I accept the risk of no encryption on the my mobile device. I avoid the risk of being thrown out of a vehicle by wearing seatbelt each time I drive. I run antivirus software on my computer to mitigate the risk of getting a virus or spyware. I have insurance of my vehicle that transfers risk of paying full repair price for a collision. 
+
+4. Annualized loss expectancy as a risk management tool can be effective in specific scenarios. However failing to effectively secure an extremely valuable asset due to the expected probability of that incident occuring can be dangerous. 
+
+5. technical, economic, psychological

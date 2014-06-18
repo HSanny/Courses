@@ -1,0 +1,17 @@
+Consider the ﬁve reasons given why security is hard. Can you think of other factors?
+	Although it might be included in answer 2 (Bad things never happen), we also have to consider the following: Sometimes every day programs can be disguised as every day use (for example a word processor) but underneath the hood, they might be a key logger. In other words, we also have to consider that people cannot be trusted
+
+Is there a systematic way to enumerate the “bad things” that might happen
+to a program? Why or why not?
+	No. Some programs may be able to identify all its vulnerabilities, but identifying all possible ways a malicious user can manipulate the system is impossible. 
+
+Explain the asymmetry between the defender and attacker in security
+	The person defending must protect every single potential threat. An attacker only needs to focus on 1.
+	
+Examine the quotes from Morris and Chang. Do you agree? Why or why
+not?
+	I agree. However, there is a risk associated with everything in life. For example, I could get hit by a meteorite on my way to campus. I think the important thing is to be protected against probable attacks.
+
+Explain the statement on slide 8 that a trade off is typically required.
+	The more secure you make a system, the more functionality that is lost.
+

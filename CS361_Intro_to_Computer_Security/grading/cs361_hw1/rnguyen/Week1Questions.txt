@@ -1,0 +1,118 @@
+Questions for Week 1
+Name: Robinson Nguyen
+EID: rn5644
+CS Login: rnguyen
+Email: robinson_nguyen@hotmail.com
+Lecture 1
+1) There are economic security, network security, mental security
+2) They all have something to protect or keep safe.
+3) My parents have had some possessions stolen. The only security they had was a closed fence but the intruders just cut through the fence.
+4) It’s possible but I don’t think it is. It has not been acting weirdly and my antivirus has not picked anything up. I also haven’t had any notifications that my identity or money has been stolen from my bank. So I think it is okay.
+5) I use the antivirus program avast that usually prevents viruses from entering before it has a chance to infect anything. I think it’s a pretty good and effective program. I also try to avoid clicking on suspicious websites and emails.
+6) I have not had any problems so far and I’ve had it for several years now, so it seems likely it has been working.
+7) I don’t think it’s an overstatement. It’s quite possible that all the information the U.S. has can cause irreversible damage within the wrong hands. For example, if someone had a launch sequence of a nuke at their disposal, he could physically harm others.
+8) Since society is moving more towards a more convenient and technological way of life. More of our valuable information is converted to data and connected to the web where it’s possible that anyone can access it. So it’s important to protect our digital assets just like we would with our physical assets.
+Lecture  2
+1) There could be problems when there are people that are authorized to see the data but cannot because of the security. The security measures could maybe be a hindrance or possibly corrupt the data. It’s most likely it will slow down retrieving the data.
+2) I don’t believe there is because the “bad things” are always updating and changing along with the programs. As we come up with new and better programs, there will be new ways to breach through security.
+3) The defender can only defend against known threats while attackers can use many unknown methods and use hacking programs for outdated security systems.
+4) I do agree with both quotes but only in the sense of computer security. Since there is no foolproof security for computers, the only way to protect it is not own one at all. But what’s the fun in that? 
+5) For example, if a higher security required 20 passwords, fingerprints from 5 people, and dna scans from another 5, it would definitely not have simplicity and efficiency since it would take some time to go through the whole process. And vice versa whereas if you had low security, it would lose its functionality of protecting the data it was made for. 
+Lec ture 3
+1) Risk is “the possibility that a particular threat will adversely impact an information system by exploiting a particular vulnerability”
+2) You could argue that all security is about managing risks because there could be some people trying to take or change what you have and there is no foolproof way to protect everything forever. So you have to consider the risks in the event that someone does get past your security.
+3) There is a risk that water from a water fountain could be contaminated but I accept the risks and drink anyway. There is a risk that going home during rush hour will get me caught in traffic so I avoid that by waiting on campus until later.  There is a risk that leaving my sandals outside my front door would allow it to be stolen but it’s not a big deal because they’re old. There is also a risk that someone could steal my dog but I could transfer the problem to my sister because the dog really belongs to her.
+4) The annualized loss expectancy gives you a clearer idea of potential losses but it doesn’t factor in the levels of the risks.
+5) You have to consider what you can lose, the odds of that happening, what would happen after you have lost it, and what else you can do to salvage the situation. (technical, psychological, economic)
+Lecture  4
+1) Slide two contains the reasons why we employ security and slide three are mechanisms to achieve those ends.
+2) Confidentiality is most important because it has the maximum risk of destroying my life. Identity thief has the potential to pose more problems than changing or having my information available.
+3) It’s not best to group sensitive information with irrelevant information. So to provide greater security and organize information for easier access, you categorize the information by separating the data into different containers according to their relevant information.
+4) Someone could gain more trust like gaining a promotion and needed to gain the necessary information to do his or her job.
+5) Lax security could introduce a virus to a server and prevent the availability of the server making it less reliable.
+6) Thieves could pretend to be a well known company and steal money. And they could also lie and claim that they never received any money from a client. So you have to make sure the person you are making a deal with is the real thing and won’t cheat you of your money.
+Lecture  5
+1) The main goal of a cell phone network is availability of their servers to prevent losing customers. And a military database’s greatest concern is confidentiality to protect their sensitive information.
+2) Policies are specific rules that tries to meet the goals of the ambiguous metapolicy.
+3) Do not change any grades. Provide honest information. And  don’t leak sensitive information.
+4) Of course, a student could want to change a grade for a better one but a policy could say that he or she is not allowed to change grades.
+5) Keep the confidentiality and privacy of student’s SSN
+6) If someone doesn’t understand a metapolicy, he or she could break the metapolicy rule and claim it was in the best interest of the metapolicy due to ignorance.
+Lecture 6
+1) The military contains information that could hurt a lot of people so they have to keep it private. The integrity and availability of that information could also potentially hurt people given certain circumstances.
+2) Some people could unintentionally or intentionally leak information that they may or may not even necessarily needed in the first place.
+3) The MLS doesn’t concern the integrity or the availability of the information within the experiment.
+4) The first label displays the sensitivity level of trust needed for a document. And the other labels are used to categorize the information within a sensitivity level to apply a need-to-know basis.
+5) There is some higher power that assigns those labels based on the subject or object. How the information gets its labels doesn’t concern how to protect the confidentiality of the information.
+6) From least to most. First the cafeteria menu, the softball game, who got a raise or didn’t get a raise, the british breaking the enigma codes, and the Normandy invasion plan.
+7) (Unclassified{miscellaneous}) for cafeteria menu, softball game, and who got raises/didn’t get a raise. (Top secret{war}) for Normandy invasion plan. And (secret{crypto}) for the British breaking the Enigma codes.
+8) The “mixed” documents still apply the need-to-know basis so a person needing clearance for all the labels of a document is the logical choice to prevent unnecessary leaks.
+Lecture 7
+1) The labels on humans reflect the clearance they have to view the appropriate level documents.
+2) The labels on the document indicates the type of information in the container. And the label displays the amount of trust given to the human and the authority to view documents of that label.
+3) Document could be a password protected word document and the human could be the password to gain access to the word document.
+4) A person has no need for information that he or she will probably never use. This will prevent any unnecessary leaks of information.
+5) The subjects with a certain clearance level means he or she is given authorization to view documents of that sensitivity level.  You could say the lower levels are subsets of the higher levels and therefore having a clearance for a level means clearance for the lower levels as well.  
+Lecture 8
+1) To avoid any confusion and know that MLS can apply to more than just humans and documents.
+2) If H dominates M and M dominates L, H dominates L. M does not dominate H.
+3) Labels can have the same hierarchical level but different category labels making the labels not dominate one another.
+4) If the first hierarchical level is higher than the second’s, and the category label is a superset of the second’s label.
+5) A subject can only access an object if the subject’s level dominates the object’s level.
+6) There could be other conditions a subject needs to meet before having access to the object.
+Lecture 9
+1) Someone with a clearance level for a document can still intentionally leak information to others.
+2) Writing can break confidentiality.
+3) Computers will do whatever you tell it to do, no matter who you are or what intentions you have. And a person may unknowingly have a program that can manipulate sensitive data.
+4) A person isn’t allowed to write anything below their hierarchy level.
+5) The object must be the same hierarchy level and category clearance. It must have both the *-property and simple security property.
+6) The general could log in as an unclassified subject and send orders to the private.
+7) It is a problem but we could have backups of all files and revert to an earlier state whenever necessary.
+Lecture 10
+1) Changing a subject’s level down could possibly break confidentiality if it carried with it information from the higher level. And changing a subject level’s up definitely breaks confidentiality.
+2) There are times when you need to be able to change levels such as giving a person a promotion.
+3) The object may have sensitive information not meant for the lower level to have.
+4) Require that somebody check the information in the object so that it doesn’t break confidentiality when lowering the object.
+Lecture 11
+1) The subject’s level would have to be higher than the objects.
+2) Most of the matrix would be empty because most subjects won’t have access to most objects and you can easily compute the access permissions by using the simple security and *-property.
+Lecture 12
+1) (H,{A}) <- (H,{}) 
+       ^-(L,{A}) <-^-(L,{})  
+2)  For the LUB it’s the highest level with all categories and for the GLB it’s the lowest level with the subset of all the sets.
+3) The metapolicy for BLP is confidentiality and it follows the simple security and *-property only when information flows upward.
+Lecture 13
+1) BLP only allows information to flow upwards which is what the metapolicy of that system shows.
+2) READ satisfies the simple security property in that the subject must dominate the object in order to be able to receive information from the object. And WRITE follows the *-property in that the object must dominate the subject in order to be able to change anything on it.
+
+3) CREATE doesn’t send any information to lower levels, but it can write an object at its own level which still follows the *-property. DESTROY can overwrite objects dominates the subject and it still follows the *-property.
+4) The operations of the lower level subject has to be all the same.
+5) So that the lower level subject and repeat the process to steadily gain information through time.
+6)  No the contents are the same.
+7) The actions must be consistent or else the information of the object’s attributes may not be true. 
+8) The actions of SH does not have to be different but that’s the only way for SL knows that SH has done something or not.
+9) Even though the metapolicy states that information can only flow upwards, SL can gain information about object attributes through operations depending on what SH does.
+Lecture 14
+1) Explicitly transferring information from subject to subject is not covert because it doesn’t use any mechanisms.
+2) No because you are writing different bits so you won’t be able determine any usable information from it. 
+3) The information comes from the error message from the access attempt. 
+4) The process can keep track of the time in the system clock when it gains and releases the processor.
+5) The information can reside in the order of the sectors that you requested depending on where the read head was left off.
+6) The value of l changes depending on what information it receives from h.
+7) The process may never terminate if it’s in an infinite loop. 
+8) The low level would have to have access to how much power there is.
+9) Stop lights. Water heater. Bits presenting a 0 or 1.
+Lecture 15
+1) Computers are fast and you can still send thousand bits of information.
+2) Because it could be impossible for a process to do its function without specific operations
+3) You could change the way operations are implemented (eliminate) , introduce more noise to reduce bandwidth, or keep an eye on the channel to see if anyone is taking advantage of it.
+4) Trying to gain access to a certain file that requires authorization.
+5) The sender modifies the attribute of the object by saying it exists or not, and the receiver can see the information about the attributes on whether it does exist or not.
+Lecture 16
+1) CREATE doesn’t tell if the operation succeeded or not.
+2) For that attribute, someone can modify an attribute and someone else can reference that attribute
+3) It does not necessarily mean it’s a covert channel, only that the attributes can be read or modified for a specific operation.
+4) So you can identify potential covert channels and deal with them before something bad happens.
+
+
+

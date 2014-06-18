@@ -1,0 +1,18 @@
+Explain the key distinction between the lists on slides 2 and 3.
+	The distinction is between aspects vs mechanisms
+
+Consider your use of computing in your personal life. Which is most important: confidentiality, integrity, availability? Justify your answer.
+	Availability. I want to be able to use my computer. What good would the most confident integral machine be if its not available?
+
+What does it mean “to group and categorize data”?
+	To assign that data object a level of importance and secrecy. For example, is my social security number important? Should I let other people know it?
+
+Why might authorizations change over time?
+	Permissions, clearance levels change all the time. For example a private has a low authorization level but when he gets promoted to General, his authorization level will change.
+
+Some of the availability questions seem to relate more to reliability than to security. How are the two related?
+	If a system is very unreliable then it is also unavailable. For example if a system is infected by malware (unreliable) then it will be so slow that is unavailable
+
+In what contexts would authentication and non-repudiation be considered important?
+	Authentication: A bank needs to make sure the person accessing a bank account is the right one.
+	Non-repudiation: If you buy something on line from Ebay, then you wouldn't want Ebay to say they never received your payment.

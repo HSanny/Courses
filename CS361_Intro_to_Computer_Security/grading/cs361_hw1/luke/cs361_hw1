@@ -1,0 +1,145 @@
+Peter Luke Conlon
+PLC585
+
+CS361 Questions: Week 1
+
+Lecture 1
+1)	In my everyday life, many uses of the term “security” are relevant. Some of them include: personal security, network security, system security and communications security.
+2)	They all protect my personal property or myself from potential threats.
+3)	Yes, I’ve had fraudulent charges on a debit card likely due to lax security.
+4)	If an estimated 97% of sites have a severe vulnerability, it is likely that some virus infects my computer. 
+5)	I use a Mac, which is slightly less vulnerable than Windows. I keep my systems up to date to ensure that I have the latest security patches. I also make sure that I vary my passwords for different applications in order to prevent cross platform attacks. 
+6)	These are good general practices, but it is impossible to be completely secure from attacks. 
+7)	I do not know the validity of his first statement that they could access virtually any computer system, but if this is true then I do not think he is overstating this risk. For example, a DoS hack into the financial system halting all transactions could crash our economy.
+8)	It is important to learn computer security, even if you are not interested in a career in the field, so that you can protect your personal assets from potential threats. It is impossible to be fully protected, but it is important to abide by certain good practices to mitigate your risks.
+
+Lecture 2
+1)	Security is hard because it is ever evolving. Every introduction to a single new technology brings about many new security concerns, so it is a never ending game. And because the technology is introduced before all of the security holes can be patched, there will always be periods of vulnerability due to that latency period.
+2)	No, this is impossible because the best hack is the one that the engineers never thought of.
+3)	There is an asymmetry in that the defender has to find and patch every exploitable vulnerability, whereas the attacker only needs to find one. So the attacker has a clear advantage.
+4)	In terms of “perfect security” I agree with Morris and Chang. It will never be reached. However, these risks are obviously low enough to make computer extremely useful, so their statements are more about getting a point across than encouraging users to seek perfect security by throwing away their computers.
+5)	 You must give users access to some information to make the application worthwhile. This may pose some risk, but without allowing them some access, the application is useless. This is the tradeoff.
+
+Lecture 3 
+1)	Risk is the possibility that a particular threat will adversely impact an information system by exploiting a particular vulnerability.
+2)	Yes, the best that we can do is to assess the potential threats and their impact and prepare accordingly.
+3)	One risk that I accept is that I may lose money while investing in stocks. I avoid the risk of getting hit by a car while walking to class by looking both ways before crossing. I mitigate the risk of losing money in the stock market by diversifying, so that while one stock may drop, the others will help ease the blow. I transfer the risk of my laptop crashing by purchasing Apple’s insurance. 
+4)	ALE is very useful in identifying how much we can expect risks to cost us in the long run, but sometimes this does not inform us of the best places to invest security dollars. The coin flip example illustrates an instance when the ALE would tell us that two situations pose the same risk, but in reality they do not. 
+5)	Some factors relevant to rational risk assessment include: technical, economic, and psychological.
+
+Lecture 4
+1)	Aspects of security (confidentiality, integrity, and availability) are the key factors that need to be protected, and the list on slide 3 are the mechanisms for ensuring the protection of these factors.
+2)	Confidentiality and integrity are almost equally important to me, but I think that confidentiality is the most important. I can back up my hard drive and store information in the cloud to protect against integrity attacks, but if my financial confidentiality is exposed, then I will have a much bigger problem. 
+3)	Data can be categorized and grouped based on certain characteristics, like confidentiality so that an OS can determine who is allowed to see what data.
+4)	If certain information is released from the government to the general public, that data now has a different authorization. 
+5)	Reliability is related to security because DoS security attacks directly affect the reliability of a system.
+6)	Authentication is important in government systems that must determine that a person is who they say they are. Non-repudiation is important in E-commerce. Once a person buys something from an online retailer, it is important that the retailer does not deny that the person has paid and refuse to send the purchased good(s).
+
+
+Lecture 5
+1)	A possible metapolicy for a cell phone network might be: maintain confidentiality amongst conversations held over the network, do not allow DoS attacks to threaten our availability to users, and prevent hacks that may change users information. A possible metapolicy for a military database might be: maintain confidentiality of all top secret documents, maintain availability of communication between departments, and prevent integrity attacks on our mission plans. 
+2)	The metapolicy is a general set of goals, whereas the policy gives specific mechanisms for achieving the metapolicy.
+3)	1. Students may not view other students’ grades 2. Students may not have access to write their own grades into the database 3. Professors have write access to the students’ grade database, but only for their given class
+4)	Their interests could conflict. For example, an online retailer may want to store its users credit card information so that future checkout processes may be faster for the user. However, this poses additional security risks for the user. It’s a tradeoff.
+5)	The metapolicy was likely to maintain confidentiality of students’ personal information.
+6)	Some lengthy tasks may seem arbitrary or unnecessary if the developer does not understand why they are being implemented since systems can grow to be very complex.
+
+Lecture 6
+
+1)	Confidentiality is the most important aspect of security to the military because it must hide its data from enemies, but integrity and availability are still very important.
+2)	A person with access to top secret information could still share this information with a spy or low level person.
+3)	Many more issues would arise if we had to address all 3 factors of security. We want to focus only on confidentiality.
+4)	The label contains both the confidential hierarchy of folders, and a set of categories that they contain
+5)	The process of determining who should have access to read and write is the same regardless of the given labels. The labels are just examples.
+6)	From highest to lowest sensitivity: 2, 6, 4, 5, 1, 3
+7)	1. (Unclassified: {Personnel}), 2. (Top Secret: {Missions}), 3. (Unclassified: {Personnel}), 4. (Confidential: {Status}), 5. (Confidential: {Status}), 6. (Secret: {Crypto})
+8)	You have to use the highest appropriate level for mixed documents because it is important that top-secret information is not viewable by those that only have secret access, for example.
+
+
+
+Lecture 7
+
+1)	Individuals are given labels based on trustworthiness, and their necessity to know the information. The labels indicate the classes of info that they can access.
+2)	Labels on documents indicate the sensitivity of the data they contain; labels on humans indicate what data they are allowed to access.
+3)	Files on a computer are analogous to these documents. Users of the computer are analogous to the humans.
+4)	This principle makes sense because a janitor does not need to know information pertaining to the CEO’s job. If this information is confidential, it only poses a risk to inform the janitor; there is no potential gain in telling the janitor. 
+5)	1. Access is granted because the person has secret clearance and the document is only confidential, which is lower. Also, the documents are the same. 2. Access is denied because the person does not have high enough clearance to match the sensitivity. 3. Access is granted because the clearance is higher than the sensitivity, and the object is a superset.
+
+Lecture 8
+1)	It’s important to identify objects, subjects and actions so that we can define the relationships between them. The subjects perform actions on objects. 
+2)	In Security Labels (High, {0}) and (High, {3}), The Subjects have the same level of access, but 0 is not a subset of 3, and 3 is not a subset of 0. Therefore, neither dominates so it is a partial order, not a total order.
+3)	To be a total order, there would have to be domination in every case. The example in number 2 above proves that this is not the case.
+4)	Two labels would dominate each other if they had the same subject and object.
+5)	A subject can read objects at its level, or below it; it can’t read objects above it.
+6)	The Simple Security Property is a necessary condition to gain access, but it does not guarantee access; it is just another hurdle on the path to clearance.
+
+Lecture 9
+
+1)	Simple Security isn’t enough because it only addresses read access, but doesn’t say anything about who has write access.
+2)	We need constraints on write access so that someone with a high level of security access doesn’t write the information down to a lower level, where unauthorized people can read it.
+3)	With a computer, you could be running malicious programs with a Trojan horse or spyware that take classified information and write it to a lower level without your knowledge. So you can trust the person, and still have to be wary about the programs they are running.
+4)	I can’t write information down, I can only write at my level or above. This keeps information flowing in one direction.
+5)	The Subject and Object must have the same level and the sets must be the same.
+6)	The General could log out of his Top Secret account and log into an Unclassified account to send the orders out – it’s the programs that are running on his computer that we don’t trust, not the general.
+7)	This is a problem, but it is an integrity problem, and this set of rules is to defend confidentiality. We could deal with that by **************
+
+Lecture 10
+
+1)	If a subject’s level goes up, the subject can read higher access objects. The opposite is also true: if a subject’s level goes down, the subject can only read less than or equal to secure objects. This is only permitted if it does not break the “spirit” of the security policy. 
+2)	Sometimes you need to raise the level of an object to write up.
+3)	Lowering the level on an object down is bad because it would be equivalent to writing down.
+4)	For lowering the level of an object, you would want that object to be a stateless object, so that it doesn’t write any information down. Or you would want the object’s confidential data to be outdated so that it doesn’t matter if lower level subjects can now read it. 
+
+Lecture 11
+
+1)	You would have the subjects dominate the objects, so that they have read access, but not write access (according to BLP, you can read down, but not write down).
+2)	For a realistic system, you would have thousands of subjects and objects, making millions of entries to the matrix. It is much faster to just compute them on the fly. 
+
+Lecture 12
+
+	1)    (L, {})   ----->  (H, {})
+                            |                        |
+		V                       V
+	        (L, {A}) ---->  (H, {A})
+2)	The LUB in a BLP system is the lowest level security label that dominates both of the two labels. The GLB is the highest level security label that is dominated by both of the two labels.
+3)	The metapolicy is what we really care about because it gives us specific instructions. The upward flow in the lattice gives us these specific instructions by telling us through Simple Security and the *-Property where information can flow. If the information flows in any other way than should be allowed through the path in our lattice of labels, then we know the rules we have established are not enough to satisfy the metapolicy. 
+
+Lecture 13
+	
+1)	The BLP rule of Simple Security states that if H dominates L, H can read down to L, but not vise versa, and the *-Property states that L can write up to H, but not vise versa. The metapolicy states that information flow is only permitted from L to H so they reinforce each other.
+2)	The Read instruction clearly satisfies BLP because it only allows a Subject to read if it dominates the Object; otherwise it returns a 0. Similarly, the Write instruction satisfies BLP because it only allows a Subject to write if the Object dominates it; otherwise it doesn’t write anything. These are Simple Security and the *-Property, respectively.
+3)	Create satisfies BLP because the write action takes place at the Subjects level, so it is not writing down. Destroy abides by BLP for the same reason – it is only writing at it’s own level, which is allowed by the *-Property. 
+4)	For the covert channel to work, the Low level Subject’s commands must be the same on both sides. It must also be the case that the High level Subject did something different in both cases. For example on the slides,  the High Subject created F0 in one case, and did nothing in the other – therefore, the output is different for the two cases and the Low level Subject gets one bit of information.
+5)	The Destroy statement is there so that the process can be put in a loop. It allows them to send arbitrary amounts of information over time.
+6)	The contents are the same – F0 has the same value in the two paths, it’s just hidden from the Low level in one path, so the output of the Read is different.
+7)	SL does the same thing in both cases so that we can say the change in output comes from what is happening at the Higher level. This is necessary.
+8)	SH must do different things in both cases so that the exact same instructions on the Lower level in both cases yield different results. 
+9)	As shown on slide 5, if SH does different things, and SL does the same thing, this sends one bit of information down to the Lower level of security. This is in direct contradiction to the BLP, which says that information cannot flow down – it can only be pulled up or pushed up. So this notion of covert channels tells us that something must be wrong with the BLP system.
+
+Lecture 14
+
+1)	Two people talking over coffee is not a covert channel because it is not a flow of information within the system.
+2)	This is not a covert channel; F0 is written High in both cases, so the Read instructions do not access the F0 value, and return the same thing. However, if he can get the High level to send two different error messages for the two cases, then he has a Covert Storage Channel.
+3)	In Covert Channel #1 the bit of information resides in the error message.
+4)	In Covert Channel #2 the bit of information comes from Q’s recognition of the time clock. It could be 1 unit since it last had access to the processor, or t units – so it reads the bit by looking at the clock. This is called a Covert Timing Channel.
+5)	In Covert Channel #3, the bit of information transmitted comes from which cylinder is closest to the read head. Process Q can tell whether process P accessed cylinder A or B based on whether it is returned A, B or B, A and it can return a 1 or 0 based on this fact.
+6)	In Covert Channel #4, the bit of information transmitted comes from the resulting value of L from H. This Implicit Channel uses the control flow of the program to get the bit of info.
+7)	A Termination Channel might have low bandwidth because it has to wait for a given computation to end and then check to see if the time it took to compute was expected or not. So if the computation took a long time, the data speed would be lower than normal.
+8)	To implement a power channel, it would have to be the case that the Low level could detect the change in power by monitoring the manipulated difference in availability or usage of a certain resource.
+9)	In credit cards, you could monitor the fluctuation in power usage to potentially determine the cryptographic key so Power Channels could lead to a rise in a device that rips peoples financial information from ATMs.
+
+Lecture 15 
+
+1)	They could pose serious threats because the information could be gathered over time, and sometimes it doesn’t take many bits to transfer very confidential information, like a social security number.
+2)	It is infeasible to eliminate every potential covert channel in systems because many companies don’t have the resources to dedicate that much attention to security. Also, the risk can be so low that the research and time spent searching for every covert channel becomes a waste of resources. There are many possible channels.
+3)	One could eliminate the channel by modifying the system, introduce noise into the channel as to make the channel useless to hackers, or monitor it for patterns of usage so as to catch an intruder. 
+4)	The Heartbleed Bug that infected OpenSSL seems to have been a covert storage channel. The Low level Subject pings the server, and receives a message saying that it’s alive. However, the Low level Subject found that it could receive valuable information from the server in the message sent back. This information was confidential, with a High level of security. 
+5)	The sender transmits information to the receiver, who could now be in possession of confidential information. For example, the receiver could ping the server, the receiver sends the message that it’s alive, but accidentally also sends user information – like passwords. The receiver can then use those passwords to his benefit.
+
+Lecture 16
+
+1)	The operation Create doesn’t tell me directly that the file now exists; I have to infer this knowledge so it would be impossible if you were the receiver of a Covert Channel to use Create to get that information.
+2)	This is because for a Covert Channel, you need a situation where one person can reference the attribute, and one person can modify it with some mechanism. This is the case when there is an R and an M in the same row. So there is not necessarily a covert channel, but there might be.
+3)	An R and an M in the same column does not imply a covert channel because they are referring to different attributes.
+4)	It gives you a systematic process for looking for potential channels. Once found, then you can decide how you are going to deal with the channels.
+

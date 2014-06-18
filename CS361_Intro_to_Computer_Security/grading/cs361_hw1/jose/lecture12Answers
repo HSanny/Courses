@@ -1,0 +1,12 @@
+Suppose you had hierarchical levels L, H with L < H, but only had one category A. Draw the lattice. (Use your keyboard and editor to draw it; it doesn't have to be fancy.)
+			H{A}<-H{}<-B{A}<-B{}
+			 |_____|_____|	 |
+			 |_____|_________|
+
+Given any two labels in a BLP system, what is the algorithm for finding their LUB and GLB?
+	In a lattice, to find the LUB you would follow the edges in the direction of the arrows
+	In a lattice, to find the GLB you would follow the edges in the opposite direction of the arrows
+	
+
+Explain why upward flow in the lattice really is the meta-policy for BLP
+	The meta-policy is what a system is trying to accomplish. Since upward flow is what is being achieved in a BLP system, its the meta-policy

@@ -1,0 +1,374 @@
+﻿Jesse Isleib
+jsi234
+CSF361
+
+
+
+
+
+
+LECTURE 1
+1) Authentication, authorization, confidentiality, integrity, accessibility, and the ability to prove transactions (non-repudiation)
+
+
+2) they are all aspects of security interfaces for resources I need/want
+
+
+3) yes, in real life and on my computer
+
+
+4) pretty likely. I can check with various tools, or I can assume as much if it is running slow / things have changed or have gone missing (settings, files)
+
+
+5) firewall, antivirus
+
+
+6) they are effective, but not completely
+
+
+7) no. Because if it ever happens, the loss is so great that we did not take it as seriously as we should have- all it takes is to do something that wasn’t expected.
+
+
+8) protecting myself, others, businesses transaction quality and safety, and general security through the world.
+
+
+
+
+
+
+LECTURE 2
+1)
+ -it is about preventing bad things rather than ensuring good things, 
+-there is more to know / think of that may be a possible “bad thing”, 
+-you have to protect against multiple threats, 
+-there are many weak points in information systems, 
+-people don’t build systems to be secure (primarily) but to work at all.
+
+
+2) no, because securing something completely is supposedly the same as not using it!
+
+
+3) the defender may find security measures to be annoying or in the way, or they may not be able to implement the uses of the security properly (typing your password into a random phishing site…). The attacker needs to just find one flaw, or opening, to do their job. The maker of security programs needs to take into account the weak links in the system and the users of the system.
+
+
+4) “Cynically,” they’re correct. But they’re trying to convey that it’s not going to be perfect, not that we should actually do this.
+
+
+5) With the idea that perfect security would require never using the system, we can infer that more security = less convenience in accessibility/speed or something. So it’s important to prioritize what we should keep secure
+
+
+
+
+LECTURE 3
+1) the possibility that a threat can negatively hurt a system by exploiting a vulnerability
+
+
+2) yes, it is an important aspect. The way each part of managing risk is especially important, because some methods / models won’t work with some situations.
+
+
+3) I accept that accessing websites is dangerous. I avoid especially obvious threats (downloading and running .bat, .exe files, etc). I use firewalls to mitigate many online threats. I insure my computer to transfer risk to the company.
+*(Young’s example is that I drive, I don’t drive at night, I drive my cheaper vehicle, and i buy insurance)
+
+
+4) It’s okay for certain models, but other factors are important, such as too much money lies on it. Even if it analyzes the probability correctly, the risks can vary more than just probability.
+
+
+5) Keeping say, our battle plan secret (confidentiality), keeping our information safe from tampering (integrity), and the ability to respond quickly to threats, etc (availability).
+
+
+
+
+
+
+LECTURE 4
+1) Most on slide 3 can be defined as a part of the main ones (on slide 2).
+
+
+2) I’d say availability, since I mostly need my computer to access things online. I do not buy anything, so my real information isn’t kept on my computer, and if integrity is breached, then I can focus on my firewalls & passwords for a time, attempt to fix the problems, all to keep my availability of my computer up.
+
+
+3) group data into level of importance, and categorize to be accessible only by certain people.
+
+
+4) authorizations can change over time to keep certain people who potentially gained/had access before from continuing to be able to access/change information.
+
+
+5) keeping availability up requires being secure from denial of service attacks and such
+
+
+6) a lot of purchasing websites. They need you, as the customer, to be able to access the service. They also need you to know that you can trust them (prove that a transaction occurred, etc)
+
+
+
+
+LECTURE 5
+1) a cell phone: keep peoples’ names & cell phone #s only available to people who use the account, or workers who must contact those people regarding their account/the company.
+ a military database: 
+-label level of sensitivity of information in folder via hierarchical component (if you can access the most secret, you can access the less secret ones as well) and 
+-need-to-know (you can access from certain domains of information)
+
+
+2) the meta policy is more general, while the policy is more specific (what to do EXACTLY if you’re in a certain position practicing the metapolicy)
+
+
+3) faculty/staff cannot use student SSN
+-documents with SSNs must be destroyed unless needed otherwise
+-if SSNs needed in document, the doc must be appropriately stored
+
+
+4) yes, maybe for a certain stakeholder, one aspect may be much more important to be kept confidential. In the military policy, someone may need to be able to access top secret documents only pertaining to cryptography. Thus the policy has to change to specifically allow certain credited people to be able to access that.
+
+
+5) the metapolicy is to keep SSNs secret unless deemed otherwise. The policy outright states who can do what with with the SSNs.
+
+
+6) If you don’t specify that faculty/staff cannot use SSNs in documents, then someone could wrongfully interpret what is considered “necessary” to use in a document, possibly giving out information where it is not necessary.
+
+
+
+
+LECTURE 6
+1) if information is available to the wrong people, security can be breached (we may trust some people more than others). If someone who isn’t trusted has access to the wrong information, they may inadvertently (or purposefully) leak the information.
+
+
+2) keeping the people who need/(should have) access to information should have it, and keep others out.
+
+
+3) talking about confidentiality, we must have well defined levels, who can see it, how do we check it, and changing authorizations
+
+
+4) Labels and categories. If you have access to the category and a certain level of label, you can see all labels “below” it, as long as it pertains to that category.
+
+
+5) As long as the system works, the people who are concerned about implementing it should be in control of how to make the labels.
+
+
+6) (most to least secure) 2 -> 6 -> 4 & 5 -> 3 & 1
+
+
+7) 2 = Top secret (hasn’t happened yet, must keep it secret)
+6 = secret (happened, but still should be kept secret)
+4 & 5 = classified (not for public knowledge)
+3 & 1 = unclassified (don’t matter, anybody can know)
+
+
+8) classify information hierarchically on the most secret of information present.
+classify in all domains relevant to the document.
+These two rules keep the hierarchy/subjects pertinant
+
+
+
+
+LECTURE 7
+1) human is allowed access to information of their hierarchical allowance (trustworthiness) and their domain of interest necessary.
+
+
+2) the label of a document (object) defines WHO can access it, while the label of a human (subject) defines WHAT level they can access (or lower [does it dominate?], and what subject they can access).
+
+
+3) Subjects (humans) are users or programs (which can copy, change data, etc).
+Objects (documents) are files, programs, systems.
+
+
+4) If someone has access to too much, you are allowing potential security breach. Incorrect access can show malicious intent.
+
+
+5) 1. Access approved: secret > confidential, so it is greater. The set of the subject is a superset of the object. Dominates
+2. Access denied: the subject has secret label, but the object is top secret. This does not dominate the object.
+3. Access approved: the subject has secret clearance which is greater unclassified, and any set is a superset of an empty set. This dominates
+
+
+
+
+
+
+LECTURE 8
+1) To clarify who can do the action to the object. The subject/object is defined by dominance, and the action says what the subject can do with the object.
+
+
+2) P: (A, {1, 2}) Q: (A, {2});   P dominates Q, Q does not dominate P (antisymmetry)
+from P and Q, if R: (A, {}); Q dominates R, and P dominates Q. P dominates R. (transitive)
+
+
+
+
+3) P dominates Q, but Q doesn’t dominate P, so it is not reflexive, and cannot be in total order.
+
+
+4) They would have to be the exact same.
+
+
+5) If the label of subj is >= to label of obj, and the domain of subj is a superset of the domain of obj, then the subject can access object.
+
+
+6) Other factors must be taken into account. Maybe they weren’t  SUPPOSED to access the object. So they passed the “hurdle” of the simple security property, that doesn’t mean they were supposed to.
+
+
+
+
+
+
+LECTURE 9
+1) Because write access is not defined by simple security. Maybe one would write information down after they accessed it.
+
+
+2) The example that one takes information from access by simple security, and writes it onto a lower label level, which would breach security.
+
+
+3) Programs the subject is running may take information you have access to and write it somewhere else, where access wouldn’t normally be allowed.
+
+
+4) Defines whether a subject can write about things that are on a higher level.
+
+
+5) They must have equal label levels, and equal domains.
+
+
+6) Check if they are able to write, use *-property
+
+
+7) Add another aspect to the system which checks if they are allowed to change information they have access to.
+
+
+
+
+
+
+LECTURE 10
+1) If the subject’s level is moved up, then security COULD be breached (unless it is deemed absolutely necessary). If the subject’s level is moved down, then they can only access less, so by weak tranquility, not much is adversely effected.
+
+
+2) Strong tranquility may be too restrictive; What if an object becomes more important to keep confident? What if a subject becomes potentially malicious?
+
+
+3) More subjects can access it. That may be a bad idea.
+
+
+4) The object was at too high of a level for the information it contains.
+Lower level subjects need the information, and the object’s information is not dangerous to bring to that lower level.
+
+
+
+
+LECTURE 11
+1) All objects would have levels that are dominated by all subjects.
+
+
+2) It’s too large for a legitimate system (many will be empty, since many subs will have no access to objects, so it is a huge waste). Since the subjs and objs are given these attributes, they can be decided at the time of attempt of read/write.
+
+
+
+
+
+
+LECTURE 12
+1) 
+                H{ }------->H{A}
+                ^                ^     ^
+                |          /         |
+                |      /             |
+                L{ } ------->L{A}
+
+
+2) LUB is 1 when label 2 <= label 1
+GLB is 1 when label 1 <= label 2
+
+
+3) to constrain information among the different security levels within the lattice (info flows upwards)
+
+
+
+
+LECTURE 13
+1) information only flows from low to high
+
+
+2) read only works if Ls dominates Lo, and write only dominates if Lo dominates Ls
+
+
+3) create works because you must both read the info and write it, so Ls and Lo are equivalent.
+destroy works because you are writing it into oblivion, only if Lo dominates Ls, which satisfies the write requirement.
+
+
+4) S_L must be able to flow from high to low.
+
+
+5) in case it must happen multiple times, a lot of information can be transmitted.
+
+
+6) yes, because in the left, the low level cannot read, and a 0 is transmitted. in the right, it reads a 1, because S_L is on the same level as F0.
+
+
+7) Yes, because S_H does something different, changing whether or not something exists on a higher level than S_L.
+
+
+8) Yes, it changes whether S_L can read/write. If F0 exists on the S_H level, then S_L can write to it but not read. Otherwise, it can both write and read.
+
+
+9) If S_H creates first, then S_L can only write to it. Otherwise, if S_H does not create it, then S_L can read and write to it.
+
+
+
+
+
+
+LECTURE 14
+1) Two humans are different systems
+
+
+2) No, because S_L cannot read above itself, so both get a 0 (or whatever the default is)
+
+
+3) Whether you get resource not found or access denied, the difference says that the high level subject says the status of the resource exists or not.
+
+
+4) If q begins using the processor faster than expected, p has inadvertently shown that p has spent a different amount of time than expected doing something.
+
+
+5) It resides in the cylinder that was last used.
+
+
+6) If H is even or odd, L becomes 0 or 1 (respectively).
+
+
+7) If the computations take a long time / don’t vary very much, then the covert channel picks up on very little over time.
+
+
+8) an external device to detect how much power was transmitted (if different amounts of energy are transmitted from the high transmission of 1 or 0)
+
+
+9) a system check (i.e. BIOS). it is important enough to have its own device to monitor it, and it is important to know whether or not the computer is working. Or maybe something like a light bulb.
+
+
+
+
+LECTURE 15
+1) although they appear to have low bandwidth, they can actually transmit a considerable amount of information (thousands of bits per second).
+
+
+2) Because we would be changing system implementations, lower bandwidth by directly introducing noise, and always watching the channel for observation by outside sources. And many more methods. This would really mud up computations.
+
+
+3) Detect the biggest transmission of information by the channel, and try to remedy it with one of the above methods.
+
+
+4) The first example, when trying to access a higher level bit, it says “access denied” / “file not found.”
+
+
+5) A bit is stored somewhere in the state to say whether or not the higher level “sender” exists or not.
+
+
+
+
+
+LECTURE 16
+1) Because it is implied. If it does not exist, it does now. If it did exist, then nothing happens. Either way, no information should be sent to the lower level module.
+
+
+2) If you can reference and modify an attribute, then by definition, it is a storage channel.
+
+
+3) Since each column is a different command, you cannot get information on whether something is modified or not by a command.
+
+
+4) It can tell you where potential channels could exist, so you could monitor or remedy them accordingly.

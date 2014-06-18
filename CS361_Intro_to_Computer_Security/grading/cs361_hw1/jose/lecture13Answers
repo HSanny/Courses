@@ -1,0 +1,26 @@
+Explain how the BLP rules are supposed to enforce the metapolicy in the example on slide 1.
+	The metapolicy is upward flow. Simple security prevents L from pulling from H; The start property prevents H from pushing from L. With both this properties and assuming strong tranquility, the metapolicy is 100% enforced.
+
+Argue that the READ and WRITE operations given satisfy BLP.
+	Given the 3 properties mentioned, it would be impossible for a subject to break the metapolicy using only Read and Write actions. For instance, a top secret subject has no way of sending writing to a lower sensitivity level and a secret subject has no way of reading from a higher level instance.
+
+Argue that the CREATE and DESTROY operations given satisfy BLP
+	 If a top secret subject creates an object, it will have top secret sensitivity. Therefore, no subject below that level will be able to read it. If a subject with confidential clearance tries to destroy an unclassified object, he wont be allowed because it would be like giving him permission to write to a lower level. On the other hand if he tries to destroy a higher level object, he will be permitted to do so for the same reason. With this in mind, it is clear that this actions satisfy BLP
+
+What has to be true for the covert channel on slide 5 to work?
+	First, there has to be an action called create. Secondly, this action must be used in an unintended way. For example in slide 5, the create action is not being used to create a file per se, but rather it is acting as 1 or 0 bit. In other words, it is being used to transfer information
+
+Why is the DESTROY statement there?
+	So the file can be created again later. If one where to put this inside a loop, an arbitrary amount of information could be sent
+
+Are the contents of any ﬁles different in the two paths?
+	Yes on the left part, the file contains "0". On the other side, it contains "1"
+
+Why does SL do the same thing in both cases? Must it?
+	it does so to covertly transmit information. The same results could be achieved if SL doesnt create f0 on the left segment
+
+Why does SH do different things? Must it?
+	Just like before, it does so to covertly transmit information. He must do things differently because his action acts as sending bit 0 or 1
+
+Justify the statement on slide 7 that begins: “If SL ever sees...”
+	The metapolicy is that only upward flow is allowed. In the example, Sl is reading different information depending on Sh's actions. In other words, information is flowing downwards and thus breaking the metapolicy

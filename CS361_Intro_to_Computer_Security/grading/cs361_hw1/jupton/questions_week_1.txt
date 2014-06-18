@@ -1,0 +1,264 @@
+Name: Jeff Upton
+EID: jau55
+CS Login: jupton
+Email: jeffupt@gmai.com
+
+Lecture 1
+=========
+
+1. Personal security, web security, financial security, relationship security, Job security
+
+2. They all involve protecting assets from some sort of threat.
+
+3. Yes, my credit card information was leaked as part of the compromise of Target's data.
+
+4. It is probably pretty high, based on the statistics of compromised personal computers and large volume of malware.
+
+5. I use a secure password and practice safe browsing habits. I don't install software unless I know exactly what it is. I run antivirus and a firewall.
+
+6. They are probably somewhat effective, definitely not 100%.
+
+7. I don't think it overstates the case. A malicious attacker could compromise our nuclear arsenal and attack our country or allies. They could collapse the global economy.
+
+8. It's important to learn about security for the protection of myself, my country and those I care about.
+
+
+Lecture 2
+=========
+
+1. The landscape of technology is constantly changing, driving the creation of new, time-untested code.
+
+2. No, the number of "bad things" is nearly infinite.
+
+3. The defender has to worry about all of the possible "bad things", while the attacker only has to find a single vulnerability.
+
+4. I agree. There's no way to be perfectly secure when your computer is connected to virtually every other computer in the world. 
+
+5. Since security is difficult and not directly-related to the functionality of a program, a compromise is usually made in the area of time-of-development, functionality, usability or efficiency in order to obtain some degree of security.
+
+
+Lecture 3
+=========
+
+1. Risk is the possibility that something bad will happen.
+
+2. Yes, due to the fact that software has to compromise between the goals and security, we can't achieve perfect security - so we must minimize risk.
+
+3. I accept the risk that I may get injured driving. I avoid the risk of dying bungie jumping by not bungie jumping. I mitigate the risk of losing my job by saving my money. I transfer the risk of repairing my car in the case of an accident to my insurance company.
+
+4. It is a helpful tool, but doesn't cover the entire picture as it doesn't account for factors other than money.
+
+5. Technical, economic, psychological
+
+
+Lecture 4
+=========
+
+1. The list on slide 2 contains the primary security goals, while the list on slide 3 contains the mechanisms used to achieve those goals.
+
+2. Availability is probably most important to me as my livelihood depends on access to many online resources, including my bank.
+
+3. The divide up data into chunks that require varying levels of security.
+
+4. Authorizations would change over time as roles or jobs are changed or system priorities evolve.
+
+5. It is a security issue when an attack compromises the reliability of a system and thus lowers its' availability.
+
+6. In an online transaction, authentication and non-repducation are important to both parties involved.
+
+
+Lecture 5
+=========
+
+1. For the cell phone network, the metapolicy could be that no person is able to hear a conversation that they aren't supposed to. For a military database, no user should have access to anything above their clearance level.
+
+2. A policy describes how the metapolicy is enforced.
+
+3. Any computers that can access student records should be encrypted. SSN can't be on any document owned by a professor. No one but the student and administration can see the student's record.
+
+4. Yes, the professor's interest in rapidly performing their work conflicts with the student's interest in privacy.
+
+5. A student's SSN must remain confidential unless absolutely necessary.
+
+6. The policy is often low level and may seem capricious without taking the metapolicy into consideration.
+
+
+Lecture 6
+=========
+
+1. Military security is mostly about confidentiality due to the sensitive nature of military secrets. There are aspects of integrity (orders and secrets must be accurate) and availability (if people are unable to get their orders then they are unable to act).
+
+2. The major threat in the thought experiment is military secrets leaking to unauthorized individuals.
+ 
+3. The proviso is there to simplify the though experiment, eliminating the need to worry about integrity and availability.
+
+4. The labels we're using consist of a hierarchical level and a set of categories.
+
+5. We're not concerned about how the labels were given because we are only focused on confidientiality and not integrity or availability.
+
+6. From lowest to highest: 3, 1, 4, 5, 6, 2
+
+7. 
+    - 3 (Unclassified: {Food})
+    - 1 (Unclassified: {Recreation})
+    - 4 (Confidential: {Salary, Performance})
+    - 5 (Confidential: {Salary, Performance})
+    - 6 (Secret: {Foreign Secrets})
+    - 2 (Top Secret: {War Plan})
+
+8. The rules for mixed documents maintain confidentiality for the highest sensitivity component.
+
+
+Lecture 7
+=========
+
+1. They are stored in a computer system.
+
+2. Labels for documents indicate the sensitivity of the contents while labels for humans indicate the authorization that the individual has.
+
+3. Files are analogous to documents and users (or programs) are analogues of humans.
+
+4. The principle of least privilege makes sense because it limits the spread of information unless absolutely necessary.
+
+5. For the first row, access should be allowed because the subject has a higher level and matching category. For the second row, access should not be allowed because the subject only has "Secret" level clearance while the document has "Top Secret". For the third row, access should be allowed because "Secret" dominates "Unclassified".
+
+
+Lecture 8
+=========
+
+1. The vocabulary was introduced to definite a language that is more applicable to computer systems where there aren't simply humans and documents.
+
+2. It is reflexive - if two levels are equivalent then they dominate eachother. (eg. (H, {Weapons}) >= (H, {Weapons})))
+   It is transitive - if level A dominates B then it also dominates everything that B dominates.
+   It is antisymmetric - if level A dominates B and B dominates A, then A == B.
+
+3. Dominates is not a total order because it is possible for two levels to not dominate eachother. For example (H, {Weapons}) and (H, {Personnel}).
+
+4. They would have to be identical.
+
+5. A subject can only read documents that are "lower level" (or equal) than the subject.
+
+6. The simple security policy is "only if" because it is a necessary but not sufficient prerequisite for access. There may be other security constraints imposed.
+
+
+Lecture 9
+=========
+
+1. Confidentiality may still be violated if someone with higher level access is able to write/copy the information to a lower level document.
+
+2. As above, we need constraints on write access to preserve confidentiality.
+
+3. Malware can cause malicious code to run on behalf of a user.
+
+4. The *-property says that a subject can only write to documents that are "higher level" (or equal) to the subject.
+
+5. The subject and object must both have the same level of access fot the subject to be able to read and write.
+
+6. The general can log out of his top secret account and login to his unclassified account. We trust the general, but not the programs running on his behalf.
+
+7. It is a problem. We could deal with this problem with the addition of rules to ensure the integrity of the system. Currently, we're only concerned with confidentiality.
+
+
+Lecture 10
+==========
+
+1. Changing a subject's level up may decrease security as the subject now has access to objects that it didn't previously. Lowering a subject's level may also be bad unless the subject is stateless (i.e. it doesn't carry any knowledge gained from the higher level down to the lower level).
+
+2. Because a user may need to operate at different levels at different times.
+
+3. The object then becomes available for reading by lower levels than it was previously.
+
+4. The downgrade must not violate the "spirit" of simple security and the *-property.
+
+Lecture 11
+==========
+
+1. Subjects would have (Unclassified: {Books}) and objects would have (Confidential: {Books})
+
+2. Because for 1000's of subjects/objects the matrix becomes huge and mostly empty. Computing access is easy to calculate on the fly.
+
+
+Lecture 12
+==========
+
+1. (With transitive and reflexive arrows left out)
+(H, {A}) <------ (H, {})
+   ^                ^ 
+   |                |
+   |                |
+   |                |
+(L, {A}) <------ (L, {})
+
+2.
+
+3. The upward flow of the lattice shows that information can only flow to higher security levels, which is the metapolicy for BLP.
+
+
+Lecture 13
+==========
+
+1. The simple security policy prevents L from reading H and the *-property prevents H from writing to L. Thus, information can only flow from L to H.
+
+2. The read operation satisfies the simple security policy; no read access is granted unless the subject dominates the object. The write operation satisfies the *-property; no write access is granted unless the object dominates the subject.
+
+3. Create satisfies BLP because it can be seen as write access to the same level document. Destroy also satisfed BLP because it is also writing to a document. Both create and destroy are governed by the *-property.
+
+4. SH and SL must have colluded to pass information. 
+
+5. The destroy is there so that the process can be repeated many times to transfer arbitrary amounts of information.
+
+6. No, the contents of the files are identical.
+
+7. Yes, it must do the same thing in order to be sure that different results are due to the actions of SH.
+
+8. It does different things to transmit different information (either 0 or 1). It must, because SL is doing the same thing and expecting different results.
+
+9. This makes sense because SL seeing a different result based on an action by SH is a flow of information from high to low and thus a violation of BLP principles.
+
+
+Lecture 14
+==========
+
+1. Because the flow is not between subjects in the system. A covert channel is concerned with the mechanisms of the system.
+
+2. No. If F0 has label L, then both writes will fail and SL will see the same value. If F0 has label H, then both reads will fail.
+
+3. The information leaves in the  status of the resource. In each status a different error message is returned.
+
+4. The information resides in the ordering/duration of the running processes.
+
+5. The information resides in the location of the read head on the hard disk drive.
+
+6. The information resides in the language of the program that inspects the high level value and varies the low level value accordingly.
+
+7. Because the time it takes to determine whether or not something will "probably" terminate will be fairly long, meaning each bit of information will take quite a while to transmit.
+
+8. The subjects in the system have to be able to gauge the power usage of the system.
+
+9. Power channels might arise in battery-powered devices such as cell phones.
+
+
+Lecture 15
+==========
+
+1. On modern systems, covert channels can convey thousands of bits of information per second with no appreciable impact on system processing.
+
+2. Covert channels are difficult to detect, and systems are usually so complex that systematically discovering covert channels is too difficult/time-consuming.
+
+3. One could either modify the system to remove the channel, introduce noise to the channel to reduce the bandwidth, or monitor the channel for activity patterns that indicate someone is using the channel.
+
+4. The permissions on a file in a unix system is an example of a covert storage channel.
+
+5. The sender can change the permissions of a file to be readable by others or not. The receiver can attempt to open the file for reading and record 0 or 1 based on whether the open succeeds.
+
+
+Lecture 16
+==========
+
+1. The create operations modifies whether the file exists when successful, so it should have an M.
+
+2. This indicates that there is some operations that one subject can use to modify information and another subect can use to read that information.
+
+3. An R and M in the samn column does not indicate a potential covert channel because the bits of information are unrelated.
+
+4. They SRMM table used as a systematic way to detect covert channels and close some of the security holes in the system.

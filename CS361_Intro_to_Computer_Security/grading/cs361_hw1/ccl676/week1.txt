@@ -1,0 +1,184 @@
+Connor Lirot
+ccl676
+
+Week 1 Questions
+
+Lecture 1
+
+1. Personal security, network security, system security, homeland security
+
+2. They are about protecting "assets against threats".
+
+3. Yes, since it's practically impossible to have perfect security
+
+4. I wipe my hard drive and resinstall my operating system every once in a while, so I don't think I have any viruses or worms, as they would get killed in this process
+
+5. I haven't downloaded any software dedicated to providing security for my laptop, but a few of the programs I use take their own measures to provide security (ex. Google Chrome warns against accessing malicious pages). I regularly scan my computer manually and delete any files that I don't recognize (sometimes it ends up being spyware)
+
+6. Yes
+
+7. It's a little too sensationalist for me, but given that we so heavily rely on computers for everyday activities, if someone commandeered control of them, it could be very detrimental
+
+8. To protect ourselves, our friends, our workplace, and our country
+
+Lecture 2
+
+1. If you spend 6 months making a program and then release it, you only spent 6 months making sure it was secure while attackers have the rest of eternity to figure out ways to expoit it.
+
+2. No because the types of bad things that can happen depend on the nature of the software you've created, and there are bad things that can happen that we don't even know about yet (because they haven't happened)
+
+3. Attackers know who the defenders are; defenders don't know who the attackers are. Defenders must defend against every kind of attack; attackers only need to find one vulnerabiltiy.
+
+4. Yeah. Because even if you created your hardware from scratch, wrote your own programs, and didn't even connect your computer to the internet, an attacker could still find a way to gain access to your machine if he could sit in front of it when you weren't paying attention
+
+5. Well, to provide security, you have to detract attention away from another aspect of your program and direct it toward security. In the very simplest case, if you spend 6 hours writing a program, and 2 of those hours go to ensuring security, you really only spent 4 hours writing your program, because security adds nothing to the utility of your program.
+
+Lecture 3
+
+1.  "The possibility that a particular threat will adversely impact an information system by exploiting a particular vulnerability"
+
+2. Yes. It should be about eliminating risk, but since that's probably impossible, we may at least attempt to mitigate it as much as possible.
+
+3. I accept the risk that driving my car to work everyday could end up in a fatal car crash. I avoid the risk of skydiving because I'm too convinced something terrible will happen. I mitigate risks that driving presents by driving my less expensive car around so if I wreck it I won't have to pay as much to fix it. I transfer a financial risk of driving by buying car insurance so if I do get in an accident, a third party will handle the financial loss.
+
+4. It's a very good tool, but if you just look at annualized loss expectancy and nothing else, you might not make the best decisions. If something very terrible can happen but it's highly unlikely that it will, it might have a low annualized loss expectancy, but you'd probably want to protect against it extra just because it would be so terrible if it occurred.
+
+5. Value of a single incidence of the risk. Probability of risk occuring. Expected value of the risk occuring over a period of time.
+
+Lecture 4
+
+1. The items from slide 2 are goals of security, and the items from slide 3 are the mechanisms by which you could achieve those goals
+
+2. In order of importance: integrity, confidentiality, availability. If stuff isn't available, then oh well. I can just wait. If someone manages to gain access to my personal information, that's annoying, but it's not immediately detrimental. However, if someone can actually modify my personal information, that's when problems really arise, because they can now easily mess with my life.
+
+3. Arrange it to prevent unauthorized disclosure
+
+4. People can be promoted to a higher level of authorization/clearance
+
+5. Denial of service attacks are threats to both reliability and availability
+
+6. Authentication and non-repudiation would be very relevant to online banking
+
+Lecture 5
+1. cell phone network - availability of network is preserved. military database -  confidentiality of communication is preserved
+2. The metapolicy is not concrete enough to be enforced. The policies are created so people can be guided in a direction that allows them to enforce the metapolicy
+3.
+-staff may not use student SSN's in documents
+-documents containing SSN's must be destroyed if they are not deemed absolutely necessary
+-documents containing SSN's that are not destroyed must be kept in a secure storage location
+4. If a stakeholder wants confidentiality and availability, we might have to sacrifice some availability to preserve confidentiality. For example, we might have to add extra authentication for them to see their records, which would reduce the availability because it takes them longer to see their stuff
+5. Confidentiality of students' SSN's
+6. The metapolicy is the overall goal. The policies are things we do to accomplish the goal. If we just do things without knowing why we are doing them, it seems useless; but if we know why we are doing them, we can do them more effectively.
+
+Lecture 6
+
+1. Confidentiality is ridiculously important to the military, so much so that they are willing to sacrifice availability and integrity in order to achieve it. Surely they care about integrity and availability, but just not as much as confidentiality
+2. Someone getting access to information that they shouldn't have access to
+3. so we can just deal with one thing at a time without having too large of a scope (that would be overwhelming)
+4. the labels indicate the level of sensitivity of the information contained in the folder
+5. because we just have to enforce the labels, not understand what information is inside them
+6. 
+- softball team has a game tomorrow, cafeteria serving chopped beef
+- col. jones got a raise, col. smith didn't get a raise
+- british have broken the german enigma codes
+- normandy invasion is june 6
+7.
+softball - unclassified (recreation)
+cafeteria - unclassified (food)
+col. jones - confidential (employee stuff)
+col. smith - confidential (employee stuff)
+british broke codes - top secret (war stuff)
+normandy invasion - top secret (war stuff)
+8. some documents pertain to more than one subject, so you must label them as such. however, because this is the case, you must be sure that a subject has the correct clearance to view the document. If they only have partial clearance, we should not let them see the document
+
+Lecture 7
+
+1. People are affixed with clearances or authorization levels
+2. Labels for documents are for how confidential they are; labels for humans show how trusted the human is
+3. Documents - files in a file system. humans - users on a computer or in a network
+4. There's no reason to give an individual more information than is required to do their job because the only effect is produces is a higher likelihood that they will leak the information to unauthorized personnel (whether inadvertently or advertently)
+5.
+-makes sense. secret is more confidential than crypto, and the need-to-know categories coincide
+-does not make sense. the clearance level is too low, so regardless of what the info is about, he should not see it
+-makes sense. unclassified with no need-to-know categories is the lowest sensitivity (in this example), so anyone should be able to see it
+
+Lecture 8
+
+1. To be explicit about the interactions for any security policy we could try to implement while simultaneously allowing any definitions to be general (objects is a more general term for files, folders, documents, etc.)
+2. A dominates B and B dominates C implies A dominates C (transitive)
+3. It is possible to create labels A and B such that neither A nor B dominate the other, and so the dominates relation is not a total order
+4. They would have to have the same clearance levels as well as the same set of need-to-know topics
+5. An individual asking to see a documents must show that his clearance level dominates the sensitivity level of the document
+6. Just because a subject passes these tests does not mean that it should still be able to perform the read. There may be other external factors in play, so "if and only if" is not as safe as "only if".
+
+Lecture 9
+
+1. No because we need constraints on write access as well
+2. Because if we don't constrain write access, then higher level subjects could relay confidential information to lower level subjects by simply writing to lower level objects that those lower level subjects can read
+3. Even if we can trust the human subject to not write confidential information into unclassified files, we cannot trust the computer to not be malicious and do that for us
+4. You can only write at your own level or up.
+5. The subject must have the exact same label as the object
+6. The general can switch to a lower level account to send the orders
+7. It's a problem, but it's only an integrity problem. If a lower level subject overwrites confidential information, it has destroyed the integrity of the information, but our metapolicy of confidentiality is still standing fine. If we wanted to deal with this we would have to create policies for dealing with data integrity.
+
+Lecture 10
+
+1. It would be acceptable to lower a subject's level (analogous to reading down), because this would not conflict our metapolicy of confidentiality. However, it would not be okay to freely raise a subjet's level because it would allow the subject to read any document it wanted to, which is exactly against our metapolicy
+2. It's inflexible. Subjects should be able to be promoted/demoted to different levels just as humans would be in real life
+3. Lowering the level of an object is like writing down. It would allow lower level subjects to view information that was previously (and probably still) considered confidential
+4. In order to ensure its security you'd probably want to have the downgrade be approved by more than one subject
+
+Lecture 11
+
+1. Subjects - High, Objects - Low
+2. The number of subjects and objects is normally very large, so the control matrix would be extremely large. Also, you could just compute the access permissions on the fly anyway
+
+Lecture 12
+
+1.
+H{A} <-- L{A}
+^		  ^
+|         |
+|         |
+H{}	<--  L{}
+2. Draw the lattice, and then follow arrows up to find LUB. Follow arrows down to find GLB
+3. The upward flow in the lattice represents the transfer of information from low levels to high levels, without the transfer of information form high levels to low levels.
+
+Lecture 13
+
+1. In BLP, You can read down and write up. This means that information should, if everything goes as expected, flow from low to high
+2. If according to BLP, you are allowed to read the object, you will be able to. However, if you're not allowed to read the object, you'll just get back a zero. This zero tells you nothing about the object. Write works similarly to read. If according to BLP you should be able to write the object, you will be allowed to do so. If you're not allowed to write, nothing happens.
+3. Create is fine because creating a file does not relay any information at all. So anybody should be able to create any file. Destroy is similar to create in that it shouldn't convey information to the subject performing the action. It's neither a read nor a write, so executing it shouldn't be against BLP.
+4. SL must do the same thing over and over again so that it can read SH's message, and both SH and SL must be synchronized
+5. To clean up for the next iteration (if this procedure were put in a loop)
+6. Yes. Transmitting 0 - contains 0; transmitting 1 - contains 1
+7. If SL did different things in the two cases, that would imply SL knew beforehand which bit SH was going to transmit, which doesn't make any sense. It must do the same thing every time.
+8. SH does different things because SH is the one sending the message. SH must do different things because if it did the same thing over and over there would be no change in activity for SL to notice
+9. If you can synchronize the actions of SH and SL such that SL can interpret changes in its environment due to actions made by SH, you have found a potential covert channel where information can flow in the wrong direction
+
+Lecture 14
+
+1. Because it's an overt channel. Covert channels involve communicating through mediums that are not meant to be used for communication
+2. No. First of all, it only uses read and write operations, which are overt operations. Secondly, SL would read 0 both times, so information wouldn't even be flowing from SH to SL.
+3. It resides in the system state (storage)
+4. It resides in the time it takes for process q to regain control of the processor
+5. It resides in both time and storage, sort of.
+6. Resides in the control path of the program
+7. If the channel if very noisy it will be hard to distinguish attempted communication from noise, so you wouldn't be able to transfer as many bits as fast
+8. Lower level process would have to be able to sense change in power usage, and higher level process would have to be able to actually modulate the power usage
+9. Hardware devices. You might be able to detect a 1 over a 0 because it would take more power to write a 1.
+
+Lecture 15
+
+1. Processors run at an extremely high speed, so even if a covert channel can only send 1 bit per iteration, the number of iterations per unit time would be so high that the low bandwidth wouldn't matter.
+2. Covert channels communicate through mediums which we didn't intend for communication to pass through, so in order to eliminate them we would have to simply remove features from our hardware and programs
+3. You can eliminate it by modifying the system implementation, we can reduce it by introducing noise into the channel, or we can monitor it for patterns of usage that indicate someone is trying to exploit it.
+4. The original scenario with the creating, writing, reading, and destroying of files is an example of a covert storage channel.
+5. If the sender and receiver synchronize their accesses to the object, the sender would be able to relay information to the receiving by changing when it creates the file or does nothing. The reader will be able to tell if the sender created the file, and so this would signal a bit of information
+
+Lecture 16
+
+1. Sure, you know that creating a file results in the file existing in the file system. But it does not actually tell you anything about the file because you don't know if you were the one who created the file or if it already existing prior to you creating it.
+2. If there is an R and an M in the same row it means that this attribute can be used as a medium of communication if a sender and receiving are able to satisfy the requirements for a covert channel (listed in the previous lecture)
+3. This does not indicate a potential covert channel because the attributes are different and so modulating one would not affect the other.
+4. SRMM tables are a tool to find potential covert channels in a system, so they are helpful for people who are attempting to fight against those channels

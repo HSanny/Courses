@@ -1,0 +1,194 @@
+Vivian Nguyen (vn2699) 
+CS361 Questions: Week 2
+CS Login: ngugenv
+Email: nguyenv@utexas.edu
+
+****************
+** Lecture 17 **
+****************
+
+1. No because in BLP there may be interactions from higher subjects to lower subjects.
+2. A and B would not interact with each other because neither dominates.
+3. No because higher subjects cannot interact with lower subjects.
+4. A is "low" and B is "high" or A and B are both "low" or A and B are both "high."
+
+****************
+** Lecture 18 **
+****************
+
+1. Because it is abstract and does not give specific instructions on how the system should deal with subjects reading/writing objects.
+2. l should not see anything that h does. It should only see l1, l2, l3, ..., lk.
+3. Because interferences are very common, are mostly only benign, and mostly involve low-level system attributes.
+
+****************
+** Lecture 19 **
+****************
+
+1. If you were writing a paper, the integrity of the articles you cite matters because you don't want any incorrect information in your own writing. The integrity of a customer's bank account matters because the customer does not want to lose money and likewise the bank does to want to lose either money or customers.
+2. Because a freely available version may not be trustworthy and may contain malware.
+3. In Separation of Function, a single subject cannot complete complementary roles within a critical process. In Separation of Duty, there must be several different subjects involved to complete a critical function but a subject could possibly complete complementary roles.
+4. Auditing is important for recoverability and accountability.
+5. In a commercial setting, you don't want users to know the implementation and full specs of the program and likewise you do not want programmers to have access to real user data.
+6. An article on a news site - confidentiality is not a concern since everyone should be able to access it, but you would't want just anyone to edit the article.
+
+****************
+** Lecture 20 **
+****************
+
+1. Highly reliable with little sensitivity: food items on a menu. Lesser reliability with greater sensitivity: eyewitness testimony in a closed court.
+2. In row 1, label 1 is ranked more trustworthy than label 2 and have the same set of categories, so label 1 dominates. In row 2, label 1 is ranked less truthworthy and the categories are not a subset of label 2, so neither label dominates. In row 3, label is ranked more trustworthy and the empty set is a subset of all setes, so label 1 dominates.
+3. A subject may only write to an object if the subject dominates the object. A subject may only read an object if the object dominates the subject.
+4. The labels must be treated separately. Although a subject's label may be ranked higher on the confidentiality scale, they may still be ranked low on the integrity scale. 
+
+****************
+** Lecture 21 **
+****************
+
+1. Biba Integrity is essentially the same thing as BLP except the dominates relations are switched around.
+2. Because neither the subject nor object dominate one another. Neither is the subset of the other.
+3. No, the subject should at least satisfy both in order to access the object.
+
+****************
+** Lecture 22 **
+****************
+
+1. That subjects cannot filter out bad information and are immediately "tainted" if they read an object below their level.
+2. No because subjects' levels flow down over time. 
+3. Subjects are able to filter out bad information.
+4. Yes because subjects can access anything they want and will remain at the same level regardless.
+
+****************
+** Lecture 23 **
+****************
+
+1. No because SD is a confidentiality category and ID is an integrity category.
+2. Downgrade is necessary in order to move software (objects) from development to production.
+3. Yes system controllers can modify development code and test data.
+4. Weak tranquility.
+
+****************
+** Lecture 24 **
+****************
+
+1. Clark and Wilson wanted to maintain integrity in the context of a commercial setting and thus were concerned with what users could do and being able to trace what users did.
+2. Examples of CDIs are: (1) bank statements, (2) article on news site, (3) code for website's layout, and (4) credit card bills.
+3. Examples of UDIs are: (1) pamphlets on desk, (2) food from the snack machine, (3) lunch menu, (4) library books.
+4. Certification rules have to do with setting up the TPs in way such that the four basic concerns of integrity are maintained. Enforcement rules have to do with making sure the certification rules are properly followed by users.
+5. The bank teller is allowed to perform customer withdraw and deposit money transactions.
+
+****************
+** Lecture 25 **
+****************
+
+1. Because the consultant could leak confidential information from AA to UA.
+2. Yes because they are in different conflict classes.
+3. GM, Microsoft, Bank of America, Wells Fargo, and Citicorp.
+4. There are conflict classes which means a subject's permissions change dynamically according to past accesses.
+
+****************
+** Lecture 26 **
+****************
+
+1. It is easier to manager as you can group multiple people into a role instead of having to assign permissions by an individual to individual basis.
+2. Authorized roles are all the roles a subject can take and an active role is an authorized role that the subject is currently performing.
+3. Role authorizaton means that the subject's active role must be an authorized role for the subject. Transaction authorization means the subject can execute a transaction only if the transaction is authorized for one of the subject's active roles.
+4. It is easier to administer, specific to the organization, and flexible in terms of recognizing that the object has various functions within an organization and is able to transition between those roles without having to change identities.
+
+****************
+** Lecture 27 **
+****************
+
+1. ACMs are typically very large and would mostly only contain empty fields since most subjects and objects pairs do not dominate one another.
+2. Access control list (ACL), capability-based system, and implicitly.
+
+****************
+** Lecture 28 **
+****************
+
+1. Both the sender and the reciever must agree on an encoding scheme.
+2. To see how much information is encoded in a message, the maximum capacity of a given transmission medium, and how efficiently a given language can be transmitted.
+3. If they did not have some shared knowledge or an agreed coding scheme then the reciever would not be able to interpret what is conveyed my the sender.
+4. It is less efficient and wastes unnecessary resources. 
+5. This would not use any bits because the reciever already knows what the answer is. If the receiver did not know if it would be a "yes" or "no" then that would required 1 bit.
+
+****************
+** Lecture 29 **
+****************
+
+1.
+	An n-bit binary number: 		n-bits
+	A single decimal digit: 		4 bits
+	A two digit decimal number:	7 bits
+	"The attack is at dawn":		Unknown
+2. It is unknown if the uncertainity lies within the exact time, the exact day, the location, or any infinite amount of reasons.
+3. 4-bits because because there are 16 different combinations of 0's and 1's that could be represented in a 4-bit string.
+4. 8-bits
+5. In most cases, the level of uncertainty is unknown.
+
+****************
+** Lecture 30 **
+****************
+
+1. A bit can be a discrete binary digit representing a 0 or 1 or it can be a unit of measurement representing a continuous quantity of information.
+2.
+	000	100
+	001	101
+	010	110
+	011	111
+3. 99.5% of the time you are only sending one bit, therefore you send 1-bit * 995 messages in that cases. The rest of the time, you are sending 5 bits, therefore you send 5-bits * 5 messages. In total, the encoding takes 1020-bits.
+4. Because you can encode the messages so that the more common messages being sent will use less bits. This results in a more efficient encoding.
+5.
+	000
+	001
+	010
+	011
+6. There is a lower limit to how efficient an encoding is.
+
+****************
+** Lecture 31 **
+****************
+
+1. "24864828628468248628"
+2.
+	000
+	001
+	010
+	011
+	100
+	000111
+3. If it is not then the receiver will not be able to interpret what is being sent over. If 0 = A, 1 = B, and 01 = C, and the receiver reads 01, then it is unclear if it is an A and B or if it a C.
+4. It is more efficient if there are no breaks in the string.
+5. Morse code is not streaming.
+
+****************
+** Lecture 32 **
+****************
+
+1. h = -log(1/8) = log(8) = 2.08
+2. h = -((4/5)log(4/5) + (1/5)log(1/5)) = 0.500
+3. The entropy sets the lower limit on encoding efficiency.
+
+****************
+** Lecture 33 **
+****************
+
+1. The results that are more likely take up less bits.
+2. If we flip a coin 32 times and we expect HH to show up 9/16th of the time, then we project that HH will come up 9 times. Since the encoding of HH is 1 bit, HH will use a total of 9-bits. The same logic is used for the other three results, yielding a total of 27-bits.
+3. 
+	000	011
+	001	100
+	010	101
+4. h = -((6/11)log(3/11) + (3/11)log(3/22) + (2/11)log(1/11)) = 1.69
+5. 
+	01	110
+	10	1110
+	01	1111
+6. For 22 rolls
+	Result	Probability	Rolls	Bits (Naive)	Bits (Non-naive)
+	1				3/11				6			18						12
+	2				3/11				6			18						12
+	3				3/22				3			18						6
+	4				3/22				3			18						9
+	5				1/11				2			18						4
+	6				1/11				2			18						4
+Total bits: 								108						47

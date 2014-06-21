@@ -1,0 +1,166 @@
+Chris Hume
+cmh3258
+hw2
+6/19/14
+
+-----------------------------------------------
+
+Lecture 17
+
+1. no, because it could have a covert channel still
+2. B -> A
+3. no, because it doesn't allow for information to be read/written by someone not allowed
+4. both: low and high. a: low, b:high. 
+
+Lecture 18
+
+1. because it states how information can flow from one to the other and not the other way around. There is nothing about which subjects can read/write or actions/objects at all. It is rules, not general overview
+2. anything the H's actions may not affect. contents of file L, system flags, system clock 
+3. there is always interferences. You need to be passing information all over the place, so it would be extremely difficult to limit that.  
+
+Lecture 19
+ 
+1. For news - want to make sure it is legitamite and someone just didn't make it up. For textbooks - make sure the research behind it is truth and someone didn't mess with contents.
+2. for integrity reasons. A free version might be buggy, have viruses, etc. 
+3. duty - many subjects are involved to complete a function, but with seperate function, the subject cannot complete complementary roles within that function. 
+4. for the microsoft example, they need to make sure something doesn't get published unless it is supposed too/works correctly
+5. Lipner doesn't want users to use outside software that might have integrity concerns, he also doesn't want applications published unless they undergo a rigerous process of auditing
+6. the News. Everyone can read the news, but don't want people messing with the content
+
+Lecture 20
+
+1. news, rumors
+2. expert dominates student, and both have physics. thus it dominates
+   novice is not higher than expert
+   student is higher than novice, and art is higher than null
+3. information cannot flow up in integrity. L |-> H
+4. they are not the same, we have to treat them different even though they might appear similar
+
+Lecture 21
+
+1. it is basically the twin. You can use both of these to secure a system too.
+2. because neither dominates - there is a C in the objects
+3. no, if you are satisfying both. 
+
+Lecture 22
+
+1. subjects integrity level can be changes - falls if reads low integrity info.
+2. no
+3. that the subjects won't use the information wrongly since everyone can read everything
+4. yes
+
+Lecture 23
+
+1. The both 
+2. so that software can move to production
+3. yes system controllers have confidentiality of SP and SD with integrity of IP and ID
+4. weak tranquility
+
+Lecture 24
+ 
+1. the purpose is to secure the system. making sure that one who is authorized, manipulates data only in a constrained way and it is logged.
+2. for a bank, the bank accounts, user information
+3. for a bank , numbers entered into the keyboard
+4. certification - checks to see if valid and in state it should be in. enforcement - makes sure TPs cert. can run on CDI. The enforce the access. 
+5. (manager, change information, {users name, users email, users address})
+
+Lecture 25
+
+1. They are competing airlines, thus the consultant could give one information about the other that doesn't need to be exchanged
+2. yes
+3. can access BoA, Wells Fargo or Citicorp - but only one
+4. CWP is concerned with history and groups - its concerned about conflicts of interest
+
+Lecture 26
+
+1. give multiple people a role instead of giving every subject permissions. It is just easier. 
+2. authorized - a user is allowed to fill these roles at some point but active roles, is what it currently occupies
+3. role - checks actives role authorization for subject, while transaction checks to see if the transaction is authorized. 
+4. in RBAC a subject can change roles more easily, you can also give multiple people the same role so you don't have to give everyone an individual role
+
+Lecture 27
+
+1. becomes very large
+2. Access control list, capability-based,  "on the fly"
+
+Lecture 28
+
+1. sender and reciever much ahve some shared knowledge about which bit means what. They need to agree on an encoding scheme too.
+2. so the receiver knows how much data it is looking for 
+3. if they don't then the reciever might get the message wrong or incomplete
+4. it is unecessary bandwidth
+5. 1 bit. either a 1 or 0. 
+
+Lecture 29
+
+1. a. 2^n  
+   b. 10
+   c. 20
+   d. 25*8
+2. because the recievers uncertainity could be anything. If it is a yes no question, then one bit, if it could happen any time during the day it would be many bits
+3. 4
+4. 8
+5. becuase there is a high level of uncertainty always basically
+
+Lecture 30
+
+1. a binary digit and a quantity of information. Bit2 is the amount of information, not just a 1 or 0.
+2. 
+  000
+  001
+  010
+  100
+  011
+  110
+  101
+  111
+3. 995 is the average that it will be 10. 5 is the other. The other 5 is the amount of bits.
+4. so you can change the encoding to make a more frequent message a select bit
+5. 0000000
+   1000000
+   0100000
+   0010000
+   0001111
+   0000111
+   0100001
+   0101001
+6. using a bit or two to represnet more frequent messages. 
+
+Lecture 31
+
+1. 12345678
+2. 0,01,011,0111,01111,011111
+3. if it isn't then there will be confusions and get wrong outcomes
+4. you want lossless so you can recover the whole thing
+5. because it is not prefix-free. there are ones that are prefixs for the others
+
+Lecture 32
+
+1. .9031 I did -(1/8log(1/8)+....+same) or can just do log(1/8)
+2. .217 
+3. we want to find the optimal, the closer to 1 the more optimal. 
+
+Lecture 33
+
+1. becuase that is how many total bits there are
+2. 
+  001
+  010
+  100
+  101
+  110
+  111
+3. 
+  6/20,6/20,3/20,3/20,1/20,1/20
+  .691
+4. 
+  if we combine and do 12, 34, 56 we could have
+  0
+  10
+  110
+  111
+
+5. yes. 
+6. Less bits
+
+

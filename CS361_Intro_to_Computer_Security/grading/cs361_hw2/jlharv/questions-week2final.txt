@@ -1,0 +1,266 @@
+﻿Name: Jacob Harvey
+UTEID: jlh5585
+CSID: jlharv
+Email: jacoblharvey@utexas.edu
+
+
+CS361 Questions: Week 2
+
+These questions relate to Modules 4, 5, 6 and 7. Type your answers and submit them via email to Dr. Young by 5pm on Thursday, June 19.
+The questions marked with a dagger (†) require external research and may be more extensive and time consuming. You don’t have to do them for the assignment but, but you may want to do them to increase your knowledge of the subject matter.
+
+Lecture 17
+
+1. If a computer system complies with the BLP model, does it necessarily comply with non-interference? Why or why not? 
+
+No, there could be shared resources that could result in a covert channel.
+2. What would the NI policy be for a BLP system with subjects: A at (Secret: Crypto), B at (Secret: Nuclear)?
+They couldn't be in the same section of information flow or have any connected paths. 
+3. Can covert channels exist in an NI policy? Why or why not?
+No, by definition, NI means that, in no way can the High-ranked object interact with the Low-ranked one. 
+4. If the NI policy is A− > B, in a BLP system what combinations of the levels “high” and “low” could A and B have?
+A would be Low, B High, or both high, or both low
+
+
+Lecture 18
+
+1. Why do NI policies better resemble metapolicies than policies?
+NI is almost impossible on real systems. Also sometimes, it's not fully required, like the case of the encrypted file in the common server. It's better to aim for, than to fully do. 
+2. What would be L’s view of the following actions: h1, l1, h2, h3, . . . , hj, l2, l3, . . . , lk
+l1,l2...lk
+3. What is difficult about proving NI for realistic systems?
+There are too many parts and shared processes to fully isolate low-ranked processes
+
+
+Lecture 19
+
+1. Explain the importance of integrity in various contexts.
+You don't want important data to be overwritten, either by benign or malicious data.
+2. Why would a company or individual opt to purchase commercial software rather than download a similar, freely available version?
+To place the burden of integrity on the commercial software. It's also from a known source that's trusted. 
+3. Explain the difference between separation of duty and separation of function.
+Separation of duty requires several different subjects must be active to complete a task. Have someone double check.
+Separation of function: One individual can't perform two different functions. 
+4. What is the importance of auditing in integrity  ?
+So you can backtrack in case of a leak/ breach. 
+5. What are the underlying ideas that raise the integrity concerns of Lipner?
+To separate roles to minimize overlapping responsibilities.
+
+6. Name a common scenario where integrity would be more important than confidentiality.
+Names on the FBI's most-wanted list
+
+
+Lecture 20
+
+1. Give examples of information that is highly reliable with little sensitivity and information that is not so highly reliable but with greater sensitivity.
+The president is Barack Obama
+The location of a terrorist in the US (not reliable, but has great sensitivity).
+2. Explain the dominates relationships for each row in the table on slide 4.
+Expert is greater than student
+Novice is less than Expert
+Everything trumps novice{}
+3. Construct the NI policy for the integrity metapolicy.
+Don't want a low integrity subject to write up or a high integrity subject to read low-integrity material. 
+
+4. What does it mean that confidentiality and integrity are “orthogonal issues?”
+Confidentiality is write up, read down. Integrity is the exact opposite, where you don't want bad information to flow up.
+
+
+Lecture 21
+
+1. Why is Biba Integrity called the “dual” of the BLP model?
+A subject can write down the integrity heirarchy while it can only read information above it. BLP is the complete opposite. 
+2. Why in the ACM on slide 5 is the entry for Subj3 - Obj3 empty?
+They're not comparable.
+3. If a subject satisfies confidentiality requirements but fails integrity requirements of an object, can the subject access the object?
+No
+
+
+Lecture 22
+
+1. What is the assumption about subjects in Biba’s low water mark policy?
+
+There's trust with the subjects that they won't be corrupted.
+2. Are the subjects considered trustworthy?
+Yes
+3. Does the Ring policy make some assumption about the subject that the LWM policy does not?
+It assumes that the subject won't be corrupted from reading anything.
+4. Are the subjects considered trustworthy?
+Yes, but they're still restricted in writing
+
+
+Lecture 23
+
+1. Are the SD and ID categories in Lipner’s model related to each other?
+Yes, they're both for development, but one's for confidentiality and one for integrity.
+2. Why is it necessary for system controllers to have to ability to downgrade?
+Software from development has to be approved and audited before going to production.
+
+3. Can system controllers modify development code/test data?
+No
+4. What form of tranquility underlies the downgrade ability?
+Weak tranquility, in that, the program that's downgraded is moved to a lower confidentiality level and a higher integrity level
+
+
+Lecture 24
+
+1. What is the purpose of the four fundamental concerns of Clark and Wilson?
+
+To ensure confidentiality and integrity in a commercial setting 
+2. What are some possible examples of CDIs in a commercial setting?
+Bank balances, account numbers
+3. What are some possible examples of UDIs in a commercial setting?
+Candy from a bowl
+4. What is the difference between certification and enforcement rules?
+Certification deals with identifying a subject and it's ability to change CDI's. Enforcement deals with what the subject can do to the CDIs.
+5. Give an example of a permission in a commercial setting.
+(manager, change, (time schedule))
+
+
+Lecture 25
+
+1. Why would a consultant hired by American Airlines potentially have a breach of confidentiality if also hired by United Airlines?
+
+The consultant might carry confidential information from united airlines to American Airlines
+
+2. In the example conflict classes, if you accessed a file from GM, then sub- sequently accessed a file from Microsoft, will you then be able to access another file from GM?
+Yes
+3. Following the previous question, what companies’ files are available for access according to the simple security rule?
+Any files as long as that person has never accessed information from a different company in the same conflict class.
+4. What differences separate the Chinese Wall policy from the BLP model?
+Chinese wall deals with contractors. The subject's history changes its access capabilities. 
+
+
+Lecture 26
+
+1. What benefits are there in associating permissions with roles, rather than subjects?
+
+It's easier to administer and to change.
+2. What is the difference between authorized roles and active roles?
+Authorized roles are the roles that a person could take on (the president is authorized to be a teller), but a person only has one active role, the one they are currently doing. 
+3. What is the difference between role authorization and transaction authorization? Transactions are a set of operations for each role. 
+
+4. What disadvantages do standard access control policies have when com- pared to RBAC?
+Harder to manage, to change permissions, and to tailor for a company. 
+
+Lecture 27
+
+1. Why would one not want to build an explicit ACM for an access control system?
+Takes up too much space/ computation time. Better to implicitly store and compute every time.
+
+2. Name, in order, the ACM alternatives for storing permissions with objects, storing permissions with subjects and computing permissions on the fly.
+Access-control list
+capability-based system 
+implicitly stored?
+
+
+Lecture 28
+
+1. What must be true for the receiver to interpret the answer to a “yes” or “no” question?
+There must be an agreement on what classifies as a “yes” and “no”
+2. Why would one want to quantify the information content of a message?
+To figure how much bandwidth is necessary to push across a channel. 
+3. Why must the sender and receiver have some shared knowledge and an agreed encoding scheme?
+To interpret messages
+4. Why wouldn’t the sender want to transmit more data than the receiver needs to resolve uncertainty?
+Receiver might classify a message by the number of bits it receives. Reciever doesn't know how to interpret the extra bits. 
+5. If the receiver knows the answer to a question will be “yes,” how many bits of data quantify the information content? Explain.
+1 bit, 1 for yes, 0 for no
+
+
+Lecture 29
+
+1. How much information is contained in each of the first three messages from slide 2?
+n-bits
+4 bits
+7-bits
+Depends on encodings
+2. Why does the amount of information contained in “The attack is at dawn” depend on the receiver’s level of uncertainty?
+If there were only two possiblities, like attack at dawn or dusk, could send one bit. Or you could send the entire message. Depends on what the receiver is expecting. 
+3. How many bits of information must be transmitted for a sender to send one of exactly 16 messages? Why?\
+ 4 bits, log base 2(16)
+4. How much information content is contained in a message from a space of 256 messages?
+8 bits
+5. Explain why very few circumstances are ideal, in terms of sending information content.
+There are usually high cases of uncertainty in the receiver. Must send encoding, plus the whole message, usually encoded in something else.
+
+Lecture 30
+
+1. Explain the difference between the two connotations of the term “bit.”
+A binary digit or a quantity of information. 
+2. Construct the naive encoding for 8 possible messages.
+Msg 1  000
+msg 2  001
+msg 3 010
+msg 4 011
+...
+3. Explain why the encoding on slide 5 takes 995 + (5 * 5) bits.
+995 times, the sender sends a 0, signaling a complete process. The other 5 times, the sender must send 5 bits to signify which error happened. It's 5 bits instead of 4 to help distinguish between an OK and an error.
+4. How can knowing the prior probabilities of messages lead to a more efficient encoding?
+To encode the most common messages with less bits.
+5. Construct an encoding for 4 possible messages that is worse than the naive encoding.
+Msg 1 11110
+Msg 2 11111
+msg 3 11100
+msg 4 111101
+6. What are some implications if it is possible to find an optimal encoding?
+That you know every possible outcome and how often it appears. 
+
+
+Lecture 31
+
+1. Name a string in the language consisting of positive, even numbers.
+42646?
+2. Construct a non-prefix-free encoding for the possible rolls of a 6-sided die.
+1=1
+2=01
+3=001
+4=0001
+5=00001
+6=00000
+3. Why is it necessary for an encoding to be uniquely decodable?
+To ensure integrity. Two different decodings leads to ambiguity
+4. Why is a lossless encoding scheme desirable?
+Don't want to lose information and compromise the data's integrity 
+5. Why doesn’t Morse code satisfy our criteria for encodings?
+It isn't a stream-less system; there are breaks in between each letter
+
+
+Lecture 32
+
+1. Calculate the entropy of an 8-sided, fair die (all outcomes are equally likely).
+H=3, 3 bits on average to transmit the result
+
+2. If an unbalanced coin is 4 times more likely to yield a tail than a head, what is the entropy of the language?
+.72 bits
+3. Why is knowing the entropy of a language important?
+To know if an encoding is optimum 
+
+
+Lecture 33
+
+1. Explain the reasoning behind the expectations presented in slide 3.
+H has probability of ¾,. HH is ¾ * ¾ =9/16. T is ¼. The others follow suit 
+
+2. Explain why the total expected number of bits is 27 in the example presented in slide 4.
+You multiply the number of bits per code times the count of each result
+3. What is the naive encoding for the language in slide 5?
+roll 1=000
+2=001
+3=010
+4=011
+5=100
+6=111
+
+4. What is the entropy of this language?
+Roll 1=6, roll 3 =3, roll 5=2. 6+3+2=11, 11*2=22. Roll 1 = 6/22, roll 2= 6/22, roll 3= 3/22, roll 4=3/22, roll 5=2/22, 6=2/22.
+Entropy= 2.44 bits
+Find an encoding more efficient than the naive encoding for this language.
+1=00
+2=01
+3=111
+4=110
+5=101
+6=100
+5. Why is your encoding more efficient than the naive encoding?
+The most common rolls, 1 and 2, have 1 less bit for their encoding, meaning this implementation will be more efficient than the naïve implementation. 

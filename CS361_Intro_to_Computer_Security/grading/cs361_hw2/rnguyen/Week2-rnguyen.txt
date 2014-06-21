@@ -1,0 +1,112 @@
+Name: Robinson Nguyen
+EID: rn5644
+CS Login: rnguyen
+Email: robinson_nguyen@hotmail.com
+
+Lecture 17
+1) It does comply because low subjects can communicate to high subjects just like in the NI policy.
+2) They wouldn't be able to send information to each other.
+3) I'm sure there are operations not meant for their created intention could be used to send unwanted information a lower level subject.
+4) B is the high subject and A is the low subject. A is allowed to send information to B. 
+
+Lecture 18
+1) It resembles the confidentiality metapolicy in that information can flow, but it doesn't specify any rules in what way it can flow like policies do.
+2) It would have to be l1, l2, l3, ....lk
+3) If you made the system extremely inclusive, it would be impossible to prove that it's non-interfering. You would also have to have a model of low-level system attributes. And many files that interferes are encrypted.
+
+Lecture 19
+1) Changing data to incorrect data can lose the trusts of the people reading the data. Low integrity will have people less inclined to retrieve that data.
+2) The commercial software may have more integrity to produce the results the company really wants.
+3) Separation of duty requires several subjects for one function while separation of function requires a single subject cannot do several sensitive functions.
+4) So you can go back to see the source of the problem should it arise and fix it accordingly.
+5) The users shouldn't be making their own programs and and developers shouldn't be working on customer data. 
+6) A highly regarded newspaper that provides reliable information.
+
+Lecture 20
+1) I could say 1+1 is 2 because I went to elementary school which would be high integrity but low sensitivity. Then I could say Obama is racist which would be low integrity but high sensitivity because I don't know Obama and racism is a sensitive subject matter.
+2) Expert is a higher level than student in the same set of physics so the label 1 dominates label 2. A novice is a low level than expert so label 1 does not dominate label 2 in the second row. And a student with a superset of a novice with an empty set is dominating that novice so label 1 dominates label 2.
+3) Subjects can interfere with an object if object dominates the subject.
+4) They aren't related. A subject/object can have a high confidentiality label but a low integrity label.
+
+Lecture 21
+1) The dominance relation is opposite in the strict policy and BLP.
+2) Subject 3 and Object 3 does not dominate one another so you can't read or write.
+3) No because it has to pass both clearances.
+
+Lecture 22
+1) The subject's integrity may change depending on the level of integrity they read.
+2) The subjects are not considered trustworthy in this case.
+3) The subject will filter out bad information
+4) The subject is trusted to not lower their integrity level.
+
+Lecture 23
+1) They are both development categories under confidentiality and integrity respectively
+2) So that they can transfer software from the development house to the production house
+3) No they should not be able to modify the data it is downgrading.
+4) The downgrade reflects the weak tranquility property.
+
+Lecture 24
+1) To keep the integrity of the object and fix any problems should they arise.
+2) bank balances, inventory, work hours.
+3) free samples, water from a fountain.
+4) Certifications are checks such as ensuring CDIs are valid and logging operations. Enforcements are rules for certain operations.
+5) (John, transfer money to bank, {checking account})
+
+Lecture 25
+1) The consultant may have sensitive information about the competing company.
+2) Yes because you can access information from different conflict classes but not the other companies within the same conflict class.
+3) You would be able to access GM, Microsoft, and either Bank of America, Wells Fargo, or Citicorp
+4) The Chinese Wall policy uses conflict classes by using companies as clearance instead of labels. It also checks what you write and can read from another conflict class.
+
+Lecture 26
+1) Roles can have all the same permissions instead of assigning individuals their individual roles. 
+2) Authorized roles are roles given to an individual in order to do an operation and an active role is the role that the individual currently occupies. 
+3) Role authorization must have its role within its authorization roles and transaction authorization are operations that can only be done if your authorization roles allows it.
+4) You have to assign each individual their permissions, the operations of an individual is fixed and you can't assign new roles in order to do necessary operations.
+
+Lecture 27
+1) There may not be any associativity from many subjects to many object. 
+2) Creating an access control list, subject capability list, and computing permissions based on a subject's and object's level.
+
+Lecture 28
+1) That the sender has an answer and wants to send it to the receiver and the receiver has to know how to interpret the answer.
+2) So we can know how much information is going through, for example in covert channels.
+3) So that they can communicate if at all.
+4) You can prevent any noise and use less bandwidth to convey the same information.
+5) Just one bit because there are only two options and there are two different options for bits.
+
+Lecture 29
+1) n bits for first one, 4 bits for the second, and 7 bits for the third.
+2) The receiver would have to decode what the message is depending on how many different bits of information represent a ascii character. Or 1 bit depending on how the receiver interprets the information.
+3) 4 bits because there are 16 possibilities for 4 bits of information and each message could be assigned to each possibility.
+4) 8 bits 
+5) The sender would also have to send the receiver the encoding protocol to decode what the bits represent.
+
+Lecture 30
+1) Bits can be a binary digit 0 or 1. It can also be a quantity of information, the measure of information content.
+2) Use 3 bits so that there are 8 different options and assign them a message.
+3) There are 995 bits to determine that it’s message 10, and (5 * 5) bits to determine which of the 5 other messages it is. So to get the 1000 messages you can send 1020 bits.
+4) If you know one message has a higher probability, you can just look at the first bit and decide if it’s one of the higher probability messages instead of going through at all the bits.
+5) Using 3 bits, the first bit to determine if it’s a particular 2 out of the 4 messages and then using the last 2 bits to determine that message.
+6) The machine is working properly, and the probabilities of having a certain message is reliable and accurate.
+
+Lecture 31
+1) “24684268864”
+2) 1 for 1, 0 for 2, 10 for 3, 01 for 4, 101 for 5, 010 for 6
+3) So that you can accurately decode the message and not mistake a code for different symbols.
+4) So there isn’t lost information.
+5) Morse code is not streaming. It has breaks in the code. 
+
+Lecture 32
+1) 3 entropy
+2) -[4/5log(4/5) + 1/5log(1/5)]
+3) It tells you how much information you’re sending and can determine if the encoding is optimal.
+
+Lecture 33
+1) The probability of two independent events are the multiple of the probabilities.
+2) You get the sum of the probability of an event happening times the number of bit it takes to code that message.
+3) The naive encoding is using 3 bits with 2 extra encodings. The other 6 encodings represent a die roll.
+4) -[3/11log(3/11) + 3/11log(3/11) + 3/22log(3/22) 3/22log(3/22) + 1/11log(1/11) + 1/11log(1/11)] 
+5) 00 for 1, 01 for 2, 100 for 3, 101 for 4, 110 for 5, 111 for 6
+6) It uses less bits for the highest probability message and the same amount for the rest, thus using less bits.
+

@@ -1,0 +1,239 @@
+---------------------------
+Week 2 Question Responses
+---------------------------
+CS361, Summer 2014, Bill Young
+
+:Author: Mark Watts
+:csid: markw
+:eid: mw27428
+:email: mark.watts@utexas.edu
+
+Lecture 17
+==========
+1. No. Views on elements of the system which are omitted in a BLP scheme, such as file permissions, must be accounted for in the non-interference model. 
+
+2. There is no 'interferes-with' arrow either from A to B or B to A.
+
+3. Theoretically, no. An NI policy asserts non-interference over *all* aspects of viewable state where interference is not permissible. Covert channels still operate through state information.
+
+4. For A,B respectively: low,high or low,low or high,high
+
+Lecture 18
+==========
+1. NI polcies make information flow requirements over arbitrary interleavings of instructions, but in contrast to BLP, there are not prescribed rules for specific kinds of operations. That lack of operational specificity makes NI more of a metapolicy.
+
+2. Under non-interference, L's view should be all of the l and none of the h actions.
+
+3. Proving in realistic systems requires a very low-level view, dealing with many channels, and non-determinism in system operations.
+
+Lecture 19
+==========
+1. Situations:
+   
+   - In a payment transaction database, each transaction must be protected against changes not tied to authorised exchanges.
+   - Legal codes must be protected against the modifications by people not on the drafting committee.
+   - Paintings in a gallery must be protected against defamation.
+   - In a large software project programmers should only have commit access to the repositories they work from.
+2. They may be using the heuristic that a company which is charging for their software is less likely to do something malicious with the software. There may be correlates between price and the amount of engineering that went into software that make the heuristic useful.
+3. Duty is about many people checking the same documents to ensure integrity.
+   Function is about not allowing one person to do multiple tasks such that they could hide integrity violations. 
+4. Auditing is important for correction of errors.
+5. It is assumed that people make errors in working with data or that they are maliciously manipulating it, that the number of colluding actors can be bounded, that logs cannot be corrupted, and that reliable auditors exist.
+6. A business ledger should be well checked to prevent fraud or theft, but for a legitimate business without immediate competitors, it matters less that the business transactions are to outside parties.
+
+Lecture 20
+==========
+1. High reliability, low sensitivity: Calendar dates.
+   Less reliable, highly sensitive: Rumors from spies.
+2. Explanations:
+
+   1. An expert in physics has greater integrity than a student in physics. 
+   2. A novice in physics and art does not dominate an expert in physics because the Novice < Expert although {Physics,Art} is a superset of {Physics}
+   3. A Student > Novice and {Art} is a superset of {}
+3. No low-integrity subjects should interfere with high-integrity subjects.
+4. The implementations of integrity and confidentiality are mutually independent and ideally use non-overlapping properties of the subjects and objects referents to assign labels in the system .
+
+Lecture 21
+==========
+1. It is the dual because the rules for read and write are reversed such that in a table of the BLP relationship between subjects and objects, universally exchanging read labels for write describes the Biba integrity relationship for equivalent labels on the subjects and objects.
+2. Neither {A,B} is a superset of {B,C} nor {C,B} is a superset of {B,A}.
+3. No.
+
+Lecture 22
+==========
+1. The assumption is that subjects are unconditionally fallible, that is that, that they aren't able to critically evaluate low-integrity information.
+2. In LWM, it is assumed that subjects cannot be trusted to maintain high-integrity after consuming low-integrity sources.
+3. Ring policy assumes that the subject is able to filter bad sources to retain its integrity level in its actions.
+4. In Ring policy, subjects are trusted.
+
+Lecture 23
+==========
+1. For subjects, ID always appears with SD or SSD. Otherwise, there is no relationship between these categories.
+2. They must be able to downgrade to create objects in production from development.
+3. System controllers can modify development code and data.
+4. A weak tranquility property for which software objects do not necessarily have confidential information is preserved.
+
+Lecture 24
+==========
+1. Clark and Wilson's four fundamental concerns attempt to isolate the necessary parts of an data integrity policy involving people.
+2. CDIs (in an online store): 
+
+   - Customer transaction records
+   - Product listings
+
+3. UDIs (in an online store):
+
+   - Customer reviews 
+   - Browser cookies
+4. Certification rules are about specifying or setting up the constraints enforced by enforcement rules.
+5. A customer would have permissions to initiate a transaction with their previously added payment information (as a certification rule) through the payment portal for a product.
+
+Lecture 25
+==========
+1. The consultant could share information about her consultancy with AA directly or indirectly through recommending the same policies to both (suggesting to UA that might be following a particular strategy where they wouldn't have otherwise).
+2. Yes. Microsoft and GM are in distinct conflict classes.
+3. Microsoft, GM, or a company not in either of Microsoft's or GM's classes.
+4. Distinctions:
+
+   - BLP is for security among multi-leveled actors within a system, but Chinese Wall has no hierarchy, only groups based on similar concerns.
+   - BLP is equally for confidentiality and integrity, but in our discussion, Chinese Wall is mostly about conflict of interest.
+   - Chinese Wall doesn't have labels outside of company names (and implicitly, a 'group' label)
+   - Chinese Wall deals with history of past accesses
+
+Lecture 26
+============
+1. Roles advantages:
+
+   - It is easier to copy roles between subjects. 
+   - It is easier to update permissions uniformly for all subjects with a particular role.
+   - Roles fit more directly into high-level business rules.
+   - Sets of permissions can be assigned differently to one subject depending on what they have to do.
+2. Authorised roles are those that *may* me engaged (taken on for the purpose of doing some action). Active roles are currently engaged.
+3. Role authorisation is authorisation of a subject to enact a set of actions. Transaction authorisation is authorisation of another subject to perform a *specific* action on behalf of the granting subject.
+4. **In addition to the points given in (1)**:
+
+   - Easier administration
+   - More flexible to changes
+
+Lecture 27
+==========
+1. The matrix is sparse. Also, in a system where many objects (and subjects) are created and destroyed regularly, in a distributed fashion, modifying the matrix on each such change could be expensive and difficult to parallelize, potentially creating a bottle-neck for the whole system.
+2. Access control list, capabilities, rules
+
+Lecture 28
+==========
+1. He must know which bit means 'yes'. That is, he must know the encoding scheme.
+2. To establish how much information can be sent in a given time window.
+3. The receiver needs to know how to decode a message for the scheme to be useful.
+4. The channel may have a limited bandwidth.
+5. If we're asking how much information is needed for the receiver to know that the answer to the question is yes, then 0 bits are needed because he already has the answer and nothing needs to be transmitted.
+
+Lecture 29
+==========
+1. 
+   - n bits 
+   - log(10)/log(2) = 3.32 bits
+   - log(100)/log(2) = 6.64 bits
+2. If it was known that the attack would be either at dawn or dusk and would definitely happen that day and a particular group was known to be doing the attacking..., then the message has something like 1 bit of information. If those things are not specified, for example, if the receiver thought the attack could occur at one of n possible times in the day, there would be O(log(n)) information in the message.
+3. 4 bits. There are log(16)/log(2) = 4 bits to encode any message in the space.
+4. 8 bits.
+5. The message space is unbounded: any number of messages might need to be encoded.
+
+Lecture 30
+==========
+1. Bit_1 is numerical quantity, 1/8th of a byte. Bit_2 is a unit of measurement for information.
+2. Encoding for messages 1-8:
+
+   1. 000
+   2. 001
+   3. 010
+   4. 011
+   5. 100
+   6. 101
+   7. 110
+   8. 111
+
+3. Each message can be decoded from the stream either by reading the first bit (message 10) or reading 5 bits. Because the prefixes for these two classes of messages are distinct, there is no need for any padding between them, and each message 10 can just be one bit after another. Thus, on average 995 out of 1000 messages need just one bit and the remaining 5 messages need 5 full bits to distinguish from each other and message 10.
+4. More frequent messages can be encoded with fewer bits at the expense of less frequent ones which are encoded with more bits -- necessary to distinguish from the shorter messages.
+5. Double each bit of the naive encoding. For example, message 1 -> 00 becomes 0000; message 3 -> 10 becomes 1100 and so on.
+6. If there is an optimal encoding, then the message space and the frequencies of messages in the language are known completely.
+
+Lecture 31
+==========
+1. 2,46,2,68,24,92
+
+2. 
+   1: 00
+   2: 001
+   3: 0011
+   4: 00111
+   5: 001111
+   6: 000
+
+3. If a message could be decoded to two different messages, it would be impossible to tell which was the intended one.
+4. The receiver can be certain that the message was received in the form it was sent.
+5. Morse code requires a break between characters; thus, it is not streaming.
+
+Lecture 32
+==========
+1. H = -log(1/8) = log(8) = 3
+2. H = -(4/5 * log(4/5) + 1/5 * log(1/5)) = .7219
+3. It sets the lower limit on encoding efficiency; thus, it prevents you from seeking a more efficient code than the proven entropy.
+
+Lecture 33
+==========
+1. Given 32 flips, and the encoding given, each symbol's encoding appears for the expected number of times, so:
+   9 events * 1 bit + 3 events * 2 bits + 3 events * 3 bits + 1 event * 3bits = 27
+2. Naive encoding:
+
+   1. 000
+   2. 001
+   3. 010
+   4. 011
+   5. 100
+   6. 101
+3.
+
+   Probabilites:
+
+       x = P(1 or 2 rolled)
+       x + x/3 + x/2 = 1
+       x = 6/11
+       P(1) = 6/22
+       P(2) = 6/22
+       P(3) = 6/44
+       P(4) = 6/44
+       P(5) = 6/66
+       P(6) = 6/66
+
+   Entropy: 
+
+       H = -(2*(3/11 * log(3/11))+2*(3/22 * log(3/22))+2*(1/11 * log(1/11))) = 2.435
+4. My encoding:
+
+   1. 0
+   2. 10
+   3. 111
+   4. 1101
+   5. 11101
+   6. 11111
+
+5. For 22 rolls, we expect
+
+   1:6
+   2:6
+   3:3
+   4:3
+   5:2
+   6:2
+
+To encode these rolls:
+
+   1:6*1
+   2:6*2
+   3:3*3
+   4:3*4
+   5:2*5
+   6:2*5
+
+59 bits are needed versus 22*3=66 bits for the naive encoding.

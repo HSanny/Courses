@@ -1,0 +1,315 @@
+Danny Banh
+EID: dgb634
+CS login: dgb634
+email: dannybanh@utexas.edu
+
+
+CS361 Questions: Week 2
+
+Due 5 pm, Thurs. June 19
+
+Lecture 17
+1. A system that complies with BLP does NOT necessarily comply with non-interference.
+One large difference is that non-interference is not transitive. Low -> Middle -> High does not mean Low -> High in NI.
+In BLP if H > M > L, then H > M.
+
+2. A and B do not interfere with each other. There would be an NI policy with no connections.
+
+3. Theoretically, covert channels should not exist in a NI system. There should be no information flow from "low" to "high".
+
+4. A -> B means that information flows from A to B. Also, actions by B cannot affect A.
+There are 3 possible situations. Either both are "High", both are "Low", or B is "high" and A is "low".
+
+Lecture 18
+1. NI mirrors a metapolicy of information flow more directly. It has no specific rules about objects or actions.
+It does not specify read/write, only "interferes".
+
+2. L's view should only be L1, L2, ... Lk. It should only be able to view things at level L, not H.
+
+3. In the implementation of a real system, there are many interferences and shared low level files.
+Normally, proving an NI system would involve proving that everything L can observe cannot be used to obtain information from H.
+This is extremely difficult in a real system because of multiple shared resources.
+
+Lecture 19
+1. Integrity is important because an unauthorized change to files can be devastating.
+Integrity deals with the supplying data, and incorrect or malicious changes to data is highly unwanted.
+Some bad program can rewrite or overwrite files.
+
+2. The commercial version of software is more trustworthy than a similar, free version.
+There is probably more help and support, as well as people paid to work customer support for the software. 
+So the commercial version is more trustworthy to handle/create data.
+
+3. Separation of Duty means that multiple different subjects must be available to do certain single actions.
+This makes it harder for unauthorized actions to happen, since more people would have to collude to pose a security threat.
+
+Separation of function requires that one individual cannot work as two different functions that complement each other.
+This makes it harder for one individual to do unauthorized actions.
+
+4. Auditing is necessary to keep track of all changes made to a system.
+Unwanted changes, which is an integrity issue, can thus be noticed and hopefully dealt with.
+
+5. The production, testing, and usage of programs are all "quarantined" so to speak. 
+Different jobs do not interact without special procedure. This controls possible integrity issues.
+
+6. A common instance of integrity being more important than confidentiality could be bank fraud.
+A fake audit could steal a large sum of money given enough access. 
+
+Lecture 20
+1. A highly reliable and not sensitive piece of information can be the weather forecast.
+A highly sensitive and possibly unreliable piece of information can be information from a spy in a warzone.
+
+2. (Expert:{Physics}) (Student: {Physics}) Yes - 
+Label 1 has a higher level (Expert) than Label 2 (Student). Label 2's set is a subset of Label 1's set.
+
+(Novice: {Physics, Art}) (Expert: {Physics}) No -
+Label 1's level (Novice) is lower than Label 2's level (Expert).
+
+(Student: {Art}) (Novice: {}) Yes -
+Label 1's level (Student) is higher than Label 2's level (Novice). Label 2's set (empty set) is a subset of Label 1's set.
+
+3. Do not allow information to "flow up". So Low takes No Interference from High.
+ 
+4. Confidentiality and integrity are not directly related. They should be treated separately when designing a security system.
+Confidentiality wants information to flow up, and integrity wants to prevent information from flowing up.
+Thus they are "orthogonal".
+
+Lecture 21
+1. Biba Integrity is the "dual" of BLP because given an access control matrix for BLP, 
+the Biba Integrity would switch the "reads" with "writes" and vice versa.
+BLP is used for confidentiality and Biba is for integrity.
+
+2. Subj3 does not dominate Obj3, and Obj3 does not dominate Subj3. This is because their sets are not subsets of each other.
+Thus Subj3 does not read nor write from Obj3, so their box in the ACM is blank.
+
+3.  Access is only allowed if both Biba and BLP are satisfied. 
+So no, a subject that only satisfies confidentiality (BLP) but not integrity (Biba) rules is not granted access.
+
+Lecture 22
+1. The assumption about the subjects in Low Water Mark Policy is that they get corrupted by lower level information.
+
+2. The subject is not considered trustworthy in LWM.
+
+3. The assumption about the subjects in Ring policy is that they can filter out lower level bad information.
+
+4. The subject is considered trustworthy in Ring policy.
+
+Lecture 23
+1. The SD and ID categories in the Lipner model are related to each other. 
+One is confidentiality and one is integrity, and both are for development.
+
+2. System controllers can downgrade (move objects down from development to production) by changing their label.
+There is no explicit rule for this in BLP or Biba is it has to be explicitly stated.
+Downgrading is necessary to actually create the working commercial environment of producing software.
+
+3. System controllers CAN modify development code/test data.
+System controllers security level dominates development code/test data level in both confidentiality and integrity.
+
+4. Weak tranquility underlies the concept of downgrading. 
+Weak tranquility says label changes can only happen if not violating the security policies.
+Downgrading changes the security label in order to move software from one category to another, so different work can be done with it.
+
+Lecture 24
+1. The overall goal of the 4 concerns of Clark and Wilson is consistency between all components of the system.
+Commercial security wants consistency. 
+For example, a bank's money at the beginning of the day should be consistent with the money at the end of the day after the day's transactions.
+
+2. Examples of CDIs (constrained data items) include bank balances, checks, and accounts.
+
+3. Examples of UDIs (unconstrained data items) could be things like free candy/mints/toothpicks, blank deposit forms.
+
+4. Certification is concerned with making sure all actions are authorized or legal in the system.
+Enforcement rules limit possible actions, to help prevent unwanted actions.
+
+5. An example of a permission in a commercial setting is a user being able to withdraw money from his bank account.
+(User, Transaction procedure, Constrained Data Item)
+
+Lecture 25
+1. Since American Airlines and United Airlines are competitors in the same market, someone hired by both could transfer information as a breach of security.
+There could be conflict of interests due to competition, and one could benefit while the other gets some disadvantage from the situation.
+
+2. Yes. GM and Microsoft are not competing and so are not in the same conflict class.
+This means reading from a file in GM, followed by Microsoft is okay. Afterwards, reading from GM again is still okay.
+
+3. After reading Ford, the possible companies can be read from: Ford, Bank of America, Wells Fargo, Citicorp, Microsoft.
+However, after reading one of the bank companies, the other bank companies will not be able to be accessed anymore.
+
+4. Access permissions change dynamically in Chinese Wall policy based on viewing history. 
+Permissions in BLP do not have the same ability.
+
+Lecture 26
+1. Assigning permissions to roles rather than subjects means less work - there could be many subjects that perform the same role.
+This also mirrors jobs in real commercial systems.
+
+2. An authorized role is a role the subject can fulfil at various times. A possible role for a subject.
+An active role is one that the subject currently occupies.
+
+3. Role authorization is a rule where an active role for a subject must be an authorized role.
+On the other hand transaction authorization is the rule that transactions a subject can do must belong to their active role.
+
+4. Standard access control policies have disadvantages compared to RBAC.
+For large groups, RBAC is easier to apply to a large portion of subjects with the same access levels.
+Also, roles offer more suitable possible transactions compared to just read/write.
+
+Lecture 27
+1. An explicit ACM for an access control system may be unwanted because it can be highly inefficient.
+Most subjects may have no relationship to most objects. 
+An implicit storage of rules to compute access may be much more inefficient than an explicit storage for mandatory access control policy.
+In a realistic system, file access permissions can be changed at any time.
+
+2. The ACM alternative for permissions for objects is an Access Control List.
+The ACM alternative for permissions for subjects is Capabilities.
+The ACM alternative for computing permissions on the fly is maintaining a set of rules, or implicit storage.
+
+Lecture 28
+1. For the receiver to interpret the answer to a "yes" or "no" question, the receiver and sender must agree on the meaning of a bit.
+
+2. One would want to quantify the content of a message because one would want to know the most efficient way to send the content.
+An appropriate representation of the data with the least number of necessary information is the goal.
+
+3. The sender and receiver must have some shared knowledge and an agreed encoding scheme because otherwise it would be impossible to convey any message.
+
+4. The sender would not want to transmit more data than the receiver needs to resolve uncertainty because that is extra effort that is unneeded. It is inefficient.
+
+5. If a receiver knows the answer to a question is "yes", no bits are needed because there is no need to send information.
+
+Lecture 29
+1. The first message contains n bits. 
+The second message contains 4 bits. For single digit decimal numbers portraying a 9 would be 1001, and a 0 would be 000.
+The third message contains 7 bits. For a double digit decimal number, portraying 99 would be 1100011.
+
+2. If the message can be any combination of letters, the information sent can be a large number of bits.
+This means the receiver has a higher amount of uncertainty.
+If the message can be limited to one of 16 possible messages because of how specific the information can be, less bits are needed.
+The receiver has a lower amount of uncertainty and does not need as much information to know the message.
+If the agreed encoding is simply "at dawn" or "at dusk" then there only needs to be 1 bit. Low uncertainty.
+
+3. If there are 16 possible messages that can be sent, the sender only needs 4 bits. 2^4 = 16
+There are 16 unique combinations of 4 bits so each combination matches up to 1 unique message.
+ 
+4. If there are 256 possible messages, the information content can be 8 bits because 2^8 = 256.
+
+5. It is hard to have every additional bit actually cut the information needed in half, which would be ideal.
+For example, ASCII needs multiple bits to just transmit one symbol.
+Most real systems have too high of uncertainty to be ideal.
+
+Lecture 30
+1. The first connotation is a binary digit. It is a discrete quantity, which means it is counted.
+The second connotation is a quantity of information, which is a measurement. Thus it is continuous.
+
+2. A naive encoding for 8 possible messages would have 8 possibilities so 3 bits.
+MSG | CODE 
+0   | 000
+1   | 001 
+2   | 010 
+3   | 011 
+4   | 100 
+5   | 101 
+6   | 110 
+7   | 111
+
+3. Message 10 happens 99.5% of the time, and the encoding assigns 1 bit to message 10 and 5 bits to the other messages.
+Since Message 10 happens 995 times in 1000 messages and only takes up 1 bit, Message 10 costs 995 bits.
+The other 5 messages take 5 bits. So total bits is 995 + (5x5)
+
+4. Knowing the prior probabilities of messages allow the more probable messages to be assigned a smaller size.
+This makes sending those messages more efficient.
+
+5. Worse than naive encoding for 4 messages?
+MSG | CODE
+0   | 0111111111111
+1   | 01111111111111111
+2   | 01111111
+3   | 01111111111
+
+6. If it is possible to find an optimal encoding, that means the probability of messages is known.
+The amount of bits needed to send messages is quantifiable and it is possible to test for the lowest average bit per symbol.
+
+Lecture 31
+1. A string in the language of positive even numbers: 22222222
+
+2. A non-prefix-free encoding for rolls of a 6 sided die (aka probably bad, and hard to be uniquely decodable)
+MSG | CODE
+1   | 1
+2   | 10
+3   | 110
+4   | 1110
+5   | 11110
+6   | 111110
+1 is a prefix of all the other codes
+
+3. Messages must be uniquely decodable. 
+There must only be one possible decoding for an encoded string, otherwise messages could be ambiguous.
+It would defeat the purpose of communication if an encoded string could have multiple meanings.
+
+4. Lossless encoding is important so that there is no lost information. 
+The receiver can know they received all the information the sender intended to send to them.
+
+5. Morse code does not follow our criteria because it breaks streaming (to avoid being non-uniquely decodable).
+
+Lecture 32
+1. For an 8 sided fair die, the entropy should be 
+-(1/8 log(1/8) + 1/8 log(1/8) + 1/8 log(1/8) + 1/8 log(1/8) + 1/8 log(1/8) + 1/8 log(1/8) + 1/8 log(1/8) + 1/8 log(1/8))
+Which equals -(log (1/8)). Which equals log(8)
+
+2. The entropy of an unbalanced coin with tails 4 times more likely than a head is
+-(4/5 log(4/5) + 1/5 log(1/5))
+
+3. Entropy is important because it is the average information content of a symbol in a language.
+It can be used as a lower limit of efficiency possible for an encoding. 
+If an encoding's bits per symbol matches the entropy it is an optimal encoding.
+
+Lecture 33
+
+1. We expect the probabilities to hold true in the chart.
+The chart is based off the original probabilities of the unfair coin flip (1/4 tails, 3/4 heads)
+Instead of a single coin flip, the unit is 2 coin flips, each with a probability multiplied from the originals.
+
+2. The expected number of bits is 27 for this example because of the probabilities and bits assigned to the messages.
+The highest probability of messages is 2 heads in 2 flips, which is given 1 bit. 
+In 32 coin flips, we expect 9 "HH" which means 9 bits for 18 messages.
+We expect 3 "HT" (which is assigned 2 bits) which is 6 bits for 6 messages.
+We expect 3 "TH" (which is assigned 3 bits) which is 9 bits for 6 messages
+We expect 1 "TT" (which is assigned 3 bits) which is 3 bits for 2 messages.
+The total is 27 bits for 32 messages.
+
+3. The naive encoding for a 6 sided die (doesn't matter if it is fair or not) is like this:
+MSG | CODE
+1   | 001
+2   | 010
+3   | 011
+4   | 100
+5   | 101
+6   | 110
+
+4. The entropy of a language where (1 and 2) are twice as often as (3 and 4) which are 3 times as often as (5 and 6)
+is based off of their probability, so
+MSG | Probability
+1   | 6/20
+2   | 6/20
+3   | 3/20
+4   | 3/20
+5   | 1/20
+6   | 1/20
+
+The entropy ends up being -(6/20 log(6/20) + 6/20 log(6/20) + 3/20 log(3/20) + 3/20 log(3/20) + 1/20 log(1/20) + 1/20 log(1/20))
+which simplifies slightly to -(12/20 log(6/20) + 6/20 log(3/20) + 2/20 log(1/20))
+
+5. A more efficient encoding than the naive encoding:
+MSG | CODE
+1   | 0
+2   | 10
+3   | 110
+4   | 1110
+5   | 11110
+6   | 11111
+
+6. Given 20 rolls, the naive encoding will have 3 bits for each roll so 60 bits for 20 rolls.
+My encoding uses the probabilities of the rolls to have an expected bit total less than 60.
+6/20 of the rolls are expected to be 1, and 1 is assigned one bit. 6 bits
+6/20 of the rolls are expected to be 2, and 2 is assigned two bits. add 12 bits.
+3/20 of the rolls are expected to be 3, and 3 is assigned three bits. add 9 bits. 
+3/20 of the rolls are expected to be 4, and 4 is assigned four bits. add 12 bits.
+1/20 of the rolls are expected to be 5, and 5 is assigned five bits. add 5 bits.
+1/20 of the rolls are expected to be 6, and 6 is assigned five bits. add 5 bits.
+The total of my encoding is 49 bits, which is smaller than 60 bits.
+

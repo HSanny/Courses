@@ -1,0 +1,195 @@
+Derek Smith
+dks826
+dksmith
+dksmith@cs.utexas.edu
+Questions Week 2
+
+-----------------------------Lecture 17 Questions-----------------
+1. Yes because any BLP model can be made with the non-interference policy as well.
+
+2. They cannot interfere with each other since they have different catagories.
+
+3. Yes because lower level subject can still communicate with higher level subjects, just as in an mls system.
+
+4. A has to be low and B has be high. Or they can be both low and low or high and high if they have the same categories.
+
+------------------------------Lecture 18 Qustions-------------------------------
+1. Because the non interference policy does not specify any rules about objects and only dictates that info can flow from low to high.
+
+2. l1, l2, l3...lk.
+
+3. You have to make sure that anything H uses is out of the view of L.
+
+----------------------------Lecture 19 Questions---------------------------
+1. One important context of integrity is in information regarded as news. You have to be sure that a source is reliable and does not taint an already reliable source if it is not. 
+
+2.Commercial software will have more integrity than free software making it more reliable.
+
+3. Seperation of duty means several different subjects have to be involved to do a function. This is different from seperation of function because that required that one subject cannot do two different funcions.
+
+4. To keep clear records so that if something bad happens you have a trail to discover the culprit. 
+
+5. He wants to keep production and developement seperate such as in seperation of function. 
+
+6. In a banking scenerio integrity is more important because you do not want someone to be able to change anything. 
+
+-----------------------------Lecture 20 Questions----------------------------
+1. News from a trusted source will be highly reliable and have little sensitivity since it is open to the public. The testimony from a criminal would be not reliable but could be sensitive information
+
+2. Row 1: Label 1 dominates label 2 because Expert is higher than Student and the catagories are the same.
+   Row 2: Label 1 does not dominate because novice is lower than exper
+   Row 3: Label 1 dominates because Student is higher than Novice and Art is a superset of the empty set.
+
+3. A NI policy would have to impliment the opposite idea of confidentiality. Information can flow down, not up. That means low integrity subjects can read from high, and high subjects can write down. It would look like:
+	H -> L
+
+4. They are orthogonal because they are opposites. In integrity you do not want information to flow up, and in confidentiality you do not want information to flow down. That is why for each model a different set of labels are needed.
+
+----------------------------Lecture 21 Questions------------------------------
+1. The Strict Integrity Policy is the dual of the BLP model because it utilizes the inverse of the Simple Security Property and the *-Property.
+
+2. Because neither Subj3 nor Obj3 dominate each other, so they cannot read or write to each other.
+
+3. No, access is only allowed if both the BLP and Biba rules are satisfied.
+
+------------------------------Lecture 22 Questions---------------------------
+1. That subjects can read anything they want but cannot filter bad information.
+
+2. No, they have the capacity to corrupt themselves. 
+
+3. Yes, it assumes that subjects can filter bad information.
+
+4. Yes, subjects are considered trustworthy. 
+
+------------------------------Lecture 23 Questions---------------------------
+1. Yes, they deal with programs under development.
+
+2. To be able to move objects from the development stage to production. 
+
+3. No.
+
+4. Weak  
+
+---------------------------Lecture 24 Questions------------------------------ 
+1. To provide comercial integrity.
+
+2. Bank balances
+
+3. The candy on the counter of the bank.
+
+4. The certification rules make sure that the 4 Fundamental Concerns are being followed, while the Enforcement rules describe the means by which the concerns are kept. Almost as if comparing metapolicy to policy.
+
+5. A bank teller depositing a check into a clients account. (tellName, Deposit, {Client Accounts}).
+
+--------------------------------------Lecture 25 Questions------------------------------
+1. The employee ould be taking company secrets with them to the competing airline.
+
+2.Yes, as long as you do not try to access anything else within GM's conflict class.
+
+3. All files withing the datasets of the objects the subject already accessed from GM or Microsoft are available for accesss since they are in different conflict classes.
+
+4. The Chinese Wall policy is designed to address one very specific problem, while the BLP model is more general. It is also sensetive to the history of a subject.
+
+------------------------------------Lecture 26 Questions------------------------------
+1. It makes managing the subjects easier.
+
+2. Authorized roles are all the roles an individual can take on, while the active roles are the ones they are currently doing. 
+3. Role authorizations means thata subjects active role must be included, or me a subset of, the subjects list of authorized roles, and transaction authorization is to make sure the transaction the subject is trying to perform is one granted to them by one of their active roles. 
+
+4. RBAC is more flexible and easy to manage than standard access control policies. 
+
+------------------------------------Lecture 27 Questions----------------------------
+1. Most subjects do not have access to most objects.
+
+2. Access control list, capability based system, and BLP calculations on the fly
+
+-----------------------------------Lecture 28 Questions--------------------------
+1. The reciever has to know how to interpret the response from the sender.
+
+2. To know how many bits per second are being transmitted across a channel.
+
+3. So that the reciever knows how to interpret the data from the sender.
+
+4. It would be wasted sent data and the reciever would not know how to interpret it.
+
+5. None, the reciever would not need to wait for any information from the sender if it already know the answer.
+
+---------------------------------Lecture 29 Questions----------------------------------
+1. n bits, 4 bits, 7 bits
+
+2. It depends on the coding scheme used to encode the message and how much information the reciever needs to complete the message.
+
+3. 4 bits, because you can have 16 unique bit strings using 4 bits, each representing a message.
+
+4. 8 bits
+
+5. You would need to know exactly what messages can be send and aggree on a coding scheme.
+
+--------------------------------Lecture 30 Questions--------------------------------
+1. Bit can be thought of as a binary digit or a ocntinuous quantity of inforation. 
+
+2.	msg | code 
+	M0  |  000
+	M1  |  001
+	M2  |  010
+	M3  |  011
+	M4  |  100
+	M5  |  101
+	M6  |  110
+	M7  |  111
+
+3. Because the most likely message, message 10, only takes one bit.
+
+4. You can make the encoding of the more likely message take the least ammount of bits, reducing the size of bits sent along the channel.
+
+5. M0 | 1
+   M1 | 11
+   M2 | 111
+   M3 | 1111
+	Where M3 is 99 percent most likely to be sent.
+
+6. That you would know the prior probability of each message. 
+
+-------------------------------Lecture 31 Questions------------------
+1. "2426828642" could be a possible string.
+
+2. 1 | 1
+   2 | 10
+   3 | 101
+   4 | 1010
+   5 | 10101
+   6 | 101010
+
+3. So that you can only get one message on the recieving end.
+
+4. To get the entire encoded message from the sender
+
+5. Morse code is not streaming. If it were to stream it would not be prefix free. 
+
+----------------------------------Lecture 32 Questions----------------------
+1.  logs2(8) = 3
+
+2. .722
+
+3. To find what the best possible encoding can be.
+
+-------------------------------Lecture 33 Questions----------------------------
+1. Since the probability of heads is 3/4, the probability of two independent events being HH is the probability of each event multiplied together. 
+
+2. Because it counts the average number of bits to represent 32 symbols. Since the pairs of sybols take a different number of bits to represent, and the most common sybol pair takes the least amount of bits to ecode, the total if bits sent will be less than 32. 
+
+3. A three bit encoding for the six possible results of a role in the language.
+
+4. The entropy is 2.871
+
+5. Roll | Code
+    1   |  00
+    2   |  01
+    3   |  100
+    4   |  101
+    5   |  110
+    6   |  111
+
+6. This is a valid and better encoding than the naive encoding because it can be streamed without any prefix problems, but more importantly, the more common codes only take 2 bits instead of 3 with the naive version. The reciever would just have to know that if the code begins in a 0 that the size is only 2, otherwise the size of the code is 3.
+
+

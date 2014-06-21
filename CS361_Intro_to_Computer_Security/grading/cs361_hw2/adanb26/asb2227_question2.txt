@@ -1,0 +1,95 @@
+Name: Adan Briones
+EID: asb2227
+CS LOGIN: adanb26
+Email: adidan26@yahoo.com
+
+Lecture 17
+	1. No, the BLP compliant system could have certain channels of communication open that do not comply with non-interference.
+	2. Subjects A and B would not be able to interefere with each other.
+	3. Yes, only channels that are in the view elements of L are blocked. If a channel is not listed in the view elements of L, the channel will still be available for use in a covert channel.
+	4. They both have the same level, either high or low, or B is high and A is low.
+Lecture 18
+	1. They better resemble metapolicies because they are so abstract.
+	2. L's view should be identical in both cases.
+	3. There are countless intereferences, benign interferences, and alot of interferences involve low level attributes.
+Lecture 19
+	1. Integrity is important in contexts where information is valuable and change to that information can be bad. For example, modifying bank info or press articles could be detrimental to the integrity of a system. 
+	2. The commercial software would have more integrity than a free version, and may even be certified.
+	3. If an important task needs to be done, separation of duty states that more than one person must be involved to to complete the task. Separation of function states that one single person can't complete more than one role within a critical process.
+	4. Auditing add recoverability and accountability to a system. If there is a problem, the problem can be traced and the system could be recovered.
+	5. Some ideas that might raise the concerns of Lipner are that Integrity cannot be sacrificed or taken lightly in a commercial setting and that integrity must be dealt with systematically and thoroughly. 
+	6. Sports standings. Confidentiality is not a priority as team rocords are usually public information. However, if an unauthorized person changes the standings or records of a team, it could change the entire outcome of the season.
+Lecture 20
+	1. Government records of public information, such as criminal records, are highly reliable but not sensitive. Leaking of confidential government information usually comes from an unreliable source (low level employee), but includes sensitive information. 
+	2. It is the exact same as with confidentiality. The label one level must be higher or equal to that of label two, and the categories of label one must be a superset of label two categories in order for label one to dominate label two.
+	3. A --> B. A can interfere with B if A dominates B.
+	4. It means they are not really related to one another. You could have a high integrity subject with low confidentiality or vice versa.
+Lecture 21
+	1. It is the dual of BLP because it is the exact opposite. A subject must now dominate an object to write, and be dominated by an object to read.
+	2. Neither the subject or object dominates the other.
+	3. No, both confidential ad integrity requirements must be met.
+Lecture 22
+	1. The assumption is that the subjects are easily corrupted or tainted by lower level information.
+	2. No, one read of lower level information reduces the level of the subject which implies that subjects are not trustworthy.
+	3. The assumption is that the subject can filter out bad information.
+	4. Yes, the subjects are considered trustworthy because they can read anything and are believed to filter out bad information. 
+Lecture 23
+	1. Yes, they both refer to programs under development. SD is the confidential category and ID is the integrity category.
+	2. It allows the possibility to move software from development to production.
+	3. No. He can write according to the integrity rules, but not the confidentiality rules. He would need both to be able to modify the data.
+	4. The weak tranquility property.
+Lecture 24
+	1. The fundamental concerns' purpose is to lay the foundation for an integrity system developed for commercial settings that focuses on consistency.
+	2. Some examples include bank balances or payroll information.
+	3. Some examples include free candy at a bank or or whose birthday it is in the office.
+	4. Certification rules ensure the integrity of the state, while the enforcement rules ensure constraints are in place and followed to mainatain that integrity.
+	5. An example of a permission would be the permission of a bank teller to give out any given cashier's check.
+Lecture 25
+	1. The consultant would be able to share information about American Airlines, confidential or not, with United Airlines who are direct competitors int he same industry.
+	2. Yes, they are in different classes.
+	3. GM and Microsoft files and other files that are outside the respective classes of GM and Microsoft.
+	4. The Chinese Wall policy is different because permissions change dynamically based on history of past accesses.
+Lecture 26
+	1. A subject can have multiple roles, roles can subsume each other, and roles can change easily.
+	2. Active roles are roles that are currently assumed by a subject, and authorized roles are roles the subject may assume.
+	3. Role authorization states that an active role assigned to a subject must be authorized for that subject, and transaction authorization states that a transaction carried out by a subject must be authorized for the active role of that subject.
+	4. Disadvantages include assigning permisions for each individual subject that can not change easily and the permissions are not very appropriate in a commercial setting.
+Lecture 27
+	1. In realistic systemsit takes too much time and effort, and a realistic ACM is often so large that it is expensive to store and maintain.
+	2. ALternatives include Access Control Lists, Capability-based Systems, and having a set of rules to compute access permisions on the fly.
+Lecture 28
+	1. The reciever must have an agreed coding scheme with the sender to interpret the answer.
+	2. To determine the threat level of a covert channel
+	3. They need shared knowledge so that the message can be communicated clearly.
+	4. It would be excess information and may be detected.
+	5. Zero, the sender wants to send the minimum amount of data to resolve the reciever's uncertainty, but in this case there is no uncertainty.
+Lecture 29
+	1. n bits, 4 bits (ceiling of log2(10)), and 7 bits(ceiling of log2(100)).
+	2. Because as the amount of possible messages increases the amount of information that must be transmitted also incrases, and in this case we do not know the amount of possible messages.
+	3. 4 bits, because there are 16 possible messages and log2(16) is 4.
+	4. 8 bits of information because 8 bits is the minimum amount of bits that can have 256 combinations of information.
+	5. Few circumstances are ideal because we do not know how many possible messages could be sent.
+Lecture 30
+	1. One connotation refers to a binary digit, and the other to a quantity of information.
+	2. 000, 001, 010, 011, 100, 101, 110, and 111 with each binary number representing one of 8 messages.
+	3. Knowing that 995 of 1000 messages will be message ten and representing those messages with 0 requires 995 bits. The other 5 messages are represented using 5 digits which is (5 * 5). So the total is 995 + (5*5).
+	4. It allows you to represent more probable messages in a more efficent manner and reduces the average number of bits required for each message.
+	5. 1110011, 11000111111, 1111001110101, and 1111111111111 where each binary number represents one of four messages.
+	6. If an optimal coding exists, it implies that the number of possible messages and the probability of each of those messages are known and constant.
+Lecture 31
+	1. "246"
+	2. 0, 01, 011, 010, 100, 1001
+	3. To ensure that identical messages do not have more than one possible meaning.
+	4. A lossless encoding scheme ensures there is no lost information.
+	5. Morse code isn't streaming because it requires a break between each letter.
+Lecture 32
+	1. log2(8) = 3. The entropy is 3.
+	2. h = -(4/5log2(4/5) + 1/5log2(1/5)) = .722. Entropy is about .722	
+	3. Entropy gives us a lower limit on encoding efficiency which helps optimize and measure the efficiency of encodings.
+Lecture 33
+	1. Sending results in halves the number of messages needed to send the information. Using the known probabilites we assign the 2flip results more efficient encodings. This means we have a more efficient encoding with less messages to send.
+	2. 27 is the expected number of bits because, using the efficent encoding, that is the raw number of bits sent in the average case of sending 16 2flips. 
+	3. 000, 001, 010, 011, 100, 101.
+	4. 2.295
+	5. (in order from 1 to 6) 0, 10, 110, 1110, 11110, 111110
+	6. The naive encoding uses on average 3 bits per symbol, while the other encoding only uses  2.5 bits per symbol when the probability is taken into account. We could do better, but this is atleast better than the naive encoding.

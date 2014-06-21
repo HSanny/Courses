@@ -1,0 +1,294 @@
+me:Tehreem Syed	
+EID: tfs385	
+CS Login:fatima	
+Email: tehreemsyed@utexas.edu
+
+
+
+
+S361 Questions: Week 2
+These questions relate to Modules 4, 5, 6 and 7. Type your answers and submit
+them via email to Dr. Young by 5pm on Thursday, June 19.
+The questionsmarked with a dagger (†) require external research and may be more
+extensive and time consuming. You don’t have to do them for the assignment but,
+but you may want to do them to increase your knowledge of the subject matter.
+
+
+Lecture 17
+
+1. If a computer system complies with the BLP model, does it necessarily
+comply with non-interference? Why or why not?
+Yes, it would because non-interference is just specifying the information flow and BLP model also handles teh information flow. 
+
+2. What would the NI policy be for a BLP system with subjects: A at (Secret:
+Crypto), B at (Secret: Nuclear)?
+
+Yes, my understanding was that since neither dominates that means that no one of the two should be able to interfere with the other.
+
+3. Can covert channels exist in an NI policy? Why or why not?
+
+ No, they cannot. Because the information flow is very explicit and the chances of information leaking through covert channels is minimal. 
+
+4. If the NI policy is A− > B, in a BLP system what combinations of the
+levels “high” and “low” could A and B have?
+A is low and B is high.
+
+
+Lecture 18
+
+1. Why do NI policies better resemble metapolicies than policies?
+Ans. 
+
+2. What would be L’s view of the following actions: h1, l1, h2, h3, . . . , hj,
+l2, l3, . . . , lk
+Ans. l1,l2,l3, .......lk.  
+
+3. What is difficult about proving NI for realistic systems?
+Ans.
+a). There are  lots of interferences and if you amde L's view that inclusive it would be very  difficult to prove NI for realistic system. 
+b).Another problem is that most of the attributes that might be exploited by covert channels are very low level attributes, way down in teh implementation. SO in order to prove NI we would have to have a model for that low level abstraction which is hard to come by. 
+c). Lastly, there are many interferences that are benign so in order to have if a high level subject encrypts a file and puts it out in teh file system than it is an interference because a low level subject cannot read the file. Even though that mechanism coudl be used as a covert channel.
+
+Lecture 19
+1. Explain the importance of integrity in various contexts.
+ You dont need collaborator to need an information. You could just do bad things within a system being a thrid party like a malicious software.OR by yourself too.  It really relates to how an entity can produce, protect and modify data. Integrity is more important tahn  confidentiality in the commercial world. 
+ 
+2. Why would a company or individual opt to purchase commercial software
+rather than download a similar, freely available version?
+ Because, the latter has chances of having a malicious sloppy programme which could override local files. 
+3. Explain the difference between separation of duty and separation of function.
+Separation of duty: Several different subjects have to be involved in several different tasks.
+ Go to a bank to get a cashoier check for 10,000 and you need two bank officers to make an accoount.One bank officer colluding with you cannot steal money from teh bank. 
+ Separation of Function:
+ It requires that one individual cannot perform two different critical functions.
+ A teller during the day and auditor at night. Having different people to do different roles to ensure accountability. Two different people mean checks and balances. 
+ 
+
+4. What is the importance of auditing in integrity contexts?
+Auditing is keeping careful records so that if something bad happens you can roll back and follow up on the logs. It may help you identify where something went wrong and you can take appropriate measures for it. 
+
+5. What are the underlying ideas that raise the integrity concerns of Lipner?
+1. Users will not write their own programs but use existing production software. 
+2. Programmers develop and test applcations on a non productive system, not real time data but cntrived data. 
+3. moving applications from development to production requires a special process. 
+4. This process must be controlle dan daudited. 
+5. Managers and auditors must have access to system state and system logs. 
+
+CS361 Questions: Week 2 2
+6. Name a common scenario where integrity would be more important than
+confidentiality.
+For instance, a buggy software allows the file to be altered by nauthprized user. 
+
+Lecture 20
+
+
+1. Give examples of information that is highly reliable with little sensitivity
+and information that is not so highly reliable but with greater sensitivity.
+
+
+2. Explain the dominates relationships for each row in the table on slide 4.
+Label 1 : Expert in physics and Label 2 : student in physics  
+then label 1 dominates label 2
+
+Label 1 is a Physics and Arts novice , Label 2 is an expert on physics but label 1 does not dominate label 2 because they are both equally comptetnt. 
+
+Label 1 is a student in art while label 2 is a novice in nothing than we know that a student in arts will dominate it.
+
+
+
+3. Construct the NI policy for the integrity metapolicy.
+We dont want low integrity information to corrupt high integrity information. 
+We dont want information to flow up in integrity. 
+
+4. What does itmean that confidentiality and integrity are “orthogonal issues?”
+Low integrity information can flow up and if writes that information up and a high integrity information reads it then we dont want that. We should not have one label and viewing it as integrity and confidentiality label both. This cannot happen.  
+
+Lecture 21
+1. Why is Biba Integrity called the “dual” of the BLP model?
+We dont want information to flow from low integrity levels to high integrity levels. 
+Strict Integrity property and Integrity *- property which is analogous to BLP and just a switch on arrows. 
+If an object is higher integrity , it is good information and i should read it but lower intergity information is not for me to read. 
+The *- priperty says that i can pnly write down and not write up. 
+
+2. Why in the ACM(access control matric) on slide 5 is the entry for Subj3 - Obj3 empty?
+Ans. ?
+
+3. If a subject satisfies confidentiality requirements but fails integrity requirements
+of an object, can the subject access the object?
+For access to be permitted both BLP and Biba integrity would have to say it is ok so rules have to apply. However, these riles cannot be applied to the same labels and can combine the results later.  
+
+Lecture 22
+1. What is the assumption about subjects in Biba’s low water mark policy?
+Ans. A potential of the LWM Integrity policy is to monotonically decrease the integrity level of a subject unnecessarily.
+
+This sort of problem is called label creep and may result in an overly conservative analysis.
+2. Are the subjects considered trustworthy?
+Not really. If you have read a corrupted information so it means you are carrying bad info and you should label to a lower level. 
+
+3. Does the Ring policy make some assumption about the subject that the
+LWM policy does not?
+Yes, it makes the assumption that the subject has teh common sense to filter out bad information. 
+
+4. Are the subjects considered trustworthy?
+Yes,subjects can read anything but filter out bad information. 
+
+Lecture 23
+1. Are the SD and ID categories in Lipner’s model related to each other?
+Yes, looks like they are and they both happen in the development phase. 
+
+2. Why is it necessary for system controllers to have to ability to downgrade?
+Because, there is no other way to change labels within BLP and Biba alone.Moving objects from the development to production world means changing their labels. There’s no obvious way to do
+that in BLP or Biba.
+
+CS361 Questions: Week 2 3
+3. Can system controllers modify development code/test data?
+   No they cant. 
+4. What form of tranquility underlies the downgrade ability?
+	Weak tranquility property.
+
+Lecture 24
+1. What is the purpose of the four fundamental concerns of Clark andWilson?
+Lipner’s Integrity Matrix Model showed that BLP and Biba’s Strict
+Integrity can be adapted to yield a workable commercial policy.
+But it’s not necessarily a good fit.David Clark and David Wilson (1987) argued that commercial
+security has its own unique concerns because consistency among the various components of the system state is important.
+
+2. What are some possible examples of CDIs in a commercial setting?
+	bank account information, users passwords, users SSN
+3. What are some possible examples of UDIs in a commercial setting?
+	Candy in a Bowl sitting on the desk, free news articles on a newspaper website
+
+4. What is the difference between certification and enforcement rules?
+Certification ensures how procedures are carried out without violating security laws. Enforcement is ,only verified users carry out these procedures on CDI
+5. Give an example of a permission in a commercial setting.
+Only certified bank members have access to lockers.
+
+Lecture 25
+1. Why would a consultant hired by American Airlines potentially have a
+breach of confidentiality if also hired by United Airlines?
+ Because he has access to American Airlines inside details that can be manipulated and used by United.
+
+2. In the example conflict classes, if you accessed a file from GM, then subsequently
+accessed a file from Microsoft, will you then be able to access
+another file from GM?
+Yes, you would because the classes are different and Microsoft and GM are not directly competing.
+
+3. Following the previous question, what companies’ files are available for
+access according to the simple security rule?
+GM's.
+4. What differences separate the Chinese Wall policy from the BLP model?
+Unlike previous policies, Brewer and Nash’s Chinese Wall
+Policy is designed to address a very specific concern: conflicts
+of interest by a consultant or contractor.
+
+The Chinese Wall is an access control policy in which accesses
+are sensitive to the history of past accesses.
+
+Lecture 26
+1. What benefits are there in associating permissions with roles, rather than
+subjects?
+Unlike BLP, instead of assigning individual permission to specifc  we can assign permissions to a 
+subject based on roles. It makes managing indivudals in an organziation really easy. 
+A subject may fill several roles at once. Roles may change over time.
+
+2. What is the difference between authorized roles and active roles?
+Authorized Roles are positions or functions they can take on within a certain period of time
+Active roles are a subset of authorized roles which they are permitted to take on 
+
+3. What is the difference between role authorization and transaction authorization?
+Role authorization is that all active roles for a subject must be authorized roles while transaction authorization is that a subject can execute a transaction only if the transaction is authorized for one of the subject’s active roles.
+4. What disadvantages do standard access control policies have when compared
+to RBAC?
+1.ACP is difficult to administer where individuals permissionsa are assigned to individual users in a large number of users.
+2. Permissions are not appropriate to the organization , they are always read or write a file.
+3. ACP does not allow subjects to change roles in a period of time. 
+4. ACP does now allow subject transition between roles without haveing to change idetities.  
+
+
+
+CS361 Questions: Week 2 4
+
+Lecture 27
+
+1. Why would one not want to build an explicit ACM for an access control
+system?
+In realistic systems most subjects dont have any access to most objects and they are so many so the ACM is hard to manage.Though the ACM is a completely general model of any access control policy, it is difficult and expensive to store a large and sparse matrix of this sort.
+
+2. Name, in order, the ACM alternatives for storing permissions with objects,
+storing permissions with subjects and computing permissions on the fly.
+
+Three common alternatives exists:
+
+a). Maintain a set of rules to compute access permissions based on attributes of subjects and objects. 
+
+b). Associate the permissions with objects. This is called an access control list (ACL).
+c). Associate the permissions with subjects. This is called a capability-based system.
+
+
+
+Lecture 28
+1. What must be true for the receiver to interpret the answer to a “yes” or “no”
+question?
+ Sender and receiver must have some shared knowledge,included an agreed encoding scheme.                                                                                
+2. Why would one want to quantify the information content of a message?
+Because,Information theory is very important in computer science. It affects all communication, hardware design, protocol design, cryptography, fault-tolerance, etc. It is one way of measureing hpw it went . 
+
+3. Why must the sender and receiver have some shared knowledge and an
+agreed encoding scheme?
+4. Why wouldn’t the sender want to transmit more data than the receiver needs
+to resolve uncertainty?
+Beause, then it comprmises the issue of security.
+
+
+5. If the receiver knows the answer to a question will be “yes,” how many bits
+of data quantify the information content? Explain.
+It could be done by 2 bits. 
+
+Lecture 29
+1. How much information is contained in each of the first three messages from
+slide 2?
+We cant tell  because it depends on how we encode it. 
+
+2. Why does the amound of information contained in “The attack is at dawn”
+depend on the receiver’s level of uncertainty?
+It depends upon reciever's leevl of uncertaint because it could mean something else. 
+
+
+3. How many bits of information must be transmitted for a sender to send one
+of exactly 16 messages? Why?
+
+4. How much information content is contained in a message from a space of
+256 messages?
+5. Explain why very few circumstances are ideal, in terms of sending information
+content.
+CS361 Questions: Week 2 5
+Lecture 30
+1. Explain the difference between the two connotations of the term “bit.”
+2. Construct the naive encoding for 8 possible messages.
+3. Explain why the encoding on slide 5 takes 995 + (5 * 5) bits.
+4. How can knowing the prior probabilities ofmessages lead to amore efficient
+encoding?
+5. Construct an encoding for 4 possible messages that is worse than the naive
+encoding.
+6. What are some implications if it is possible to find an optimal encoding?
+Lecture 31
+1. Name a string in the language consisting of positive, even numbers.
+2. Construct a non-prefix-free encoding for the possible rolls of a 6-sided die.
+3. Why is it necessary for an encoding to be uniquely decodable?
+4. Why is a lossless encoding scheme desirable?
+5. Why doesn’t Morse code satisfy our criteria for encodings?
+Lecture 32
+1. Calculate the entropy of an 8-sided, fair die (all outcomes are equally likely).
+2. If an unbalanced coin is 4 times more likely to yield a tail than a head, what
+is the entropy of the language?
+3. Why is knowing the entropy of a language important?
+Lecture 33
+1. Explain the reasoning behind the expectations presented in slide 3.
+CS361 Questions: Week 2 6
+2. Explain why the total expected number of bits is 27 in the example presented
+in slide 4.
+3. What is the naive encoding for the language in slide 5?
+4. What is the entropy of this language?
+5. Find an encoding more efficient than the naive encoding for this language.
+6. Why is your encoding more efficient than the naive encoding?
+

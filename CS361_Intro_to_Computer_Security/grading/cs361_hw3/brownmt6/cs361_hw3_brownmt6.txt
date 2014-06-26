@@ -1,0 +1,187 @@
+Name: Maximilian Brown
+EID: brownmt6
+CS Login: brownmt6	
+Email:	maximilian.brown@gmail.com
+
+Questions: Week 3
+Lecture 34
+1.	The average rate is dictated by the entropy (h) and the channel's transmission rate. c/h is the average number of symbols per second that can be transmitted. 
+
+2.	By repeating the message over and over you can ensure that then entirety of the message is eventually transmitted. Parts of the message may be lost each time it is transmitted but the result will be a complete message.
+
+Lecture 35
+1.	The entropy of the language would be -(log 1/10) = 3.2
+
+2.	Computing the entropy of a natural language is difficult because natural languages contain significant redundancy and it is difficult to isolate that redundancy entirely
+
+3.	A zero-order model assumes all symbols are equally likely
+	A first-order model takes the probablility of occurance into account
+	A second-order and third-order model determines the probablility of pairs and triples of letters at a time, taking context into account
+
+Lecture 36
+1.	In many cases it is impossible to know the probabilities of different things occuring. 
+
+2. 	The ammount of information conveyed by a message depends on how much information is already known. If the message is already known then the entropy of the message would be zero.
+
+3.	If the length of a message is equal to the content then there is no redundancy. As efficiency approaches entropy, redundancy decreases.
+
+Lecture 37
+1.	-All digits and symbols, no letters - source language is unknown
+	-The presence of a goats head could imply kidd if the source language were English.
+	-The message is on parchment paper, seems old, so it narrows encryption techniques.
+
+2.	Keys can be optional because the encryption can be done directly. Keys provide a tool for encryption and decryption.
+
+3.	It hides the information in a message but the information should be preserved
+
+4. 	Redundancies can provide information about the source message. Patterns in the cipher text are easier to notice with redundancy.
+
+Lecture 38
+1.	P
+
+2.	C
+
+3.	The patterns are redundancies of the message and can be used to determine possible redundancies in the original message.
+
+4.	Knowlege of probabilities of symbols can be used to help determine causes of any redundancies in the encrypted message.
+
+Lecture 39
+1.	It may not be feasible to break an algorithm due to the ammount of time that is required. It could be possible but take 100s of years.
+
+2.	A linear search through the entire key space would yeild the correct key on average half way through the space.
+
+Lecture 40
+1.	monoalphabetical - substitution is done uniformly
+	polyalphabetical - different substitutions dependingon where in plaintext the symbol occurs
+
+2.	a table, dpends 
+
+3.	It depends on the size of the alphabet being used
+
+4.	It would be dependent on the shift
+
+5.	25 or 26
+
+6.	The Caesar Cipher isn't that strong.
+
+7.	vigenere tablaeu
+
+Lecture 41
+1.	The 17576 possible decryptions were derived by taking 26^3, there are 26 letters and 3 possible spaces
+
+2.	it is a simple substitution
+
+3.	yes, one-time pad is unbreakable
+
+Lecture 42
+1.	The key is the same length as the plaintext
+
+2.	If the keys were not completely random you could eliminate half of the possiblities
+
+3.	Both the sender and receiver need to know the entire key. This would require a secure channel, but if this were available there would be no point in encrypting the message to begin with. 
+
+Lecture 43
+1.	encryption by transposition is not strong by itself
+
+Lecture 44
+1.	One time pad is symmetric
+
+2.	Key distribution is how to convey keys to those who need them to establish secure communication
+	Key management is hot to preserve the safety and make available a large number of keys
+
+3.	Ks would be just the public key. The private key could also be required.
+
+4.	Public key systems are better because they solve the key distribution problem
+
+Lecture 45
+1.	Block ciphers are stronger encryptions
+
+2.	Malleability can corrupt the meaning of the text without appearing in the plaintext
+
+3.	Homomorphic encryption - if specific types of computations are carried out on ciphertext and the resulting encryption is decrypted it would match the result of the same computations carried out ont eh plain text.
+
+Lecture 46
+1.	subBytes - for every byte, substitute it with a value stored in the location of a 256 element lookup table
+	mixColumns - for each colun of the state, replace the column by its value multiplied by a fixed 4x4 matirix of integers
+	addRoundKey = XOR the state with a 128-bit round key derived from the original key by a recursive process.
+
+2.	shiftRows - shift R0 in the state left 0 bytes, shift R1 left 1 byte, shift R2 2 bytes, shift R3 3 bytes
+
+3.	Inverting the mixColunms step requires multiplying each column by the inverse of the array used to encryt, and it ends up being a more complex calculation
+
+4.	Block positions are used for substitution of values in a 256 element table, and rounds are used to make breaking the encryption difficult
+
+5.	Increasing the total number of rounds increases the confusion and diffusion more
+
+Lecture 47
+1.	Identical blocks int he plain text would result in identical blocks of cipher text
+
+2.	You could randomize the blocks before they were encrypted making it harder for eavesdroppers to detect the original message.
+
+3.	If changes to the cipher text are detected over time, an attacker could find two identical cipher text blocks and derive information about the corresponding plain text blocks
+
+4.	In keystream generation modes the cipher is used as a pseudorandom number generator. The result is a key stream that can be used like a one-time pad. In block encryption modes cipher text stores the message encrypted.
+
+Lecture  48
+1.	The users private key has to be secret
+
+2.	They are easy to compute and difficult to invert.
+
+3.	Public keys can be available to everyone for use to encrypt, as long as people have their one private keys messages can stay secure.
+
+4.	{{{P}k-1}k}k-1 = {{P}k-1}
+
+5.	Symmetric encryption is the main form of encryption for commercial application, and asymmetric encryption has special functionality. Asymmetric algorithms are less efficient than symmetric.
+
+Lecture 49
+1.	It would still work. You can use either key to encrypt or decrypt so they would be interchangable.
+
+2.	Two prime numbers are needed for generating a RSA key pair. If you could factorize the public key and find the prime numbers, you would be able to find the private key.
+
+3.	Yes, you could eventually try all possible keys. 
+
+4.	{M}ka needs the private key ka-1 to be decrypted. 
+
+5.	Anybody has access to the Ka public key and could use it to encrypt any message.
+
+6.	{M}kb-1 is encrypted with B's private key which is only accessible to B. 
+
+7.	{M}kb-1 can be decrypted with B's public key which is accessible to everyone
+
+8.	B would need to first encrypt the message with their private key to show it was sent by them and then encrypt with A's public key so the outer encryption could only be decrypted with A's private key.
+
+
+Lecture 50
+1.	The hash values need to be accessible to everyone. The act of hashing isn't meant to be alluding	
+
+2.	Strong collision resistance means it is hard to find two messages that a hash function will map to the same value	
+
+3.	preimage resistant - given a hash value, its hard to find a message that hases to that hash value.
+
+	second preimage resistant - given a message its hard to find another message different from the first that hashes to the same hash value
+
+4.	You would have to look at 1.25 * 2 ^64 hash values before finding a collision
+
+5.	You would have to look at 1.25 *2 ^80 hash values before finding a collision
+
+6.	Hash functions can not be used to encrypt data and decrypt becasue it is not possible to recreate the original message from a hash value. Since you are going from an infinite source of messages to a finite number of hash values it is impossible to accurately recreate the original message.
+
+7. The attribute of preimage resistance makes it likely that any change to the message would result in a different hash value. Therefore message M is bound to the hash value H(M).
+
+8.	You could hash a message then use RSA public key to encrypt it before transmitting. On the other side the recipient could decrypt it with the private key then apply the hash function on the message to make sure the file had not changed. 
+
+Lecture 51
+1.	No, S can not send {{K}ks-1}kr-1 because S would not have access to R's private key. Also the key K could be compromised using R and S's public keys.
+
+2.	No, S can not do the encryptions in the other order becasue anyone could strip the outter level of encryption off and R would not longer know that S was the sender.
+
+3.	No, by adding an additional level of encryption using S's public key, the Reciever would be unable to access the key because the Senders private key is needed to perform the initial decryption.
+
+4.	Key exchange needs confidentiality and authentication. You need the key to be secure and you need to know who the sender is.
+
+Lecture 52
+1.	Nothing, they would not be able to determine the key from this information.
+
+2.	If the value of 'a' was discovered by an eavesdropper they would be able to determine the key by intercepting Bob's transmission of (g^b mod p)
+
+3.	If the value of 'b' was discovered by an eavesdropper they would be able to determine the key by intercepting Alice's transmission of (g^a mod p)

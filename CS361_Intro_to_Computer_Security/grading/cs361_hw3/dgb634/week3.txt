@@ -1,0 +1,242 @@
+Danny Banh
+EID: dgb634
+CS login: dgb634
+email: dannybanh@utexas.edu
+
+CS361 Questions: Week 3
+
+Due 5 pm, Thurs. June 26
+
+Lecture 34
+1. It is impossible to transmit a signal over a channel at an average rate greater than C/h because C/h is a perfect transmission, with no noise and optimal efficiency of transmitting data. 
+A higher average rate than C/h would exceed the capacity of the channel.
+
+2. Increasing the redundancy of the coding scheme will make the error arbitrarily small. This increases the reliability.
+
+Lecture 35
+1. The zero order model for entropy for 10 digits (0-9) would be -(log(1/10))
+
+2. Computing the entropy of a natural language is hard because there are so many probabilities of letters following other letters.
+Natural languages are very complex and there are many factors to weigh in.
+
+3. The zero order model is the naive encoding. It gives every symbol an equal amount of bits.
+The first order model assigns encodings based on the probability of each individual symbol.
+The second order model assigns encodings based on probabilities to a series of 2 symbols.
+The third order model assigns encodings based on probabilities to a series of 3 symbols.
+
+Lecture 36
+1. Prior probabilities are sometimes impossible to compute because there is not enough information early on to gain information from.
+
+2. The observer can know anywhere between nothing to already knowing the message.
+Thus the observer can have different states of knowledge that can change the relative content of the message.
+
+3. If there is no redundancy, then the entropy will just be the naive encoding because the language is random.
+More redundancy implies a bigger entropy.
+
+Lecture 37
+1. Is the underlying language English? What kind of content might it be? What kind of encryption might it be?
+Since it is a written note, and the goat head might allude to a "kid", the underlying language might be English.
+The content, if it is believed to be Captain Kidd's note, could be some sort of treasure coordinate.
+Since it is a written note, the encryption might be pretty simple, maybe simple substitution.
+
+2. Perhaps the encryption is easy enough that a key is not needed to apply the encryption algorithm.
+
+3. Hopefully, encryption should not have any effect on the information content. 
+It only serves to hide the information content from unwanted eyes.
+
+4. Redundancy can give a clue as to what the encryption method may be, with the assumption of knowing what underlying language is being used.
+
+Lecture 38
+1. Rewriting D(E(D(E(P)))) in simplest form: P
+
+2. Rewriting D(E(E(P,Ke),Ke),Kd) in simplest form: P
+
+3. A cryptanalyst may want to recognize patterns in encrypted messages to gain some insight of why the sender is sending messages
+
+4. Knowing the properties of an underlying language of the encrypted message can help by knowing the probability of certain symbols.
+
+Lecture 39
+1. It may be infeasible to break an encryption algorithm because breaking it it would take too long to be useful.
+
+2. An exhaustive linear search on a linear space would search the key space needing 2^(n-1).
+This is because there are 2^n possibilities, so on average the linear search would go through half or 2^(n-1).
+
+3. Substitution and transposition are important in ciphers because they can retain information content while making it hard to read without decryption.
+
+4. Confusion transforms the symbols so the information is not readily apparent.
+Diffusion moves the information around, making the ordering different, which also makes the information hard to obtain.
+
+5. I would think that confusion is more important than diffusion for encryption because it masks the information more directly.
+Diffusion keeps the information more intact and possibly easier to decipher for an eavesdropper.
+
+Lecture 40
+1. Monoalphabetic substitution is a uniform, simple substitution. Symbols are mapped directly to other symbols.
+Polyalphabetic substitution can change the substitutions based on the position of symbols based on their position in the plaintext.
+
+2. The key in a simple substitution is a simple 1 to 1 table.
+
+3. There would be k! based on the size of the alphabets because you can map 1 symbol to another in the alphabet. 
+It is limited by the size of the alphabet.
+
+4. The key in the Caesar Cipher would be the number of positions you shift in the alphabet.
+
+5. The size of the keyspace in Caesar Cipher is 26 because the alphabet has 26 letters.
+
+6. The Caesar algorithm is not strong, probably due to the English language and probability of letters/words that can help break it.
+
+7. The corresponding decryption algorithm for Vigenere would need the key and the Vigenere Tableau to decrypt the cipher text.
+The key would correspond to the ciphertext and the Tableu would be used to find the substitution. 
+
+Lecture 41
+1. If "xyy" means that there are 3 possible letters in that sequence, there are 26^3 or 17576 possibilities.
+The y's do not have to be the same letter unless it is simple substitution.
+
+2. The second part assumes that it is a simple substitution, so there are 2 unique letters in "xyy" since the y's are the same.
+So instead of 3 possible letters it is only 2, and x cannot be y (and vice versa). So it becomes 25 x 26 instead of 26^3.
+
+3. As of this question, I do think a perfect cipher is technically possible but only if the sender and receiver are the only people who know the underlying language.
+This means that an attacker can know the encryption algorithm and ciphertext but cannot gain any information from them because of no knowledge of the underlying language of the original message.
+
+Lecture 42
+1. A one time pad is "perfect" because every possible plaintext could be possible of the ciphertext under a plausible key. 
+Knowing the algorithm and knowing the ciphertext does not reduce the plaintext search space.
+
+2. The key must be random for the encryption to be perfect so that the search space cannot be reduced.
+
+3. The sender and the receiver must both know the key.
+The key is going to be just as long as the plaintext - so sending the key is just as hard as sending the plaintext.
+Sending the key is just as important as sending the plaintext - a secure channel means the key is not needed.
+Not having a secure channel means that the key may be intercepted and thus the encryption might not be safe.
+
+Lecture 43
+1. Without substitution, transposition has the downside of keeping the same character frequency of the underlying language.
+
+Lecture 44
+1. One time pad is a symmetric algorithm (the key is secret).
+
+2. Key distribution applies more to "secret keys". It deals with getting keys to recipients that need them, reliably.
+Key management applies to having many keys, and keeping them safe while making them available as needed.
+
+3. No, if someone has S's key, Ks, they cannot decrypt S's encrypted messages. That person needs Ks^-1 to decrypt those messages.
+
+4. It is hard to say whether symmetric encryption or public key systems are better. 
+They have different characteristics and are better in different situations.
+
+Lecture 45
+1. Most modern symmetric encryption algorithms are block ciphers probably because modern encryption systems use both substitution and transposition.
+It is impossible to do transposition on a stream cipher because you need a group of bits.
+Block ciphers can however hold substitutions as well as transpositions.
+
+2. Malleability is the idea that changing the ciphertext can have predictable results on the plaintext.
+A malleable cipher would be easier to break with this information.
+
+3. Homomorphic encryption is important because it can allow chaining different services without exposing the data to each of those services.
+
+Lecture 46
+1. AES steps using confusion:
+subBytes: Each byte in the array gets replaced by another value in a lookup table
+mixColumns: Multiply each column by a fixed 4x4 matrix of integers, replace the column with this result.
+addRoundKey: The state is XOR'd with a 128-bit round key, created from original key by a recursive process
+
+2. AES steps using diffusion:
+shiftRows: Shift Ri (ith row) in the state left by i bytes.
+
+3. Decryption takes longer than encryption because inverting the MixColumns step uses harder numbers to multiply by than the original MixColumns step.
+
+4. A block is the 128-bit unit that is to be encrypted.
+A round is an iteration of the algorithm. 
+Each round consists of 4 steps. There are 10, 12, or 14 rounds for keys of 128, 192, and 256 bits.
+
+5. More rounds are necessary to use bigger keys. Bigger keys would mean more encryption, and more safety.
+
+Lecture 47
+1. One disadvantage in using ECB mode is that identical blocks in the plaintext yield identical blocks in the ciphertext.
+This can be used to find clues in the AES key.
+
+2. A fix to this flaw is Cipher Block Chaining, or randomizing every block in the plaintext.
+Each successive plaintext block XOR'd with the previous ciphertext block is encrypted, which changes the result of otherwise identical plaintext blocks.
+
+3. Potential weaknesses of CBC are an attacker can observe changes to the ciphertext over time, and thus the first block that changed. 
+This is called "observed changes".
+An attacker can also find two identical ciphertext blocks to derive information about two plaintext blocks.
+This is called "content leak".
+
+4. Key stream generation uses the cipher to create a one time pad. Decryption uses the same key stream.
+Standard block encryption modes take a block of plaintext, encrypt it, and generate ciphertext that can be decoded.
+
+Lecture 48
+1. Public key systems must keep the private, or decryption keys secret.
+
+2. One-way functions are critical to public key systems because the public key is available to anyone. 
+Attackers should not be able to decode the encryption with the public key.
+
+3. Every participant has their own 2 or 4 designated keys. Public keys can be sent safely in order to communicate.
+The private key is only needed by the recipient of the message.
+
+4. RSA rules: simplify: {{{P}K^-1}K}K^-1: {{P}K^-1}
+
+5. Efficiency of asymmetric algorithms: may take 10,000 times as long as symmetric algorithms.
+This is enough to make symmetric algorithms more used.
+
+Lecture 49
+1. The algorithm should work. RSA public and private keys theoretically are interchangeable.
+
+2. RSA is based on factoring large primes. 
+"d" is the secret, private key. The plaintext is hidden as P^e mod n, where (P^e)^d mod n = P. 
+
+3. Yes, RSA is breakable by some practical issues.
+
+4. Someone who intercepts {M}Ka should not be able to read the message without the private key to decrypt the message.
+
+5. A cannot be sure {M}Ka came from B because anyone with the public key could have sent that message.
+Since it is a public key, anyone has access to the key.
+
+6. A knows {M}Kb^-1 came from B because the message was encrypted with B's private key. Only B has B's private key.
+
+7. Anyone who intercepts {M}Kb^-1 would be able to decrypt the message with B's public key.
+
+8. To ensure authentication and confidentiality, the scheme should involve more keys.
+There must be separate sets of keys in order to fulfil the two.
+
+Lecture 50
+1. Hash functions end up with the same length hash values no matter what kind of data is hashed. 
+This lets it be organized easier.
+
+2. Strong collision resistance is having trouble finding any two values that hash to the same value.
+Weak collision resistance is having trouble finding any value that hashes to another given value.
+
+3. Preimage resistance is if there is a given hash value, and it is hard to find a message that hashes to that value.
+Second preimage resistance is if there is a given message and its hash value, it is hard to find a different message with the same hash value.
+
+4. 1.25 x square root of 2^128 bits, or 1.25 x 2^64. Large number of outputs, but possible to compute with computers.
+
+5. 1.25 x square root of 2^160 bits, or 1.25 x 2^80. Larger number of outputs, but possible to compute with computers.
+6. It is easy to see if the file is changed because the hash function likely changes. 
+Thus hash functions are good for protecting integrity.
+It is easy to read through hash functions, so it is not suited for confidentiality. 
+
+7. A cryptographic hash function "binds" the bytes of a file together. Thus if the bytes change, the hash itself probably changes.
+
+8. B can send a hashed message to A with private key Kb^-1. A can decrypt it with B's public key.
+B can also send the regular message to A with A's public key Ka. A can decrypt it with its own private key.
+Then A can compare the two for any changes.
+
+Lecture 51
+1. S cannot send {{K}Ks−1}Kr −1 because S should not have access to R's private key.
+
+2. S can do the encryptions in the other order, but it loses a little bit of confidentiality.
+If S first encrypts with the receiver's public key, then the sender's private key, anyone can see that S sent a message to R.
+(They cannot actually read the message sent to R).
+
+3. {{{K}Ks^−1}Kr}Ks is NOT equivalent to {{K}Ks^−1}Kr. You would need both S's and R's private keys in order to decrypt the first.
+You only need R's private key to decrypt the second. 
+
+4. Key exchange requires confidentiality and authentication.
+
+Lecture 52
+1. The eavesdropper still could not determine the secret key in suitable time.
+Even if g, p, and g^a mod p were known on a Diffie-Hellman exchange, the discrete logarithm problem proves that the time it takes to solve is enormous.
+
+2. If an eavesdropper can discover a, the eavesdropper can find the key if it can also eavesdrop p, and (g^b mod p).
+
+3. If an eavesdropper can discover b, the eavesdropper can find the key if it can also eavesdrop p, and (g^a mod p).

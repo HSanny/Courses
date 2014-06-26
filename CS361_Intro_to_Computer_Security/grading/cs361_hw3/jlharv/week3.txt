@@ -1,0 +1,253 @@
+Name: Jacob Harvey
+EID: jlh5585
+CS Login: jlharv
+Email: jacoblharvey@utexas.edu
+
+CS361 Questions: Week 3
+The questions marked with a dagger (†) require external research and may be more
+extensive and time consuming. You don’t have to do them for the assignment but,
+but do them to increase your competency in the class.
+Lecture 34
+1. Why is it impossible to transmit a signal over a channel at an average rate
+greater than C/h?
+It's impossible to beat perfect transmission. C is the amount able to be transmitted, while h is the entropy. Both are limits.
+
+2. How can increasing the redundancy of the coding scheme increase the reliability
+of transmitting a message over a noisy channel?
+By transmitting the message over and over, the message will eventually go through
+
+Lecture 35
+1. If we want to transmit a sequence of the digits 0-9. According to the zeroorder
+model, what is the entropy of the language?
+-log(1/10)
+2. What are reasons why computing the entropy of a natural language is difficult?
+It's usually less than you expect. Vowels are more common than consonants. 
+3. Explain the difference between zero, first, second and third-order models.
+Zero is predicting each letter is has the same frequency, first actually takes in a letter's frequency in general,
+the second order predicts what letters follow every other letter, The third order uses trigrams, or triplets of letters.
+Lecture 36
+1. Why are prior probabilities sometimes impossible to compute?
+We have no clue how much the other subject knows.
+2. Why is the information content of a message relative to the state of knowledge
+of an observer?
+You only need to provide as much information as the observers needs
+3. Explain the relationship between entropy and redundancy.
+Higher the entropy, less redundancy. 
+Lecture 37
+1. List your observations along with their relevance to cryptography about
+Captain Kidd’s encrypted message.
+4, 8, 5, ),( appear a lot maybe they relate to common characters
+It's probably English
+If it's directions, maybe directional words
+Probably a simple substitution algorithm 
+2. Explain why a key may be optional for the processes of encryption or decryption.
+Sometimes the keys are the same
+3. What effect does encrypting a file have on its information content?
+Nothing
+4. How can redundancy in the source give clues to the decoding process?
+Gives patterns, thus information about the encryption. Could relate to common characters in the plaintext
+CS361 Questions: Week 3 2
+Lecture 38
+1. Rewrite the following in its simplest form: D(E(D(E(P)))).
+P
+2. Rewrite the following in its simplest form: D(E(E(P,KE),KE),KD).
+
+E(P,KE)
+3. Why might a cryptanalyst want to recognize patterns in encrypted messages?
+
+Gives hints, if you guess most common characters, might be able to find a relationship
+
+4. How might properties of language be of use to a cryptanalyst?
+
+Helps find the key by looking for common properties. 
+
+Lecture 39
+1. Explain why an encryption algorithm, while breakable, may not be feasible
+to break?
+
+Might take a year or two. Not useful
+2. Why, given a small number of plaintext/ciphertext pairs encrypted under
+key K, can K be recovered by exhausteive search in an expected time on the
+order of 2n−1 operations?
+
+You can find matches, try and get the key K. If you apply K to the plaintext pairs and get the ciphertext pairs, it's probably the key. 
+3. Explain why substution and transposition are both important in ciphers.
+
+To create a ciphertext by using known operations that can be reversed to decipher the text
+4. Explain the difference between confusion and diffusion.
+
+Diffusion is spreading out the information in the plaintext (transposition), while confusion is transforming the information in the plaintext (substitution).
+5. Is confusion or diffusion better for encryption?
+
+Both are equally important
+Lecture 40
+1. What is the difference between monoalphabetic and polyalphabetic substitution?
+
+Monoalphabetic cipher subsitututes each character with another throughout the text, while the poly method takes into account where the character is in the text.
+2. What is the key in a simple substitution cipher?
+
+The mapping of character c->c'
+3. Why are there k! mappings from plaintext to ciphertext alphabets in simple
+substitution?
+
+Each character can be mapped to only one other character (k possiblities). That character can't be used anymore. Now there are (k-1) possibilities
+4. What is the key in the Caesar Cipher example?
+
+shift 2 up
+5. What is the size of the keyspace in the Caesar Cipher example?
+
+26
+6. Is the Caesar Cipher algorithm strong?
+
+No
+7. What is the corresponding decryption algorithm to the Vigenere ciphertext
+example?
+
+Find the ciphertext in the row of the key. The column is the plaintext
+CS361 Questions: Week 3 3
+Lecture 41
+1. Why are there 17576 possible decryptions for the “xyy” encoding on slide
+3?
+
+26^3=17,576. Each character could be one of 26 posssiblities, if you had no other information to use
+2. Why is the search space for question 2 on slide 3 reduced by a factor of 27?
+
+No transposing took place. The y's map to the same thing then.
+3. Do you think a perfect cipher is possible? Why or why not?
+
+Given infinity amount of time and data, then no. There will always be some algorithm that will decrypt the ciphertext
+Lecture 42
+1. Explain why the one-time pad offers perfect encryption.
+
+The key is totally random, and thus, the ciphertext is also totally random.
+2. Why is it important that the key in a one-time pad be random?
+
+If you knew any patterns, you could eliminate part of the plaintext possibilities
+3. Explain the key distribution problem.
+
+There's no way to send the receiver the key securely
+Lecture 43
+1. What is a downside to using encryption by transposition?
+
+Since it only moves the characters, the frequency of characters remains the same. Important information
+Lecture 44
+1. Is a one-time pad a symmetric or asymmetric algorithm?
+
+symmetric, need same key to decrypt and decrypt
+2. Describe the difference between key distribution and key management.
+
+Distribution is sending the key to the receiver. Management is matching up the keys correctly 
+3. If someone gets a hold of Ks, can he or she decrypt S’s encrypted messages?
+Why or why not?
+
+If it's asymmetric then no. Only the host that generated Ks can decrypt it. 
+4. Are symmetric encryption systems or public key systems better?
+
+Depends on the situation. If there are a lot of users, then yes. Requires less keys to be exchanged. 
+Lecture 45
+1. Why do you suppose most modern symmetric encryption algorithms are
+block ciphers?
+CPU's and chaches never pull just one bit from memory. Computers work with blocks, much more efficient. Computer's store characters as blocks
+2. What is the significance of malleability?
+If you can change the ciphertext and have an affect on the plaintext that's noticeable.
+3. What is the significance of homomorphic encryption?
+They are malleable by design. 
+CS361 Questions: Week 3 4
+Lecture 46
+1. Which of the 4 steps in AES uses confusion and how is it done?
+subBytes, mixColumn, addRoundKey
+2. Which of the 4 steps in AES uses diffusion and how is it done?
+shiftRows, 0
+3. Why does decryption in AES take longer than encryption?
+mixColumn requires multiply by the inverse of the encrypting array. Hard to inverse numbers
+4. Describe the use of blocks and rounds in AES.
+Each round manipulates one block. Block size can vary. Each round changes the block
+5. Why would one want to increase the total number of Rounds in AES?
+Make it more random and harder to break
+Lecture 47
+1. What is a disadvantage in using ECB mode?
+All of the blocks are going to be identical, since all blocks are undergoing same transformation
+2. How can this flaw be fixed?
+Make identical blocks in the plaintext undergoe different transformation. 
+3. What are potential weaknesses of CBC?
+They can encrypt with same text but with some changes, and then see where the changes started to tell where similiar blocks are
+If you have two identical ciphertext blocks, can XOR together to get information 
+4. How is key stream generation different from standard block encryption
+Use encryption algorithm as a PSNG 
+Lecture 48
+1. For public key systems, what must be kept secret in order to ensure secrecy?
+The private key
+2. Why are one-way functions critical to public key systems?
+Easy to do, but difficult to inverse. Hard to undo the encryption 
+3. How do public key systems largely solve the key distribution problem?
+The public key can be shared with no risk to confidentiality 
+4. Simplify the following according to RSA rules: {{{P}K−1}K}K−1.
+(P)K-1
+5. Compare the efficiency of asymmetric algorithms and symmetric algorithms.
+asymmetric algorithms are a lot less efficient than symmetric encryption. Especially computing the keys. 
+Lecture 49
+1. If one generated new RSA keys and switched the public and private keys,
+would the algorithm still work? Why or why not?
+Yes it would. Only algorythm to do this
+2. Explain the role of prime numbers in RSA.
+To make encryption a one-way function. Knapsack problem 
+3. Is RSA breakable?
+Yes, it's possible to find the encryption key given enough time
+4. Why can no one intercepting {M}Ka read the message?
+They would need A's private key
+CS361 Questions: Week 3 5
+5. Why can’t A be sure {M}Ka came from B?
+No way to prove it came from B. Anyone could encrypt with A's public key
+6. Why is A sure {M}K−1 b originated with B?
+
+Only b has b's private key
+7. How can someone intercepting {M}K−1b read the message?
+
+B's public key is public. Anyone can decrypt
+8. How can B ensure authentication as well as confidentiality when sending a
+message to A?
+
+By encrypting the message B's private key, and then with A's public key
+Lecture 50
+1. Why is it necessary for a hash function to be easy to compute for any given
+data?
+Needs to be fast and work on large data sets
+2. What is the key difference between strong and weak collision resistance of
+a hash function.
+Weak collision creates the same hash value everytime for a message m. Strong collision creates a different value for message m
+3. What is the difference between preimage resistance and second preimage
+resistance?
+It's hard to find a matching answer
+4. What are the implications of the birthday attack on a 128 bit hash value?
+You'll ahvea  colliision on average 1.25* squrt(128). Only 2^128 possible values 
+5. What are the implications of the birthday attack on a 160 bit hash value?
+Decreases the change of collision by a 2^x, 
+6. Why aren’t cryptographic hash functions used for confidentiality?
+IF you have the hash function, you can change the message
+7. What attribute of cryptographic hash functions ensures that message M is
+bound to H(M), and therefore tamper-resistant?
+IF you change one bit, the whole hash changes
+8. Using RSA and a cryptographic hash function, how can B securely send a
+message to A and guarantee both confidentiality and integrity?
+encrypt with hash, then encrypt again with B's private key which A has. hash ensures integrity, priv key ensures confidentiality
+Lecture 51
+1. For key exchange, if S wants to send key K to R, can S send the following
+No, you don't have R's private key. And anyone with R's public key can decrypt it and then decrypt S's
+famessage: {{K}KS−1}K−1R? Why or why not?
+2. In the third attempt at key exchange on slide 5, could S have done the encryptions
+in the other order? Why or why not?
+3. Is {{{K}KS−1}KR}KS equivalent to {{K}K−1S}KR?
+4. What are the requirements of key exchange and why?
+CS361 Questions: Week 3 6
+Lecture 52
+1. What would happen if g, p and gamodp were known by an eavesdropper
+listening in on a Diffie-Hellman exchange?
+Nothing, they need to know A or B to listen
+
+2. What would happen if a were discovered by an eavesdropper listening in on
+a Diffie-Hellman exchange?
+
+They could then find gb mod p by listening, since it's unencrypted, and from that, get the key
+3. What would happen if b were discovered by an eavesdropper listening in on
+a Diffie-Hellman exchange?
+Same thing as above. 

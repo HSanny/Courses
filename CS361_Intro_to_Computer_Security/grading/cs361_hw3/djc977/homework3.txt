@@ -1,0 +1,305 @@
+Name: David Coon
+EID: djc977
+UTCS: djc977
+email: david.coon@utexas.edu
+
+##############################################################################
+Lecture 34
+##############################################################################
+1. Why is it impossible to transmit a signal over a channel at an average rate greater than C/h?
+	It is a mathematical barrier similar to how an encoding can never use fewer bits than that language’s entropy. C is based on a perfect encoding, so you can’t do any better than perfect.
+
+2. How can increasing the redundancy of the coding scheme increase the reliability of transmitting a message over a noisy channel?
+	Because any part of a message lost to noise can be recovered from another part of the message with higher reliability since the message will be repeated in some way with increased redundancy
+
+##############################################################################
+Lecture 35
+##############################################################################
+1. If we want to transmit a sequence of the digits 0-9. According to the zero order model, what is the entropy of the language?
+	-(log2(1/10))
+
+2. What are reasons why computing the entropy of a natural language is difﬁcult?
+	Because some symbols occur much more frequently than others, so a zero order encoding generally is insufficient. Additionally, due to patterns of language it becomes more difficult to get a true idea of entropy as there are so many different variables in effect
+
+3. Explain the difference between zero, ﬁrst, second and third-order models.
+	Zero Order: Naive
+	First Order: single letter probability
+	Second Order: following letter probability (consecutive letters)
+	Third Order: Two following letter probability (close to whole words)
+
+##############################################################################
+Lecture 36
+##############################################################################
+1. Why are prior probabilities sometimes impossible to compute?
+	Because it requires knowledge about the statistics of a language, which is impossible to get without observing the language previously
+
+2. Why is the information content of a message relative to the state of knowledge of an observer?
+	The more that an observer knows about a language, the lower the entropy
+
+3. Explain the relationship between entropy and redundancy.
+	Higher entropy == more redundancy
+
+##############################################################################
+Lecture 37
+##############################################################################
+1. List your observations along with their relevance to cryptography about Captain Kidd’s encrypted message.
+It’s interesting that there are no letters, only symbols and numbers in this message. Its encoding is pretty advanced for being done in the 1800s
+
+2. Explain why a key may be optional for the processes of encryption or decryption.
+	The encryption/decryption algo may not require a key (process may be statistical rather than using xor)
+
+3. What effect does encrypting a ﬁle have on its information content?
+	It has no change on the information stored in the message, it just makes it more difficult to read unless you know how to decrypt it
+
+4. How can redundancy in the source give clues to the decoding process?
+	An attacker can use those redundancies to gain an understanding of how it was encrypted, which can give leverage to decrypt a message successfully.
+
+##############################################################################
+Lecture 38
+##############################################################################
+1. Rewrite the following in its simplest form: D(E(D(E(P)))).
+	P
+
+2. Rewrite the following in its simplest form: D(E(E(P, KE), KE), KD).
+	E(P, KE)
+
+3. Why might a cryptanalyst want to recognize patterns in encrypted messages?
+	Any amount of information can be useful for inferring meaning to an encrypted message and/or help with later decryption
+
+4. How might properties of language be of use to a cryptanalyst?
+	More information about the properties of a language -> more information that can be used to break an encryption
+
+##############################################################################
+Lecture 39
+##############################################################################
+1. Explain why an encryption algorithm, while breakable, may not be feasible to break?
+	It can be broken by trying every single possible key, but that is computationally intractable and not very easy to do
+
+2. Why, given a small number of plaintext/ciphertext pairs encrypted under key K, can K be recovered by exhausteive search in an expected time on the order of 2 n−1 operations?
+	yes, but that is an incredible amount of work to do just to decrypt one message
+
+3. Explain why substution and transposition are both important in ciphers.
+	Substitution is good at confusing information (hard to extract), Transposition is good at diffusing information (spreading information around in a message)
+
+4. Explain the difference between confusion and diffusion.
+	Previous question.
+
+5. Is confusion or diffusion better for encryption?
+	Confusion by itself is better than diffusion, but truly good encryption must make use of both.
+
+##############################################################################
+Lecture 40
+##############################################################################
+1. What is the difference between monoalphabetic and polyalphabetic substitution?
+	Mono - same symbols are always replaced in the same way
+	Poly - symbols are replaced differently depending on where they appear in the message
+
+2. What is the key in a simple substitution cipher?
+	The key is the mapping of one symbol to another.
+
+3. Why are there k! mappings from plaintext to ciphertext alphabets in simple substitution?
+	Because the kth symbol can be matched to k-1 possibilities, k-1th symbol to k-2 possibilities, and so on
+
+4. What is the key in the Caesar Cipher example?
+	the number of spaces you do your shift by
+
+5. What is the size of the keyspace in the Caesar Cipher example?
+	26
+
+6. Is the Caesar Cipher algorithm strong?
+	Not really, it’s easily broken by brute force
+
+7. What is the corresponding decryption algorithm to the Vigenere ciphertext example?
+	use a table, look up the row and column corresponding to your cipher and key for that symbol, and decode away!
+
+##############################################################################
+Lecture 41
+##############################################################################
+1. Why are there 17576 possible decryptions for the “xyy” encoding on slide 3?
+	Because there are 26 possible letters, spread across three symbols, so there is 26^3 possible decryptions
+
+2. Why is the search space for question 2 on slide 3 reduced by a factor of 27?
+	Because if it’s a simple substitution cipher, you remove a significant number of solutions from your problem space. There would only be 26*25 possible decryptions
+
+3. Do you think a perfect cipher is possible? Why or why not?
+	No, because it’s impossible to encode a language such that no reduction of the search space is possible. At some level, a reduction of work is possible
+
+##############################################################################
+Lecture 42
+##############################################################################
+1. Explain why the one-time pad offers perfect encryption.
+	Since the pad is the same length as the message, the entire key can be xor’d with the plaintext with no repeats. There is no reduction to search space even if you know the ciphertext and encryption algo, since you still have to search through 2^(size of message) keys
+
+2. Why is it important that the key in a one-time pad be random?
+	If it isn’t random, then that is some information that could be used to reduce the problem space which would make the one-time pad no longer be a perfect cipher. Randomness is good at maintaining the huge problem space.
+
+3. Explain the key distribution problem.
+	If the key is just as long as the plaintext, and you have to send the key without it being intercepted (must be a secure channel), then why not just send the message over that secure channel?
+
+##############################################################################
+Lecture 43
+##############################################################################
+1. What is a downside to using encryption by transposition?
+	Letter frequencies are still preserved, so transposition encryption method can be vulnerable to statistical attacks of decoding
+
+##############################################################################
+Lecture 44
+##############################################################################
+1. Is a one-time pad a symmetric or asymmetric algorithm?
+	Symmetric
+
+2. Describe the difference between key distribution and key management.
+	Distribution - how keys are sent to those who need them so a secure communication channel is established.
+	Management - how a large number of keys are kept safe and available as needed
+
+3. If someone gets a hold of Ks, can he or she decrypt S’s encrypted messages? Why or why not?
+	No, a public key can only encrypt information. In order to decrypt information encrypted with Ks, you must use Ks-1
+
+4. Are symmetric encryption systems or public key systems better?
+	In general, public key systems are better since they solve the key distribution problem.
+
+##############################################################################
+Lecture 45
+##############################################################################
+1. Why do you suppose most modern symmetric encryption algorithms are block ciphers?
+	It is difficult to insert symbols into the message without detection
+
+2. What is the signiﬁcance of malleability?
+	If there is malleability, an attacker will be able to modify parts of an encrypted message without detection.
+
+3. What is the signiﬁcance of homomorphic encryption?
+	Encrypted messages can be appended together without messing up the encryption (you don’t lose information)
+
+##############################################################################
+Lecture 46
+##############################################################################
+1. Which of the 4 steps in AES uses confusion and how is it done?
+	subBytes, mixColumns, and addRoundKey. subBytes by doing a simple replacement; mixColumns, by doing some matrix multiplications; addRoundKey by XOR’ing the state with a round key 
+
+2. Which of the 4 steps in AES uses diffusion and how is it done?
+	shiftRows, by shifting Rn by n bytes to the left, where n is the row number of the array
+3. Why does decryption in AES take longer than encryption?
+	because mixColumn multiplies by the inverse of the one used in encryption, which uses not as optimizable numbers
+
+4. Describe the use of blocks and rounds in AES.
+	data is chopped into blocks, and then those blocks are ran through a number of rounds to confuse and diffuse the data
+
+5. Why would one want to increase the total number of Rounds in AES?
+	to further obscure data and make datamining the encrypted information more difficult
+
+##############################################################################
+Lecture 47
+##############################################################################
+1. What is a disadvantage in using ECB mode?
+	identical blocks are encrypted in the same way, so the overall pattern of the ciphertext is not affected
+
+2. How can this ﬂaw be ﬁxed?
+	by using CBC to somewhat randomize plaintext blocks before they’re encrypted
+
+3. What are potential weaknesses of CBC?
+	if they observe changes to the ciphertext they’ll be able to spot the first block that changed, and if they get two identical ciphertext blocks, they’ll be able to get parts of the key
+
+4. How is key stream generation different from standard block encryption modes?
+	key stream generation uses the previous block as a psuedorandom number generator to seed the creation of the next random key
+
+##############################################################################
+Lecture 48
+##############################################################################
+1. For public key systems, what must be kept secret in order to ensure secrecy?
+	the corresponding private key to the public key must be kept secret
+
+2. Why are one-way functions critical to public key systems?
+	Because they are easy to use but hard to undo or work backwards without some additional information
+
+3. How do public key systems largely solve the key distribution problem?
+	because you can easily broadcast your public key without fear of compromising your secure channel since encrypting using a public key makes it so that only you can read the information
+
+4. Simplify the following according to RSA rules: {{{P}K−1}K}K−1.
+	{P}K-1
+
+5. Compare the efﬁciency of asymmetric algorithms and symmetric algorithms.
+	asymmetric algos are much slower than symmetric algos because they require using factoring and more difficult math than just addition and bitwise operations that are very difficult to optomize
+
+##############################################################################
+Lecture 49
+##############################################################################
+1. If one generated new RSA keys and switched the public and private keys, would the algorithm still work? Why or why not?
+	Sure, as long as you made sure never to switch them up. There is no functional difference between your private and public key, its just that whichever one you broadcast has to be your public key
+
+2. Explain the role of prime numbers in RSA.
+	The are used to generate the keys
+
+3. Is RSA breakable?
+	Yes, it is NP-complete so it is VERY computationally hard to do, but it is theoretically breakable
+
+4. Why can no one intercepting {M}Ka read the message?
+	Because it’s encrypted using A’s public key so only the holder of A’s private key and read the message
+
+5. Why can’t A be sure {M}Ka came from B?
+	Because encryption with a public key doesn’t ensure authentication, just confidentiality.
+
+6. Why is A sure {M}K −1 b originated with B?
+	Because it’s been signed with B’s private key, which only he holds.
+
+7. How can someone intercepting {M}K−1 b read the message?
+	by using B’s public key to decrypt the message
+
+8. How can B ensure authentication as well as conﬁdentiality when sending a message to A?
+	Encrypt the message sent to A with B’s private key, and then with A’s public key
+
+##############################################################################
+Lecture 50
+##############################################################################
+1. Why is it necessary for a hash function to be easy to compute for any given data?
+	Because you want to be able to run any set of data through the hashing function
+
+2. What is the key difference between strong and weak collision resistance of a hash function.
+	Weak - it is hard to find two messages not equal to eachother such that they have the same hash value
+	Strong - hard to find ANY two values that hash to the same value
+
+3. What is the difference between preimage resistance and second preimage resistance?
+	preimage - hard to find the message that created a hash value
+	second - hard to find a message m2 such that its hash value is the same as m1’s hash value
+
+4. What are the implications of the birthday attack on a 128 bit hash value?
+	there are 1.25 * 2^64 values before you can find a collision of values
+
+5. What are the implications of the birthday attack on a 160 bit hash value?
+	there are 1.25 * 2^80 values before you can find a collision
+
+6. Why aren’t cryptographic hash functions used for conﬁdentiality?
+	Because they are not good at obfuscating information since they are much more easily broken than full encryption methods
+
+7. What attribute of cryptographic hash functions ensures that message M is bound to H(M), and therefore tamper-resistant?
+	any change to the input is apparent in the output of the hash, so it is easy to tell when a file has been tampered with.
+
+8. Using RSA and a cryptographic hash function, how can B securely send a message to A and guarantee both conﬁdentiality and integrity?
+	have B hash his message with his private key, and then encrypt it with A’s public key and send it to him. Hash gives integrity, encryption gives confidentiality
+
+##############################################################################
+Lecture 51
+##############################################################################
+1. For key exchange, if S wants to send key K to R, can S send the following
+message: {{K}KS−1}K −1 R ? Why or why not?
+	Yes, because the message is signed with S’s private key and then encrypted with R’s public key so the message has integrity and confidentiality
+
+2. In the third attempt at key exchange on slide 5, could S have done the encryptions in the other order? Why or why not? 
+	Yes, order of applying encryptions doesn’t matter
+
+3. Is {{{K}KS−1}KR }KS equivalent to {{K}K −1 S }KR ?
+	No, it would be equiv to {K}KR
+
+4. What are the requirements of key exchange and why?
+	confidentiality to make sure no one sees what you’re transmitting, and integrity to make sure the info you’re getting is legit
+
+##############################################################################
+Lecture 52
+##############################################################################
+1. What would happen if g, p and g amodp were known by an eavesdropper listening in on a Difﬁe-Hellman exchange?
+	he still wouldn’t be able to solve since he wouldn’t know b, which is a problem for the eavesdropper
+
+2. What would happen if a were discovered by an eavesdropper listening in on a Difﬁe-Hellman exchange?
+	nothing, he would have ¼ of the info needed to break the secret
+
+3. What would happen if b were discovered by an eavesdropper listening in on a Difﬁe-Hellman exchange?
+	nothing, he would have ¼ of the info needed to break the secret

@@ -1,0 +1,247 @@
+Name: Kevin Nguyen
+EID: kn6347
+CS Login: knguyen
+Email: KevinNguyenn@utexas.edu
+
+/************************************************************/
+Lecture 34 (Fundamental Theorems)
+1. It is impossible to transmit a signal over a channel at an average rate greater than C/h because the average rate represents the most optimal transmission rate. Going over the average rate is practically impossible.
+
+2. Increasing the redundancy of the coding scheme increases the chance for the transmission of a message over a noisy channel, since the channel is susceptible to block a number of messages.
+/************************************************************/
+
+
+/************************************************************/
+Lecture 35 (Entropy of English)
+1. To transmit a sequence of digits 0-9, in the zero-order model, the entropy of the language is on average -(log1/10) per symbol.
+
+2. Computing the entropy of a natural language is difficult because the language contains a lot of redundancies that require complex models to compute the entropy.
+
+3. The difference between zero, first, second and third-order models is that each model takes into account the relative likelihood that a particular letter appears. For the zero order, the model assumes that all letters are equally likely. The first order model takes into account the likelihood of a single letter. The second order model takes into account the likelihood of the second letter, given the first letter. The same rule applies to the third letter for the third order model.
+/************************************************************/
+
+
+/************************************************************/
+Lecture 36 (Entropy Oods and Ends)
+1. Prior probabilities are sometimes impossible to compute because the probabilities have to be deduced or inferred from the given situation .
+
+2. The information content of a message is relative of the state of knowledge of an observer because the state indicates how much uncertainty the message needs to resolve by sending an arbitrary number of bits.
+
+3. The relationship between entropy and redundancy is that they are opposite from each other. Since entropy achieves the lower/optimal bound of the encoding efficiency, redundancy does out achieve optimal encoding efficiency.
+/************************************************************/
+
+
+/************************************************************/
+Lecture 37 (Cryptography)
+1. Observations of Captain Kidd’s encrypted message:
+	-Numbers could represent the position in the alphabet
+	-Mathematical operators could represent an instruction that points to the true position of the alphabet
+	-Grammatical symbols could represent filler in the encrypted message
+
+2. A key may be optional for the processes of encryption and decryption if both parties know that their message will reach the other party. There would be no reason to apply cryptographic techniques on the message.
+
+3. The effect of encrypting a file would increase the information content because the file is not the true representation of what it tries to convey. Therefore, there is increased uncertainty when trying to decrypt the message.
+
+4. Redundancy in the source gives patterns in the ciphertext, if it preserves the original text, allowing the decoder more leeway to decrypting the given encrypted message.
+/************************************************************/
+
+
+/************************************************************/
+Lecture 38 (Cryptography II)
+1. D(E(D(E(P)))) → {{{{P}}}}
+
+2. D(E(E(P, Ke), Ke), Kd) → {{{P}Ke}Ke}Kd
+
+3. A cryptanalyst would want to recognize patterns in encrypted messages because it could provide some help for him/her to decode the ciphertext.
+
+4. Properties of language could be of use to a cryptanalyst since it allows him/her to focus on a particular language and decode the ciphertext.
+/************************************************************/
+
+
+/************************************************************/
+Lecture 39 (Properties of Ciphers)
+1. An encryption algorithm may not be feasible to break even though it is breakable because the time to break the algorithm spans a lifetime or more.
+
+2. Key K can be recovered by an exhaustive search in an expected time on the order of 2^n-1 operations because on average the time of find the key is half of the length of the plaintext/ciphertext.
+
+3. Substitution and transposition are both important in ciphers because it disrupts the original orientation of the plaintext, slowing down the rate at which attackers and decode the ciphertext.
+
+4. The difference between confusion and diffusion is that confusion transforms information in plaintext so that an interceptor cannot readily extract it. Diffusion deals with spreading the information from a region of plaintext widely over the ciphertext.
+
+5. Both confusion and diffusion are essential for encryption, since substitution is good for confusion and transposition is good for diffusion.
+/************************************************************/
+
+
+
+/************************************************************/
+Lecture 40 (Substitution Ciphers)
+1. The difference between monoalphabetic and polyalphabetic substitution is that monoalphabetic substitution cipher uniformly exchanges one symbol in the plaintext with another symbol. Polyalphabetic substitution ciphers make different substitutions depending on where in the plaintext the symbol occurs.
+
+2. The key in a simple substitution cipher is usually a table representing the key pairings.
+
+3. There are k! mappings from plaintext to ciphertext alphabets in simple substitution because the mappings are 1 to 1, and there exists two mappings per pair of symbols.
+
+4. The key in the Caesar Cipher example is the number of positions shifted in the alphabet.
+
+5. The size of the keyspace in Caesar cipher is the number of letters in the alphabet, 26.
+
+6. The Caesar cipher algorithm is not strong because you don’t have to perform an exhaustive search for the correct decoding.
+
+7. The corresponding decryption algorithm to the Vigenere ciphertext involves key pairs from the plaintext and the key in order to generate the ciphertext.
+/************************************************************/
+
+
+/************************************************************/
+Lecture 41 (Using Information)
+1. There are 17576 possible decryptions for the “xyy” encoding because the substitution cipher, not a simple substitution cipher was used. This means for each slot in the encoding, there are 26 choices (letters in the alphabet) to make.
+
+2. The search space for question 2 is reduced by a factor a 27 because the information states that it is a simple substitution cipher. Based on the “xyy” encoding, theres a key that corresponds to x and a key that corresponds to y, therefore 26 * 25.
+
+3. A perfect cipher is possible because there could be an algorithm where the reduction of the search space cannot be performed.
+/************************************************************/
+
+
+
+/************************************************************/
+Lecture 42 (A Perfect Cipher)
+1. The one-time pad offers perfect encryption because the encryption ensures that every possible plaintext serves as a pre-image of that ciphertext. As a result, no reduction of the search space is possible.
+
+2. It is important that the key in a one-time pad be random so that the reduction of search space does not happen. If you knew about the key, then decoding the ciphertext would only require half the search of the possibilities in the plaintext space.
+
+3.In the key distribution problem, the sender and receiver require to share a secret key, they need to be able to do so in an unsecure channel. The reason why the problem exists in an unsecure channel is because in a secure channel, a key is generally not required.
+/************************************************************/
+
+
+
+/************************************************************/
+Lecture 43 (Transposition Ciphers)
+1. A downside to using encryption by transposition is that its easier to decrypt by hypothesizing the number of positions to decode the ciphertext versus substitution, where each letter might be represented by another letter. 
+/************************************************************/
+
+
+/************************************************************/
+Lecture 44 (Symmetric vs. Asymmetric Encryption)
+1. A one-time pad is an symmetric algorithm.
+
+2. The difference between key distribution and key management is that key distribution deals with sharing secret keys with other parties to establish secure communication over an unsecure channel. Key management deals with preserving the safety and make them available as needed.
+
+3. If someone has a Ks (public key), then there are able to decrypt S’s encrypted messages because they assume that S used their private key to encrypt the message.
+Public key systems are better because they are more complex and specialized, however are very expensive to generate.
+/************************************************************/
+
+
+/************************************************************/
+Lecture 45 (Stream and Block Encryption)
+1. Most modern symmetric encryption algorithms are block ciphers because it is easier to detect potential intrusions. Also block ciphers have a high diffusion, meaning that information from one plaintext symbol is diffused into several ciphertext symbols.
+
+2. The significance of malleability is that any encryption algorithm that transforms the ciphertext to produce meaningful changes in the plaintext is considered bad in security.
+
+3. The significance of homomorphic encryption is that if the semantics of the ciphertext is changed so that it is not readily noticeable in plaintext, then the meaning of the plaintext has completely changed.
+/************************************************************/
+
+
+/************************************************************/
+Lecture 46 (Advanced Encryption Standard) 
+1. Steps in AES that uses confusion
+	- subBytes: for each byte in the array, use its value as an index into a 256-element lookup table, and replace byte by the value stored at that location in the table
+	- mixColumns: for each column of the state, replace the column by its value multiplied by a fixed 4x4 matrix of integers
+	- addRoundKey: XOR the state with a 128-bit round key derived from the original key K by a recursive process
+
+2. Steps in AES that uses diffusion
+	- shiftRows: Shift R0 in the state left 0 bytes; shift R1 left 1 byte; shift R2 left 2 bytes; shift R3 left 3 bytes
+	- mixColumns:multiply by the 4x4 matrix of integers
+
+3. The decryption in AES takes longer than encryption because the inversion of the mixColumns step requires multiplying each column by the inverse of the array.
+
+4. The blocks serves as an array that bytes which indicates the state of the block. The key is generated on the cipher block through a number of recursive rounds in order to confuse and diffuse the plaintext to ciphertext.
+
+5. One would want to increase the total number of Rounds in AES because it creates more complexity that cannot be easily detectable by possible attackers.
+/************************************************************/
+
+
+/************************************************************/
+Lecture 47 (Modes of Usage)
+1. A disadvantage of using ECB mode is that the block encryption mode yields identical block in both the plaintext and ciphertext.
+
+2. The flaw can be fixed by randomizing the blocks before they’re encrypted.
+
+3. The potential weaknesses of CBC is that an attacker would be able to observe changes to the ciphertext over time and locate the first block that changed (Observed changes). Also, the attacker can spot two identical ciphertext blocks, deriving the respective plaintexts.
+
+4. Block encryption modes generate ciphertext that stores the message in encrypted but recoverable form. Key stream generations use the cipher as a pseudorandom number generator. The result is a key stream that can be used as a one-time pad. 
+/************************************************************/
+
+
+/************************************************************/
+Lecture 48 (Public Key Encryption)
+1. A public key systems, the private key must be kept secret in order to ensure secrecy. This means that public disclosed key can be used to encrypt and a secret private key to decrypt.
+
+2. One-way functions are critical to public key systems because they are easily computed, but difficult to invert without additional information.
+
+3. Public key systems largely solve the key distribution problem by having a public key that anyone can encrypt with but only the party with the private key corresponding to the public key is able to decrypt the message. In other words, the party with the private key does not need to establish separate keys with all the other parties. The other parties can just use the public key and communicate to the party with the private key.
+
+4. {P}K^-1
+
+5. Symmetric encryption is more efficient with simple bit-wise operations but serves as a work horse of commercial cryptography (does not serve any special functions). Asymmetric encryption is less efficient with more complex operations but serves as an important special functions throughout the system.
+/************************************************************/
+
+
+/************************************************************/
+Lecture 49 (Public Key Encryption II)
+1. The algorithm for switching the public and private keys would still work because the modulus operator serves to resolve the offset between the encryption and decryption mechanisms.
+
+2. The role of prime numbers in RSA is to increase the complexity of the encryption so that the interceptor will take longer than usual to decrypt the encrypted message. He/she will have to resort to factor prime numbers, which is very difficult, to decrypt the message.
+
+3. RSA is breakable, but it will take a long time for RSA encryption to be broken.
+
+4. No one can intercept {M}Ka because the public key was encrypted so that A, who has the private key, can only read the message.
+
+5. A can’t be sure {M} came from B because any other party can possess the Ka and send a message to A.
+
+6. A is sure that {M}Kb^-1 originated with B because B only has the private key to encrypt the message.
+
+7. Someone can intercept {M}Kb^-1 by reading the message because anyone with public key Kb can read the privately encrypted message.
+
+8. B can ensure authentication as well as confidentiality when sending a message to A by incorporating two separate keys for authentication as well as confidentiality.
+/************************************************************/
+
+
+/************************************************************/
+Lecture 50 (Cryptographic Hash Functions)
+1. It is necessary for a hash function to be easy to compute for any given data to ensure that the lookup is just as easy.
+
+2. Strong collision resistance of a hash function states that it is hard to find two different messages such that their hash values are the same. Weak collision resistance states that if given one message and its hash value, it is hard to find another message that hashes to the same value.
+
+3. Preimage resistance states that given a hash value, it is hard to find the message that hashes to that value. Second preimage resistance states that if given one message and its hash value, it is hard to find another message that hashes to the same value.
+
+4. The implications of the birthday attack on a 128 bit hash value is that it would take 1.25 * 2^64 possibilities to find two same hash values.
+
+5. The implications of the birthday attack on a 160 bit hash value is that it would take 1.25 * 2^80 possibilities to find two same hash values.
+
+6. Cryptographic hash functions are not used for confidentiality because integrity is more of a concern for practical applications. For example, in a document retrieval system containing legal records, it may be important to know that the copy retrieved is identical to that stored.
+
+7. The attribute of cryptographic hash functions ensure that message M is bound to H(M) is that the mechanism binds the bytes together in a file that would make alterations apparent.
+
+8. B can securely send a message to A using RSA to ensure confidentiality because only A can read the message. Using a cryptographic hash function ensures the integrity of the message because A can use the hash value to obtain B’s message.
+/************************************************************/
+
+
+/************************************************************/
+Lecture 51 (Key Exchange)
+1. S cannot send {{K}Ks^-1}Kr^-1 to R because S does not have the private key Kr^-1 to encrypt the message.
+
+2. The encryption in the other order: {{K}Kr}Ks^-1 could be done when S sends message to R because R can use S public key to decrypt and its own private key to decrypt the inner encryption.
+
+3. {{{K}Ks^-1}Kr}Ks is not equivalent to {{K}Ks^-1}Kr
+
+4. The requirements of key exchange are confidentiality and authentication because the mechanism has to ensure that the message sent preserves its secrecy and maintains the same state when it reaches the receiver.
+/************************************************************/
+
+
+/************************************************************/
+Lecture 52 (Diffie - Hellman Key Exchange)
+1. The eavesdropper could listen in on the message exchange because she would only need to solve for the secret number. Since the shared key is dependent on both secret numbers, if the eavesdropper knows on secret number, than he/she can find the other secret number to find the shared key.
+
+2. The eavesdropper could listen in on the message exchange if a were discovered because the shared key is dependent on both secret numbers. Then eavesdropper can extract the other secret number ‘b’ given the secret number ‘a’ it has.
+
+3. The eavesdropper could listen in on the message exchange if b were discovered because the shared key is dependent on both secret numbers. Then eavesdropper can extract the other secret number ‘a’ given the secret number ‘b’ it has.
+/************************************************************/

@@ -1,0 +1,140 @@
+Name: Justin Baiko	
+EID: jb39998	
+CS Login: Baiko
+Email: baiko@utexas.edu
+34
+1. you go faster than allowed
+2. separates message from noise
+
+35.
+1. 3.32
+2. complex models
+3. zero assumes everything occurs equally. one takes letter into account second takes words into account etc. every new order is different.
+
+36.
+1. its different for everyone
+2. if you know the content of the message than it doesn't contain any usefulness to you.
+3. less errors the closer you get to entropy.
+
+
+37.
+1. it is encoded but easily breakable if you know the key span.
+2. you can guess and check that doesn't require a key.
+3. it changes how it looks but the message is still there.
+4. it can notice patterns and patterns allows you to decipher.
+
+38.
+1.p
+2.d(e,d)
+3. thats how you break code
+4. you can see patterns better
+
+39.
+1. may just take to long
+2. brute force
+3. the combination is deadly
+4. confusion shifts while diffusion upsets
+5. diffusion
+
+
+
+40
+1.mono is a simple subsitiont
+poly is a movement substitiuion.
+2. replace one value with another
+3. there are that many posibilityes . k*k-1*k-2 etc
+4. value+3
+5.no
+6. 26
+7. no
+8. four score and seven years ago
+
+
+41.
+1.because 26^3
+2. bceause they are allow 25*26*26 different possible ways those could occur
+3. yes one time pad
+
+
+42.
+1. it doesnt give any insight as to the method of encryption.
+2. because it allows randomness.
+3. how do you share keys?
+
+
+43.
+1. teh text doesnt change just moves.
+
+
+44.
+1. asmmetric
+2. key distrubition is sharing the key management is who gets the key
+3. no they can only send messages.
+4. i think asymmetric algorithms are better allows more confidentiality 
+
+45.
+1. because it is easier to change a block of text than a sequential stream.
+2. malleability allows non unique decoding
+3. code can only be transformed in one way
+
+
+
+46.
+1. mix columns. replaces columns by a value
+2.shift rows shifts the each row by a incremented value
+3. it goes through multiple rounds for different bits.
+4. blocks can changed through rounds each time.
+5.it makes the text harder to invert.
+
+
+
+
+47.
+1. observed changes and content leak
+2. using it in a key stream generation mode
+3. a naive use of encryption leaves too much regulatrity in the ciphertext
+4. the key stream is like a one time pad but the block encryption generates text that can be recoverable
+
+
+
+48.
+1. the private key
+2. the allow the user to generate a very hard ciphertext that is hard to invert.
+3. computation takes 10000 times as long as a symmetric encryption. 
+4.p
+5. assymetric algorithms are less effecient than symmetric ones because symmetric ones remain the work horse of commericial cryptography while assymetric encryption plays a function in the background.
+
+
+49
+1.yes because they have been switched.
+2. they arent divisible by anything so it doesn't hash to the same function.
+3. yes
+4. because they need the private key to read it.
+5. because someone knowing the public key and send information posing as him.
+6. if a can decrypt it using kb then a can be sure oit orginated from b.
+7, they know his private key and public key.
+8. pd of e = p = p e of d
+
+
+50
+1.keep it simple stupid.
+2.a strong collision resistant is if it is hard to find two messages such that both in the function give the same message. a weak collision resistance is given a input that is different than another input but still produces the same value in a given function.
+3.preimage resistance is knowing what it says, find a message under a equation that gives its value if knowing the input, finding another input that is still equal to it.
+4.it means that the chance of finding a pair of arguments will be easier.
+5. the hash value will be computed within 1.25sqrtH.
+6. they are more about integrity and being tamper proof than being seen.
+7.they compute the hash function and see if it is the same after being calculated again
+8.using md5. 
+
+
+
+51
+1.Yes he can send the message but someone can decrypt it using rs public key.
+2.yes but someone can take s's key and send something to r.
+3.no
+4.a sender a receiver , two public keys and two private keys that allow each to encrypt a message and decipher. a symmetric cipher of sorts.
+
+52
+1. It wouldn't be able to do much because if the # prime is large enough it would take more than a lifetime to figure it out.
+2. He would be write as person a.
+3. depends on if he knew a. if he knew b he would be able to send stuff to a.

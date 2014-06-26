@@ -1,0 +1,100 @@
+Kevin Roesner
+kmr2373
+CS361
+
+Week 3 Questions
+
+Lecture 34
+1. To transmit at a higher rate than that would mean finding an encoding that is better than the entropy which isn't possible.
+2. It means that even if there is a slight error in the transmission that receiver is still likely to be able to gather the meaning of the information.
+
+Lecture 35
+1. -log(1/10)
+2. It is very difficult to figure out all possible combinations of symbols and the probability of each symbol appearing.
+3. A zero-order model encodes single symbols while higher order models might encode digrams or trigrams, thus decreasing the number of bits needed per symbol.
+
+Lecture 36
+1. Because you don't always have the necessary information needed to make that judgment.
+2. If the observer knows more about what the odds of a certain outcome are, then less information is needed in the message.
+3. Greater redundancy results in a higher bits/symbol. So knowing the entropy can be used to measure the redundancy of an encoding. 
+
+Lecture 37
+1. There are no alphabetic character. There seem to be several pairs of 8s. 
+2. A key might make it easy, but it is possible to decipher the encryption without it?
+3. It obscures the meaning of the text.
+4. It gives the attacker more to work with.
+
+Lecture 38
+1. P
+2. P
+3. To make it easier to decrypt.
+4. Knowing different properties might inform assumptions about probability or arrangements or symbols that could make decrypting easier.
+
+Lecture 39
+1. Because the keyspace could be so large that a brute-force approach might take really long.
+2. You can try all different possible keys systematicall (brute-force).
+3. Substitution changes exchanges symbols with different symbols while transposition changes the order of the sumbols.
+4. Confusion is transforming information in plaintext so that an interceptor cannot readily extract it. Diffusion is spreading the information from a region of plaintext widely over the cyphertext.
+5. Both can be useful, I'd say confusion a little more so, but you should probably use both.
+
+Lecture 40
+1. Monoalphabetic - uses fixed substition over the entire message.
+   Polyalphabetic - uses a number of substitutions at different positions in the message.
+2. Each letter is a key for a single different letter.
+3. k! is the number of permutations possible to a simple substitution cipher.
+4. A->C, B->D, C->E, D->F, E->G, F->H, G->I, ... X->Z, Y->A, Z->B
+5. 26
+6. Not very strong.
+
+Lecture 41
+1. 26^3 = 17576
+2. You know that the two y's have the same encoding.
+3. Probably not, otherwise there would be no pattern that gives it meaning at all. If a pattern exists, it should theoretically be possible to find it. Or so I imagine.
+
+Lecture 42
+1. Every possible plaintext could be the pre-image of that ciphertext under a plausible key. Therefore, no reduction of the search space is possible.
+2. If the key isn't random one could narrow down what the key could be, which would narrow the possible plaintexts that could have been coded into the ciphertext. Or you could just take the ciphertext and the key and decode it yourself
+3. If you have a secure channel to distribute the key, then why do you even need the key? How can you send it securely if you don't have a secure channel.
+
+Lecture 43
+1. It does not alter any symbols and preserves the letter frequencies.
+
+Lecture 44
+1. Symmetric.
+2. Key distribution - how do we convey key to those who need them to establish secure communication.
+   Key management - given a large number of keys, how do we preserve their safety and make them available as needed.
+3. No, you have to have Ks-1 (the private key).
+4. Probably asymmetric, since they largely solve the problem of key distribution.
+
+Lecture 45
+1. They have better immunity to tampering.
+2. Malleability means being able to manipulate ciphertext with predictable effects on plaintext.
+
+Lecture 46
+1. subByte - replaces bytes by different values in a lookup table (substitution)
+2. shiftRows - shifts rows to different places (transposition)
+3. It requires more multiplication.
+4. Blocks organize bytes together while the rounds implement different types of encoding.
+5. So its is harder to decode.
+
+Lecture 47
+1. Identical blocks in the plaintext yield identical blocks in the ciphertext.
+2. Cipher Block Chaining (CBC): XOR each successive plaintext block with the previous ciphertext block and then encrypt. An initialization vector IV is used as a “seed” for the process.
+3. An attacker able to observe changes to ciphertext over time will be able to spot the first block that changed.
+4. In key stream generation modes the cipher is used more as a pseudorandom number generator. The result is a key stream that can be used as in one-time pad. Decryption uses the same key stream.
+
+Lecture 48
+1. The private key.
+2. The basis of any public key system is the identification of a one-way function: easily computed, but difficult to invert without additional information.
+3. Already kind of talked about this above.
+4. {P}K-1
+5. A public key encryption may take 10,000 times as long to perform as a symmetric encryption; the computation depends on more complex operations, not on simple bit-wise operations.
+
+Lecture 50
+1. Because they need to be convenient. 
+2. Weak collision resistant would have more messages hashed to the same key. 
+3. Preimage resistant means its hard to find the message that could be hashed to a value, knowing just the value. 
+4. With large amounts of values used, collisions become quite common.
+5. Collisions much less common than with 128 bits.
+6. Typically used for integrity.
+7. weak collision resistance

@@ -1,0 +1,242 @@
+Name: Jeremy Bouzigard
+EID: jdb2999
+CS Login: jeremy
+Email: jbouzigard@gmail.com
+
+CS361 Questions Week 3
+
+--------------------
+
+Lecture 34
+
+1. Because in this noiseless channel the average rate of transmission is defined as (C/h) -  ε, but the lower limit of ε is 0. Therefore the upper bound of (C/h) -  ε = (C/h) - 0 = C/h. In other words, the channel is fully utilized at that point.
+
+2. If there is any bandwidth at all, then the receiver's uncertainty can be reduced. If part of a message is lost due to noise, then the receiver's uncertainty is reduced but not by as much as if the entire message was transmitted. If the sender then transmits that same message again, the receiver may potentially receive data that was lost in the noise the first time and therefore the receiver's uncertainty is further reduced. If this process is repeated an arbitrarily high amount of times (if redundancy is increased), then the receiver's entire uncertainty will eventually be eliminated.
+
+--------------------
+
+Lecture 35
+
+1. h = - [ log(1/10) ] = ~ 3.32193
+
+2. Because all nature languages contain significant redundancy.
+
+3. The zero-order model assumes all characters are equally likely, the first-order model considers the frequency of individual characters assuming they are independent of the context, the second-order model considers the frequencies of diagrams (pairs) of characters, the third-order model considers the frequencies of trigrams (triples) of characters, and so on.
+
+--------------------
+
+Lecture 36
+
+1. Prior probabilities are sometimes impossible to compute because it is not always possible to compute or quantify the total amount of uncertainty.
+
+2. Because information content is about resolving uncertainty. Different observers may have varying degrees of uncertainty and so the amount of uncertainty that a message removes will accordingly be relative to a particular observer's state of knowledge.
+
+3. In the same way that entropy can be used to measure the efficiency of an encoding, it can also be used to measure redundancy of an encoding. If the information content of a message is near the length of the encoded message, then there is little redundancy in the encoding; similarly, if the information content of a message is shorter than the length of the encoded message, then there is redundancy in the encoding.
+
+--------------------
+
+Lecture 37
+
+1. The pun of goat and "kidd" suggests the underlying language of the plaintext is English because that pun only works in English. Given that it is English, the frequency of characters in the plaintext can be leveraged to decrypt the ciphertext. The source of the document (a pirate) also suggests the encryption algorithm was relatively basic like simple substitution.
+
+2. For encryption, the sender may have enough confidence in the strength and uniqueness of the encryption algorithm alone; alternatively, the sender may use a known encryption with a private key. For decryption, the intruder may already know the encryption/decryption algorithm but not know the key; alternatively, the intruder may have no information, or know the decryption algorithm, the encryption amy not use a key, or several other combinations.
+
+3. Encrypting a file will ideally not effect its information content. That is, a message should resolve the same amount of uncertainty in the intended receiver regardless of encrpytion. The goal of encryption is to render the message less useful / meaningful to an intruder, not the intended receiver.
+
+4. If the ciphertext reflects redundancy in the source, then an intruder has more leverage to decode the ciphertext. If the intruder is aware of the source redundancy, then that intruder already has information to apply to the decryption. Similarly, if the ciphertext is redundant then the intruder has multiple contexts to test a decryption algorithm and can learn even more by comparing the results.
+
+--------------------
+
+Lecture 38
+
+1. D(E(D(E(P)))) = D(E(P)) = P
+
+2. E(P, KE)
+
+3. If the cryptanalyst can gain clues from patterns in an encrypted message. For example, even if the cryptanalyst has no other knowledge, the cryptanalyst may be able to deduce some clues about the given state. If the cryptanalyst has some information, then applying that information to the patterns can help refine that information or offer more clues.
+
+4. The cryptanalyst may be able to apply the same properties of a language to an associated encrypted message and gain clues about its information content.
+
+--------------------
+
+Lecture 39
+
+1. Because even if the encryption algorithm is theoretically breakable, the keyspan may be so large that there is no way too test them all in any reasonable amount of time.
+
+2. Because for n-bit string, there are 2^n possibilities. If you're doing a linear search of these possibilities, on average you will find the key about halfway through the list, which is 2^(n-1) operations.
+
+3. Because they both achieve different goals for an encryption. Substitution helps achieve confusion, while transposition helps achieve diffusion.
+
+4. Confusion is transforming information in plaintext so that an intercept cannot readily extract it. That it, it obscures the meaning of the information. Diffusion is spreading the information from a region of plaintext widely over the ciphertext. That is, it spreads the information so far apart that putting it back together becomes very difficult.
+
+5. Neither is great alone, their power comes from the combination of both applied in unpredictable and unique ways.
+
+--------------------
+
+Lecture 40
+
+1. A monoalphabetic substitution is a substitution in which each symbol of the plaintext is replaced uniformly by another symbol; a polyalphabetic substitution is when different substitutions are made for a letter depending on where in the plaintext the letter occurs.
+
+2. The key in a simple substitution cipher is a table showing which symbol in the plaintext corresponds with which symbol in the ciphertext.
+
+3. Because there are k! permutations of an alphabet of k characters.
+
+4. The key is how many positions you shift a character by -- in this case, 2.
+
+5. The keyspace is the length of the alphabet which is 26 characters.
+
+6. No, because it's not likely that you'd have to try every before possible key before getting the right one.
+
+7. 
+1) Align the two texts
+2) For every character, find the row in the Vigenere Tableau that corresponds to the cihpertext character and the column as given by the eky
+
+--------------------
+
+Lecture 41
+
+1. The string is of length 3 and encoded in the English alphabet. Because this is not known to be a simple substitution cipher, there are 26 possiblities for each of the 3 letters. 26^3 = 17576.
+
+2. Because it's found out to be a simple substitution cipher, every symbol uniformly maps to one other. Two of the symbols in the string "xyy" are the same, so there are only two characters to decrypt. There are 26 possiblities for one character and once that is known 25 possiblities for the other. 26 * 25 = 650. 17576 / 650 = 27.04.
+
+3. Yes, the one-time pad algorithm is a perfect cipher. If they key in a one-time pad is truly random, the attacker is not able to reduce the search space by knowing the encryption algorithm or seeing the ciphertext.
+
+--------------------
+
+Lecture 42
+
+1. Because an attacker can known both the algorithm and the cipher text but not be able to reduce his/her uncertainty at all. This is because the key is randomly generated, so every possible plaintext could be the pre-image of the ciphertext.
+
+2. If the key is not random then there is some characteristic about it that the attacker has some leverage to reduce the number of possible plaintexts that could result in the ciphertext, which makes the cipher no longer perfect.
+
+3. The key distribution problem is a problem of communication between the sender and receiver. Both parties must agree on a key, but the problem is finding a way to send the key to each other.Further, if they have a secure channel to send the key, then the key is pointless anyway.
+
+--------------------
+
+Lecture 43
+
+1. One downside of a transposition cipher is that the message cannot be decrypted until it has been read in its entirety, which may cause a delay in the decryption of very long messages.
+
+--------------------
+
+Lecture 44
+
+1. Symmetric because the same key is used by the sender to encrypt (XOR) the plaintext as is used by the receiver to decrypt (XOR) the ciphertext.
+
+2. Key distribution is the problem of conveying keys to those who need them to establish secure communication, whereas key management is the problem of how to preserve the safety and availability of a large number of keys.
+
+3. No, because Ks is just the S's public key that was used for encrpytion. To decrypt, the attacker would need to get a hold of S's private key.
+
+4. They are not directly comparable because both have different characteristics and applications.
+
+--------------------
+
+Lecture 45
+
+1. Because it is easier to achieve high diffusion and confusion with block ciphers, whereas stream ciphers lend themselves only well to confusion.
+
+2. Malleability is the idea that transformations on the ciphertext can produce meaningful changes in the plaintext. This is significant because an attack on a malleable encryption algorithm is more likely to go unnoticed than one on a non-malleable encryption algorithm.
+
+3. Homomorphic encryption is a form of encryption where a specific algebraic operation performed on the plaintext is equivalent to another (possibly different) algebraic operation performed on the ciphertext. This is significant because homomorphic encrpytion schemes are malleable by design and can be used in many applications such as secure voting systems.
+
+--------------------
+
+Lecture 46
+
+1. subBytes uses confusion by substituting the original byte value with a value stored at a corresponding location in the lookup table.
+
+2. mixColumns uses diffusion by replacing each column of the state with the product of a given column with a fixed 4x4 matrix of integers. shiftRows also aids diffusion by shifting the rows.
+
+3. Because mixColumns takes longer to compute. The operations between the state and the fixed array take longer because, unlike the simple integers during encrpytion, the fixed array is compromised of values that make it difficult to optimize the operations.
+
+4. Blocks allows the algorithm to operate on the text as a whole, whereas the use of rounds allows the process to be repeated to further distantce the ciphertext from the plaintext.
+
+5. Because the more rounds that are performed, the more scrambled and distant the state will be from the original text and more difficult to revert.
+
+--------------------
+
+Lecture 47
+
+1. The problem is that identical blocks in the plain text yields identical blocks in the ciphertext and much of the original regularity remains.
+
+2. This problem can be fixed by using another block encryption mode such as cipher block chaining (CBC).
+
+3. An attacker able to observe changes to ciphertext over time will be able to spot the first block that changed; in addition, if in attacker finds two identical ciphertext blocks, then the attacker can XOR them together to find some information about the plaintext block.
+
+4. In block encryption modes, ciphertext is generated that stores the message in encrypted but recoverable form. In key stream generation modes, the cipher is used as a pseudorandom number generator and the result is a key stream that can be used (like in a one-time pad).
+
+--------------------
+
+Lecture 48
+
+1. The decryption key must be kept secret.
+
+2. Because the encryption key is public, it is important that attackers are not able to decrypt the ciphertext by easily reversing the function.
+
+3. The encryption key is public and cannot be used to decrypt, so they can be transffered by any medium and it does not matter who overhears the key.
+
+4. {P}K^-1
+
+5. Asymmetric algorithms may take 10,000 times as long to perform as a symmetric algorithm because the computation depends on more complex operations rather than simple bit-wise operations. As a result, asymmetric algorithms are less efficient and therefore less widely used in commercial encryption.
+
+--------------------
+
+Lecture 49
+
+1. Yes, because RSA uses keys in a symmetric fashion. Either key can be used to encrypt and then the other used to dercrypt.
+
+2. Like other asymmetric algorithms, RSA keys are generated based on a one-way function, which are frequently implemented by performing computations on prime numbers.
+
+3. Not currently because no one knows how to invert a one-way function using prime numbers.
+
+5. Because only the intended receiver has the key to decrypt the message.
+
+6. Because anyone may have encrypted {M}Ka with A's public key.
+
+6. Because no one besides B has the private key. If A can decrypt with B's public key, then it must have been encrypted with A's private key, which only B has.
+
+7. Anyone that has B's public key can use that key to read the message.
+
+8. B must use different public keys for authentication and for confidentiality.
+
+--------------------
+
+Lecture 50
+
+1. Because the main use of a hash function is to verify that one particular datum matches another. The hash function may have to be calculated many times, so it's important that the function be easy to compute for any given data.
+
+2. In a strong collision resistant hash function, it is hard to find any two messages that hash to the same value, whereas weak collision resistant means that it is hard to find a message and hash value that matches a given message and hash value.
+
+3. A preimage resistant hash function makes it difficult to find any two messages that hash to a given value, whereas a function is second preimage resistant if it's difficult to find a message and hash value that matches a given message and hash value.
+
+4. H = 2^128 possible values. sqrt(H) = 2^64. Therefore, on average you will look at 1.25 * 2^64 values before you find a collision.
+
+5. H = 2^160 possible values. sqrt(H) = 2^80. Therefore, on average you will look at 1.25 * 2^80 values before you find a collision.
+
+6. Because the idea behind a hash function is to maintain integrity. The main use of a hash function is to verify that one particular datum matchers another.
+
+7. Because a hash can be used to show with high probability that a text has not changed. Any alterations to the file should not get the same hash value as the original file making any tampering apparent.
+
+8. The sender and the receiver can hash a content of a message to make sure their values match, guaranteeing integrity, and the messages themselves can be sent securely via RSA, guarantee confidentiality.
+
+--------------------
+
+Lecture 51
+
+1. No, because KR^-1 is R's private key and S does not have R's private key.
+
+2. No, because the receiver cannot be sure who the message came from. Someone may have intercepted the message, removed the original sender's signature, and then placed their own.
+
+3. No.
+
+4. The requirements of key exchange are to maintain both confidentiality and authentication when exchanging keys. Confidentiality makes sure no one has the receiver's private key and authentication ensures that the receiver knows the message came from the sender and not an outside party.
+
+--------------------
+
+Lecture 52
+
+1. The eavesdropper would not be able to obtain the key.
+
+2. The eavesdropper would not be able to obtain b but would attain the key.
+
+3. The eavesdropper would not be able to obtain a but would attain the key.

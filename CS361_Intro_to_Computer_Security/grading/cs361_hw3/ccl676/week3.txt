@@ -1,0 +1,121 @@
+Connor Lirot
+ccl676
+
+Week 3 Questions
+
+Lecture 34
+1. That would imply you achieved an encoding that is more efficient than the optimal encoding.
+2. If you increase redundancy, that means you'll be sending more data than necessary, so the receiver can be more sure that he is getting the correct message
+
+Lecture 35
+1. -(10*1/10*log(1/10)) = log(10)
+2. You don't necessarily need every letter in a word to know what the word is supposed to be, and you don't necessarily need every word in a sentence to know what the sentence is supposed to be.
+3. Zero-order model assumes all probabilities of symbols are the same. First order model takes into account probabilities and computes the entropy based on that. Second order model takes into account digrams and their probabilities. Thrid order model takes into account trigrams.
+
+Lecture 36
+1. Because they depend on the state of the observer
+2. Because the more prior information an observer has, the less additional information the observer will need in order to interpret a message
+3. The less redundancy an encoding has, the closer it will be to acheiving the entropy
+
+Lecture 37
+1. It's probably in english, so if he used simple substitution, you could look for symbols that occur the most frequently and assume they represent e's, t's, r's, etc. It probably has the words "east", "west", "paces", etc. so if you can single those out it will give away more of the symbols.
+2. You could write an encyrption algorithm that doesn't use a key, so anyone who knows the algorithm could figure out the message. Or you could write one that uses a key, so even if everyone knows the encryption algorithm they can still maintain confidentiality from each other.
+3. It should have no effect on the information content. What gets encrypted on one end should come out losslessly when decrypted.
+4. if the encyrption algorithm is weak, you will be able to see the redundancy in the cipher text, and you could use that to decrypt the message.
+
+Lecture 38
+1. P
+2. D(E(E(P,Ke),Ke),Kd)
+3. If you recognize patterns you could figure out what the algorithm is doing and figure out how to decrypt the message
+4. Frequency of words, symbols, letters, phrases, etc. could provide leverage to a cryptanalyst if those frequencies are present in the cipher text as well
+
+Lecture 39
+1. If it is a strong encryption algorithm, the only way to break it would be to try every possibility (brute force). If the number of possibilities is sufficiently high, this would take an infeasbile amount of time to accomplish
+2. 2^(n-1) is the number of possibilities for the key, and so that is the maximum number of iterations a brute force approach would take to yield the answer
+3. They both accomplish different things, and the weaknesses they have are the strengths of the other
+4. Subsitution exchanges one symbol for another (confusion); transposition reordser the symbols (diffusion).
+5. Neither. They are both the foundation of encryption and are equally useful.
+
+Lecture 40.
+1. monoalphabetic - a given symbol will always be replaced with the same symbol. Polyalphabetic - a given symbol's replacement symbol will not necessarily always be the same. It can depend on where the symbol is in the plaintext, for example
+2. A symbol conversion table
+3. Every symbol can possibly be replaced by every other symbol - k! possibilities
+4. an integer representing the distance from the original letter to the replacement letter
+5. You could have an infinite amount of keys, but since there are only 26 letters, you really only have 26 keys that provide unique mappings
+6. No.
+7. Look up the cipher text symbols matched with the key symbols in a different table to get the plaintext symbols
+
+Lecture 41
+1. Each symbol could represent a different letter in the alphabet, so 26^3 = 17576
+2. Since the y's must be the same symbol, that means there are 26 options for x and 25 for y (or the other way around), so 26*25 = 659
+3. Yes but it might not be practical to use.
+
+Lecture 42
+1. If you are given the ciphertext and the encryption algorithm, you still cannot do better than a brute force search of the keyspace to figure out the key
+2. If the key isn't random, you could possibly see patterns in the cipher text and use those to figure out what the key was
+3. Now that you've found the perfect encryption algorithm, you have to securely transfer the key to whoever's receiving the message - but oftentimes you've no way to ensure the security of doing that.
+
+Lecture 43
+1. All original symbols from the plaintext are present in the cipher text
+
+Lecture 44
+1. Symmetric
+2. Key distribution - how do we convey keys to those who need them to establish secure communication? Key management - given a large number of keys, how do we preserve their safety and make them available as needed?
+3. If it's a symmetrical encryption, yes. If it's asymmetrical, it depends on which key they acquired and which key was used to encrypt the message
+4. Depends. Symmetric is easier to ensure security of keys but harder to generate keys for because you need to use larger keys to get the same security
+
+Lecture 45.
+1. If a block gets tampered with it will get corrupted and you will be able to tell right away that something went wrong. Also, high diffusion
+2. If you have malleability, it means you can mess with the cipher text and predict the reflected changes in the plain text
+3. You can mess with the cipher text and the plaintext and see predictable changes
+
+Lecture 46
+1. subBytes - for each byte in the array, use its value as an index into a 256-element lookup table, and replace byte by the value stored at that location in the table
+2. shiftRows - let Ri denote the ith row in the state. Shift R0 in the state left 0 bytes (no change); shift R1 left 1 byte; shift R2 left 2 bytes; shift R3 left 3 bytes
+3. Because inverting the MixColumns step requires multiplying each column by a fixed array
+4. They allow the algorithm to be more random, and it makes it recursive.
+5. To increase the randomization
+
+Lecture 47
+1. Ideentical plaintext blocks will have identical cipher text blocks
+2. Randomization - cipher block chaining
+3. an attacker able to observe changes to ciphertext over time will be able to spot the first block that changed. if another attacker can find two identical ciphertext blocks, he can derive the relation listed in the slides
+4. the cipher is used as a pseudorandom number generator, and the reuslt is a key stream that can be used as in a one-time pad.
+
+Lecture 48
+1. The private key
+2. they are easy to compute but difficult to invert
+3. you don't have to care who has the public key. you only have to care about the one person who has the private key, and they should never have to transfer it because they made it themselves
+4. {P}K-1
+5. Public key encryption can take 10,000 times as long as symmetric encryption because it is more complex.
+
+Lecture 49
+1. Yes because both keys can be used for both purposes
+2. You are supposed to use very large prime numbers for your keys. RSA relies on the difficulty of factoring large numbers
+3. Yes
+4. They would need the private key to decrypt it, and only one person has that key
+5. Because everyone has access to the public key, so anyone can send a messge encrypted with that key
+6. Because only B has that private key, so the key provides authentication
+7. They can use the public key to decrypt it
+8. B can encypt it with its private key and then encrypt the result with A's public key
+
+Lecture 50
+1. So that you can quickly use it to check the integrity of the data
+2. it's strong if even given an input, you are unable to find another input that hashes to the same value
+3. second preimage resistance means that if you are given an input to a hash, you can't find a different one that hashes to that value. first preimage just says you can't find an input that hashes to a given value
+4. you'd expect a collision when you have 1.25*sqrt(2^128) different inputs
+5. collision after 1.25*sqrt(2^128) inputs
+6. Because you can't really unhash something, so you wouldn't be able to decyrpt anything
+7. If the plaintext is tampered with, it would change the hash value, so you'd immediately know something was wrong
+8. sign it with A's public key and then hash it.
+
+Lecture 51
+1. No b ecause that message can be decyrpted with the public keys
+2. No because than anyone could decrypt the outer encryption and then re-encrypt it with their own key
+3. No
+4. Requires confidentiality and authentication. No one else can see the message and you have to know that the message came from the correct source.
+
+Lecture 52
+1. Doesn't matter because the attacker would need to know b in order to get the key
+2. Wouldn't matter because they have to know g^b mod p
+3. Wouldn't matter because they would have to know g^a mod p

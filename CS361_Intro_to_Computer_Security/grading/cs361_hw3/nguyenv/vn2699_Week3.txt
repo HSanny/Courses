@@ -1,0 +1,159 @@
+Vivian Nguyen (vn2699) 
+CS361 Questions: Week 3
+CS Login: ngugenv
+Email: nguyenv@utexas.edu
+
+****************
+** Lecture 34 **
+****************
+1: Because to get a rate larger than C/h, we would have to decrease h, and it is impossible to have an encoding that is smaller than the entropy.
+2: Even if noise obscures some of the message, you can still figure out what the meaning is because more than the bare minimum encoding is transmitted.
+
+****************
+** Lecture 35 **
+****************
+1: h = -(log(1/10)) = log(10)
+2: Symbols or letters in a language are not independent of one another; it is difficult to run experiments on people; lots of complexities in language like syntax; etc.
+3: Zero-order assumes all characters are equally likely, first-order assumes some symbols occur more frequently than others but are independent of one another; and higher-order assumes some symbols follow other symbols more frequently than others.
+
+****************
+** Lecture 36 **
+****************
+1: Because there are an infinite number of random uncertain qualities that may affect the outcome of an event.
+2: The person who writes or sends a message knows what the message is but anyone who cannot read it or can only read parts of it has no to only partial information about the message.
+3: The closer a language is to entropy, the less redundancy it contains.
+
+****************
+** Lecture 37 **
+****************
+1: There are numbers occuring at random frequencies - 8 seems to occur most frequently while 7 doesn't appear at all; there are symbols - parenthesises, addition signs, asterisks, question marks, exclamation points, periods, colons, and semicolons.
+2: You could encrypt something without a key but it would be unrecoverable. Likewise, you could decrypt without a key but you wouldn't get anything useful out of it.
+3: It renders the message less useful or meaningful to anyone who does not know how to interpret it.
+4: An attacker could figure out what is being obscured because on knowledge that certain symbols occur more frequently than others in a natural language.
+
+****************
+** Lecture 38 **
+****************
+1: P
+2: C
+3: Redundancy in a language transmits more meaning. It may also be an easier method than trying to break the algorithm, deduce the key, etc.
+4: If they know certain symbols occur more frequently than others and if they occur more frequently than others in a certain succession then they can use that to their advantage when looking at an encrypted message and placing certain patterns with the natural/original language.
+
+****************
+** Lecture 39 **
+****************
+1: Someone may be able to try every combination of a key possible and eventually break the encrypted message but it may use brute force and take a very long time. Also it is useless if you aren't able to recognize what a successful decryption in that algorithm looks like.
+2: Because you must try every possible combination of that key and there are two possibilities (0 or 1) that could occur at every n position in the string.
+3: Substitution is important for confusion and transposition is important for diffusion.
+4: Confusion is transformating information in plaintext so that an interceptor cannot readily extract it and diffusion is spreading the information from a region of plaintext widely over the ciphertext.
+5: They are both equally important especially when used in conjunction with one another.
+
+****************
+** Lecture 40 **
+****************
+1: A monoalphabetic cipher is one in which each symbol of the plaintext is exchanged for another symbol uniformly and a polyalphabetic substitution is exchanged for another symbol dependening on where in the plaintext the symbol occurs.
+2: Itself or another alphabet.
+3: It is every possible combination of that alphabet.
+4: The shifted alphabet.
+5: The factorial of the number of symbols in the alphabet.
+6: No because you can analyze the frequency of symbols and strings of symbols to match redundancies in the plaintext to the ciphertext.
+7: Find the ciphertext on the row of the row, move down to the key on the table, and find the corresponding letter pair on the left.
+
+****************
+** Lecture 41 **
+****************
+1: Assuming that the plaintext is in the English alphabet, 26^3 for a three symbol string.
+2: It is assumed that the two y's in the ciphertext will also turn out to be the same letters in the plaintext.
+3: Yes because there are publicly available encryption algorithms use by the government and commercial businesses so "perfect ciphers" must exist.
+
+****************
+** Lecture 42 **
+****************
+1: Even with knowing the algorithm, the attacker would still need to try every possible combination of the key. Also, every possible plaintext could be the pre-image of that ciphertext under a plausible key.
+2: If the key is not random then the attack could reduce the number of the possible key combinations which would no longer make the algorithm perfect.
+3: The sender and reciever both need the key and need it to be distributed securely. However, if there was already a secure channel in which to distribute in order to deliver the key securely, there would be no use for the encryption in the first place.
+
+****************
+** Lecture 43 **
+****************
+1: The original characters are still present in the ciphertext and letter frequencies are preserved.
+
+****************
+** Lecture 44 **
+****************
+1: Symmetric algorthm.
+2: Key distribution is determining how to convey keys to those who need them to establish secure communication. Key managment is how to preserve the safety of a large number of keys and make them aailable as needed.
+3: No because S has a private key use for decoding messages.
+4: Neither is "better." Which key is better depends on the context or situation.
+
+****************
+** Lecture 45 **
+****************
+1: Block ciphers have a more complicated interface, higher diffusion, and better immunity to temperting.
+2: An encryption alogrithm is malleable if transformations on the ciphertext produce meaningful changes in the plaintext.
+3: Homomorphic encryption allows computations to be carried out on ciphertext and generates an encrypted result which matches the result of operations performed on the plaintext when decrypted.
+
+****************
+** Lecture 46 **
+****************
+1: subBytes and addRoundKey
+2: shiftRows and mixColumns
+3: Because inverting the MixColumns step requires multiplying each column by a fixed array.
+4: A block of bytes is modified in place during a round in which substitutions and transpositions take place.
+5: If there is a larger array of bytes.
+
+****************
+** Lecture 47 **
+****************
+1: Identical blocks in the plain text yield identical blocks in the ciphertext.
+2: Cipher Block Chaining (CBC). XOR each esuccessive plaintext block with the previous ciphertext block and then encrypt.  
+3: An attacker able to obvserve changes to ciphertext over time will be able to spot theh first block that changed and if an attackere can find two identical ciphtext blocks, they can derive a relation gain information about two plaintext blocks.
+4: Block encrption modes generate ciphertext that stores the message in encrypted but recoverable form. In key stream generation modes, the cipher is used more as pseudorandom number generator. The result is a key stream that can be use as a one-time pad. Decryption uses the same key stream.
+
+****************
+** Lecture 48 **
+****************
+1: The private key used for decryption.
+2: It should be extremely difficult to be able to invert the public key or else it would be easy for everyone to decrypt the messages.
+3: It eliminates the need to establish secure communation between the sender and reciever when sending keys.
+4: C
+5: A public key encrption elimintes the key distribution problem but may take 10,000x as long to perform as a symmetric encryption as the computation depends on complex operations and not simple bit-wise operations.
+
+****************
+** Lecture 49 **
+****************
+1: Yes because either key could be use for encoding. Just use the other key to decode.
+2: An interceptor would have to fact P^e to recover the plaintext.
+3: Yes but it would take a very long time to recover the plaintext using brute force.
+4: It is encrpted and only A has the private key for decryption.
+5: Because the key is public and anyone can encode a message to A.
+6: Because it is B's private key that has not been given to anyone else.
+7: They can just use the public key to decrypt the message.
+8: You use two pairs of keys in which B first encrypts the message with their private key to ensure authentication and then encrypts again with A's public key to ensure privacy.
+
+****************
+** Lecture 50 **
+****************
+1: Because it is more efficient.
+2: Strong collision resistance means that a function is more likely to hash two different message to two different locations. Weak collision resistance means it is more likely two hash two different messages to the same location.
+3: First preimage resistant means the hashed message should not resemble the original message. Second preimage resistant means two different messages shoudl not hash to the same location.
+4: 1.25 * (2^128)^(1/2) = 2.3e19
+5: 1.25 * (2^160)^(1/2) = 1.2e24
+6: The hash function is not as strong or difficult to invert as public keys.
+7: A cryptographic hash function "binds" the bytes of a file together in a way that makes any alterations to the file apparent.
+8: B uses a hash function first to preserve the integrity of the data. Then B pairs that with RSA in which B encrypts with their own private key and then encrypts again with A's public key to preserve authentication and confidentiality respectively.
+
+****************
+** Lecture 51 **
+****************
+1: No because anyone can decrypt R's private key by using their public key. Then they could do the same thing again but with S's keys.
+2: No because anyone could decrypt S's private key by using the public key and then use that message to pretend to be S.
+3: No they are not equivalent.
+4: Perform the authentication step as the inner encryption to assure no one but S sent the message and then the confidentiality step as the outer encryption to assume no one but R can read it.
+
+****************
+** Lecture 52 **
+****************
+1: Nothing because the eavesdropper would need to knwo either a or b in order to decrypt the message.
+2: They would be able to decrypt Alice's message.
+3: They would be able to decrypt Bob's messaage.

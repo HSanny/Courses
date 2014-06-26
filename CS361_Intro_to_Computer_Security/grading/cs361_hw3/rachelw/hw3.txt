@@ -1,0 +1,183 @@
+FIRSTNAME : Rachel
+LASTNAME : Wong;
+UTEID :  rcw956;
+CSACCOUNT : rachelw;
+EMAIL : rachelcwong168@gmail.com;
+
+Lecture 34:
+1. If you achieve C/h on average, you are fully utilizing the channel. You cannot transmit a signal over the same channel greater than C/h because there is no more room left in the channel.
+
+2. If you keep sending the same message, and there’s any bandwidth at all, according to the Fundamental Theorem of a Noisy Channel, the message will eventually go through. The more redundant, the higher the reliability.
+
+Lecture 35:
+1. H = -(log1/10)
+
+2. Symbols and ordering of words/letters are redundant, All symbols are not equally likely.
+
+3. Zero-order: All symbols have the same probability. First-order: Takes probability of each letter. Second-order: Computes the likelihood that one symbol will come after another.
+
+Lecture 36:
+1. Prior probabilities are sometimes impossible to compute because you don’t know what to expect, and there’s no past information to look at to determine trends.
+
+2. In order to communicate the information effectively, both the sender and receiver must know what they are trying to communicate. If the receiver is expecting a message, the sender needs to send the receiver the answer or information to what it’s expecting. The sender can’t arbitrarily send the receiver whatever the sender wants because the receiver won’t have any idea what the sender is talking about.
+
+3. The entropy can be used to measure the amount of redundancy in encoding. If the information content of a message is equal to the length of the encoded message, there is no redundancy.
+
+Lecture 37:
+1. Just by looking at the message, you can’t decipher immediately what the message perceives, hence cryptography. They are only numbers and symbols, no letters.
+
+2. There are other ways to do encryption/decryption to where you don’t need a key. All you need is a encryption/decryption algorithm
+
+3. The file’s information content is preserved and hidden.
+
+4. Depending on the language, you can assume that the most used symbol in the message is equivalent to the most used symbol/letter in that language.
+
+Lecture 38:
+1. S = E(D(E(P))), D(S)
+
+2. {D{E{{P}KE}KE}KD}
+
+3. To make it easier to figure out the message, gives you more clues for the scenario.
+
+4. More redundancy in the message would prove helpful to decode if the cryptanalyst knew the properties of the language. The more redundant symbols could be linked to the more redundant symbols of that language.
+
+Lecture 39:
+1. You have to have some way of recognizing that you broke the encryption algorithm. You may have broken it, but you wouldn’t know it.
+
+2. There are 2^(n-1) different operations, so if you go through every possibility, you are bound to recover K.
+
+3. Almost all modern commercial symmetric ciphers use some combination of substitution and transposition for encryption.
+
+4. Confusion: transforming information in plaintext so that an interceptor cannot readily extract it. Diffusion: Spreading the information from a region of plaintext widely over the ciphertext.
+
+5. Substitution is good at confusion, transposition tends to be good at diffusion.
+
+Lecture 40:
+1. A uniform substitution is monoalphabetic, meaning each symbol of the paintext is exchanged for another symbol. When different substitutions are made depending on where in the plaintext the symbol occurs, this is called polyalphabetic.
+
+2. Whatever the map/table is from on alphabet to the other alphabet.
+
+3.  
+
+4. The same alphabet and how much you shift it by.
+
+5. For English, 25 or 26
+
+6. No, probably not.
+
+7. You need a key and Vigenere Tableau to decode the ciphertext.
+
+Lecture 41:
+1. There are 3 letters, and 26 letters in the alphabet. 26^3 = 17576
+
+2. 26 possibilities for x, 25 possibilities for y, 25 * 26 = 650
+
+3. No, especially with English. There’s too much redundancy and with that, it’s too easy to find trends and through guess and check you are bound to come break it.
+
+Lecture 42:
+1. Even if you know the ciphertext and algorithm, you can’t remove any of the possibilities.
+
+2. If you know something about the key, you could minimized the number of possibilities.
+
+3. If sender and receiver already have a secure channel, why do they need the key? If they don’t, how do they distribute the key securely? This is the key distribution problem.
+
+Lecture 43:
+
+1. Since transposition reorders characters, but doesn’t replace them, the original characters still occur in the result. Letter frequencies are preserved in the ciphertext, but the frequencies of digrams, trigrams, etc. are not.
+
+Lecture 44:
+1. Symmetric.
+
+2. Key distribution: how do we convey keys to those who need them to establish secure communication. Key management: given a large number of keys, how do we preserve their safety and make them available as needed.
+
+3. No. Ks is only for encrypting. The holder of K-1s is the only one who can decrypt.
+
+4. Depends on the situation you want, they both have their positives and negatives. I would say symmetric encryption because public is more expensive to generate, but they have very different characteristics and are not directly comparable.
+
+Lecture 45:
+1. Because stream encryption has low diffusion and susceptibility to insertions and modifications while block ciphers has high diffusion and immunity to tampering.
+
+2. Malleability is bad for encryption algorithms. It means you can make changes to the ciphertext to produce meaningful changes in the plaintext.
+
+3. Homomorphic encryption is a form of encryption where a specific algebraic operation performed on the plaintext is equivalent to another (possibly different) algebraic operation performed on the ciphertext.
+
+Lecture 46:
+1. The third step uses confusion. You take each column of the array and multiply the column by integers. The result is a column and substitute.
+
+2. The first step uses diffusion. For each byte in the array, its value is used as an index into a 256-element lookup table, and replace its value in the state by the byte value stored at that location in the table.
+
+3. The inverse array that you have to multiply by are not as optimized as the regular array.
+
+4. AES works with blocks and the rounds are for mangling the blocks in order to provide as much protection as possible.
+
+5. You would want to increase the total number of rounds to mix up the blocks.
+
+Lecture 47:
+1. Same blocks in plaintext are going to be identical blocks in the cipher text.
+
+2. Having a process where identical blocks in the plaintext don’t yield identical blocks in cipher text.
+
+3. An attacker able to observe changes to ciphertext over time will be able to spot the first block that changed. If an attacker can find two identical ciphertext blocks, you can XOR them together and get information about the plaintext block.
+
+4. The key stream generation mode, the cipher is used more as a pseudorandom number generator. The result is a key stream that can be used for encryption by XORing with a message stream. Decryption uses the same key stream.
+
+Lecure 48:
+1. The secret key to decrypt.
+
+2. The are easy to compute, but difficult to invert.
+
+3. Because only you have the decryption key, no one else does. Everyone can read but no one can decrypt.
+
+4. {{{{P}k}k}k}
+
+5. An asymmetric algorithms may take 10,000 times as long to perform as a symmetric encryption; the computation depends on more complex operations, not on simple bit-wise operations.   Symmetric algorithms are much faster.
+
+Lecture 49:
+1. Yes, because of the way the keys are used in a symmetric fashion.
+
+2. RSA algorithm relies on the difficulty of factoring large numbers.
+
+3. Yes
+
+4. Because they do not have the key to decrypt the message.
+
+5. Anyone might have A’s public key.
+
+6. No one besides B has that private key.
+
+7. Anyone can have B’s public key.
+
+8. You need two sets of keys, one for authenticity and the other for privacy.
+
+Lecture 50:
+1. Because we want to be as efficient as possible.
+
+2. Weak collision resistance: m2!=m1 such that f(m1) = f(m2). Collision resistance: it is hard to find messages m1 and m2 such that f(m1) = f(m2).     
+
+3. Premiage resistant: it is hard to find any m such that h = f(m). Second preimage resistant: given an input m1, it is hard to find m2 != m1 such that f(m1) = f(m2).
+
+4. 1.25(2^64) before you find a collision
+
+5. 1.25(2^80) before you find a collision
+
+6. Because it is used for integrity, theres no way to use it for confidentiality.
+
+7. Given a sensitive file M, we compute the hash function H(M) and store the result securely. Each time the file is used or accessed, recompute the hash. Compare it to the stored value. If the two values match, it is likely that no changes have occurred to the file.
+
+8. B can use a hash function on a message to guarantee integrity, and then use RSA to have keys for certain hash values to guarantee confidentiality.
+
+Lecture 51:
+1. No, any eavesdropper can intercept the message and decrypt it using S’s public key to retrieve K.
+
+2. Yes, Since no one but R can decrypt the message, confidentiality is assured. No one but S could have perfomed the inner encryption so authentication is accomplished.
+
+3. No
+
+4. Key exchange requires both confidentiality and authentication.
+
+Lecture 52:
+1. The eavesdropper would be able to eavesdrop as long as they knew how to use these values in computing the agreed upon value.
+
+2. They would not be able to eavesdrop because they do not know b.
+
+3. They would not be able to eavesdrop because they do not know a. 

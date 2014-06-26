@@ -1,0 +1,121 @@
+Name: Taylor Gregston
+EID: teg282
+CS Login: teg282
+Email: gregstont@gmail.com
+
+Lecture 34:
+ 1. Fundamental Theorem of Noiseless Channel states that C/h - e is the maximum data rate.  ie, A pipe can only fit so much.  A perfect encoding will get you near C/h.
+ 2. Increasing the redundacy will make it more likely for the message to get through in the presence of noise, which in turn makes the channel more reliable.
+
+Lecture 35:
+ 1. h = -log(1/10)
+ 2. It is difficult to get accurate probabilities to use for the digrams and trigrams, etc.
+ 3. Zero: only considers number of symbols, First: considers the frequency of the symbols, Second: considers the likliehood of the following symbol.
+
+Lecture 36:
+ 1. You have to have a complete history of the language, whether written or spoken.  This knowledge may not even be available.
+ 2. Depending on the amount of knowledge already known the number of available options may be different.  With less options the information content will be lower.
+ 3. Redundancy is the amount of extra data in a message.  A highly redundant encoding will have lower entropy than a highly efficient encoding.
+
+Lecture 37:
+ 1. Its probably English because it was found in the US.  We know the complexity of the encryption is probably low because it is from a long time ago.
+ 2. The encyrption and decryption may always use the same static function, indpendant of any sort of key/salting.
+ 3. The information content is preserved but hidden so the reciever can read the message but eavesdropper cannot.
+ 4. One could guess that the most often used symbols are most often used in the underlying message.  This can happen in the presence of redundancy.
+
+ Lecture 38:
+  1. D(E(D(E(P)))) = P
+  2. ... = D(E(E(P,Ke),e),Kd)
+  3. Using traffic analysis we can gain clues about the scenario.
+  4. They can use the frequency of symbols to make good guesses.
+
+ Lecture 39:
+  1. Trying the number of keys necessary to guess correctly would take years upon years to guess correctly
+  2. You could guess the key and check against the cipher. Although with modern encryption this would take a very long time. It is n - 1 becuase you might get there on avg halfway through.
+  3. Substitution creates confusion while transposition creates diffusion.  In combination and in great quantity a strong encrpytion can be made.
+  4. Confusion is transforming information in plaintext so that it can't be intercepted and diffusion is spreading information over a region of text.
+  5. Both.  Most algorithms use both in combination to make the encoding harder to detect.
+
+ Lecture 40:
+  1. Mono: each symbol is substituted uniformly over the plaintext. Poly: substitutions are made depending on where the symbol occurs.
+  2. They key is the specified mapping which may just be a table.  Easily breakable.
+  3. K! is the number of combinations of mappings. 
+  4. They key is the number of positions you shift.
+  5. The keyspace would be 26 because there are 26 letters.
+  6. No it is not strong because you probably wouldnt have to guess all combinations.
+  7. The decyption algoritm would use a similar table that was used for encyption.
+
+Lecture 41:
+ 1. There are 26 possibilities so 26^3 = 17576
+ 2. If it is a simple substition we know that 2 letters are the same.
+ 3. Yes but it requires as many keys as possible plain texts.
+
+Lecture 42:
+ 1. It is perfect because the search space for the key is the same as the messsage.
+ 2. It has to be random because if something is know about the key it breaks the perfect cipher.
+ 3. Distrubution problem describes the problem that the receiver does not have the key but needs it to decode the message.
+
+Lecture 43:
+ 1. If one knows that transposition was used they can still count frequencies of symbols and they would be approximately the same as the underlying language.
+
+Lecture 44:
+ 1. A one-time pad is symmentric because you use the same key.
+ 2. Key distribution is about getting the key to the places it is needed.  Key management is about keeping track of all your keys in a safe manner.
+ 3. No.  They would need the private key to decpryt the message.
+ 4. It depends on the circumstance.  Asymmetric solves the distribution problem.  Symmetric algorithms are usually faster.
+
+Lecture 45:
+ 1. Stream ciphers have low diffusion and susceptibility to insertions and modifications.  Block has higher diffusion and immunity to tampering.
+ 2. It means that a change in the cipher will produce meaningful changes in the plaintext.
+ 3. It means that the same operations are used to encrypt and decrypt.
+
+Lecture 46:
+ 1. SubBytes causes confusion by using a simple substituion with a lookup table.
+ 2. ShiftRows causes diffusion because depending on where the symbol is, it gets shifted a different amount (polyalphabetic).
+ 3. For decryption the mixcolumns step uses the inverse of the matrix which contains number which are harder to optimize.
+ 4. A block of 128 bytes is used as a unit called the state.  The algorithm does many passes, or rounds, on this state to eventually get the ciphertext.
+ 5. Increasing the number of rounds is done with higher key lengths to increase security.
+
+Lecture 47:
+ 1. Identical blocks in the plaintext will yeild identical blocks in the ciphertext.
+ 2. It can be fixed with Cipher Block Chaining which uses the ciphertext of the previous block and xors it with the next block.
+ 3. Observed changes: may allow someone to pinpoint spot in cipher where text changed.  Content leak: two identical ciphertext block could yield information if xored together.
+ 4. Key stream uses the cipher as a random number generator which is used as a one time pad.
+
+Lecture 48:
+ 1. The private key needs to be kept private.
+ 2. One way functions are difficult to reverse which makes finding the key very difficult.
+ 3. They can make the public key visible to anyone as long as they keep the private key private.
+ 4. {{{P}k-1}k}k-1 = {P}k-1
+ 5. Asymmetric algorithms may take up to 10,000 times more time to perform encrpytion.
+
+Lecture 49:
+ 1. Yes because with RSA either key can be used for encryption or decryption.
+ 2. They play a role in the one-time function because the product of two prime numbers is difficult to factor.
+ 3. Yes, but it would take years and years and years.
+ 4. Only the person with the corresponding private key could read the message.
+ 5. The public key is available to anyone, so anybody could have signed/encrypted the message.
+ 6. Only B has the B's private key, so it must have originated from B.
+ 7. B's public key could be used to decrypt the message which is publicly available.
+ 8. By signing the message by using a pair of keys, one for privacy and the other for authorization.
+
+Lecture 50:
+ 1. Because it is done often it is necessary that the function can be done efficiently.
+ 2. Weak resistence is when given a message it is difficult to find another message with the same hash and strong resistence is when it is hard to find two messages with the same hash aka collision.
+ 3. Preimage says it is hard to find the message of a given hash and second preimage says it is hard to find another message with the hash of a given message.
+ 4. It means a collision could be found in 1.25 * 2^64 tries.
+ 5. It means a collision could be found in 1.25 * 2^80 tries.
+ 6. It isn't used for confidentiality because anybody could just replace the hash with a recomputed hash.
+ 7. Collisions are unlikely.  Slight modification on the message will completely change the hash.
+ 8. They can append a hash and encrypt both the message and hash together.
+
+Lecture 51:
+ 1. No because anybody with R's public key could decrypt the first level then use S's private key to get the rest.
+ 2. No because anybody with S's private key could decypt the first level and then encrypt again with their own key.
+ 3. No because the first option would require you to have both R and S's private key and the 2nd option you only need R's private key
+ 4. Authentication and confidentiality.
+
+Lecture 52:
+ 1. Nothing. The eavesdropper would need to know a or b.
+ 2. If a were discovered then the message could be decytpted. (assuming g and p are also known)
+ 3. If a were discovered then the message could be decytpted. (assuming g and p are also known)

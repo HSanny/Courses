@@ -1,0 +1,125 @@
+Name: Adan Briones
+EID: asb2227
+CS LOGIN: adanb26
+Email: adidan26@yahoo.com
+
+Lecture 34
+	1. It is impossible because C represents the maximum capacity of a channel, and h represents the entropy of a language. Since C is dependent on the channel and fixed, the only way to transmit at a greater average rate than C/h is to decrease h. However, we know that h, or the entropy, is the best possible encoding for a language and can't be made smaller. Therefore, transmitting faster than an average of C/h is impossible over any given channel.
+	2. An increase in redundancy increases the reliability of transmission over a noisy channel, because it increases the chance that a message is successfully recieved even if some information is lost in the noisly channel.
+
+Lecture 35
+	1. h = (log2(10)) = -(log2(1/10)) = 3.32
+	2. It is difficult because many natural languages contain significant amounts of redundancy.
+	3. Zero-order calculates entropy based on the assumption that each symbol of a language has the same probability of being used. First order calculates entropy based on calculated probabilities of each symbol in the language. Second order does the same with digrams of the language, and third order does the same with trigrams.
+
+Lecture 36
+	1. It is sometimes impossible to compute prior probabilities because there may be factors that affect the calculation that are unknown. Calculating prior probability depends on the state of knowledge of the person computing the probability.
+	2. Some observers may have more knowledge than others, which means they have less uncertainty.
+	3. Entropy can be used to measure redundancy. The lower the entopy of a language, the lower the amount of redundancy in that language.
+
+Lecture 37
+	1. We see it is a message from a pirate and that there is alot of redundancy in the message. This helps us by giving us ideas about the source text and the nature of the encryption algorithm because we know a pirate probably wouldn't know complex algorithms. Also, the redundancy would make it easier to decode.
+	2. I key may not be necessary becuase the sender or reciever may have the encoding memorized which makes a key pointless.
+	3. Encrypting a file should preserve the information content of that message because modifying the content would render the message useless to the receiver. Encryption should only mask the content.
+	4. Redundancy in a source would allow anyone to use his or her knowledge about an underlying language in order to make it easier to decode the message.
+
+Lecture 38
+	1. D(E(D(E(P)))) = P
+	2. D(E(E(P, Ke), Ke), Kd) = E(P, Ke) = C (ciphertext)
+	3. Patterns, such as traffic analysis, can give clues to the content in an encrypted message.
+	4. Properties of language can be used by a crypanalyst to explain the frequency of symbols in a message. 
+
+Lecture 39
+	1. It may not be feasible to break a breakable algorithm because it would take a tremendous amount of time. One example on Quest would take millenia.
+	2. Since there are 2^n possibilites, you can do a linear search over the possibilities and on average a linear search produces the target halfway down. This would require 2^(n-1) operations.
+	3. While they may seem simple on their own, multiple combinations of substitution and transposition can be very effective in ciphers, and that is why they are used in most ciphers today.
+	4. Confusion transforms plaintext information while diffusion spreads the information widely over the ciphertext.
+	5. A combination of confusion and diffusion is best for encryption.
+
+Lecture 40
+	1. Monoalphabetic substitutions are done uniformly throughout the cipher, and polyalphabetic subsitutions vary based on the position of the symbol in the plaintext.
+	2. The key is the mapping of each symbol with the symbol it replaces.
+	3. Because if k is the size of the alphabet, there are that many different combinations for mapping the key and each symbol only replaces one other symbol.
+	4. The key is the number of letters you shift down the alphabet when encoding or decoding a symbol.
+	5. The keysoace is 25 or 26 depending on whether 0 is a possible key. (A 0 key would be pointless)
+	6. No, you could use other methods than brute force to solve the cipher because it would reflect the redundancy of English
+	7. Find the row of the character in the key, then find the ciphertext character in that row. Then the plaintext character is the charcter whose collumn intersects the row at the location of the ciphertext character.
+
+Lecture 41
+	1. All we know is that it is a substitution cipher so there are 3 characters with 26 possible representations. 26^3 = 17576.
+	2. It was reduced by a factor of 27 becuase the fact that a simple substitution cipher was used was revealed to us. This meant the amount of decriptions was now 26 * 25 = 650. 17576/650 =(about) 27.
+	3. Yes, becuase knowing that a running cipher is used does not decrease the search space even if you have the ciphertext.
+
+Lecture 42
+	1. Shannon proved that a perfect cipher requires as many possible keys as possible plaintexts, with the key being chosen randomly. The one-time pad fits all three of those criteria. Seeing the ciphertext and knowing the algorithm doesn't reduce search space.
+	2. The key must be random because nothing must be known about the key so that the search space can't be reduced. Any knowledge of the key could be used to reduce search space.
+	3. The key distribution problem states the main problem with the one-time pad. If the sender and reciever have a secure channel to send the key, why not use it to send the message? If no such channel exists, how will they send the key? These questions make up the key distribution problem.
+
+Lecture 43
+	1. One downside is that using transposition retains the frequency of characters from the plaintext to the ciphertext. 
+	
+Lecture 44
+	1. Symmetric
+	2. Key distribution describes the problem of sending keys securely to people who need them, and key management describes the problem of maintaining secure yet available keys.
+	3. Not neccessarily, S may have different keys for encryption and decryption. You would have to have the correct key in order to decrypt encrypted messages.
+	4. The two systems can't really be compared directly, but must be applied based on the security situation.
+
+Lecture 45
+	1. Block ciphers make more sense because they have high diffusion and they are hard to tamper with without detection.
+	2. Malleability is bad because it means that a change in the cipher text produces meaningful changes in the plaintext. This is important becuase an attacker could possible change the message.
+	3. Homomorphic encryption is malleable by design and allows for computations carried out on the cipher text to be equal to operations performed on the plaintext.
+
+Lecture 46
+	1. The first step, shift rows, uses confusion by replacing a byte in the statewith a byte in a lookup table. The mixColumns steps also uses confusion by replacing columns in the state after multiplying the column by a fixed array of integers.
+	2. The second step uses diffusion by shifting the bytes in the state array based on their row number.
+	3. Decryption of AES is the inverse of encryption. Decryption is slower because inverting the mixColumns step requires multiplying each column by an fixed array.
+	4. A block refers to the amount of data you encrypt at a time. So AES take 128 bits of input at a time and encrypts it independent of the rest of the input. This is repeated until the input is completly encrypted
+	5. Increasing the rounds could increase the security of the information in the plaintext. This would be desired if the reliability of AES with a certain amount of rounds used was reduced.
+
+Lecture 47
+	1. A disadvantage is that identical blocks in the plaintext are identical when encrypted into ciphertext.
+	2. This flaw can be fixed by randomizing the blocks before encryption.
+	3. Potential weaknesses inlude "observed changes" and content leak.
+	4. The key stream generation is different because it is used more as a pseudorandom number generator. The goal is to generate a random spearing string of bits in a reproducible fashion. Not encrypting and recovering information.
+
+Lecture 48
+	1. The decryption key must be kept secret.
+	2. One-way functions are critical to public key systems because the functions are easy to compute and hard to invert. This relates to the fact that in public key systems, it should be easy to encrypt and hard to decrypt.
+	3. The key is just made public. Any one can see the public key, so distributing the key is not a problem.
+	4. {P}k^-1 (may or may not equal C)
+	5. Asymemmetric algorithms require more complex operations than symmetric algorithms to be secure. More complex operations cause asymmetric algorithms to be much less efficient than symmetrical algorithms.
+
+Lecture 49
+	1. Yes, because in RSA either key can be used to encrypt or decrypt. RSA is symmetric. 
+	2. Prime numbers are used in the one-way function used in creating RSA. 
+	3. Yes, but it is infeasible to break it.
+	4. No one else would have the private key to decrypt the message.
+	5. The message was created using a key that is publicly available, so anyone could have sent the message.
+	6. A is sure because the key is private.
+	7. Anyone can have the public key for decryption.
+	8. B can ensure authentication and confidentiality by using two keys. One for authentication and the other for confidentiality.
+
+Lecture 50
+	1. It should be easy to use on any data so that multiple functions do not need to be generated.
+	2. Weak gives the restriction that m1 != m2. However, strong does not have that restriction.
+	3. Preimage means that given an h value, it is hard to find a message that hashes to that value. Second preimage states that it is hard to find a message that hashes to the same value of a message you already have.
+	4. You will have to go through 1.25(2^64) arguments to find a collision.
+	5. You will have to go through 1.26(2^80) arguments to find a collision.
+	6. Hash functions bind the bytes of a file together to make them tamper resistant. Hash functions to not disguise the data of the file.
+	7. It is hard to find two messages to hash to the same value. Therefore, a file has a unique hash value that would change with any change to the file itself. So any tampering would be made apparent.
+	8. B can send a message encrypted with a public key and include a public hash value. Then B can be confident that only A can decode it, and A can compute the hash value to make sure the integrity of the message hasn't been compromised when he recieves it.
+
+Lecture 51
+	1. No, both levels can be decrypted using the public keys of S and R.
+	2. Yes, but it would be as secure as anyone could perform the outer decryption.
+	3.  No, the first requires an intitial decryption using the sender's private key.
+	4. Key exchange requires confidentiality and authentication
+
+Lecture 52
+	1. It would take longer than the lifetime of the universe to find a.
+	2. In order for this to threaten the security of the system, the listener must also have the information from question one. If the listener only has a, the system should still be secure.
+	3. Same as 2. If the listener only has b, the system should still be secure. However if the listener has b and the info from question one, they may be able to get the shared secret value.
+
+
+
+

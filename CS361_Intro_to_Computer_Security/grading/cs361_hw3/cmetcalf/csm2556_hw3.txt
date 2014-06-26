@@ -1,0 +1,285 @@
+Name:  Christopher Metcalf		
+EID:  csm2556	
+CS Login:  cmetcalf	
+Email:  csmetcalf@gmail.com
+
+Lecture 34:
+1. If a channel transmits at C bits per second, and its entropy is in
+bits/symbol, then C/h is bits/sec * symbol/bits or symbols per second.  To
+increase symbols per second, you need to increase the channel or decrease h.
+But we know that h is entropy, the theoretical limit on the number of bits on
+average to transmit a symbol.  H is a bound on the efficiency of the coding.
+Since h cannot decrease, given a certain channel, it is impossible to transmit
+a signal over said given channel at an average rate greater than C/h.   
+
+2.  Redundancy basically says that if you remove stuff and can still get the
+same message, there is a lot of redundancy in the ordering of letters in words
+and/or presence/absence of symbols.  If a channel's capacity is
+reduced by noise, you can still reliably transmit the message by increasing
+the redundancy of the coding scheme.  That is to say, if you have a lot of
+redundancy, the messages meaning will get through even if not all of the
+symbols do because of the noise.  
+
+Lecture 35: 
+1. h = -log(1/10) = log10
+
+2. Computing the entropy of a language is difficult because it requires that
+we know the probabilities of the symbols (either beforehand or on the fly),
+and this is hard.  We also might need to assume those probabilities do not
+change, which may be unrealistic. Entropy also depends on the state of knowledge of the receiver.   
+
+3. Zero order model gives an approximation of entropy assuming that all
+symbols are equally likely.  It assumes each letter is independent of the
+context.  The first order model also assumes each letter is independent, but
+takes into account that some symbols occur much more frequently than others. 
+The second order takes into the liklihood that 1 letter will fall after
+another another (eg. EN), and the third order carries it to 3 letters - a
+trigram (eg. ENT). 
+
+Lecture 36: 
+1. Prior probabilites are sometimes impossible to compute because you may not
+have a large enough sample set to compute them with accuracy.  
+They may also change if conditions change.   Or perhaps you have random
+string, and this is one that you do not know the prior probability and cannot
+be represented more efficiently. 
+
+2. Information content is relative to the state of knowledge of the receiver.
+If the receiver knows the content, there is no need to convey that particular
+content because he has no uncertainty.   
+
+3.  The difference between the efficiency of the encoding and the entropy (the
+theoretical limit of efficiency) is a measure of the redundancy in the
+encoding.  Entropy can be used to measure the amount of redundancy in the
+encoding.  The close the coding to efficiency, the better the encoding because
+of less redundancy.  If the info content of the message equals the length of
+the encoded message, there is no redundancy. 
+
+Lecture 37: 
+1. Regarding Captain Kidd's message, you might observe what is the underlying
+language of the plaintext - perhaps English.  The goat's head as a pun on
+Kidd's name may point to this. You might want to ask what characteristics of
+the probable source text are relevant - if a treasure map then you might look
+for directionals like north, south, etc.  You also what to see what characteristics 
+of the source language are relevant - as in English letters have different
+probabilities.  You want to ask what is the complexity of the encryption
+algorithm and consider the pirate context - such as a simple substitution algo
+replacing letters with characters.  You also want to consider if any other
+transformations have been applied (such as squeezing out spaces).  
+
+2. A key may be optional if there isn't an algorithm needed from a family of
+algorithms in order to encrypt/decrypt the message. It may be an extremely
+simple algorithm of shifting the letters one spot (a is b, b is c, etc).  A
+key wouldn't be necessary as it would be obvious on how to encrypt/decrypt.   
+
+3. Encrypting a file should preserve the info content of the message, or the
+receiver wouldn't be able to retrieve it. 
+
+4. If there is redundancy in the plaintext that is reflected in the sourcetext (eg.
+regularities in the e's), the attacker can gain leverage on decrypting the
+message.  
+
+
+Lecture 38: 
+1.  Simplest form is P.  
+
+2.  Simplest form is E(P, Ke).  I think it's encrypted, then encrypted again, then
+decrypted once, but not a second time.
+
+3.  Traffic analysis can be analyzed in a crisis without knowing the content
+to give a clue about the scenario.  Or, one use patterns to infer some meaning without  
+actually breaking the algorithm. 
+
+4.  The frequency of symbols in languages such as English can give clues as to
+the decryption algorithm - e's are used more and you might see a symbol used
+more frequently in the encrypted message. 
+
+Lecture 39: 
+1. It may not be feasible to break because either if takes too much time or
+data given the analyst's definition of success, or rather the analyst cannot
+recognize when he has succeeded in breaking the code.  For this reason, having
+plaintext/ciphertext pairs that you know match is required.  
+
+2.  The larger the keyspace, the longer the search. If you have a bitstring of
+length n, you have 2^n possibilities.  
+On average when searching a linear space,  you find it about half way down,
+which is expected time on the order of 2^(n-1) operations. 
+
+3.  Almost all modern symmetric modern algorithms use substitution and
+transposition repeatedly and in combination as building blocks, so they are
+important. 
+
+4.  Confusion is transforming info in plaintext so that an interceptor cannot
+easily extract it.  Substitution is good at confusion.  Diffusion is spreading
+the info from a region of plaintext widely over the ciphertext.  Transposition
+(rearranging the order of symbols) is good at diffusion.
+
+5.  We want both confusion and diffusion for encryption, not just one or the
+other.  Whether one singly is better would depend on the context.  
+
+Lecture 40: 
+1.  A monoalphabetic cipher is a substitution cipher where each symbol of
+plaintext is exchanged with the same symbol (all a's have same symbol).   A
+polyalphabetic substitution is where different substitutions are made
+depending on where in the plaintext the symbol occurs.
+
+2. The key is a simple substitution cipher is a table, or however you specify
+the mapping. 
+ 
+3. Because the cipher is an injection (1-1) mapping of the alphabet into
+another alphabet, we have K! tables depending on the size of the alphabet.  
+
+4.  The Caesar Cipher's key is how many positions you shift. 
+
+5.  The size of the Caesar Cipher keyspace should be 26. 
+
+6.  The Caesar Cipher is not strong. 
+
+7.  The Vigenere ciphertext algorithm lines up the plaintext and the key and
+ use the pairs of letters as indicies into a table to tell you what letter in
+ the ciphertext at that position is.  The key to this cipher is another text. 
+The decryption algo just lines up the ciphertext and the key, and the plaintext
+will be the column index corresponding to the ciphertext in the table
+corresponing to that key's row index.
+   
+Lecture 41: 
+1. There are 26 letters in English (26 possibilities), and 3 positions.  Each letter can be
+re-used, so there are 26^3 possible decryptions. Each x and y could correspond
+to different letters (polyalphabetic substitution).
+
+2. It is a reduced by a factor of 27 because it is a simple substitution or
+monoalphabetic cipher, where each x and each y is exchanged for one symbol and
+that symbol is not re-used depending on where in the plaintext the symbol
+occurs, so it is 26 x 25 possibilities now. 
+   
+3. A perfect cipher is possible if there is no reduction of the search space
+gained by knowing both the ciphertext and the encryption algorithm.  This
+requires as many possible keys as plaintexts, with the key chosen randomly.  
+
+
+Lecture 42: 
+1. The one time pad has a key that is the same length as the plaintext and is
+used only once.  It is xor'd with the plaintext.  If the attacker knows the
+ciphertext is 101, and there are 8 possibilities.  Every possible plaintext
+could the pre-image of that ciphertext under a plausible key, so no reduction
+of the search space is possible.  So even though you know the encryption algo
+and the ciphertext, there is no reduction in the search space, so it is a
+perfect key. 
+
+2.  The one time pad key should be random because imagine that you knew the
+key had even parity.  If you work backwards, you could take the ciphertext and
+eliminate half the possible plaintext. It would no longer be a perfect cipher.   
+So the key needs to be random. 
+
+3.  The key distribution problem is how to securely distribute the key the sender and
+receiver can use in the algorithm if they do not have a secure channel.  
+
+Lecture 43: 
+1. The downside of encryption by transposition is that it preserves the
+symbols of a text. It merely reorders them, thus preserving the letter
+frequencies in the ciphertext (but not frequencies of digrams, trigrams).  If
+an attacker did a test of symbol probabilities, he could gain evidence it is a
+transposition.  In a columnar transposition, he could also hypothesize as to
+the distance of the shift n (if row are length n), try a decryption, and then
+try a distance of n+1 until he succeeds.  Thus, transpositions alone are not
+strong.   
+
+
+Lecture 44: 
+1. A one time pad is symmetric.
+
+2. Key distribution pertains to how we convey keys to another party, if we need to do so secretly, in order to establish a secure connection.  
+Key management pertains to how we manage multiple keys (what keys are used for which encode/decode), preserve their safety, and make them available as needed. 
+
+3.  The only way K can decrypt S's encrypted messages if K obtains S's private key.  If K only has the public key that anyone can use to decrypt, that will not help K.  K would need the private key for decryption.  
+
+4.  Each has advantages and disadvantages. Symmetric keys are randomly generated k-bit strings, easy to generate, and have no special properties.  For n users, you need a lot of keys n(n-1)/2 keys, o(n^2).  You also need to deal with the key distribution problem.  A public key system has a special structure (large primes) and are expensive to generate, but it does solve the key distribution problem.  You only need 2n keys, or o(n). They are not directly comparable.
+
+Lecture 45:
+1. Modern symmetric encryption algorithms are block ciphers because it has high diffusion, meaning that info from one plaintext symbol is diffused into several ciphertext symbols.   Also, it has a greater immunity to tampering, meaning that is difficult to insert symbols without detection.  These advantages offset the disadvantages of slowness and the possibility of one symbol corrupting the entire block.  
+
+2.  Malleability is a bad thing. It means transformations on the ciphertext produce meaningful changes in the plaintext. An attacker could extract characters out of the ciphertext, and push together.  You won't be able to see it in the decrypted text, but it would change the content of the message entirely. Modern block ciphers are non-malleable in that any changes to the ciphertext garbles everything so that you would notice it.     
+
+3. Homomorphic encryption is a form of encryption where a specific algebraic operation performed on the plaintext is equivalent to another (possibly different) algebraic operation performed on the ciphertext.  Homomorphic encryption schemes are malleable by design. The homomorphic property of various cryptosystems can be used to create secure voting systems, collision-resistant hash functions, and private information retrieval schemes.
+
+Lecture 46:  
+1.  Confusion in AES would be in step subBytes.  It is a simple substitution algo so that for each byte in the array, you use its value as an index into a 256 element lookup table and replace the byte with the value stored at that location in the table.   
+I would think that mixColumns also uses confusion by replacing each column with its value multiplied by a fixed 4x4 matrix of integers.  AddRoundKey also is confusion in that the state is XOR'd with a 128 bit round key derived from the original key K by a recursive process.
+
+2.  Diffusion in AEs would be in step shiftRows.  Here, you shift R1 left 1 byte, R2 left 2 bytes, etc.  
+
+3.  Decryption takes longer because in the step mixColumns, you multiply each column with the inverse of the fixed array, which will contain 9s, 11s, 13s (larger numbers) that can't be as easily optimized as the original array in the encryption process.  
+
+4. If 128 bits, a 128 bit block is arranged as a 4 by 4 array of bytes, the state, and it is modified in each round.  The key is also a 4xn array of bytes, expanded into r + 1 128 bit keys where r is the number of rounds.  AES uses 10, 12, or 14 rounds for keys of 128, 192, and 256 bits.  Each round has 4 steps, starting with subBytes.  It is a simple substitution algo so that for each byte in the array, you use its value as an index into a 256 element lookup table and replace the byte with the value stored at that location in the table. In shiftRows, you shift R1 left 1 byte, R2 left 2 bytes, etc.    mixColumns replaces each column with its value multiplied by a fixed 4x4 matrix of integers.  AddRoundKey also is confusion in that the state is XOR'd with a 128 bit round key derived from the original key K by a recursive process.
+Decryption is reversing these steps. 
+
+5.  You would want to increase the rounds either because you have more bits in a key, or to add more security/confidentiality to the message.
+
+Lecture 47:
+1. A disadvantage of ECB mode is that identical blocks in the plaintext yield identical blocks in the ciphertext. 
+
+2.  This flaw can be fixed by doing something to randomize blocks before they are encrypted, like using cipher block chaining, which XORs each successive plaintext block with the previous ciphertext block and then encrypt.
+
+3. Potential weaknesses of CBC are for one, that an attacker may be able to observe changes to ciphertext over time and be able to spot the first block that changed. Also, if an attacker can find two identical ciphertext blocks, he can xor them and maybe get info about the plaintext. 
+
+4. Key stream generation uses the cipher as a pseudorandom number generator that results in a key stream that can be used as a one time pad.  You feed in bytes of text, shift onto a register, encrypt the result, and output part of the output.  You are generating a random appearing set of bits in a way that is reproducible and can be used as a one time pad. 
+
+Lecture 48:  
+1. For public key systems, the private key must be kept secret.
+
+2. One way functions are easy to compute but difficult to invert without additional info.  An example is multiplying two large primes (easy), but it is difficult to factor them to recover p1 and p2. 
+
+3. Public key systems solve the key distribution problem because there is no need to transmit the key in order to decrypt.  Since there is one key for encryption and one for decryption.  So we don't have to worry about sending the key over a channel.  The private key is a separate key already held by the one needing to decrypt the message.
+
+4.  Simplified would be {P}k-1, or {P}k since encryption and decryption commute, and either key can be used in either function.   
+
+5.  Symmetric algos are quicker in encryption, using more bit wise operations.  Asymetric algos may take 10,000 times as long as symmetric, because it uses factoring and modular exponentiation, more complex operations.  It doesn't rely on simple bit wise ops. 
+
+Lecture 49:
+1.  Switching keys should work, assuming these are new key pairs - public and private, because RSA is symmetric in the use of keys. 
+
+2.  RSA relies on the difficulty of factoring large numbers.  Prime numbers are used in the keys for encryption and decryption.  Prime number operations like multiplication are one way functions, easy to compute, difficult to invert.  It is difficult to factor the product of primes, without knowing one of the primes.  If a plaintext block is encrypted as P^e mod n, d (decryption key) is chosen so that (p^e)d mod n = P.  An attacker needs to factor P^e to recover the plaintext while a legimate receiver of a message knows d and computes (p^e)d mod n = P.
+
+3. RSA is likely breakable.  Any encryption is breakable given enough time. 
+
+4. If B encrypts with A's public key, no one intercepting the message can read it because only A has the private key to decrypt.   This is good for privacy, not authentication.  If B encrypts with A's private key, someone intercepting the message can read it because anyone with B's public key can decrypt.  
+
+5.  He can't be sure the message came from B because anyone can have A's public key.
+
+6.  He is sure the message came from B because no one besides B has that private key. 
+
+7.  If some intercept the message, anyone with B's public key can decrypt. 
+
+8.  B can ensure both authentication and privacy by having two pairs of keys, one pair for privacy and the other pair for signing or authenticity. 
+
+Lecture 50:  
+1. It should be easy to compute because the hash function is taking variable sized texts (large) and converting it to a small datum, usually a fixed size integer.  
+
+2.  Weak collision resistance refers to being given a message, it is hard to find a second message that hashes to that value.  Strong collision resistance refers to the difficulty of finding any two message such that they hash to the same value.
+
+3.  Preimage resistance refers to being given a hash value,it is hard to find any message that hashed to that value.  Second preimage, or weak collision resistance, refers to being given a message, it is hard to find a second message that hashes to that value.
+
+4.  There are 2^128 possibilities.  For a 128 bit hash value, it would have to look at 1.25 x 2^64 different arguments before finding a collision.
+
+5.  There are 2^160 possibilities.  For a 160 bit hash value, it would have to look at 1.25 x sqrt(2^160) different arguments before finding a collision.
+
+6.  They are not used for confidentiality because it is not possible to decrypt.  There is no way to invert the process of hashing.  
+
+7.  If you change any byte in the file, you are likely to have changed the hash value.  So  you can have a file, store it, retrieve it and recompute the hash. If the recomputed hash does not match with the stored value hash, it is likely that changes have occurred. 
+
+8.  Using RSA and cryptographic hash, one could use the public key for to encrypt both the message and the hash with the public key for confidentiality.  One can decrypt with the private key, rehash the messge, and compare the sent hash with the rehash to ensure integrity. 
+
+Lecture 51:
+1. Probably not. The encryption with the sender's private key is good for authentication, but encrypting the result with the receiver's private key will not ensure confidentiality because if intercepted, the message can be decoded with the receiver's public key.
+
+2.  Probably not.  If the outside encryption is with the sender's private key, it can be decrypted with the sender's public key.  The inner encryption with receiver's public key cannot be decrypted if intercepted but someone might be able to spoof the sender.  We won't know that the message came from this sender. 
+
+3.  I don't think this is equivalent.  You are adding another encryption with the sender's public key.  The receiver won't have the private key to decrypt it. 
+
+4.  The key exchange problem is how do you know are dealing with someone over a secure channel without a key.  If don't have a secure channel, then how do you do symmetric encryption with someone, and how do you get them a key without a secure channel.  The requirements are  authentication and confidentiality because you need to establish the sender's identity and also protect the information that is being sent.  You can do this with 2 levels of encryption, by applying the sender's private key, and then the receiver's public key to the result.  The receiver can decrypt securely its private key, and then use the sender's public key to decrypt to see that the message is from the sender. 
+
+Lecture 52:  
+1. Since the attacker doesn't know a or b, nothing could happen. It would longer than the universe to crack it (the discrete log problem).  
+
+2.  If the attacker knows g^a modp and can get a, then he could intercept g^b mod p and break the code.
+
+3.  If the attacker knows g^a modp and can get b, then he could compute the secret code.  

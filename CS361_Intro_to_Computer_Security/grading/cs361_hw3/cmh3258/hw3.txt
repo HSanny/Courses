@@ -1,0 +1,153 @@
+Chris Hume
+cmh3258
+HW3
+6/22/14
+
+Lecture 34
+
+1. Because the channel can not transmit more bits per second than what its capacity is. This is the max it can handle, not the minimum.
+2. It increases the reliability because the same scheme is being used and transmitted over and over again. Thus you can transmit the message over and over and make sure you are recieving the right message. 
+
+Lecture 35
+
+1. h = -(log 1/10)
+2. because not every letter in language is used as often as the others. Ther are many combinations of words and letters that could be used all the time.
+3. zero, first, second, etc relate to the amount of letters in the grouping. second = 2, third = 3. 
+
+Lecture 36
+
+1. because it is realtive to a particular observer. 
+2. because the observer needs to know what information/content it is looking to receive. In other words, if you have two observers, both which get sent the same content, if the state of the observers are different than they will be receiving depending on that knowledge. - that might not make sense :)
+3. entropy can measure amount of redundancy in encoding. If message is equal to encoded message there is no redundancy.
+
+Lecture 37
+
+1. Kidd's message seems the numbers and symbols were used to encrypt certain letters of the alphabet. 
+2. I am not too sure what this is saying, but I assume that a key would be like 1 = D, 2 = E. You could just offset the alphabet by one, thus not needing a key but a mathematical equation. 
+3. It just changes it according to the key. 
+4. You can tell a patern is happening if its redundant.
+
+Lecture 38
+
+1. C = E(P)
+    F = D(C)
+    G = E(F)
+    simplest: D(G)
+2. c
+3. So that they can decrypt the message or so they can implement a better encryption
+4. So it can detect patterns in the system. IF you know the language it makes it that much easier to decrypt. 
+
+Lecture 39
+
+1. Because the analyst must be able to recognize success.
+2. 2^n is the ammount of numbers that can be represented by n bits. Thus, 2^n-1 is one less and means you can recover K in one less than the max. You don't need that extra one to find get the last 
+3. They both are because they encrypt the text. It is a simple yet highly effective method if you use both. 
+4. confusion is just transforming text while diffusion spreads out the information. 
+5. Use both. That is best. 
+
+Lecture 40
+
+1. mono - where each symbol is exchanged for another. poly - substitutions are made depending on where in the text the symbol occurs, it is not uniformly done.
+2. the key is a 1-1 mapping of alphabet to another
+3. k! is the ammount of all the combinations of K map
+4. a shift parameter
+5. keyspace is all possible offsets : 1-26
+6. um, no. 
+7. vigenere square
+
+Lecture 41
+
+1. there are 26 letters and 3 choices, so 26^3 
+2. I am not sure
+3. no. BUT from lecture 42, it says it is if you have a key the same length as the plaintext 
+
+Lecture 42
+
+1. no reduction of the search space is possible.
+2. random makes it harder to decrypt - so you don't keep the key somewhere and someone get it
+3. the problem states that if the sender/reciever are going to use a key, they still need to agree on a key and know what they are using. So you still have to send a key somehow and send it securely
+
+Lecture 43
+
+1. because it preserves teh symbols of a text, transposition preserves letter frequencies but not diagrams, trigrams. 
+
+Lecture 44
+
+1. symmetric
+2. dist - is giving out keys. manag - is how to preserve safety and make keys available
+3. well maybe. Depends if the key is to encrypt or decrypt
+4. aren't comparable
+
+Lecture 45
+
+1. because a block is harder to brake. 
+2. if transformations on ciphertext produce meaningful changes in plaintext - someone messes with the ciphertext and messes up the plaintext
+3. you can edit ciphertext without revealing plaintext. 
+
+Lecture 46
+
+1. subbytes, shiftrows, mixcolumns, addroundkey
+2. reverse of confusion
+3. because of the matrix multiplication
+4. the block is the state and through each round the block is changed and modified
+5. the rounds change the block more after each round, gains stronger encryption
+
+Lecture 47
+
+1. It encrypts each block with same key
+2. can randomize blocks before encrypted
+3. if one can observe changes to ciphertext over time it will be able to spot first block
+4. in KSG the cipher is used more as pseudorandom number generator
+
+Lecture 48
+
+1. the private key
+2. because they are easy to compute but hard to invert
+3. it may take 10,000 times as long to perform
+4. p is encrypted by k -1, dec by k and encry by k-1
+5. asy are not as efficient
+
+Lecture 49
+
+1. no. It depends on the way it was encrpted, but a private key is secret
+2. prime numbers are what the users send to each other to decide a key, basically
+3. not really
+4. they don't have a decryption
+5. doesn't have key that matches with B - it was encrypted by a
+6. it was encrypted with b
+7. if they have the public key
+8. needs both public and private keys
+
+Lecture 50
+
+1. for speed
+2. weak is such that m2 /= m1 but fm1 = fm2, but in strong it is hard for both
+3. basically same as number 2
+4. can get a result
+5. same as 4 but takes a whole lot longer
+6. its about integrity. need the correct transmissions first
+7. binding the bytes of a file together
+8. use hash with private key
+
+Lecture 51
+
+1. why two decrypt? need one of each
+2. yes b/c its like RSA
+3. no
+4. confid and authen
+
+Lecture 52
+
+1. they need a or b to be able to read it
+2. could read file
+3. could read file
+
+
+
+
+
+
+
+
+
+

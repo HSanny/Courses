@@ -1,0 +1,204 @@
+Name: Mallory Koai
+EID: mjk567
+CS Login: mkoai
+Email: mkoai@utexas.edu
+
+Lecture 34
+
+1. It is impossible to transmit a signal over a channel at an average rate greater than C/h because that would be exceeding the capacity of the channel. For example, if a channel’s capacity is 100 bits per second and the entropy for your language is 5 bits per symbol, C/h would be 20 symbols per second. This is the highest rate the channel can sustain.
+
+2. Increasing the redundancy of the coding scheme increases the reliability of transmitting a message over a noisy channel because the repetition of code gives the receiver more chances to capture the message over the noise.
+
+Lecture 35
+
+1. The zero-order model assumes that all symbols are equally likely. Since we have ten symbols representing the digits 0 through 9, the entropy would be: h = -(log 1/10) = 3.32.
+
+2. Computing the entropy of a natural language is difficult because it contains a lot of redundancy.
+
+3. A zero-order model assumes that all symbols are equally likely to occur. A first-order model takes frequency of symbols into account. Both the zero and first-order models are called zero-memory models because they assume each symbol is independent of the context. The second-order model takes into account the likelihood that two symbols appear together (digrams), while the third-order model considers the likelihood that three symbols appear together (trigrams).
+
+Lecture 36
+
+1. Prior probabilities are sometimes impossible to compute because you don’t know the likelihood of an event.
+
+2. The more the receiver knows, the less information you need to send to reduce his uncertainty. For example, if the receiver has NO uncertainty, there is no information content resulting in an entropy of 0.
+
+3. The closer an encoding matches the entropy, the better the encoding is which means less redundancy.
+
+Lecture 37
+
+1. What is the underlying language of Captain Kidd’s message? Since the message came with a goat’s head, we might interpret that as a pun on “Kidd” (i.e., kid). It’s therefore reasonable to assume that the underlying language is probably English and not French or Italian.
+
+If certain symbols/characters in the encrypted message are more common, maybe they correspond to some of the more prevalent letters in the alphabet (e.g., ‘e’, ‘a’, etc).
+
+2. A key may be optional for the process of encryption or decryption because the sender and receiver might be aware of the algorithm.
+
+3. Encrypting a file should hide the information content while preserving it.
+
+4. A higher occurrence of some symbols could suggest a simple substitution cipher where the more prevalent symbols correspond to more commonly used letters.
+
+Lecture 38
+
+1. D(E(D(E(P)))) in its simplest form is just P, or the plaintext. 
+
+2. D(E(E(P, Ke), Ke), Kd) in its simplest form is E(P, Ke).
+
+3. Cryptanalysts can use traffic analysis to detect any patterns in encrypted messages. For example, a sudden influx of the same patterns indicates urgency.
+
+4. Properties of language can be of use to a cryptanalyst such as the frequency of certain symbols in English or any other language.
+
+Lecture 39 
+
+1. An encryption algorithm may be breakable but it might take a very long time (i.e., a lifetime). For example, an algorithm with 2^256 possible bitstreams/keys is breakable, but it could take years for even a machine to break.
+
+2. If we have a bitstream of length N, there are 2^N possibilities. If you perform a linear search, on average you find the result in 2^(N-1) operations.
+
+3. Substitution and transposition are powerful in combination and contribute to the confusion and diffusion desired in a resulting ciphertext, making it harder to decipher.
+
+4. Confusion is transforming the information in plaintext (e.g., with substitution) whereas diffusion is dispersing the plaintext widely over the ciphertext. Otherwise, confusion transforms individual characters in place while diffusion scrambles and moves the substitutions across the ciphertext.
+
+5. Most algorithms utilize both confusion and diffusion for encryption. 
+
+Lecture 40
+
+1. Monoalphabetic substitutions replace symbols uniformly, i.e., one symbol in the plaintext is always replaced by the same symbol in the ciphertext. Polyalphabetic substitution, however, can represent one symbol in the plaintext with different symbols in the ciphertext depending on where it occurs in the plaintext.
+
+2. The key in a simple substitution cipher is just a table of the 1-1 mappings.
+
+3. There are k! mappings from plaintext to ciphertext alphabets in simple substitution because for every subsequent mapping, there is one less option available. For example, if we substitute ‘a’ with ‘z’, we have removed ‘z’ from our pool of possible substitutions, leaving 25 remaining letters. After selecting a substitution for ‘b’, we have 24 letters left. And so on. 
+
+4. The key in the Caesar Cipher example is shifting two letters to the right, i.e., A is replaced by C, B is replaced by D, etc. In general, the key for a Caesar Cipher is how many positions you shift.
+
+5. The size of the keyspace is total number of positions you can shift in the English alphabet. Without overlapping itself, a letter can shift 25 times in one direction.
+
+6. The Caesar Cipher is not a strong algorithm because you probably don’t have to go through all 25! mappings to break it.
+
+7. Given the ciphertext and the key, decrypting a Vigenere ciphertext involves looking for the column corresponding to the key symbol and then finding the ciphertext symbol underneath. The row it aligns with indicates the plaintext for that symbol.
+
+Lecture 41
+
+1. There are 26^3 or 17576 possible decryptions for the “xyy” encoding on slide 3 because we say nothing explicit about it being encoded with a simple substitution cipher. Therefore, it is possible that each symbol could correspond to a different letter, so each of the 26 letters is a possibility.
+
+2. With a simple substitution cipher, the first symbol could be one of 26 possibilities.. The second symbol is left with a pool of 25 possibilities. Thus, there are 26 * 25 or 650 possible decryptions. 17576/650 = 27.
+
+3. I think a perfect cipher is possible. One hint lies in polyalphabetic substitution, where every symbol can be any other symbol. Given a large bank of keys, one of which is chosen at random for a given plaintext, a perfect cipher is possible.
+
+Lecture 42
+
+1. It is a perfect cipher because there is no reduction of the search space, despite knowing the ciphertext and the algorithm. As stated in the lecture, “every possible plaintext could be the pre-image of that ciphertext under a plausible key”. 
+
+2. If the key is not random, then it is possible to reduce the search space, thereby violating the definition of a perfect cipher.
+
+3. The sender and receiver have to agree on the same key to use in the algorithm. If they do not have a secure channel by which the key can be securely relayed, how does the sender get the key to the receiver? 
+
+Lecture 43
+
+1. Transposition is all about moving characters around, but none of the characters are transformed. Otherwise, letter frequencies are preserved in the ciphertext. This alone can at least indicate to an attacker whether a transposition cipher is being used.
+
+Lecture 44
+
+1. One-time pad is a symmetric algorithm because the sender and receiver need to have the same key.
+
+2. Key management is literally the management of a large number of keys and determining which key should be used between the partner you want to communicate with. Key distribution is the problem of determining how to relay the key securely to your partner if there is no secure channel by which to do so.
+
+3. If someone gets hold of a public key Ks, they can only decrypt S’s encrypted messages if  they have the messages’ corresponding private key.
+
+4. It is hard to say that one is better than the other since there are advantages and disadvantages to both. In a symmetric system, there are O(n^2) keys while an asymmetric one has O(n) keys. The keys in a symmetric algorithm are easy to generate, random, and unguessable, whereas the keys in an asymmetric algorithm have a special structure and are expensive to generate. However, the public keys in an asymmetric system solve the key distribution problem.
+
+Lecture 45
+
+1. Most modern symmetric encryption algorithms are block ciphers because they are largely 
+non-malleable.
+
+2. An encryption algorithm is malleable if transformation on the ciphertext can change the underlying meaning of the plaintext. This is a BAD attribute for an encryption algorithm to have.
+
+3. Homomorphic encryption is malleable by nature, but any transformation on the ciphertext produces a plaintext that mirrors the transformation as if it had been performed on the original plaintext itself. It allows multiple entities to augment the original message without actually exposing it.
+
+Lecture 46
+
+1. The first step called subBytes uses confusion by implementing simple substitution on each byte in the array.
+
+2. The second step called shiftRows uses diffusion by shifting each row a certain number of times, e.g., the first row is shifted by 0 bytes, the second row by 1 byte, the third by 2 bytes, etc.
+
+3. Decryption in AES usually takes longer than encryption because inverting the mixColumns step requires multiplying each column by a fixed array with numbers that are harder to optimize.
+
+4. The message is divided into blocks of 128-bits, 192-bits, or 256-bits, and each block goes through the AES steps a certain number of rounds (10, 12, or 14 respectively).
+
+5. Increasing the number of rounds mangles the plaintext even more, making it even harder to decrypt.
+
+Lecture 47
+
+1. The disadvantage with using ECB mode is that identical blocks in the plaintext will yield identical blocks in the ciphertext.
+
+2. This flaw can be fixed by randomizing the blocks before they’re encrypted. This is done with cipher block chaining (CBC).
+
+3. Potential weaknesses of CBC are observed changes and content leak. The former refers to the attacker being able to observe changes to ciphertext over time and eventually identifying the first block that changes. Content leak is possible if an attacker obtains two identical ciphertext blocks, which he can then XOR for some potentially meaningful information.
+
+4. Block encryption modes generate a ciphertext that encrypts a message but in a recoverable form. On the other hand, key stream generation modes use encryption as a pseudorandom number generator that generates a key stream that can be used as in one-time pad.
+
+Lecture 48
+
+1. The private key must be kept secret.
+
+2. A one-way function is easy to compute but hard to invert. This makes it harder for an interceptor to decrypt the message.
+
+3. The key distribution problem is concerned with how to securely relay a key to a partner. Public key systems however don’t care if someone sees the public key; you cannot decrypt a ciphertext without the corresponding private key.
+
+4. {P}K-1
+
+5. AES and other symmetric algorithms use very efficient machine operations such as bit-wise and arithmetic operations that are very efficient to implement. Public key encryptions are much less efficient to implement because they utilize more complex operations. As a result, an asymmetric encryption may take 10,000 times as long to perform as a symmetric encryption.
+
+Lecture 49
+
+1. Under the RSA algorithm, both keys can be used either for encryption or decryption because they are used in a symmetric fashion (e.g., product of two primes). Therefore, switching the public and private keys should still allow the algorithm to work.
+
+2. The RSA algorithm relies on the difficulty of factoring two large prime numbers. One multiplicand is attached to the encryption key while the other is attached to the decryption key. Decrypting an intercepted message would require factoring the encrypted message to obtain the plaintext.
+
+3. RSA is breakable but decrypting an intercepted message is difficult to do and would take a long time.
+
+4. An interceptor cannot read the message because he does not have A’s private key.
+
+5. A can’t be sure that the encrypted message came from B because A’s public key is available to anyone; anyone could have encrypted a message using A’s public key.
+
+6. A is sure the message originated with B because it was encrypted with B’s private key, and anyone with B’s public key can recover the original message. Alas, this provides authenticity (i.e., assurance that the message came from B), but confidentiality is lost since anyone can intercept and eavesdrop with B’s public key.
+
+7. Someone intercepting a message encrypted with B’s private key need only decrypt with B’s public key which is freely distributed.
+
+8. B can ensure both authentication and confidentiality when sending a message to A by having two pairs of keys: one pair for authentication and the other for confidentiality.
+
+Lecture 50
+
+1. Like one-way functions, hash functions need to be easy to compute and hard to invert.
+
+2. Weak collision resistance says that given a message and its hash value, it is hard to find another message that hashes to the same value. Strong collision resistance says that it is hard to find any two messages that hash to the same value. 
+
+3. A function is preimage resistant if, given a hash value, it is hard to find a message that hashes to that value. A function is second preimage resistant if, given a message and its hash value, it is hard to find another message that hashes to the same value.
+
+4. With a hash value of 128 bits, there are 2^128 possible values. The square root of 2^128 is 2^64. We expect to find a collision after evaluating the function for about 1.25 * 2^64 different arguments on average.
+
+5. With a hash value of 160 bits, there are 2^160 possible values. The square root of 2^160 is 2^80. We expect to find a collision after evaluating the function for about 1.25 * 2^80 different arguments on average.
+
+6. Changes made to a file (even a single byte) are likely to change its corresponding hash value. Therefore, modifications made to a file (i.e., violating integrity) are easy to detect.
+
+7. Message M is bound to H(M) thereby making it tamper-resistant because any alterations to M, even just a bit, is likely to change the corresponding H(M). It is also unlikely that two messages will have the same hash.
+
+8. B can first hash the message and then apply the RSA algorithm to the resulting hash value.
+
+Lecture 51
+
+1. I don’t believe it is possible to send the following message because S shouldn’t have access to R’s private key for the second encryption.
+
+2. If a message is first encrypted with the receiver’s public key and then with the sender’s private key, anyone could use the sender’s public key to strip away the outer encryption. The attacker could then apply his own private key and proceed to forward the message to the original receiver. This violates authentication. 
+
+3. They are not the same. Both have an inner encryption using S’s private key, but one key is then encrypted with R and S’s public keys while the other is only encrypted with R’s public key. The former message can’t be decrypted because it requires the private keys of both S and R which is impossible because R can only have his own private key. The second message on the other hand can be decrypted as it only requires R’s own private key. 
+
+4. A key exchange requires a nested encryption where the key is first encrypted with the sender’s private key and once more with the receiver’s public key. The inner encryption helps achieve authentication while the outer encryption ensures confidentiality.
+
+Lecture 52
+
+1. If g, p, and ((g^a) mod p) are known to an eavesdropper listening in on a Diffie-Hellman exchange, the eavesdropper could possibly extract a value for a.
+
+2. If a was discovered by an eavesdropper listening to a Diffie-Hellman exchange, the eavesdropper could potentially impersonate a’s sender if he also intercepted g and p, which are freely transmitted. 
+
+3. If b was discovered by an eavesdropper listening to a Diffie-Hellman exchange, the eavesdropper could potentially impersonate b’s sender if he also intercepted g and p, which are freely transmitted.  
+

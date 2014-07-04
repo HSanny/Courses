@@ -1,0 +1,79 @@
+Lecture 53
+1) So that someone can't reuse the same signature for things you didn't authorize.
+2)  Public key is expensive to apply but the hash is easy to sign because it's small.
+3) That the message was intended for R and was sent from S. Hence, the message should be unforabeable, authentic, noot repudiable, tamperproof, and not resuable.
+
+Lecture 54
+1) So that you can be sure that the source is a reliable one.
+2) The person will know that it's X is the certifying authority.
+3) Whenever the person checks if the hashes are the same, he will know that the values weren't changed.
+4) Z would not be able to open the message that is encrypted with X's private key.
+
+Lecture 55
+1) The root should be unbiased and with high trust to certify others.
+2) In case you get a expired certificate, then there would be no reason to trust it.
+3) It would mean that the certificate has been modified.
+
+Lecture 56
+1) Things like covert channels, sending messages through RSA.
+2) The protocol could fail and possibly allow others to get into the locked object.
+3) So that both parties can be sure that the message is locked during the process and still be able to get to the message in any order of unlocking.
+4) The attacker would have to XOR the message with A and B's keys.
+5) If you have several messages between A and B, you could solve Ka and Kb by XOR the messages together.
+6) You would have to XOR a message sent from B twice.
+7) There are lots of loopholes that we cannot easily get around.
+
+Lecture 57
+1) So we can easily receive and send messages to the web.
+2) So we can add security to sensitive information when sending or receiving.
+3) A knows B exists, and they each have the other's public key.
+4) They are trying to send the message in a secure manner.
+5) It should if the only people that have the private keys are their own.
+6) An attacker could send the the same encrypted message meant for B to B again so that B unlocks the outer layer. Then the attacker could remove the inner two layers.
+
+Lecture 58
+1) You can reduce time and resources by leaving out unnecessary steps.
+2) There would be no need to encrypt anything if items could be sent in the clear.
+
+Lecture 59
+1) The definition of an attack could vary from different messages.
+2) If you can replay an old message into a message between two people it could confuse the parties.
+3) An attacker could mess with the integrity of a message by messing it up.
+4) The attacker can't use arbitrary encryptions and what attacks they can do.
+5) So any party can know that a protocol is happening when it receives a message and attackers won't know.
+
+Lecture 60
+1) Not if you want to prevent attacks from potential attackers.
+2) The sender requests a key to B and the receiver is entitled to believe that A and B want to communicate.
+The sender generates a key and the receiver believes that the key is fresh. The sender believes the key is fresh and 
+the receiver believes A wants to communicate with B with a key. THe sender sends a nonce and the receiver blives
+B has the key. The sender says A got the message and the receiver believes that A got the message.
+
+Lecture 61
+1) A could ask the server for a secret key between other parties.
+2) I don't think so.
+3) Ask for a nonce for every message you send.
+
+Lecture 62
+1) A and B knows that the message is fresh and want to talk to each other.
+2) Otway-Rees provides that some messages are fresh and both parties know they want to communicate.
+3) You could encrypt a message with everyone else's public key to check if it matches with
+any current keys.
+
+Lecture 63
+1) So that you can confirm and securely send information through the channel.
+2) Beliefs that what the principles are entitled to believe.
+3) Beliefs could be that there are two parties that want to communicate to each other.
+
+Lecture 64
+1) It's a formal way of presenting belief logic using primitives and rules of inference.
+2) Only B can use the key to send a message using a key that both A and B has.
+3) If B says X then A is entitled to believe that B believes X.
+4) If B has jurisdiction over X then A should believe anything B has to say about X.
+5) So you can prevent unnecessary steps in a protocol and connect the goals of the message with the beliefe logic.
+
+Lecture 65
+1) The plaintext is just the message and has no belief within it.
+2) So that you can gather beliefs to apply inference rules to them.
+3) If it exposes suprising assumptions, then it can be used to determine how attackers could attack.
+

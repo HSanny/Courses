@@ -1,0 +1,72 @@
+Jesse Jones
+UT eid: jsj573
+Cs id: jones512
+email: jessear5890@yahoo.com
+Cs 361
+Summer 2014
+7/3/14
+
+Lecture 53:
+
+1. So that alterations can not be easily made and in case off alleged forgery, its authenticity can be judged.
+
+2. Because it adds an extra level of security to protect the integrity of the message. 
+
+3. It is unforgeable, authentic, no repudiation, tamperproof, and not reusable. 
+
+Lecture 54:
+1. Certificate authority vouches for the accuracy of the binding.
+
+2. 
+3.
+4.
+
+Lecture 55:
+1. Chain is rooted at some unimpeachable authority. 
+
+2. It is used to validate the certificate by the user. 
+
+3. Either the message has been altered or the message was signed by a different user than intended. 
+
+Lecture 56:
+1. RSA or AES
+2. The confidentiality of the message trying to be sent could be compromised.
+3. You have to be able to "reach inside" his encryption to undo yours.
+4. Store all three messages. XOR message 2 and message 3 with each other.
+5. Store all three messages. XOR message 1 and message 3 with each other to extract Ka.
+6. Store all three messages. XOR message 1 and message 2 with each other to extract Kb.
+7. Because the ways that they can be wrong are so subtle that the flaws in the protocol are overlooked until exploited.
+
+Lecture 57:
+1. Almost everything that occurs on the Internet occurs via a protocol. It is important because it is designed to accomplish a communication-related function between two or more parties. 
+
+2. It is a protocol using cryptographic mechanisms to accomplish some security-related function such as Unicity, Integrity, authenticity, confidentiality, and non-repudiation of origin and receipt.
+
+3. Assuming the message has not been altered and A is actually communicating with B.
+
+4. A shares with B a secret key K, and each party authenticates to each other that they are truly who they claim by using their key to encrypt.
+
+5. Yes the goals are satisfied because the protocol implements a secure transfer of information from A to B.
+
+6. The same way XOR one-method is flawed. Given both sets of messages one can use them to forge and decrypt messages sent by other users.
+
+Lecture 58:
+1. Unneccessary steps or messages can lead to an attacker finding a weak point in the security system to exploit that was not accounted for.
+
+2. Encrypting items that could be sent in the clear gives attackers an opportunity to attempt to decrypt a cipher that should not have been used in the first place. 
+
+Lecture 59:
+
+1. Because the attack can come from a variety of angles from authentication and secrecy problems to impersonation of one or more of the parties.
+
+2. A replay attack can led to an attacker gaining access to the system with valid identification if a user is fooled into believing that the messages came from an authenticated party they were communicating with previously. 
+
+3. Yes an attacker can use a public key to impersonate a legitimate party that will lead to the attacker gaining private or public information that they might not have had access to. 
+
+4. A party to a protocol won't know anything about the current run of the protocol except the messages it has received and sent. Except for the initiator, other parties will not even know that they are participating until they receive their first message.
+
+5. It allows for a more robust system that does not rely on the system clock, which would make it easier for an attacker to attempt to break a protocol. 
+
+
+
+5. 

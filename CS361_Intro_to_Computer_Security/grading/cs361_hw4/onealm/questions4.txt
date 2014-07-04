@@ -1,0 +1,132 @@
+Name: Melanie O'Neal
+EID: mfo264
+CS Login: onealm
+Email: melanie_oneal@yahoo.com
+
+Lecture 53:     
+	1. It is important so that the signature can't be detached. If it is 
+	detatched, it could be used maliciously on another message (Identity theft, 
+	etc).     
+	2. It's cheaper to send and ensures integrity.   
+	3. R is assured that the message is authentic and unforged.
+
+Lecture 54:
+	1. Certificate authorities ensure or vouch that a binding between a 
+	certificate, and a public key and user's identity are accurate. In other 
+	words, they make sure that the entitiy you're interacting with is the one
+	that you wanted to interact with.
+	2. X signs it to vouch for the binding.
+	3. Having a hash helps ensure that Y and Ky were not altered or corrupted.
+	4. Z couldn't trust the certificate either.
+
+Lecture 55:
+	1. The root of a (good) chain of trust has an unimpeachable authority.
+	2. There need to be certain times to ensure validity. Limits must be 
+	imposed so that entities that no longer exist may be valid and so that
+	assurances can be made about how fresh validity is.
+	3. It would mean that the integrity was compromised and that the 
+	certificate would not be valid.
+
+Lecture 56:
+	1. Diffie-Hellman and other key exchanges.
+	2. You could lose confidentiality.
+	3. They must commute so that the inner encryption may be stripped.
+	4. An attacker can XOR all three messages together to get M.
+	5. An attacker can use M as extracted in number 4, and XOR that with 
+	(M + Ka) to get Ka.
+	6. An attacker can XOR ((M + Ka) + Kb) with (M + Ka) and then XOR with M
+	as found in number 4.
+	7. Because they are very subtle.
+
+Lecture 57:
+	1. Protocols are important for the internet because almost everything that 
+	happens on the Internet happens via protocol.
+	2. Cryptographic protocols help maintain Internet security.
+	3. The assumptions are that the public keys of A and B belong to the 
+	correct parties.
+	4. The goals of the protocol are to share a secret key and ensure that 
+	no one else besides A and B view or use it.
+	5. No. The protocol does not ensure confidentiality. An attacker can get to
+	the key.
+	6. It's flawed because someone intercepting the first transmission can 
+	trick B into removing their key by initiaing a new run of the protocol.
+
+Lecture 58:
+	1. We would want to know if there are more chances for some steps to be 
+	used to cancel out others. Extra steps mean extra vulnerabilities.
+	2. Items that could be sent in the clear but are encrypted give attackers
+	more to work with and find a way to defeat that encryption.
+
+Lecture 59:
+	1. It is difficult to know what an attacker may do with any amount of
+	information gained. The questions asked on slide 2 give some idea of what
+	questions someone analyzing a protocol will want answered, but they don't
+	present every possibility because nobody knows every possibility.
+	2. Replay attacks could be used to trick people into sending secret 
+	information by sending seemingly valid messages (that used to be valid).
+	3. Yes. Some attacks may not be to gain information, but to plant 
+	information or give malicious orders/instrucitons, or disrupt a protcol.
+	4. The attacker must interject messages that make sense to the flow of
+	information. In other words, messages must be able to be identified and
+	responded to. 
+	5. It is important that protocols are asynchronous so that nobody but the
+	initiator knows that protocol is running until they receive a message.
+
+Lecture 60:
+	1. No, it wouldn't. Nonces are necessary to ensure that the messages are
+	fresh.
+	2.
+	  Step 1: The sender is trying to request a secret key for AB. The receiver
+	  is entitled to believe that A needs a secure key.
+	  Step 2: The sender is giving A a key and a secure message to send to B using
+	  B and S's key. The receiver is entitled to believe that the message it will
+	  give to B is able to be decrypted by them.
+	  Step 3: The sender is giving B a key to share. The receiver is entitled to 
+	  believe that the key is secret.
+	  Step 4: The sender is giving A a nonce using the key to make sure A is the
+	  appropriate receiver. The receiver is entitled to believe B actually sent 
+	  it.
+	  Step 5: The sender is trying to say that they got the message and could read		
+	  it. The receiver is entitled to believe A could decrypt the message.
+
+Lecture 61:
+	1. An attacker could persuade someone to communicate to the wrong party, then
+	pass on the traffic to the original target of communication and convince them
+	that the attacker is the legitimate party.
+	2. They key shouldn't get broken because it should be strong, but you never
+	know.
+	3. I might add a rule to continue using nonces throughout.
+
+Lecture 62:
+	1. Otway-Rees seems to guarantee session identifiers will ensure that S sent
+	the keys.
+	2. Needham-Schoreder guarantees that A and B get the same key.
+	3. You could use one of the keys twice in a row. 
+
+Lecture 63:
+	1. Protocols are very hard to get correct and there have been flaws found many
+	years after the protocol was made.
+	2. A belief logic is a way to reason about beliefs using logical operators and
+	rules of inference.
+	3. Beliefs come in when there are assumptions to be made.
+
+Lecture 64:
+	1. Modal logic is a logic with additional primatives and rules of inference
+	to reason about a particular domain.
+	2. A is using what it believes and sees to justify that B sent a particular
+	message. A believes that it shares a secret key with B, and A sees a message
+	encoded with that secret key, so it must have come from B.
+	3. Nonce verification inference assumes that if a message is fresh, the entity
+	that sent it believes it.
+	4. The jurisdiction inference rule assumes that if a believes B can be trusted
+	on X, and A believes that B believes X, then A should also believe X. Someone
+	else can trust X, so A can too.
+	5. Idealization is meant to omit parts of a message that are not related to 
+	the beliefs of contributing parties.
+
+Lecture 65:
+	1. It can be forged.
+	2. Because beliefs that happen later are assumed or believed to eventually
+	happen.
+	3. BAN proofs show what entities believe, so it's easier to see what 
+	assumptions or inferences were made that were not apparent before.

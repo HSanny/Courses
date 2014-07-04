@@ -1,0 +1,67 @@
+Name: Alex Fortin
+EID: AF22574
+CS Login: afortin
+Email: alexfortin@utexas.edu
+
+Lecture 53
+1. If your signature can be removed and used again, you could sign off using this pulled signature and get access to things you shouldnt be able too
+2. Public key is expensive to apply, but the hash is a constant value
+3. IT is unforgeable, authentic, non repudable, tamperproof, and non reusable
+Lecture 54
+1. It addresses the need for trust in a system
+2. So Y knows X is the one who sent it back
+3. So you know the message is encrypted
+4. You would know the message might not have came from X
+Lecture 55
+1. It has an unimpeachable authority
+2. A certificate needs to be renewed. If it is outdated, you shouldnt trust it
+3. It is not certified and you shouldnt trust it 
+Lecture 56
+1. Certificates, security keys
+2. Your message might have been intercepted or tampered with
+3. You cant access to the key to decrypt if its under a lock that has the encryption
+4. XOR with the second and third message
+5. XOR with M and Kb
+6. XOR with M and Ka
+7. Things that appear smart can have one very small hole and it exploits everything
+Lecter 57
+1. You need protocols so you can send information across the web securely
+2. If you send an email, you want to encrypt it so nobody can read your private message
+3. They each have each others public key
+4. Send a message securely back and forth
+5. No, it is flawed
+6. You can add your own public key and recieve each message and break it
+Lecture 58
+1. If it has unnessesary steps, one could possible be used to get information. You only want to do the bare minimum to get the job done
+2. If you encrypt things that dont need it, it waste time and space and also has the risk of being modified during the encryption/decryption
+Lecture 59
+1. Does attack mean attempt, actual breaking, possibly tampering?
+2. You might get a sensitive message very late and not have it when you need it
+3. Yes, an attack where it modifies the information without reading it. He gains no knowledge but the fact that you didnt recieve the information you wanted'
+4. They cannot attack arbitrary messages
+5. You dont want to wait on the other side to verify a message, more room for error
+Lecture 60
+1. No, it would not
+2. A wants a key to use for sending to b, message is secure. S encrypts the message with the as key, as key is unique and known only to A and b. A sends the message with the key, b believes it is from A. B sends the message back, A believes it is from b. A sends nb-1 and they now have a secure key to send messages wth
+Lecture 61
+1. Kb will never know if the message is from Ka since the hacker has unlimited time to crack and old session key
+2. No, because if it is, they will just say it is not
+3. Make the encryptions strong so they cant be broken
+Lecture 62
+1. A is the one who is talking to B since it initiates the talking, and not S
+2. They both have the flaw of a message being intercepted and being able to figure out both keys, A doesnt know that B has the key
+3. Have one more return message to ensure they both know they have the keey
+Lecure 63
+1. Protocols are hard to get correct, so we need to verify protocols and make sure they work
+2. Short abstract proofs off a protocol
+3. We believe a program will work a certain way just as we believe a protocol will work a certain way
+Lecture 64
+1. BAN logic
+2. A believes a and b share a key and A recieves a message with that key, then A thinks the message came from B
+3. A believes a message is fresh and A believes the message came from B, then A believes that B believes X
+4. If A believes B has jurisdiction over X and A believes B believes x, then A believes X
+5. So we can get from protocol steps to logical inferences. Helps us think what a message is trying to accomplish
+Lecture 65
+1. BAN is open to interpretation, and pictures leave more wiggle room and words
+2. Like in Needham, the last step that the message is fresh is something that the entire idealization hinges on
+3. When you write it all out, you see assumptions that the protocol depends on since it would not work without them

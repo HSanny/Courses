@@ -1,0 +1,97 @@
+Brandon Craig
+bsc526
+
+Lecture 53
+1. The signature needs to be non resuable to avoid future forgability of messages. By reusing signatures a potential attack
+may be able to impersonate Alice by figuring out her key and using it to impersonate her. If its non resusable then the key used
+will only occur once and thus cannot be used to impersonate her.
+
+2. To provide a way of figuring out whether the message has been tampered with. By signing the hash it will make it very difficult 
+to produce a message that would fit the same hash with the key used. Makes tampering much harder
+
+3. R has assurance that when he is decrypting the message that in fact it is Alice who sent it because only her public key can remove
+the encryption.
+
+Lecture 54
+1. Certificate authorities allow for a web of trust to exist. They "vouch for" parties so that they can trust eachother even when
+they have never dealt previously with eachother, allowing them to communicate
+
+2. To keep people from trying to forge the signatures of the certicate authorities whos public key is known. Its for tamper proofing
+
+3. To allow for messages to be checked for tampering. If the hash of Y and Ky doesnt match what is being given then its not going to 
+be trustable.
+
+4. Then they could be tricked into thinking they are talking to someone trustworthy
+
+Lecture 55
+1. The root contains a originally verified binding that is supposed to be verified by a impeachable and 
+known certifier such as SecureNet
+2. It tells the person for about how long they can trust the information. If at the time the certificate is read the time is passed the 
+interval then they should not trust it as the party should be reverified for its information. Its to keep parties safe.
+
+3. It means that either untrustworthy information was provided or there was tampering of messages
+
+Lecture 56
+1. Protocol: Send Ivan the message with your own key on it. He applys his key to and sends it back. You remove your application of your key and 
+send that to him, only leaving the application of his own key allowing him to decrypt
+2. If a step is ignored it may either make the message decipherable by Eve or make it undecipherable by Bob.
+3. Because otherwise Bob cannot "reach inside" his encryption to under yours
+4. By XORing M^Ka ^ (M^Kb) ^ (M^Ka^Kb). Ka and Kb cancel out leaving a single M
+5. Xor (M^Ka^Kb) ^ (M^Ka^Kb^Ka)
+6. Xor (M^KA) ^ (M^Ka^Kb)
+7. Because its easy to make an algorithm thats cryptographically unsafe especially with they aren't one way algorithms like hash
+
+Lecture 57
+1. Protocols are important because they facilitate communication amongst principles. Without a way of
+reliable communication where everyone understands how communication will be taking place then communication
+will become unclear and hard to acheive
+2. Cryptographic protocols are important because they allow for principles to be able to verify that the person
+sending the message is who they say they are and allow for secret information to be able to be transferred amongst
+them in a known hostile and untrustworthy environment
+3. 
+
+Lecture 58
+1. Because if it does it can potentially make the protocol unsafe to use by adding additional complexity or
+more information for Eve to use to break the protocol
+2. Because it increases complexity and also could reveal information to Eve for future transactions of the protocol
+
+Lecture 59
+1. Because its difficult to know exactly what an attack might do or will be able to do with the protocol. Attackers can be very
+creative.
+2. A replay attack may allow for the attacker to be tricked into accepting the messages since they are only copies. No tampering.
+Also may disrupt the receiving principles stage within the protocol creating communication problems
+3. Yes. Interleaving attack. The point isn't to gain information but to disrupt the protocol
+4. The attacker must attack in such a way that complies with the protocol
+5. Because over the internet its impossible to know if a principle received your message
+Lecture 60
+1. No. The nonces allow for replay attack detection
+2. 
+
+Lecture 61
+1. 
+2. Yes. It is important to know what the consequences might be since you can't know for sure how secure your protocol is
+3. Try to make every message protected with nonces to avoid that type of attack. Or make Nonces unique to each session. Cannot be reused
+
+Lecture 62
+1. Provides the guarantee of creating a secure channel with the correct principal 
+2. Otway-Rees provides a way to secure the Nonces without sending them as plaintext so the there a protections against nonces being used by Eavesdroppers
+3. 
+
+Lecture 63
+1. Because its dangerous to use a unsafe protocol that could result in information being compromised to people that are not authorized
+2. formal system for reasoning about beliefs
+3. Beliefs come in when messages start being passed. The belief would be something like "I believe this sender to be trustworthy"
+
+Lecture 64
+1. A formal system of logic that extends classical propositional and predicate logic to include operators expressing modality.
+2. The intuition is that if B received the key K from A and it receives a message that is encrypted with K, then B must be the only one
+has the key and thus could be the only one who sent X
+3. The intuition is that because X is thought to be fresh and that X could have been uttered only recently, then A must think that B must 
+believe X to be true.
+4. The intuition is that if Q has jurisdiction over X, then ....
+5. 
+
+Lecture 65
+1. It can be forged
+2. 
+3. Through idealization assumptions become uncovered because without them the proof can not continue making assumptions more apparent.

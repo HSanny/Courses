@@ -1,0 +1,269 @@
+Name: Drew Zoellner
+EID: dtz64
+CS Login: drew2222
+Email: andrewzoellner@hotmail.com
+CS361 Questions: Week 4
+
+Lecture 53
+1. Why is it important for a digital signature to be non reusab
+le?
+
+If a digital signature is discovered by a villain he or she won't get multiple
+accesses that are unauthorized into the system. 
+
+2. Why is it the hash of the message typically signed, rather t
+han the message itself?
+
+The hash is the "encrypted" aspect of the message that should be decoded later
+and the signature on that hash allows for authorized decryption of the message.
+The message should never be recovered by a villain anyways.
+
+3. What assurance does R gain from the interchange on slide 4?
+
+R is assured to be secure and ready to read if the message M is signed.
+
+Lecture 54
+1. What is the importance of certificate authorities?
+
+Certificate authorities can sign messages and allow them to be read by certain
+users. They allocate some permissions within the system.
+
+2. In the example on slide 5, why does X sign the hash of the first
+message with its private key?
+
+X is the president of the company and thus attempts to give Y access to certain
+information by signing his or her certificate.
+
+3. Why is it necessary to have a hash of Y and Ky?
+
+Having these hashes allow for secure communication between Y and Ky since others
+might not have access to reading this message. We know that Ky does however.
+
+4. What would happen if Z had a public key for X, but it was not tr
+ustworthy?
+
+Information leaks would cause anything that X had in confidence to be leaked to
+the public.
+
+Lecture 55
+1. What happens at the root of a chain of trust?
+
+There is some unimpeachable authority.
+
+2. Why does an X.509 certificate include a “validity interval
+”?
+
+There is some set of users that are trusted to read this certificate.
+
+3. What would it mean if the hash and the received value did not
+match?
+
+This means that the message might have been corrutpted somewhere in communication.
+
+
+Lecture 56
+1. What are some protocols previously discussed?
+
+Some of these protocols were necessary in understanding previous material.
+
+2. What may happen if one step of a protocol is ignored?
+
+The whole protocol might be comprimised causing a villain access to unauthorized
+material.
+
+3. Why must the ciphers commute in order to accomplish the task in slide 4?
+
+The message must move from one party to another.
+
+4. Describe how an attacker can extract M from the protocol in
+slide 6.
+
+A->B + B->A + A-> B , cancels to leave M
+
+5. Describle how an attacker can extract
+Ka from the protocol in slide 6.2. 
+
+B->A + A->B (3)
+
+6. Describle how an attacker can extract Kb from the protocol in slide 6.
+
+A->B + B->A , cancels except for Kb
+
+7. Why are cryptographic protocols difficult to design and ea
+sy to get wrong?
+
+There can be many way for an attacker to manipulate protocols to isolate information.
+
+Lecture 57
+1. Explain the importance of protocols in the context of the i
+nternet.
+
+Protocols protect information from falling into the hands of an attacker.
+
+2. Explain the importance of cryptographic protocols in the
+context of the internet.
+
+Cryptographic protocols allow for information to be sent in a way that even
+when intercepted can't be read by the attacker.
+
+3. What are the assumptions of the protocol in slide 6?
+
+A shares a secret key K with B
+
+4. What are the goals of the protocol in slide 6?
+
+Each party should authenticate to the other party.
+
+5. Are the goals of the protocol in slide 6 satisfied? Explain.
+
+By following the simple protocol explained on slide 6, With this protocol each 
+party must use the other party for authentication.
+
+6. How is the protocol in slide 6 flawed?
+
+If one party isn't present the information could be lost.
+
+
+Lecture 58
+1. Why is it important to know if a protocol includes unnecess
+ary steps or messages?
+
+Unnessessary steps or messages could cause the reciver to misread the data so
+its important that all unesscary steps are thrown out to extract the correct
+message.
+
+2. Why is it important to know if a protocol encrypts items tha
+t could be sent in the clear?
+
+The reciever might read the items "as is" since it could be sent in the clear 
+and would therefore be reading the encrypted message.
+
+Lecture 59
+1. Why might it be difficult to answer what constitutes an atta
+ck on a crypto-graphic protocol?
+
+The might be many different ways to attack this prtocol and identifying them
+might be a difficult task.
+
+2. Describe potential dangers of a replay attack.
+
+Replay attacks could gain access to unauthorized materials in the system.
+
+3. Are there attacks where an attacker gains no secret inform
+ation? Explain.
+
+Yes, failed attacks would result in this situation since the attacker gets
+no information from the attack.
+
+4. What restrictions are imposed on the attacker?
+
+The attacker must obey by rules instantiated by the system but can manipulate 
+these rules in such a way that unwanted results occur.
+
+5. Why is it important that protocols are asynchronous?
+
+This way one protocol can't compromise another.
+
+Lecture 60
+1. Would the Needham-Schroeder protocol work without nonce
+s?
+
+No
+
+2. For each step of the NS protocol, answer the two questions o
+n slide 5.
+
+1. A and B, the message A
+2. B and A, the message A
+3. A, A
+4. Nothing, nothing
+5. Nothing, nothing
+
+Lecture 61
+1. As in slide 5, if A’s key were later changed, after having
+K as compromised, how could A still be impersonated?
+
+No
+
+2. Is it fair to ask the question of a key being broken?
+
+Yes
+
+3. How might you address these flaws if you were the protocol de
+signer?
+
+I would change keys frequently.
+
+Lecture 62
+1. What guarantees does Otway-Rees seem to provide to A and B?
+
+A and B recieve different keys.
+
+2. Are there guarantees that Needham-Schroeder provides th
+at Otway-Rees does not or vice versa?
+
+Yes
+
+3. How could you fix the flawed protocol from slide 4?
+
+Prevent C from using the system or changing the protocol so that K can't be 
+extracted from C->B + B->C.
+
+Lecture 63
+1. Why is the verification of protocols important?
+
+One must know that the protocol is an allowed protocol within the system.
+
+2. What is a belief logic?
+
+Logic that determines if a set of protocols can leak information.
+
+3. A protocol is a program; where do you think beliefs come in?
+
+A person that has come to a conclusion about the logic of the program.
+
+Lecture 64
+1. What is a modal logic?
+
+The correct logic for protocols to use to not allow attackers to extract 
+unwanted messages.
+
+2. Explain the intuition behind the message meaning inferen
+ce rule.
+
+Inference rule means that because an attacker knows one thing, he or she
+can therefore obtain information about another thing.
+
+3. Explain the intuition behind the nonce verification infer
+ence rule.
+
+This is essentially as the answer above except that verification is required.
+
+4. Explain the intuition behind the jurisdiction inference
+rule.
+
+This has to do with the protocols of the system. If the prtocols infer that 
+a user can do something.
+
+5. What is idealization and why is it needed?
+
+This is perfection based on modal logic, it is needed to prevent attacks.
+
+
+Lecture 65
+1. Why do you think plaintext is omitted in a BAN idealization
+?
+
+Plaintext could be obtained by an unwanted user.
+
+2. Some idealized steps seem to refer to beliefs that will hap
+pen later in the
+protocol. Why would that be?
+
+Prediction of future protocols can prevent some attacks due to inferences of those protocols.
+
+3. One benefit of a BAN proof is that it exposes assumptions. Ex
+plain that.
+
+It allows everyone in the system, attackers or creators to be aware of inferenced data gained from protocols.
+

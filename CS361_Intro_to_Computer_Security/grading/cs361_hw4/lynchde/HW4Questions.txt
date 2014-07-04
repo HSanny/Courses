@@ -1,0 +1,64 @@
+David Lynch
+UTEID: Lynchde
+Lecture 53
+1. It's important for a digital signature to be non reusable because if it could be used again, then if it was intercepted, it could be used to authorize any number of actions without the desired properties of the signature.
+2. The hash of the message is typically signed instead of the message itself because public key encryption is computationally expensive to apply and the message could be arbitrarily long, and a fixed length hash doesn't require massive computation before reaching the signature.
+3. After the interchange, R is assured that the message is authentic, unforgeable, tamperproof, not reusable, and doesn't allow for repudiation.  In short, it accomplishes everything that a signature is supposed to accomplish.
+Lecture 54
+1. Certificate authorities act as trusted intermediaries between parties that are going to exchange keys, so they're important because they allow key holders to trust the keys that they recieve. 
+2. X signs the hash of the first message with its private key because they are the certifying authority, and without their signature, the certificate could have come from anyone.
+3. It's necessary to have a hash of Y and Ky because if they didn't have a hash of Y and Ky then they wouldn't be able to compare the public key that they received to the hashed value and determine if the key had been altered in some way.
+4. If Z had a public key for X but wasn't trustworthy then their certificate wouldn't match the public key certificates that trustworthy parties were issued, so they wouldn't be able to send messages to X.
+Lecture 55
+1. At the root of a chain of trust is supposed to be "some unimpeachable authority" because that would mean that parties were willing to confer that authority's verification. 
+2. An X.509 certificate includes a "validity interval" because there are times when a window for communication is all that should be certified.
+3. If a hash and a received value don't match, that means the certificate has been modified so that it no longer matches the public key of the person attempting to communicate, and the certificate might not have ever been sent to them.
+Lecture 56
+1. Some of the protocols that have been previously discussed are Diffie-Hellman (a protocol for key exchange) and the Ceaser Cipher (a simplistic protocol for encrypting text). 
+2. The consequences of ignoring one step of a protocol vary widely.  Obviously, if one step of a protocol is ignored when encrypting something that is sensitive to changes in modality, then the encryption will totally fail, like in the picture of the linux penguin, but if a step of AES is skipped, then even though the message would become unreadable, it still probably won't be easily translated.
+3. The ciphers must commute in order to accomplish the task because the first cipher won't be able to unlock his own lock once it has been encrypted behind the second party's lock.
+4. An attacker can extract M from the protocol in slide 6 by XORing the sum of the three messages that he's eavesdropped on together, but I'm not exactly sure why this works.  I spent a lot of time in a spreadsheet.
+5. An attacker can extract Ka from the protocol in slide 6 by looking at the final message and the first message that A sends and XORing them together.
+6. An attacker can extract Kb from the protocol in slide 6 by XORing the final message that A sends after they've removed their key and the real message.
+7. Cryptographic protocols are difficult to design and easy to get wrong because they are complex, and combining them (as illustrated by the multiple XOR's) can sometimes have the effect of decreasing the security of the message.
+Lecture 57
+1. In the context of the internet, protocols are important because they define the way that messages are exchanged/
+2. In the context of the internet, cryptographic protocols are important because they add security to messages sent over the internet.
+3. The assumptions of the protocol in slide 6 are that each of the principals have a reliable public key system that they're utilizing.
+4. The goals of the protocol in slide 6 are to reliably and securely exchange messages between two parties.
+5. The goals of the protocol aren't satisfied because we aren't sure that the message is reliably and securely exchanged, because there could be an attack, as detailed in lecture 62, where an attacker gets the key by impersonating A and resending a message to B that has the same information that A initially sent to B.
+6. The protocol is flawed because it relies on the private and the public keys that are both able to be sent out in various forms at requests from attackers, and this means that they could potentially be used to unlock the key that's being issued.
+Lecture 58
+1. It's important to know if a protocol includes unnecessary steps or messages because each step in a protocol is presumably a step away from actually being able to recieve and interpret a communication, so if we could eliminate additional steps to communication it would make the communication easier and more efficient.
+2. It's important to know if a protocol encrypts items that could be sent in the clear because, as we discussed in the prior question, encrypting messages is computationally expensive, and if we could avoid incurring those expenses, it would make our communication easier and more efficient. 
+Lecture 59
+1. It might be difficult to determine what constitutes an attack on a cryptographic protocol because very few of them operate in exactly the same way, and each new form of functionality that is used in communication opens the door for additional vulnerabilities that are specific to those functions.
+2. The potential dangers of a replay attack depend on who is attempting to communicate.  Obviously, if it's a text message between friends, then the risks are very small, but if it's a request for a power plant to shut down, then the effects could be disasterous.
+3. There are attacks where an attacker gains no secret information, and a classic example of this is a DNS attack.
+4. The restrictions that are imposed on the attacker are often based on the structure of the message.  Obviously, it can't send messages with keys that it doesn't have or certificates that it couldn't have obtained, but it's difficult to specify what their restrictions might be.
+5. It's important that protocols are asynchronous because presumably, the communications are designed to accomplish something, and so the message will dictate what sorts of computational protocol they're going to be following.  
+Lecture 60
+1. The Needham-Schroeder protocol wouldn't really work in the same way without nonces because even though it doubles as a tool for identifying the other party of the communication, it also serves to identify the "round" of communication that they're participating in.  Needham-Schroeder was designed before public keys, and the nonces serve the same function as a private key in identifying the other party, but since they also serve to prevent replay attacks, and there isn't really an equivalent of that in any other system.
+2. When A sends S A,B, and N, it's initiating contact, and the server is entitled to believe that A has a genuine interest in contacting B.  In the second step the server generates keys that will allow the two parties to communicate securely, and the receiver is entitled to believe that they've recieved the keys to secure their messages and communication.  The third step is A sending B the key that's been generated by S for B, and which only B can read.  At this point, B is entitled to believe that this was a key that was sent from S, because it's created with S's key.  The next 2 steps are to confirm that each of them has the key that they were given by S, and that they can use it.  They accomplish this by B sending A a new N that's been encrypted by the key that they hold between them, and A responds by subtracting 1 from that N to signal that they've recieved it.  By that point, they're both entitled to believe that they have keys, and that their communications under those keys are going through successfully.
+Lecture 61
+1. A could still be impersonated, even after its key was changed, because S and A had previously shared the key that could be used to initialize the communication protocol, so they could have gotten a bunch of keys from the server in that time that they could use to pretend to be A when contacting B.  B would see the stamp from S and think that the communication was legitimate.  
+2. It's fair to ask the question of a key being broken because, as security minded computer scientists, we're supposed to imagine ourselves as an attacker that's looking to access the portion of a system that's most easily compromised, and if there was some way to get access to keys, then it would be a huge security hole.  As the lecture pointed out, all cryptographic protocols rely on keys to some extent, so there really isn't a reasonable way around a compromised key at this point.
+3. If I was the protocol designer, I'd address these flaws by using mechanisms to send keys that were outside of the system (snail mail, signal flares, semaphore) to send keys, and requiring that a key's validity only lasted a short period of time.  My system's users would despise me, but they'd be more secure than they would be otherwise.
+Lecture 62
+1. The guarantees that Otway-Rees seems to provide to A and B are that they're both getting keys that have been verified by the server, even though, in the way the question was set up in the lectures, we can't be sure that B ever receives the key that A is given to distribute to them.
+2. The guarantee that Needham-Schroeder provide that Otway-Rees don't are that B gets the key.  
+3. To fix the protocol in slide 4, I'd require that a certificate be used to legitimize the key of anyone who is sending a public key.  Without the certificate, the attacker (C in the slides) wouldn't be able to send a message that A would view as legitimately from B.
+Lecture 63
+1. The verification of protocols is important because it helps clarify and classify exactly what an attacker could potentially do, and to identify the vulnerabilities of the protocols that have been implemented.
+2. A belief logic is a method of protocol verification that allows us to reason about what principals within a protocol should be able to infer from the messages that they're receiving.  
+3. Beliefs come in with programs in a general sense, because we are generalizing our beliefs into things that can be summarized with propositional logic.
+Lecture 64
+1. Modal logic is propositional logic that involves primitives for describing formulas, and inference rules for describing facts.
+2. The intuition behind the message meaning inference rule is that when only 2 parties share a key, if one party isn't sending a message to itself and it sees the key in the message, then that message came from the other party with the key.
+3. The intuition behind the nonce verification inference rule is that the nonce is going to show that a message is fresh, and if there is only one party that could've sent it, than that party must believe that message. 
+4. The intuition behind the jurisdiction inference rule is sort of like transitivity, because it establishes a hierarchy of belief that includes a party that is higher than A or B, and once that higher party is trusted, it should be trusted for all the other parties.
+5. Idealization is the process of turning a message into its intended semantics and it's needed because it helps the designers of protocols understand what each step within their protocols are accomplishing, and what they can trust that their protocols have accomplished.
+Lecture 65
+1. In the prior lecture it was stated that plaintext is omitted in a BAN idealization because it can be forged, and that basically means that comments can't be trusted to do exactly what they say they're doing.
+2. The reason that some idealized steps refer to beliefs that will happen later in the protocol is because we're being asked to reason through the assumptions and end up at assertions that have been made about protocols, so if we aren't looking into the future with regards to the assumptions that we're trying to make it will be difficult to understand how the inferences show what the protocols have accomplished.
+3. BAN proof exposes assumptions because you're forced to write down each one of them to reason forward and see what it accomplishes.

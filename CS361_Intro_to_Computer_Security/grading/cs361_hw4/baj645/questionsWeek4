@@ -1,0 +1,83 @@
+Name: Brian Jenkins
+EID: baj645
+CS Login: baj645
+Email: bjenkins92@gmail.com
+
+Lecture 53:
+1. So that that signature cannot be removed and then used on another message
+2. Because public key encryption can be quite expensive
+3. It is unforgeable, authentic, has non-repudiation, tamperproof, and not reusable
+
+Lecture 54:
+1. To ensure the accuracy of the certificate
+2. Because only X has his private key so it ensures that X really signed it
+3. To ensure that the message was not tampered in any way
+4. It might not correctly decrypt X's private key
+
+Lecture 55:
+1. There needs to be some sort of unimpeachable authority
+2. To say how long it is valid for. Once a certificate reaches its expiration date, it is no longer valid
+3. Then the message has likely been tampered with or it is at least not the same as when sent
+
+Lecture 56:
+1. X.509, IP
+2. Then there is a potential loss of confidentiality and/or integrity
+3. Because otherwise you cannot reach inside the outer encryption to unlock yours
+4. If a hacker had eavesdropped and collected the 3 messages can XOR them to not only get the message content but also the keys
+5. If he stores the three messages and XORs (MxKa) with ((MxKa)xKb)
+6. If he stores the 3 messages and XORs MxKa and (MxKa)xKb
+7. Because ensuring absolute security is almost impossible, and the harder you try to make it secure, the more complex the protocol becomes
+
+Lecture 57:
+1. Protocols are important so that there is a set syntax, semantics, and synchronization so that parties can easily and effectively communicate
+2. Cryptographic protocols are important because they accomplish a security-related function such as confidentiality, integrity, unicity, etc. in the wide open hostile environment that is the internet
+3. That both parties have the public key corresponding to the others' private key
+4. That both parties have the new key, can use it, and both know the other user is who they are and received the message
+5. Yes, because each party used their private key that acts as their signature saying that it was really them that got the key
+6. Because if an attacker had a previous message, he can initiate a new protocol run with the message, giving the attacker the original K
+
+Lecture 58:
+1. So that when B receives the message he can easily figure out where he is in the protocol
+2. Because encryption and decryption are expensive, so doing unnecessary steps like these are very costly
+
+Lecture 59:
+1. Because the best attacks are ones that the defender did not even think of
+2. An attacker can confuse parties or disrupt message flow
+3. Yes, an attack's purpose could be to instead disrupt or subvert instead of stealing information
+4. An attacker cannot create an arbitrary message
+5. An attacker won't know anything about the current run except for what it has seen and received
+
+Lecture 60:
+1. No, the nonces ensure the freshness of the message
+2. 	1: That it wants to communicate with B; That A wants to speak to B and to generate a key for said purpose
+	2: This is the key used for communication between A and B; that these keys will allow discreet communication
+	3: The key for communication; that A wants to communicate and this is the key
+	4: That B has the key; that B received the key A sent
+	5: That A received B's confirmation of receiving the key; A has the key and knows B has the key
+
+Lecture 61:
+1. B does not know that the original key is no longer safe
+2. It can be if the key is easy to obtain, as was seen with the Needham-Schroeder Protocol
+3. Have an additional step where S also messages B the nonce Na so that when A or C tries to make contact with B at message three, it would require the nonce A used when first generating the key
+
+Lecture 62:
+1. It guarantees that both parties are who they say that they are
+2. Needham-Schroeder guarantees that both parties get the messages, whereas Otway-Ress guarantees that both parties are who they claim to be
+3. Add nonces that show whether this is actually an old message being sent again
+
+Lecture 63:
+1. To ensure protocols actually achieve what they are trying to accomplish
+2. A reasoning about principles of a protocol by inferring from the messages seen
+3. Beliefs are extracted from the messages flying around within a program
+
+Lecture 64:
+1. A logic model utilizing abstraction and beliefs which would normally be intuitive
+2. That only B could send something with a key that only B has
+3. If A got a new message from B then B must have sent said message
+4. An expert in a field is a credible source in that matter
+5. Idealization transforms a protocol into a logical goal that the sender or recipient is trying to accomplish
+
+Lecture 65:
+1. Because the idealization is to figure out why a message was sent, not the actual textual content in a message
+2. Because some protocol steps are actually to ensure things such as unity or confidentiality at a later step
+3. Because you have to reason from assumptions to the actual specific goals, and if the assumptions cannot lead to those, then they are exposed as false

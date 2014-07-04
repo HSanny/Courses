@@ -1,0 +1,92 @@
+Peter Luke Conlon
+plc585
+luke
+luke@cs.utexas.edu
+
+Week 4 Questions
+
+Lecture 53
+1) You don't want someone to be able to take your signature from a transaction, pretend to be you and do other things.
+2) Usually the hash is signed because it is a much smaller value than the message itself, so it is cheaper.
+3) R gains the assurance that the message is not forgeable, it is authentic, there is no repudiation, it is tamperproof and not reusable.
+
+Lecture 54
+1) They are important for assuring that a key and the indentity of the person behind it correspond. Someone must vouch for the accuracy of the binding.
+2) X hashes the message because it is cheaper to sign, and anyone can access it with his public key.
+3) This way, we know that Y and Y's public key Ky are a certified pair. This is the certificate.
+4) We make the assumption in this case that it is a certified key, but if it was not, then we could not verify X's signature.
+
+Lecture 55
+1) Ideally, at the root of this chain of trust is an unquestionable source. We do not want to doubt the maker of the first certificate.
+2) If a certificate has expired, then we don't want to trust it; the validity interval is how long the certificate is good for.
+3) If the hash and the received value do not match, then that means that the certificate is not correct.
+
+Lecture 56
+1) The RSA cryptosystem is an example of another protocol we have discussed. A protocol is basically anything that gives rules to how different parties communicate.
+2) If one step of the protocol is ignored, then the security of the communication has been compromised.
+3) In order to take off the inner encryption the ciphers must commute because otherwise, you would not be able to get passed the outer encryption layer.
+4) An attacker can evesdrop on the conversation, and try XORing combinations of the three messages until he decrypts it.
+5) He can get it in the same way as M; the attacker can know that the XOR value used twice is Ka.
+6) The attacker can get it just like he got M; he can know that the XOR value used once is Ka.
+7) Cryptographic protocols are difficult to design and easy to get wrong because the best hack is the one that the engineers did not think of. You need to cover all cases, and the hacker only needs to find one hole.
+
+Lecture 57
+1) Protocols provide rules for sending information over the internet. Some examples include moving a file, or sending a facebook message.
+2) Cryptographic protocols apply the art of cryptography to protocols so that the information can not only be sent, but be secure. 
+3) We assume that A and B are both certified, and that there is a public key system in place. 
+4) The goals are that, at the end of the communication, both know that the other party has the key and can use it, and that A is actually talking to B and B is talking to A.
+5) The goals are not satisfied because this does not guaranteed authentication. 
+6) The protocol allows an attacker to listen in, take the message, send B the message with B's public key, and unravel the whole thing.
+
+Lecture 58
+1) If a protocol is taking unnecessary steps, then it is not cost/time efficient.
+2) Fewer encryptions means a cheaper process, and fewer steps in the protocol.
+
+Lecture 59
+1) Because a good attack is one the engineers never thought of.
+2) They could mess up a current protocol by injecting an old one that they listened to and recorded.
+3) Yes, they could not receive information, but destroy someone elses current communication by altering its integrity.
+4) The attacker cannot generate a message encrypted with someone else's private key. It is hard to name all of the restrictions on an attacker. 
+5) When a party receives a message, it knows what that message means, and how to respond to it.
+
+Lecture 60
+1) No, it needs nonces so that when A sends a message to B and B sends a message back, if the nonce is the same, A can be pretty sure that the response is to his message.
+2) Step 1: a) A is telling S that he wants to communicate with B so generate some keys b) S believes that this message is from A and that it has a specific nonce. Step 2: a) S encrypts a message to A with the fresh nonce and a key, and says here is a key for B that you cannot open. b) A knows that this was a response to his request based on the nonce. Step 3: a) A sends B's key over to B that only B can decrypt. b) B knows that this message is from A once he opens it, and contains a key to communicate with Ae. Step 4: a) B sends A a fresh nonce encrypted with their shared key to tell him that he got the key b). A now knows that B got the key Step 5: a) A sends the nonce back after operating on it to acknowledge B's message b) B now knows that they both have keys and can communicate, and that they both know this.
+
+Lecture 61
+1) S knows that a message is coming from A because they are the only ones with Kas. 
+2) A key being compromised is something to consider because if Kas is compromised, A could be impersonated. It depends on the security of the encryption.
+3) You would need to go through each step of the protocol in detail, checking for vulnerabilities while thinking like an attacker.
+
+Lecture 62
+1) It seems to guarantee authentication between A and B.
+2) B does not know for sure that A got the key in step 4 of Otway-Rees because A never responds to B to confirm; this is something that we are guaranteed in Needham-Schroeder.
+3) It is very hard to know how to fix all flaws in a protocol like this, but you could add a session M, a nonce, and an intermediary S so that you avoid a situation like this.
+
+Lecture 63
+1) We need to know how safe a protocol is so that we can trust it enough to send confidential information with it.
+2) Belief logic is a modal logic that allows principals within the protocol should believe from the messages they see.
+3) Beliefs come in the form of proofs and assumptions about the program which we infer to be accurate.
+
+Lecture 64
+1) A modal logic is a type of formal logic that includes operators expressing modality.
+2) Message meaning says that if A believes that A and B share a key, and A receives a message encrypted in that key, then A is entitled to believe that it came from B.
+3) Nonce verification says that if A believes a message it has received is fresh, and A believes that B said X, then A believes that B believes X.
+4) Jurisdiction states that if A believes B is an authority on things of type X, and A believes that B believes X, then A believes X.
+5) Idealization looks at a step of the protocol, and tries to determine what it is trying to accomplish so that it can eliminate redundancies in the protocol and only do what is necessary.
+
+Lecture 65
+1) I think the plaintext is omitted in a Ban idealization because there is no encrypted or private information.
+2) Some things are assumed before they happen because they are the goal of the protocol; for example, S assumes that A and B will share a key before they do because that is the purpose.
+3) Needham-Schroeder did not intend to assume that B believes that any key it receives will be a fresh key, and they were criticized for it. BAN logic is good for exposing these.
+
+
+
+
+
+
+
+
+
+
+

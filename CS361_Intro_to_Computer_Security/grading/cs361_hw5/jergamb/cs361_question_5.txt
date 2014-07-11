@@ -1,0 +1,119 @@
+Name: Gerardo Gamboa
+EID: gg8745
+cs_login: jergamb
+email: ggambo_13@utexas.edu
+
+				CS361 Questions: Week 5
+
+Lecture 66
+1. PGP is the closet you’re likely to get to military-grade encryption.
+2.  Zimmermann had a strong distrust of the government, and believed strongly that everyone had an absolute right to privacy.
+3. Yes it uses the best available cryptographic algorithms as building blocks.
+4. Just incase you have a problem or need assistance it would be a good idea to get support from the actual source.
+
+
+Lecture 67
+1. Sender creates a message M. Sender generates a hash of M. Sender signs the hash using his private key and prepends the result to the message. Receiver uses the sender’s public key to verify the signature and recover the hash code. Receiver generates a new hash code for M and compares it with the decrypted hash code.
+2. Sender generates a message M and a random session key K. M is encrypted using the recipient’s public key, and prepended to the message. Receiver uses his private key to recover the session key. The session key is used to decrypt the message.
+3. Apply the authentication step to the original message. Apply the confidentiality step to the resulting message.
+
+
+Lecture 68
+1. Compression, Email compatibility, and segmentation.
+2. To make PGP efficient and robust.
+3. Because it is preferable to sign an uncompressed message so that the signature does not depend on the compression algorithm.
+4. Uses radix-64 conversion to map groups of three octets into four ASCII characters. It is need because it expands the message by 33%. This is usually more than offset by the compression.
+5. Because email systems often restrict message length. Longer messages must be broken into segments, which are mailed separately.
+
+
+Lecture 69
+1. Session keys, public keys, private keys, and passphrase-based keys.
+2. Key size depends on the chosen encryption algorithm.
+3. The encryption algorithm E is used to generate a new n-bit key from a previous session key and two n/2-bit blocks generated based on user keystrokes, including keystroke timing.
+4. For new RSA keys, an odd number n of sufficient size is generated and tested for primality. If it is not prime, then repeat with another randomly generated number, until a prime is found.  
+5. The private key is stored encrypted with a user-supplied passphrase. This is necessary because whenever the user wants to access the private key, he must supply the passphrase.
+
+Lecture 70
+1. Generate an ID likely to be unique for a given user. 
+2. Has the timestamp, key ID, public key, private key, and the user ID. 
+3. Has the timestamp, key ID, public key, and User ID. 
+4. PGP retrieves receiver’s encrypted private key from the private-key ring, using the Key ID field in the session key component of the message as an index. Then PGP prompts the user for the passphrase to recover the unencrypted private key. Finally PGP recovers the session key and decrypts the message.
+5. Indicates the extent to which PGP trusts that this is a valid public key for this user.
+6. The owner issues a signed key renovation certificate. Recipients are expected to update their public-key rings.
+
+
+Lecture 71
+1. Consumer problem - the attacker gets logically between the client and service and somehow disrupts the communication.
+   Producer problem - the attacker produces, offers or requests so many services that the server is overwhelmed.
+   The producer problem is more prevalent.
+2. In a typical producer attack, the transaction may involve some handshake. The attacker does not respond and the server ties up resources waiting for a response. 
+3. Increasing the server’s queue size could consumer considerable resources. Shortening the time-out period might disallow connections by slower clients.
+
+
+Lecture 72
+1. A filter can detect patterns of identifiers in the request stream and block messages in that pattern. 
+2. An intrusion detection system can analyze traffic patterns and react to anomalous patterns. An intrusion prevention system attempts to prevent intrusions by more aggressively blocking attempted attacks.
+3. - Over-provisioning the network - have too many servers to be overwhelmed.
+   - Filtering attack packets - somehow distinguish the attack packets from regular packets.
+   - slow down processing - disadvantages all requestors, but perhaps disproportionately disadvantages attackers. 
+  - speak up solution - request additional traffic from all requestors.
+
+
+Lecture 73
+1. False negatives are defined as a genuine attack is not detached. False positives are defined as harmless behavior that is mis-classified as an attack. Both are bad for an IDS.
+2. Accurate is defined as detecting all genuine attacks. Precise is defined as never reporting legitimate behavior as an attack.
+3. It’s hard to do both simultaneously.
+4. The IDS classifies an attack as an attack with probability 90%. The IDS classifies a valid connection as attack with probability 10%.
+
+
+Lecture 74
+1. Tried to analyze a worm that used a static seed in its random number generator and thus generated identical lists of IP address on each infected machine.
+2. Each infected machine probed the same list of machines, so the worm spread slowly.
+3. Means a machine can be disinfected by simply rebooting it. Once-rebooted, the machine remains vulnerable to repeat infection, likely since each newly infected machine probes the same list of IP addresses. 
+4. Because they either crashed or rebooted when an infected machine attempted to send them a copy of the worm.
+
+
+Lecture 75
+1. CodeRedII also generated random IP addresses.
+2. Machines on the same network or subnet are likely to be running similar software. 
+3. It placed a backdoor that allowed any code to be executed so machines could be used as zombies for future attacks.
+4. A large number of machines remained vulnerable to the same or similar attack.
+5. Its a very big flaw that left a lot of customer’s information to be hacked.
+
+
+Lecture 76
+1. Because it provides a standardized process of independent evaluation by expert teams to provide a certified level of confidence for security products.
+2. An evaluation standard provides a set of requirements defining security functionality, a set of assurance requirements needed for establishing the functional requirements. A methodology for determining that the functional requirements are met. A measure of the evaluation result indicating the trustworthiness of the evaluated system.
+3. Because it is designed for protection of sensitive but unclassified information.
+4. 1. Basic security; at least one approved algorithm or function.
+   2. Improved physical security, tamper-evident packaging.
+   3. Strong tamper-resistance and countermeasures.
+   4. Complete envelope of protection including immediate zeroing of keys upon tampering.
+
+
+Lecture 77
+1. Comprised of the CC documents, the CC evaluation Methodology, and country-specific evaluation methodologies called an Evaluation Scheme or National Scheme.
+2. Evaluations by one signing country are respected by all of the others.
+3. May be used internationally.
+4. A protection profile is a description of a family of products in terms of threats, environmental issues and assumptions, security objectives, and requirements of the Common criteria. The Security Target is a document that contains the security requirements of a product to be evaluated and specifies the measures offered by the product to meet those requirements. It may may a protection profile.
+
+
+Lecture 78
+1. Protecting information that may not be confidential but are still unique such as records that a waste bin was cleared out consisting of bin ID, timestamp, and weight.
+2. Detect invalid ID tags, invalid bin-cleared messages, and fault tolerance.
+3. Illustrates the components of a protection profile.
+
+
+Lecture 79
+1. Store properties of users, support automatic generation of passwords, and specify password quality parameters.
+2. A security target is a specific system or class of systems submitted for evaluation.
+
+
+Lecture 80
+1. There are 7 EALs and are for functionally tested, structurally tested, methodologically tested and checked, methodologically designed, tested and reviewed, semi formally verified design and tested, and formally verified design and tested.
+2. The government of the country where the evaluation is performed.
+3. Because to be tested at EAL5/EAL6/EAL7 must have been designed using formal methods. Only NSA performs testing for EAL5 and higher.
+4. If they can it won’t be respected as much as the CC.
+5. It will mess with the process. 
+
+

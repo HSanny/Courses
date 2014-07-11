@@ -1,0 +1,185 @@
+Name: Jeff Upton
+EID: jau55
+CS Login: jupton
+Email: jeffupt@gmail.com
+
+
+Lecture 66
+==========
+
+1. PGP is a secure email system that uses the latest encryption technology to ensure confidentiality and integrity.
+
+2. Zimmerman was motivated by a strong distrust for the government.
+
+3. Yes, PGP is extremely secure.
+
+4. For help with installation/implementation or packaging.
+
+
+Lecture 67
+==========
+
+1. The sender sends a message with a signed hash. The reciever generates a new hash, decyrpts the signed hash using the sender's public key and verifies that the hash matches the one packaged with the message.
+
+2. The sender generates a random session key and encryptions the message. The key is encrypted using the recipient's public key and send with the message encrypted with the session key. The receiver decrypts the session key using his private key and uses it to decrypt the message..
+
+3. Authentication and confidentiality can be combined for a message. Simply apply the authentication step, and then apply the confidentiality step on the resulting message. 
+
+
+Lecture 68
+==========
+
+1. PGP also provides compression, email compatibility and segmentation.
+
+2. Encryption after compression strengthens the encryption because compression reduces redundancy.
+
+3. Signing the uncompressed message is preferable because the signature then does not depend on the compressino algorithm.
+
+4. Radix-64 convertion maps groups of 3 bytes to four ASCII characters. It is needed to prevent certain bit strings from being interpreted as commands in email systems.
+
+5. Since message length is often restricted, longer messages must be broken into segments.
+
+
+Lecture 69
+==========
+
+1. Session keys, public keys, private keys, and passphrase-based keys.
+
+2. Session keys are associated with a single message and only used once.
+
+3. Session keys are generated randomly at first and then from a previous session key and two blocks sgenerated based on user keystrokes. The blocks are encrypted using the algorithm and the previous key and combined to form the new key.
+
+4. To generate an RSA keys, an odd number of bits is generated and tested for primality until a prime number is found. 
+
+5. The private keys are encrypted with a user passphrase so that the user must be present each time the key is used.
+
+
+Lecture 70
+==========
+
+1. The least significant 64-bits of the key are used as the ID of the  key.
+
+2. A private key ring contains the user's private/public key pairs.
+
+3. A public key ring contains the public keys of correspondents.
+
+4. To use a private key, PGP loads the key using the key id field and prompts the user for the passphrase. The system uses the passphrase to decrypt the private key and decrypt the message using the private key.
+
+5. The key legitimacy field indicates the extent to which the system trusts that the public key for a given user is trusted.
+
+6. A public key can be revoked by an owner-issued revocation certificate. Recipients of this certificate are expected to remove the public key from their key rings.
+
+
+Lecture 71
+==========
+
+1. The consumer problem (aka "man-in-the-middle") is where the attacker gets logically between the client and service and disrupts communication. The producer problem occurs when the attacker sends so many requests that the server is overwhelmed. Producer attacks are more prevelant.
+
+2. SYN flooding happens when an attacker forges the return address on SYN packets during TCP handshakes and the server fills up with half-open connections. These connections cause legitimate requests to be denied until those connections time-out.
+
+3. The server's queue size can't simply be increased without consuming considerable resources. Shortening the timeout period might prevent connections from slower clients. Attempting to filter suspicious packets may prove to be too difficult to perform since detecting an invalid packet is hard.
+
+
+Lecture 72
+==========
+
+1. Packet filtering works well to prevent attacks because it prevents messages from getting to vulnerable consumers in the first place.
+
+2. Intrustion detection involves the analysis of traffic patterns in order to react to anomalous patterns and reacts after an attack has begun. An intrusion prevention system attempts to prevent intrusion by more aggressively blocking attempted attacks, assuming that malicious traffic can be identified.
+
+3. The first solution involves over-provisioning the network - adding too many servers to be overwhelemd. The second solution involves filtering attack packets. The third solution is to slow down request processing which may disproportionally disadvantage attackers. Lastly, the "speak-up" solution involves requesting additional information from all requesters.
+
+
+Lecture 73
+==========
+
+1. False negatives occur when a real attack is not detected. False positives classify harmless behavior as an attack and is likely the bigger problem.
+
+2. Accurate refers to the ability of the system to detect all genuine attacks, while precise refers to the ability of the system to never report legitimate behavior as an attack.
+
+3. Assuming every packet is an attack provides accuracy while assuming every packet is harmless gives precision.
+
+4. The base rate fallacy means that the IDS must be very accurate or suffer a very large incidence of false positives due to the relatively small percentage of traffic that is malicious.
+
+
+Lecture 74
+==========
+
+1. The CodeRed virus attempted to DoS the whitehouse website and deface some webpages.
+
+2. CodeRed was ineffective because it used a static seed in its RNG and generated identitical lists of IP addresses to attempted to infect, causing the worm to spread slowly. The IP address for whitehouse.gov was changed and the DoS attack failed.
+
+3. A memory resident infection can be disinfected by a simple reboot.
+
+4. CodeRed version 2 was more effective because it used a random seed in its RNG causing the worm to spread much more rapidly. The sheer volumes of infected hosts and probes caused problems. 
+
+
+Lecture 75
+==========
+
+1. CodeRedII is entirely new, the similarity is only in the name.
+
+2. The purpose of the elaborate propogation scheme was to allow the worm to propogate as quickly and widely as possible and reduce detection.
+
+3. CodeRedII does not deface web pages or launch a DoS attack, but instead installs a backdoor for root access as a base for future attacks.
+
+4. Unpatched machines remain vulnerable to attack. Many attacks target vulnerabilities for which fixes are already available.
+
+5. 90% of compromised machines were unpatched. The lesson is to always keep machines updated with the latest patches.
+
+
+Lecture 76
+==========
+
+1. It is necessary because most customers do not have the expertise required to accurate evaluate a product and can instead rely on a panel of experts.
+
+2. Requirements for security functionality, a set of assurance requirements, a methodology for determing whether the functional requirements are met, and a measure of the result indicating the trustworthiness of the system.
+
+3. Since so much relies on the security of cryptographic devices, a more rigorous standard is needed.
+
+4. The first level requires the use of at least one approved algorithm. The second includes tamper-evident package. The third level includes tamper-resistance and countermeasures. The fourth level provides completion protection, including zeroing of keys when tampering is evident.
+
+
+Lecture 77
+==========
+
+1. A standard set of criteria used for evaluating the trustworthiness of secure systems adopted by many countries.
+
+2. The "common" part refers to the fact that the criteria is shared between many countries.
+
+3. To allow for variances in the security requirements for different countries.
+
+4. A protection profile is a set of requirements for an entire category of products or systems, where an evaluation against a security target involves a specific product or system.
+
+
+Lecture 78
+==========
+
+1. The goal of the protection profile is to evaluate whether or not the scheme used to send trash data is tamper-proof and secure.
+
+2. The purpose of each part of the protection profile is to establish the assumptions, threats, and objectives in the context of the security of the system under evaluation.
+
+3. To evaluate whether assumptions and threats are being addressed by the system.
+
+
+Lecture 79
+==========
+
+1. The goal is to establish what security means in the context of a product and how the product enforces that security.
+
+2. A security target evaluation is specific to a product or system.
+
+
+Lecture 80
+==========
+
+1. EALs are the level and depth of evaluation that has been performed for a target.
+
+2. Common criteria evaluations are performed by independent, accredited labs.
+
+3. There is still a degree of mistrust for very secure products between nations.
+
+4. No, a self-certification is not trustworthy. Certification must be conducted by an independent third party.
+
+5. You miss out on implementation details that may have broken assumptions made by the model.
+

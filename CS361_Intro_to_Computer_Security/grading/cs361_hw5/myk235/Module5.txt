@@ -1,0 +1,94 @@
+Name: Matt Kim
+EID: myk235
+CS Login: myk235
+Email: matthewkim4u@gmail.com
+
+Lecture 66
+1. PGP is pretty good privacy that has the best available cryptographic algorithms, is free/low cost to use, and easy for any average person to implement
+2. Zimmerman didn't trust the government and developed it so that everyone had the right to privacy
+3. It provides effective security, and is difficult for even government agents to crack
+4. Many companies don't like to use freeware - they want maintenance on the software being used
+
+Lecture 67
+1. Sender makes message, generates a hash of that message, signs the hash with his private key and prepends the result to his message, receiver uses sender's public key to verify the signature and get the hash, receiver makes a new hash for M and compares it to the decrypted hash
+2. Sender makes message M and session key K, M encrypted with K, K encrypted using recipient's public key and prepended to message, receiver uses his private key to recover the session key, session key used to decrypt the message
+3. You can get both authentification and confidentiality by applying authentification to the original message, then the confidentiality to the resulting message
+
+Lecture 68
+1. PGP also provides: compression, email compatability, and segmentation
+2. Encryption after compression strengthens the encryption by reducing redundancy
+3. Because the signature shouldn't be undecipherable due to different compression algorithms
+4. radix-64 conversion turns 3 octets into 4 ASCII characters; this is used so email systems don't choke on certain 3-octet parts of the encoding
+5. Email systems have restrictions on message length, so longer messages are broken into segments and mailed separately
+
+Lecture 69
+1. session keys (1 per message), public keys, private keys, passphrase-based keys (protection for private keys)
+2. session keys: 1 key per message, key size depends on algorithm, 
+3. generates n-bit key from previous session key and 2 n/2 -bit blocks based on user input; 2 blocks made using algorithm and previous key, combined to make new key
+4. large odd number n generated until it is prime generated with ln(2 ^ #bits) / 2 tries
+5. the private key is protected with a passphrase, this is necessary to prevent decryption of the private keys
+
+Lecture 70
+1. generate an ID likely to be unique for a user - a 'key ring'
+2. private-key ring: contains his own public/private key pairs
+3. public-key ring: contains public keys of correspondents
+4. retrieves receiver's encrypted private key from the ring using the Key ID field, prompts user for passphrase to recover the private key, PGP recovers session key and decrypts message
+5. it indicates the extent to which PGP trusts that it is a valid public key
+6. by issuing a signed key revocation certificate; recipients are expected to update their public key rings
+
+Lecture 71
+1. consumer: attacker gets between the client and service, producer: attacker produces too many requests that a server is overwhelmed. (producer is more prevalent)
+2. syn flooding: an attacker forges return address on syn packets, sends a ton of them, server leaves half-open connections until it times out
+3. 1: limit to how big you can make the table, and attacker can keep sending requests 2: will disadvantage slower clients, and can act as DOS 3: difficult to label packets as suspicious, can end up throwing away legitimate data
+
+Lecture 72
+1. packet filtering is effective because it would remove all unwanted traffic/attack packets
+2. detection: analyze traffic patterns and responds to them, prevention: aggresively block attempted attacks, assuming that attacking traffic can be identified
+3. add more servers (expensive), filter packets (discard attack packets), slow down processing (DOS attacks don't work as well), speak up (have more legitimate requests compared to DOS requests)
+
+Lecture 73
+1. false negative: genuine attack is not detected; false positive: harmless behavior is mis-classified as an attack (false negative is much worse)
+2. accurate: detects all genuine attacks; precise: never reports legitimate behavior as an attack
+3. accuracy: can classify everything as potential attack (would be accurate but not precise) precision: can report all requests as legitimate (would be precise but not accurate)
+4. base rate fallacy states that given a specific probability and a base probability, its easy to ignore the base probability: in IDS it is important to remember what the actual probability is, not just the specific prob
+
+Lecture 74
+1. do a DOS attack on www1.whitehouse.gov
+2. the attack failed because the IP address for the website was changed, and because of the static seed for IP addresses (could be blocked)
+3. memory resident: the presence/workings of the code depend on the instructions stored in memory, implies that rebooting computer could disinfect it
+4. because it had a random IP generator, so the DOS attacks couldn't be blocked by IP
+
+Lecture 75
+1. Uses random IP generation and propagates to new computers
+2. The propagation scheme was more elaborate because this worm didn't want to be detected
+3. Code Red II tried to put backdoors into as many different computers as possible, so that they could be used at the coder's discretion
+4. A large population of unpatched machines would be able to launch a massive DOS attack
+5. Users don't patch their systems enough, when doing so could have prevented infection in a large amount of cases
+
+Lecture 76
+1. They help the consumer understand what they need and what they are buying
+2. a set of requirements defining security functionality, a set of assurance requirements needed to establish functional requirements, a method for determining that functional requirements are met, a measure of the evaluation result indicating the trustworthiness of the evaluated system.
+3. there are certain devices that require higher levels of security than others
+4. 1: basic security with at least 1 algorithm, 2: improved physical security (tamper-resistant packaging), 3: strong tamper-resistance and countermeasures, 4: complete envelope of protection including immediate zeroing of keys upon tampering
+
+Lecture 77
+1. An internationally used secure systems evaluation criteria
+2. It is commonly used in many different countries
+3. Some countries may value security to different extents, and may value security more in certain areas than other countries
+4. PP: set of implementation-independent security requirements for a category of products or systems, ST: contains security requirements of a product and the measures offered by the product
+
+Lecture 78
+1. goal of protection profile identifies threats and assigns safety to parts of the system
+2. describes what security means for this particular class of systems
+3. it is a mapp from threats/assumptions to security objectives/requirements, helps identify security needs
+
+Lecture 79
+1. It details a specific system and submits it for evaluation, and try to outline what security means for this product
+2. The two seem very similar to me
+
+Lecture 80
+1. EAL: evaluation levels, are used to describe how well tested/designed/reviewed the product was
+2. The government of the country where the evaluation is performed 
+3. Higher levels may not be accepted because the security might involve protection of very important documents, it might not be prudent to accept another country's 'top-secret' security protocol
+4. Venders can't self-certify, because it would be pointless to do so, in terms of accuracy
+5. If you could reverse-engineer the code, then it is liable to security threats (which should not be present in this high a level)

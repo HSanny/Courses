@@ -1,0 +1,94 @@
+Name:Trevor Thackston
+EID:ttt733
+CS Login:ttt733
+Email:trevor.thackston@gmail.com
+
+Lecture 66
+1. pretty good privacy
+2. provide strong encryption to everyone
+3. yes
+4. so someone can be held accountable if it fails
+
+Lecture 67
+1. sender creates message and generates a hash of it, signs the hash, puts the hash at the front of message, receiver verifies signature and generates a new hash code
+2. sender creates message and random session key to encrypt message, k encrypted with public key, receiver recovers session key, session key decrypts message
+3. authentication to original message, confidentiality to result
+
+Lecture 68
+1. compression, emails, segmentation
+2. encryption after compression strengthens encryption
+3. so signature does not depend on the compression algorithm
+4. map groups of three octets into 4 ascii characters, appends crc for data error checking
+5. email systems restrict message length
+
+Lecture 69
+1. session public private passphrase-based
+2. used only once
+3. The encryption algorithm E is used to generate a new n-bit key from a previous session key and two n/2-bit blocks generated based on user keystrokes, including keystroke timing. The two blocks are encrypted using E and the previous key, and combined to form the new key
+4. an odd number n is generated and tested for primality
+5. encrypted with a user-supplied passphrase to keep them secure
+
+Lecture 70
+1. generate an id likely to be unique for a given user
+2. table of rows with timestamp, key id, public key, private key, and user id
+3. table of rows with timestamp, key id, public key, and user id
+4. use key id field as an index to get encrypted private key, prompt user for passphrase
+5. indicates the extent to which pgp trusts that this is a valid public key
+6. owner issues a signed key revocation certificate
+
+Lecture 71
+1. in consumer problems attacker gets between client and service, in producer problems attacker overwhelms server
+2. server receives syn packets with no return address and is overloaded with half-open connections
+3. might block out legitimate connections or consume lots of resources
+
+Lecture 72
+1. detects patterns of identifiers in the request stream and discards ones outside the good range
+2. ids reacts after the attack has begun, ips attempts to prevent intrusions through blocking
+3. have too many servers to be overwhelmed, distinguish attack packets from regular packets, slow down processing of attackers, request more traffic from all requestors
+
+Lecture 73
+1. false negatives are when an attack isn't detected, false positives are when normal behavior is classified as an attack; both are bad and can cripple a system
+2. a system is accurate if it detects all attacks, precise if it never reports normal behavior as an aattack
+3. you can either detect everything or nothing
+4. high detection accuracy can still mean a high chance that a raised alarm is false
+
+Lecture 74
+1. infect a random list of ip addresses and launch a dos attack on whitehouse.gov
+2. static seed in random number generator and ip address for whitehouse.gov changed
+3. machine could be disinfected by rebooting it
+4. random seed in its RNG
+
+Lecture 75
+1. exploited same buffer-overflow vulnerability
+2. to avoid the problem codered version 1 had
+3. install a mechanism for remote, root-level access
+4. many are vulnerable to attack
+5. machines should be patched frequently
+
+Lecture 76
+1. most customers dont have expertise to determine security effectiveness
+2. requirements defining security functionality, assurance requirements, methodology for determining that requirements are met, measure of evaluation result
+3. federal agencies use them
+4. at least one algorithm, physical security improvements, tamper-resistance, immediate zeroing of keys upon tampering
+
+Lecture 77
+1. secure systems evaluation criteria
+2. used by 26 countries
+3. countries have their own ways of securing data
+4. PP describes products in terms of threats, ST contains security requirements of the product to be evaluated
+
+Lecture 78
+1. protect info on whether trash has been collected
+2. detect invalid tags and messages, fault tolerance
+3. map threads and assumptions to security objectives and requirements
+
+Lecture 79
+1. map security requirements to subfunctions
+2. PP describes products in terms of threats, ST contains security requirements of the product to be evaluated
+
+Lecture 80
+1. assurance levels, provide assurance that corresponding rigor was applied to each test
+2. independent oranizations like NIST
+3. countries don't trust one another as international politics are equivalent to man's state of nature
+4. no, ensure no bias in tests
+5. product was designed using formal methods

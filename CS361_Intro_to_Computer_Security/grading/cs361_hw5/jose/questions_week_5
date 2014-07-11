@@ -1,0 +1,191 @@
+Name: Jose Bigio
+EID: jab7677
+CS Login: jose
+Email: josebigio@utexas.edu
+
+Lecture 66
+1. What is PGP?
+	A data encryption and encryption program used for secure data comunication. It stands for pretty good privacy
+2. What motivated Phil Zimmerman to develop it?
+	Cryptographic algorithms are difficult to use for non cs people. Zimmerman wanted a way for everybody to be able to protect their data.
+3. Does PGP provide effective security?
+	Yes. Not even governmental entities can crack it.
+4. If PGP is free-ware, why would anyone bother to purchase support?
+	For many reasons. For example to increase their protection level or perhaps just to support Zimmerman's project.
+
+Lecture 67
+1. Explain the PGP authentication protocol.
+	Sender creates a message (M)
+	Message gets hashed (H)
+	The sender sends the original message + the hashed message encrypted with his private key (M + (H)k-1)
+	The receiver decrypts the hashed part of the message with the senders public key and compares it to M. They should be the same
+2. Explain the PGP confidentiality protocol.
+	The sender generates a session key K along with a message M.
+	The sender encrypts K with the receivers public key and the message M with K
+	The receiver then decrypts K with his private key and uses K to decrypt M
+3. How do you get both authentication and conﬁdentiality?
+	The message M gets a run through the Authentication protocol to generate AM
+	Then the confidentiality protocol is applied to AM. This way, he knows it came from A since only he has his private key. He knows no one else could access it because only he could decrypt the session key K.
+
+Lecture 68
+1. Besides authentication and conﬁdentiality, what other “services” does PGP
+provide?
+	Email compatibility, compression and segmentation
+2. Why is compression needed?
+	To save bandwidth
+3. Why sign a message and then compress, rather than the other way around?
+	So that the signature does not depend upon the compression algorithm used. Also, compressing a file reduces redundancy so encrypting a compressed file is harder to crack. 
+4. Explain radix-64 conversion and why it’s needed?
+	Encrypted text contains arbritary 8 bit octects that are not ascii standard. Some email clients cant handle this. with radix 64, you convert 3 8bit octects into 4 6bit ascii chars. This way every email client can handle it.
+5. Why is PGP segmentation needed?
+	Email clients can only support certain message lengths. With segmentation, large messages get split into smaller ones, then sent, then put back together at the receivers end.
+
+Lecture 69
+1. What are the four kinds of keys used by PGP?
+	one-time session symmetric keys, public keys, private keys and passphrase-based symmetric keys.
+2. What special properties are needed of session keys?
+	High Entropy, not guessable, used only once
+3. How are session keys generated?
+	You take the previous session key and two n/2 bit blocks. Then run it through an alrogithm to generate the new session key. This two blocks are generated based on random actions like user keyboard strokes and mouse movements.
+4. Assuming RSA is used for PGP asymmetric encryption, how are the keys
+generated?
+	You keep generating nbit odd numbers until you get a prime number. Then u use this prime numbers to create the keys
+5. How are the private keys protected? Why is this necessary?
+	With a passphrase. It is needed because someone can access your computer and read it. They will have a harder time reading it if they dont have the password.
+
+Lecture 70
+1. If a user has multiple private/public key pairs, how does he know which was
+used when he receives an encrypted message?
+	Each key has a "semi" unique id that is the least significant 64 bits of the public key.
+2. What’s on a user’s private key ring?
+	Timestamp, KeyID, Public Key, Private key, User ID
+3. What’s on a user’s public key ring?
+	Timestamp, Key ID, Public Key, User ID
+4. What are the steps in retrieving a private key from the key ring?
+	PGP uses the Key ID from the sessions key corresponding field, and then uses that to index into a table of the users private keys. Then prompts the user for the passphrase. Then PGP hashes the passphrase and uses that as the key to decrypt my encrypted private key
+5. What is the key legitimacy ﬁeld for?
+	It is a field indicating how legitimate PGP beleives a public key is
+6. How is a key revoked?
+	The owner issues a key revocation certificate. Users are expected to update their public key ring
+
+Lecture 71
+1. Explain the difference between the consumer and producer problems. Which
+is more prevalent?
+	The consumer problem is when someone gets in the middle of the communication between the client and the server and disrupts it. The producer problem is when a lot of computers attack the server and overwhelm it. This last is more prevalent
+2. Explain syn ﬂooding.
+	An attacker forges the return address of the SYN message he sends to the server. The server allocates space for the communication between them. The server sends a SYN/ACQ message back, but since the address is invalid, it will never receive the required response back. It will waste its resources until the connection times out.
+3. Why are the ﬁrst three solutions to syn ﬂooding not ideal?
+	Increasing internal table: It would reduce the amount of clients the server could operate with significantly. Also, the attacker could just send more requests
+	Reducing the timeout: Users with slow connections wouldn't be able to use the server.
+	Filtering suspicious packets: It is way to difficult to determine which one is legit and what not. 
+
+Lecture 72
+1. Why does packet ﬁltering work very well to prevent attacks?
+	It doesnt work well. It is very hard to implement
+2. What are the differences between intrusion detection and intrusion prevention systems?
+	Intrusion detection handles the problem after the attacker is inside the walls. Prevention tries to avoid the attacker from ever penetrating the wall
+3. Explain the four different solutions mentioned to DDoS attacks
+	Over provision network: So many servers that no matter how much traffic, you will be able to handle it. It is very expensive though
+	Filter the attack packets. Detect patterns, etc.
+	Slow down processing: This disadvantages good and bad users. But disadvantages bad users even more.
+	Speak up solution: after an attack is detected, tell every requester to send more packages. Attackers wont be able to do it because they are maxed out. This way one can spot them
+
+Lecture 73
+1. Explain false positive and false negatives. Which is worse?
+	False negative is when an attack is not detected. False positive is when a good request is thought to be evil. Which is worst depends on the circumstances
+2. Explain what “accurate” and “precise” mean in the IDS context.
+	Accurate = detects all genuine attacks (no false negatives). Precise: never reports legitimate behavior as an attack. (No false positives)
+3. Explain the statement: “It’s easy to build an IDS that is either accurate or
+precise?
+	100% accurate: block all traffic
+	100% precise: allow all traffic
+4. What is the base rate fallacy? Why is it relevant to an IDS?
+	What may sound like a good accuracy or precision rate is actually not that much. For example if a system is 90% accurate, that for every request, there is a 10% chance that the message will be considered an attack and block the system.
+
+Lecture 74
+1. What did Code Red version 1 attempt to do?
+	It was a worm that first attached it self to other machines. Then it would tell all those machines to attack the www1.whitehouse.gov. 
+2. Why was Code Red version 1 ineffective?
+	Because it used a static seed generator so it would spread to the same machines all the time. In other words, it spread really slowly
+3. What does it mean to say that a worm is “memory resident”? What are the
+implications.
+	It remains in the volatile memory of the machine. It means that when you reboot the machine, the worm will die
+4. Why was Code Red version 2 much more effective than version 1?
+	It used a random seed generator so it spread much faster
+
+Lecture 75
+1. How was Code Red II related to Code Red (versions 1 and 2)?
+	It contained the string "Code red II" in the code. It also tried to attack the white house. It also used the same vulnerabilities as code red I
+2. Why do you suppose Code Red II incorporated its elaborate propogation
+scheme?
+	So that it was more likely to propagate into nearby machines. This machines are probably running the same softwares as the attacked machine, so they are not patched as well. In other words, it made the worm propagate into machines that where likely to be susceptible. 
+3. What did Code Red II attempt to do?
+	Establish a back door in the computer so it could be accessed remotely. Since it had root access it could run any code the attacker wanted to.
+4. Comment on the implications of a large population of unpatched machines.
+	It means that many computers where susceptible to this worm. That people are lazy and wont update their softwares to their latest versions
+5. Comment on the report from Verizon cited on slide 6. What are the lessons
+of their study?
+	To keep your machines updated with the latests patches
+
+Lecture 76
+1. Why is a certiﬁcation regime for secure products necessary and useful?
+	Most consumers don't have a systematic way of buying secure products. With certifications, consumers can just see if the product has been certified by a well known agency and trust their criteria.
+2. Explain the components of an evaluation standard.
+	A set of requirements defining secure functionality. For example an OS might needs to different things than an internet browser. So their security needs are different
+	A set of assurance requirements needed for establishing the functional requirements.
+	A methodology for determining that the functional requirements are met.
+	A measure of the evaluation result indicating the trustworthiness of the evaluated system. (good bar, medium, etc)
+3. Why would crypto devices have a separate evaluation mechanism?
+	Because cryptology is a particular sensitive area. 
+4. Explain the four levels of certiﬁcation for crypto devices.
+	Level 1: Basic security, use at least one approved algorithm or function
+	Level 2: Also provides some sort of physical security. 
+	Level 3: PRovides stronger tamper evidence protection
+	Level 4: Complete envelope of protection. 
+
+Lecture 77
+1. What is the Common Criteria?
+	Evaluation mechanisms for every device that is not cryptographic
+2. What’s “common” about it?
+	It is valid amongst a set of countries
+3. Why would there be any need for “National Schemes”?
+	Because some countries are succeptible to specific threads. This allows for countries to adapt their security concerns according to their environment
+4. Explain the difference between a protection proﬁle and a security target
+	A security target is the evaluation of a specific product. For example Firewall ABC. A protection profile a set of implementation-independent security requirements for a category of products or systems.
+
+Lecture 78
+1. Explain the overall goal of the protection proﬁle as exempliﬁed by the WBIS
+example.
+	Detect invalid ID tags
+	Detect invalid bin-cleared messages
+	Fault tolerance
+2. What is the purpose of the various parts of the protection proﬁle (as exempliﬁed in the WBIS example)?
+	By defining the assets, you know what is it that you are trying to protect. By defining the environmetal assumptions, you can figure out a set of threats. With that you can define the security objectives. Finally you can define what the requriements for that set of systems should be.
+	In other words, the parts are supposed to set up a systematic way to define a protection plan.
+3. What is the purpose of the matrix on slide 7?
+	To see if every thread and assumption is being taken care of. To see if the mechanisms you are providing are adequate for the system
+
+Lecture 79
+1. Explain the overall goal of the security target evaluation as exempliﬁed by
+the Sun Identity Manager example.
+	manage data, support automatic generation of passwords, specify password quality parameters
+2. How do you think that a security target evaluation differs from a protection
+proﬁle evaluation?
+	a protection profile requires a more abstract mentality. Target evaluation is more specific.
+
+Lecture 80
+1. What are the EALs and what are they used for?
+	They are an indicator of how much effort the producer has applied to its product to make sure it meets the common criteria standards
+2. Who performs the Common Criteria evaluations?
+	A certifying authority
+3. Speculate why the higher EALs are not necessarily mutually recognized by
+various countries.
+	Because those higher levels are only applied to extremely important products. Probably used by the government of a specific country. With this in mind, for example England may have different threats than US. A product that works for the US government will not be enough for the British government.
+	There might also be conflict of interests. For example US might want to harm Britain
+4. Can vendors certify their own products? Why or why not?
+	They cant. It would result in a clear conflict of interest. 
+5. If you’re performing a formal evaluation, why is it probably bad to reverse
+engineer the model from the code?
+	Because it was designed using formal mathematical methods.
+
+

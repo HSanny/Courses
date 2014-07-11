@@ -1,0 +1,103 @@
+Name: Robinson Nguyen
+EID: rn5644
+CS Login: rnguyen
+Email: robinson_nguyen@hotmail.com
+
+Lecture 66
+1) PGP is a program that uses high level cryptographic algorithms to encrypt things.
+2) Zimmerman didn't trust the government.
+3) Several governments had trouble decrypting it.
+4) Freeware usually doesn't have customer service for maintenence.
+
+Lecture 67
+1) The sender hashes a message and signs with the private key of the sender and sends it with the message.
+2) The sender creates a new key and use that on the message and encrypt the key with the receivers public key.
+3) Use both protocols together.
+
+Lecture 68
+1) It also provides compression, email compatibility, and segmentation.
+2) So we can save bandwitdh when sending it to a receiver.
+3) So the signature won't have to depend on the compression algorithm.
+4) It converts the text ascii so that all computers can handle and read the message.
+5) Emails are often restricted in length, so segmentation lets you send messages in segments.
+
+Lecture 69
+1) Session, public, privatem passphrase-based keys.
+2) Session keys are a per message basis and makes it hard for an attacker to crack.
+3) Previous session keys, keystrokes and keystroke timing. 
+4) The keys involve two large prime numbers
+5) It asks for a passphrase so private keys can be kept private.
+
+Lecture 70
+1) The last 64 bits of the message is an ID that can tell which public key is used.
+2) Timestamp, keyID, public and private key, and userID.
+3) Timestamp, keyiD, public key, and userID.
+4) You can use the user or key ID. PGP asks for the passphrase.
+5) It can store certificates that can verify the authenticity of a users keys.
+6) The key could be compromised or the key could be old.
+
+Lecture 71
+1) The consumer can't send requests to the server, and the producer's resources get used up.
+2) The attacker doesn't respond to a server so the server has to wait.
+3) It consumes more resources, prevents less clients, and may lose clients. It doesn't deal with the problem of syn flooding
+
+Lecture 72
+1) It can prevent illegitimate requests from going through.
+2) Detection looks at patterns in the system and checks if anything got past the firewall
+while prevention tries to block attacks before anything gets through the firewall.
+3) over-provisioning is expensive since it uses several servers, filtering attack packets
+is hard to distinguish attack packets from regular packets, slow down processing 
+is where everyone is at disadvantage, and the speak-up solution requests additional traffic.
+
+Lecture 73
+1) False positives are when attacks aren't detected and false negatives are when harmless behavior are classified as an attack.
+I think it depends on what you want.
+2) Accurate is when it detects genuine attacks and precise never reports harmless behavior as an attack. 
+3) You could never flag an attack or always flag an attack.
+4) Even though you could have high accuracy, there is still a percentage that are false positives.
+
+Lecture 74
+1) It tried to launch a DoS attack on the whitehouse.
+2) The random number generator generated the same lists of IP addresses.
+3) It resided in the volatile memory of the machine. 
+4) It corrected the flaws of the static seed and also attacked the internet. 
+
+Lecture 75
+1) It had the string CodeRed in it.
+2) It's more likely to infect machines within the same area.
+3) It sets a backdoor machine and launches threads attacking other machines.
+4) The people didn't seem it too important to patch the machines and the worm will propogate.
+5) People are lousy about patching their machines.
+
+Lecture 76
+1) So you don't have to be experts to buy security products.
+2) Requirements for functionality, assurance requirements for establishing funtional
+requirements, methodology to determine if the requirements are met, and an evaluation
+to give a grade.
+3)  Cryptography is a sensitive field and has a lot less experts.
+4) basic security with atleast one algorithm, improved security, stronger tamper-resistance
+and complete protection of tampering.
+
+Lecture 77
+1) A set of documents and methodology for applying the criteria.
+2) Common among certain countries.
+3) Some countries have different created criteria.
+4) Protection profile is a document that describes the security requirements for class of systems
+while security target is the basis of requirements to be used for evaluation.
+
+Lecture 78
+1) To keep track of the waste cleared. 
+2) To check if the data is fully recorded and tag the waste bin. The time stamp and the amount of waste. 
+3) So that we can see which threats to account for and all the assumptions are validated.
+
+Lecture 79
+1) Store properties and keep the confidentiality of the users.  
+2) The security target evaluation scores how well the product handles the security requirements
+while a protection profile evaluation scores how well it matches the profile it's comparing to.
+
+Lecture 80
+1) Levels that determine the quality of product that meets certain standards.
+2) The government of the country where the evaluation is being performed.
+3) Different countries have various standards for evaluating security products.
+4) No because it's the government that usually upkeeps the criteria necessary. 
+5) It probably wouldn't be as secure and meet the security requirements.

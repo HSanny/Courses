@@ -1,0 +1,83 @@
+Name: David Barron
+EID: db25633
+csID: davidbar
+email: d.barron91@utexas.edu
+CS 361 Young
+HW5
+
+L66
+1.	Pretty Good Privacy - “…The closest you're likely to get to military-grade encryption…”
+2.	Distrusts of Government.
+3.	Yes…
+4.	It’s easier for companies to call on someone to provide maintenance.
+L67
+1.	Sender generates hash of Message, locks with private key, sends both to Receiver, Receiver opens hash with public key, generates new hash, compares hashes.
+2.	Sender generates Message and Key, encrypts Message with Key, encrypts Key with Receiver’s public key, sends to Receiver, receiver decrypts Key with private key, decrypts Message with Key.
+3.	Put the two together.
+L68
+1.	Compression, Email compatibility, and Segmentation.
+2.	Save bandwidth.
+3.	So the signature does not depend on the compression algorithm.
+4.	Maps 3 octets into 4 ASCII characters, easier to handle ASCII.
+5.	To makes sure the mailer doesn’t complain about a message being too large.
+L69
+1.	Session Key, Public Key, Private Key, Passphrase-based Key.
+2.	Random Key plus encrypting with old Key = new key. 
+3.	See Above.
+4.	With a randomly generated prime number.
+5.	Store them in encrypted folder.
+L70
+1.	Send Key ID, the last 64 bits of the public key used.
+2.	Timestamp, Key ID, Public Key, encrypted Private Key, User ID.
+3.	Same as private, minutes the encrypted Private Keys
+4.	Use a passphrase
+5.	To determine who the key belongs to.
+6.	Send revocation certificate to tell other subjects to not to use that key anymore.
+L71
+1.	Producer is more common. Consumer – Attacker gets between client and service and disrupts communication. Producer – Attacker makes many requests to the service so that the server is overwhelmed.
+2.	Attacker sends lots and lots of packages to the server; legit clients do not get service as the server table is full.
+3.	Resource intensive, disallows legit slow clients, or may be hard to implement. 
+L72
+1.	So the bad packets don’t even get through to the server.
+2.	Detection occurs once the attack has begun, Prevention occurs before any attack has begun.
+3.	Have lots of servers to prevent being overwhelmed, filter packages, slow everything down, request additional traffic from all requestors.
+L73
+1.	False Positive – Detect Attack when none exists. False Negative – Fail to detect Attack. False Negative is worse, thought it depends on situation.
+2.	Accurate – detects all genuine attacks. Precise – never reports legitimate behavior as attack.
+3.	You can go to either extreme; allow Flag none (accurate) or all (precise).
+4.	Probability of a False Positive is high, despite high accuracy rate.
+L74
+1.	Use a buffer-overflow vulnerability in Microsoft IIS websites to break in.
+2.	 Not really.
+3.	A reboot solves the problem, but it can quickly be infected again because the vulnerability is still there.
+4.	It actually used a random seed in the random number generated.
+L75
+1.	Not by very much, other than share the name.
+2.	Because it was useful, and not many people patched machines.
+3.	Install backdoors on machines.
+4.	Easy to infect, and are likely to be running the same software. Easy to circulate.
+5.	Patch and update yo stuff, dawg!
+L76
+1.	Most people don’t know how to secure their machines or how to interpret their needs.
+2.	Determine requirements, Determine assurance requirements, Determine they can be met, Measure result.
+3.	Because Cryptography is a specialized area. 
+4.	From Basic security, all the way to complete envelope protection.
+L77
+1.	Secure System evaluation criteria.
+2.	It is used by many countries.
+3.	So countries can tweak their own schemes and not be dependent on another country.
+4.	PP – description of a family of products. ST – doc containing reqs of a product to be evaluated.
+L78
+1.	Specify generally different ways to access a system securely.
+2.	Specify certain section of the CC requirements to be used in the security of the system.
+3.	To determine if you have thought about all threats.
+L79
+1.	A user won’t compromise the system in some way. 
+2.	One says what security means for the system, the other then goes on to say how they worked to provide that security.
+L80
+1.	Assurance Levels – to tell the user how stringent the security of the system is.
+2.	The government or certifying agency.
+3.	The requirements may be different from country to country, and designers may abuse these levels in marketing. 
+4.	NOOoooo. That defeats the purpose of the agencies.
+5.	Because you need a formal mathematical model to prove things.
+

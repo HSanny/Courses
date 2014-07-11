@@ -1,0 +1,104 @@
+Name: Taylor Gregston
+EID: teg282
+CS Login: teg282
+Email: gregstont@gmail.com
+
+Lecture 66:
+ 1. It is an email encryption system that is extremely strong and easy to use for all.
+ 2. Distrust of the government.  He believed everyone had a right to privacy.
+ 3. Yes. To our knowledge it can't practically be broken by any government.
+ 4. Alot of companies like to have support which is not offered with freeware in case they have problems.
+
+Lecture 67:
+ 1. The sender encypts the hash of the message with his private key, which only the sender has. Is verified with S public key.
+ 2. The sender generates a key for symmetric encryption for the message and signs it with the recievers public key so the reciever can see the key and decrpty the message.
+ 3. These to aspects are combined which naturally provides both.
+
+Lecture 68:
+ 1. Compression, email compatibility and segmentation.
+ 2. To save bandwidth because its being sent over internet.
+ 3. You don't want the signature to depend on the compression algorithm.
+ 4. It is a transformation that takes three octets and turns it into ASCII characters which can be displayed.
+ 5. Some mailers have a limit on size of message, so breaks it into pieces.
+
+Lecture 69:
+ 1. Session, public, private, passphrase-based.
+ 2. It needs to be random so it can't be guessed.
+ 3. It is dependent on user movements and mouse movements with also olders keys. This is done to increase entropy.
+ 4. A random n-bit number is generated and then checked if it is prime, and if not keep trying to guess. Usually 70 tries for 200 bits.
+ 5. They are protected by the user passphrase. If someone else has access to your data and it wasnt encrypted they could get your private key.
+
+Lecture 70:
+ 1. PGP uses the least significant 64 bits of the key as the ID which is most likely unique.
+ 2. A list of private keys owned by the user. Also holds public keys.
+ 3. The public keys used for past communication.
+ 4. It uses the Key ID field as an index and asks the user for his passphrase before giving him the key.
+ 5. It indicates the trustworthyness through a chain of certificates.
+ 6. The owner issues a signed key revocation certificate. Recipients are advised not to use that key.
+
+Lecture 71:
+ 1. Consumer: attacker gets in between a client and service and disrupts the communication. Producer: the attacker produces requests to overwhelm the server.
+ 2. The attacker sends TCP syn with and invalid address and the server witholds resources awaiting a response, that it will never get.
+ 3. They would either increase resources, decrease availability or be difficult to determine accurately.
+
+Lecture 72:
+ 1. It can determine which packets are bad and completely block the suspecting packets.
+ 2. IDS: analyzes traffic patterns and react, IDS reacts after the attack has begun  IPS: attempts to prevent intrusions by more aggressively blocking attempted attacks assuming it can be identified.
+ 3. Over-provisioning: more servers but expensive. Filtering attack packets: distinguish the attack packets from regular packets.  Slow down processing: disadvatages all requests. Speak up: request additional traffic from all requestors.
+
+Lecture 73:
+ 1. false negative is when a genuine attack is not detected.  False positive is harmless behavior that is deemed as attack. Depends on scenario (how sensitive is data).
+ 2. Accurate: detects all genuine attacks. Precise: never generates false positives.
+ 3. You could either allow all traffic or block all traffic.  The key is finding the sweet spot.
+ 4. Most likely the attacks are rare, and most things that are deemed attacks are most likely false positives.
+
+Lecture 74:
+ 1. It was a worm that would launch a DoS attack to whitehouse.gov.
+ 2. The worm spread slowly because the random generator use to make the attack lists used a static seed so everyone made the same list.
+ 3. It means the worm resides in memory and goes away when the computer is reboot.
+ 4. Random seed so more people got infected more quickly.
+
+Lecture 75:
+ 1. They both exploited the same vulnerability in MS IIS webservers.
+ 2. Probably to set up a botnet to be used for DoS attacks. It would prefer to attack computers in general network, which were likely to also be vulnerable.
+ 3. It installed a mechanism for roots access to a machine, so anything could have been done.
+ 4. Unpatched machines remain vulnerable to future attacks.
+ 5. It means that as a whole people are slow to patching their machines.
+
+Lecture 76:
+ 1. People need to know who to trust.
+ 2. A set of requiremnts defining the functionality, a set of assureance requirments, a methodology, and a measure of the evaluation result.
+ 3. The nature of cryptography is sensitive and there are not many experts.  If there is a flaw it would have great consequences.
+ 4. 1: basic security, level 2: improved physical security, level 3: strong tamper-resitant, level 4: complete envelope of protection (epoxy shield).
+
+Lecture 77:
+ 1. It is a systems evaluation criteria that is a standard that 26 countries use.
+ 2. It is common between all coutries that use it.
+ 3. Countries may trust themselves more than foreign products if there is sensitive data.
+ 4. Security target is the policy that needs to be enforced.  Protection profiles is a document that describes a policy for a class of systems.
+
+Lecture 78:
+ 1. It is trying to protect people from cheating the trash billing system.
+ 2. Data authentication, internal transfer integrity protection, stored data integrity.
+ 3. It is a mapping from threats to security objectives.
+
+Lecture 79:
+ 1. It's goal is to manage user access priviledges and not allow misuse or untrusted users and reliable timestamps.
+ 2. The protection profile evaluation is more common and standard because it is from a given document that others use.  Security target is more abstract.
+
+Lecture 80:
+ 1. They are evaluation levels that represent the level of security the product offers.
+ 2. From commercial labortories that are certified.  It means the government of that country has certified the product.
+ 3. Countries may not trust each others software from having backdoors or exploits.  The data a high EAL product would be around is going to be sensitive.
+ 4. No because there needs to be a chain of trust. Otherwise EAL would have no significance.
+ 5. If you model from the code you will miss the same holes or exploits that the programmer missed.  You need a model indpendent from the code.
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,161 @@
+Name: Mallory Koai
+EID: MJK567
+CS Login: mkoai
+Email: mkoai@utexas.edu
+
+Lecture 66
+
+1. PGP is an email encryption program that integrates and packages a bunch of strong cryptographic algorithms in a way that is easy for everyone to use (i.e., you don’t have to be a cryptographic expert to use it).
+
+2. Zimmermann did not trust the government and believed in everyone’s absolute right to privacy. PGP provided strong cryptographic algorithms that protected against any invasive government entities.
+
+3. According to Wikipedia, the Italian police, FBI, and other US government agencies all had trouble breaking PGP-encrypted files. It therefore seems pretty effective.
+
+4. Companies generally don’t like using freeware, and the purchased support offers a source of contact for maintenance and other issues.
+
+Lecture 67
+
+1. The message being sent is hashed and then signed with the sender’s private key. This is sent with the original message, M. The receiver can verify that the message came from the sender by checking against the sender’s public key. This guarantees authentication but not confidentiality.
+
+2. A sender generates a message and a random session key. The message is then encrypted using this key. To get this key to the receiver, the sender encrypts the key with the receiver’s public key. This way, only the receiver can retrieve the key and decrypt the message. This guarantees confidentiality but not authentication, as anyone has access to the receiver’s public key.
+
+3. First, apply the authentication protocol to the original message, and then apply the confidentiality step to the first step’s resulting message.
+
+Lecture 68
+
+1. Beside authentication and confidentiality, PGP also offers compression, email compatibility, and segmentation.
+
+2. Compression saves bandwidth and also strengthens the encryption by reducing redundancy in a message.
+
+3. It’s preferable to apply a signature before compression because we don’t want the signature to depend on the compression algorithm.
+
+4. Different mailers have different control characters to which they respond. Radix-64 conversion  allows for transactions between these different mailers by taking three octets and expanding them into four ASCII characters, which every mailer can handle. 
+
+5. Some mailers restrict the length of messages. PGP automatically segments longer messages into smaller chunks so no mailer can complain about the length. These chunks are sent individually and are reassembled once received.
+
+Lecture 69
+
+1. The four kinds of keys used by PGP are one-time  session keys for symmetric encryption, public and private keys used in asymmetric encryption, and passphrase-based keys used to store private keys.
+
+2. Session keys should be high-entropy, i.e., they should appear random and not be guessable by an attacker.
+
+3. Two n/2-bit blocks generated based on user keystrokes and are encrypted using encryption algorithm E. The result is then combined with a previous session key to form the new key.
+
+4. Prime numbers are used for asymmetric encryption. To produce primes that are unguessable to the attacker, a key of an appropriate size is randomly generated and then tested for primality. The process is repeated until a prime is found.
+
+5. The private key is stored in an encrypted form because the entire security of the system depends on protecting the private key. This is accomplished by using a hashed form of a user-supplied passphrase for encryption and decryption of the private key.
+
+Lecture 70
+
+1. PGP generates an ID for the pair that is likely to be unique. The ID is comprised of the least significant 64 bits of the key.
+
+2. The private key ring maintains a user’s own public/private key pairs. For each pair, it stores information such as the timestamp, key ID, user ID, and the public and private keys themselves.
+
+3. The public key ring contains the public keys of a user’s correspondents. Each entry contains a timestamp, key ID, user ID, and the public key.
+
+4.The key ID field in the session key indexes to the appropriate encrypted private key in the private key ring. PGP then prompts the user for the passphrase which is used to recover the private key. 
+
+5. The key legitimacy field is a measure of how strongly the user believes that the public key is legitimate. This field stores certificates that help vouch for the authenticity of the binding between a public key and its identity.
+
+6. The owner issues a signed key revocation certificate, and recipients update their public-key rings accordingly.
+
+Lecture 71
+
+1. The consumer problem is disrupting communication between the client and the server, while the producer problem is where someone attacks the server by flooding it with illegitimate requests, thereby hogging resources and preventing legitimate clients from accessing them. The producer problem is more prevalent.
+
+2. SYN flooding occurs when an attacker forges the return address on a number of SYN packets. This creates half-open connections that fill up the server’s table. These eventually time out, but in the meantime, legitimate clients cannot establish a TCP connection.
+
+3. Increasing the server’s queue size could incur a lot of overhead. Shortening the timeout period is itself a DoS attack that disadvantages slower clients. Filtering suspicious packets is one option, but it can be hard to determine which packets are illegitimate.
+
+Lecture 72
+
+1. Packet filtering eliminates potential threats by detecting messages of a certain pattern or discarding packets that have an invalid IP address (i.e., one outside a given range). Unfortunately, it can be hard to distinguish between patterns of attack and patterns of standard usage. Discarding too many packets can also be a form of DoS if too many legitimate requests are dropped.
+
+2. Intrusion detections systems react only after an attack has begun while intrusion prevention systems works more aggressively to block attempted attacks (assuming that the attacking traffic can be identified).
+
+3. Over-provisioning the network means having too many servers to be overwhelmed. Unfortunately, this is expensive to implement.
+
+Filtering attack packets attempts to discard packets with malicious content, but it is often difficult to distinguish attack packets from legitimate ones.
+
+Another solution is to slow down processing. This would disadvantage all requestors, even legitimate ones, but since attackers are probably sending more, it would disadvantage them even more.
+
+The “speak-up” solution has the server request traffic from all requestors. The assumption is that the attacker’s bots are maxed out. Therefore, only legitimate clients can send additional traffic, thereby raising the proportion of valid to invalid requests.
+
+Lecture 73
+
+1. A false negative is when a genuine attack is not detected, and a false positive is when harmless behavior is misclassified as an attack. Determining which one is worse depends on the scenario. If you have a system that absolutely cannot tolerate an attack, then being more accurate probably takes priority.
+
+2. An IDS is accurate if it detects all genuine attacks (i.e., has no false negatives). It is precise if it never reports legitimate behavior as an attack (i.e., has no false positives).
+
+3. Ideally, we want an IDS that is both accurate and precise, but it is difficult to implement one that is both simultaneously.
+
+4. In the context of IDS, the base-rate fallacy says that since attacks are statistically rare, the system needs a high degree of accuracy to be useful. 
+
+Lecture 74
+
+1. CodeRed attempted to launch a DoS flooding attack on www1.whitehouse.gov through infected machines (i.e., a botnet). In addition, it defaced some websites.
+
+2. It was ineffective because it used a static seed in its random number generator, meaning it generated identical lists of IP addresses on each infected machine. Each infected machine probed the same list of machines, so the worm spread slowly. Furthermore, the IP address of the intended target changed, so the DoS attack failed.
+
+3. A worm being “memory resident” means it resides in volatile memory on a machine. This means that the machine can be disinfected simply by rebooting it.
+
+4. CodeRed version 2 was more effective because it used a random seed in the random number generator, allowing the worm to infect more machines and spread more widely.
+
+Lecture 75
+
+1. It is not clear whether CodeRedII is related to CodeRed at all, except that the writer of CodeRedII heard about CodeRed because the string “CodeRedII” is in the code. The only other similarity is that they both exploit the same vulnerability.
+
+2. To maximize effectiveness, a worm should be widespread. CodeRedII’s propagation scheme allows for this by launching hundreds of threads and selecting IP addresses that build upon the current one. This is important because IP addresses with the same prefix reside in the same network or subnet, meaning they probably run similar software to the currently infected machine.
+
+3. CodeRedII installed a mechanism for remote, root-level access in infected machines. This allows any code to be executed, meaning infected machines could be used as zombies in future attacks.
+
+4. A large population of unpatched machines means a large pool of potential targets for attackers aiming to exploit a vulnerability.
+
+5. If your machine contains a vulnerability for which there is a hotfix patch, PATCH YOUR MACHINE as the first preventative step against potential threats.
+
+Lecture 76
+
+1. Most consumers are not security experts, and they may not have the knowledge necessary to properly assess a security product.
+
+2. We want a set of requirements defining security functionality, and we want to know the policies associated with each functional requirement. We want some methodology for applying the evaluation and determining whether functional requirements are met. Finally, we would like an evaluation result (i.e., a grade) rating the trustworthiness of the evaluated system.
+
+3. Crypto devices have a separate evaluation mechanism because cryptology is a very sensitive area that the government would rather oversee more carefully. There are also fewer experts in this area. 
+
+4. The four FIPS 140-2 levels indicate varying levels of security. At one end of the spectrum, Level 1 certification provides basic security and uses at least one approved algorithm. As we move to Level 4, the security becomes more robust and tamper-resistant.
+
+Lecture 77
+
+1. The Common Criteria defines a standard for secure systems evaluation. It is comprised of documents and a methodology for applying the criteria. Each country also has evaluation methodologies called Evaluation Scheme or National Scheme that are specific to their country.
+
+2. It’s “common” because it is a common standard adopted by many countries.
+
+3. “National schemes” exist because different countries may want to tweak the common criteria.
+
+4. A protection profile provides a template describing the security of a class of systems, whereas a security target is a document containing the security requirements of an actual product to be evaluated (possibly against a protection profile). 
+
+Lecture 78
+
+1. The protection profile documents security requirements for a general class of systems. In this lecture, it is a bin-collecting system. The PP itself identifies assets, threats, assumptions, security objectives, and security requirements.
+
+2. The various “chapters” of the protection profile aim to provide insight into possible threats, assets, and security goals. Since a PP is not attached to a specific product, the guidelines provided are general to the system in question (e.g., the bin-collecting system in this lecture).
+
+3. The matrix is a systematic way of determining whether the proposed mechanisms are adequate to solve the proposed problems. If every row (threats/assumptions) has an ‘X’ somewhere, then all of the threats have some sort of corresponding mechanism to counter them, and all of the assumptions have some mechanism that validates it. 
+
+Lecture 79
+
+1. The goal of the security target evaluation is to define potential threats and their security countermeasures. For example, the Sun Identity Manager example cites bad passwords as a threat and automatic password generation and quality parameters as countermeasures.
+
+2. A security target evaluation assesses a specific product while a protection profile evaluation provides a generalized evaluation for a system.
+
+Lecture 80
+
+ 1. The EAL indicates the level of rigor that should have been applied during development and test. Otherwise, a protection profile or security target submitted for evaluation should have minimal evidence to meet the standard indicated by the EAL.
+
+2. The government or a certifying agency performs the CC evaluations. More specifically, the government performs evaluations at higher levels (i.e., EAL5 and higher), while independent labs perform evaluations for lower levels (i.e., EAL4 and lower).
+
+3. Higher EALS are not necessarily mutually recognized by various countries because any country-specific evaluation methodologies (i.e., National Schemes) were probably implemented at the higher, more sensitive levels.
+
+4. Vendors cannot certify their own products because the whole point of obtaining a certificate is knowing that it was done so legitimately through a second party of credible authority. 
+
+5. You want to evaluate based off of the intended model and not what the code happens to do.
+

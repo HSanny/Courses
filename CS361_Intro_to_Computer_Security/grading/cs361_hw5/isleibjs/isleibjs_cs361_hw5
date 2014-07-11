@@ -1,0 +1,123 @@
+FIRSTNAME: Jesse;
+LASTNAME: Isleib;
+UTEID: jsi234;
+CSACCOUNT: isleibjs;
+EMAIL: jesse.isleib@gmail.com
+
+Lecture 66
+1) "Pretty good privacy." It's a method of strong encryption available to anyone.
+2) Government distrust, but more generally the idea that everyone has rights to privacy.
+3) Yes, it uses some of the most approved algorithms for symmetric encryption, public key encryption and hashing.
+4) Purchasing optional support allows for benefits necessary in commercial environments, such as immediate, on demand help.
+
+
+Lecture 67
+1) Sender sends a message prepended with a hashed version of the message signed by their private key. Since only S has access to S's private key, authentication is secured.
+2) The sender generates a key and encrypts a message with the key. The key is encrypted with the public key of the receiver. Since only the receiver can decrypt the key used to decrypt the message, confidentiality secured.
+3) First apply the authentication step, then the confidentiality step.
+
+
+Lecture 68
+1) Compression/email compatibility/segmentation (also known as engineering features)
+2) mainly to save space (and potentially reduce redundancy, if encryption is applied after compression)
+3) so that the signature does not depend on the compression algorithm
+4) makes all binary strings interpretable so there is no confusion between various email modules.
+5) so that all mail programs can handle the size of the message. Upon receiving the message, PGP "strips" headers from the messages and turns the segmentated message into one full message.
+
+
+Lecture 69
+1) session, public, private, and passphrase-based (these protect & store private keys)
+2) 1-time use (symmetric), randomly generated for one message. 
+3) PGP uses the previous session key and key-stroke/timing/mouse movement (collecting entropy) and applies an algorithm E to produce a new key.
+4) Generate random non-even numbers until a prime is found, which takes around ln(2^n)/2 tries, where n is the number of bits the prime uses.
+5) User-chosen passphrase encryption. This avoids storing the method of encryption on your disk. Private keys are very necessary to protect, or else attackers can pose as you and read your emails.
+
+
+Lecture 70
+1) 1: send the public key along with the message, which is cost inefficient.
+   2: associate unique IDs with each key pair, which means that senders must have a mapping of key to recipient IDs for all pairs.
+   3: (PGP preferred method) use the least significant 64 bits of the key as the ID.
+2) when the key pair was made, the least significant 64 bits of the key, the public and private key (private key encrypted with passphrase), and the ID of the recipient (i.e. email address)
+3) When the entry was generated, the least significant 64 bits, the public key and the ID of the of the owner(s) of the key.
+4) find the encrypted private key via Key ID from the message, then decrypt the private key with the user's passphrase.
+5) it shows PGP's level of trust with the public key. It's determined by certificates and how much trust the user should have with that key.
+6) if compromise is suspected, or the key is old, the owner of the key issues a signed key revocation to recipients, who are expected to update their public key rings.
+
+
+Lecture 71
+1) consumer: disruption between the client and the service (blocking, interception and impersonation)
+producer: overwhelming server by sending too many requests and such.
+The producer attack seems more prevalent, because it effects all clients by effect.
+2) By not proceeding with the procedure required to finish a transaction. Such as when the caller expects a final "Ack" message, but there is an illegitimate return address provided by the attacker, making the final Ack message never reach home, leaving a lot of half-open connetions in place.
+3) increasing queue size could use too many resources, and the attacker can just send more requests.
+Shortening the time-out period makes users with slower computers time out regardless on if the request is legitimate or not.
+Filtering suspicious packets is hard to accomplish, meaning more services may be denied.
+
+
+Lecture 72
+1) It can work well by getting rid of malicious packets, but checking too heavily may be costly, and might cause a self-inflicted denial of service.
+2) intrusion detection detects patterns and reacts to weird activity, while intrusion prevention assumes that attacking traffic is identifiable and more aggressively blocks such attacks before it gets in at all.
+3) obtain too many servers to be overwhelmed;
+if possible, determine which packets are attacker packets;
+slows down all requests, possibly denying service on its own, but may fiter out more malicious requests (the ones that never "finish the handshake");
+if you see that you're under attack, you request everyone to send more packets. The illegitimate requestors are probably sending as much as they possibly can.
+
+
+Lecture 73
+1) not identifying a real attack vs identifying traffic as an attack wrongly.
+depends on the scenario; not identifying a real attack could ruin everyone's transactions, but wrongly identifying an attack ruins real transactions falsely.
+2) accurate means that it detects the bad attacks, and precise means that it never wrongly detects false positives.
+3) You can be overly cautious of all interactions, making it very accurate, or you can be lenient and not wrongly accuse transactions of being malicious.
+4) what is the rate that an attack is falsely detected? Since IDS is reactionary, it looks for what are considered anomalies in traffic. If it is too sensitive to label things as such anomalies, there is a proportionally high base-rate fallacy.
+
+
+Lecture 74
+1) denial of service upon www1.whitehouse.gov by using infected, unpatched machines found by randomly generating IP addresses
+2) the random list of IP addresses were the same on each machine, easily identifiable. The machines attacked only probed the same IPs, so it spread slowly. The IP address for www1.whitehouse.gov was simply changed, as well.
+3) The worm was stored on the volatile memory of the machine, meaning the machine simply must be restarted to get rid of it.
+4) The seed was truly randomly generated, so it spread over many more machines.
+Also, not just computers were attacked, but modems/routers/printers...
+
+
+Lecture 75
+1) The name, and the attack upon machines, but no DoS target.
+2) So the infected machines stay infected for longer periods of time
+3) use infected machines later - "zombie attacks"
+4) This worm could live longer if a large population did not patch this vulnerability, meaning that more computers could later be used maliciously.
+5) If we patched our machines, we would have a much safer internet.
+
+
+Leture 76
+1) To ensure security that most customers will not be able to ensure themselves.
+2) set requirements for security, then assure the requirements are met, testing that they have been met after assuring, then measure the trustworthiness of the system.
+3) cryptographic modules are more sensitive, and less people are specialized, so there are more untrustworhy devices, potentially, without these extra standards.
+4) 1: at least 1 approved algorith/function
+2: physical security is also applied (nobody physically tampered with the package)
+3: stronger physical security
+4: complete protection (extremely obvious to note tampering, and the keys are zero'd out upon tampering)
+
+
+Lecture 77
+1) allows for a respected-amongst-all-members system of evaluation
+2) it is used by 26 countries, with consistent documents and evaluation methods, , allowing for nation-specific evaluation methods 
+3) if a nation insists on their own high level of evaluation
+4) a protection profile is the information for a product or set of products, while the security target is a document containing the aspects of the product(s) to be evaluated, and how the product(s) attempt to meet those requirements.
+
+
+Lecture 78
+1) recognize invalid IDs, and invalid bin-clears, and tolerance of faults.
+2) systematically decides whether threats / assumptions are being addressed appropriately
+3) it shows where attacks can happen upon objectives/requirements
+
+
+Lecture 79
+1) manage user access privileges stored in directory services
+2) the security target is the explanation of how a target tries to guarentee the security requirements, while protection profile evaluation is a more general escription of what must be done to meet requirements by any product (general, goal oriented)
+
+
+Lecture 80
+1) To define how rigorously a product has been checked, tested by trusted parties, so that a consumer can more easily figure out how useful the product is.
+2) independant organizations that are certified to meet government standards
+3) kind of like how we use chain certifications, a country certifying certain things guarantees that the evaluation was carefully conducted and in good faith
+4) because otherwise, there's a gap of trust that is possibly creatd.
+5) It gets rid of the aspect of testing that tests practicality, but instead directly allows a target of weakness. It's kind of like "guessing someone's password" when you know what it is.

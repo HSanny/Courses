@@ -1,0 +1,123 @@
+Name: Eric Lane
+EID: el9297
+CS Login: elane
+Email: e.lane@utexas.edu
+
+Questions-Week5
+
+Lecture 66:
+    1)  Pretty good privacy, an email encryption system.
+    2)  Distrust of the government.
+    3)  Yes, it couldn't be broken by US or Italian governments.
+    4)  Conveniently packaged, accessible to anyone, support the developers.
+Lecture 67:
+    1)  Sender creates a message, hashes the message, and signs it with their 
+        private key. Receiver then uses the sender's public key to recover the
+        hash. Receiver then generates a new hash code and compares it to the
+        decrypted hash code.
+    2)  Sender generates a message and a new session key, and encrypts the 
+        message with the key. That is encrypted with sender's public key.
+        Receiver uses private key to recover session key, which then is used
+        to decrypt the message.
+    3)  Apply authentication to original message and confidentiality to the
+        resulting message.
+Lecture 68:
+    1)  Compression, email compatability (including segmentation).
+    2)  Messages take less space to send. 
+    3)  That way you can decompress and then decrypt.
+    4)  Makes sure there are no anomolous characters in the message. Takes 3 
+        24-bit sequences and turns them into 4 ascii characters. 
+    5)  It can break up large emails, ensuring that the whole message is safe.
+Lecture 69:
+    1)  One-time session symmetric keys, public keys, private keys, 
+        passphrase-based symmetric keys.
+    2)  Each session key is associated with a single message and used only once.
+    3)  Encryption is done with CAST-128 (128-bit keys), IDEA (128-bit keys), or
+        3DES (168-bit keys). (Assume CAST-128.) CAST-128 is used to generate the
+        key from a previous session key and two 64-bit blocks generated based on
+        user keystrokes, including keystroke timing. The two 64-bit blocks are 
+        encrypted using CAST-128 and the previous key, and concatenated to form
+        the new key.
+    4)  Public and private keys are generated on the host machine.
+    5)  Protected with password.
+Lecture 70:
+    1)  Generate an ID likely to be unique for a given user. Use the least
+        significant 64-bits of the key as the ID.
+    2)  Timestamp, key ID, public key, private key, user ID
+    3)  Timestamp, key ID, public key, user ID
+    5)  Indicates the extent to which PGP trusts that this is a valid public key
+        for the user.
+    6)  Owner issues a signed key revocation certificate. Recipients are 
+        expected to update their public-key rings.
+Lecture 71:
+    1)  Consumer is man-in-the-middle, producer overwhelms a service with 
+        requests. Producer is more prevalent.
+    2)  The server fills its table with half open connections, effectively 
+        denying all legitimate accesses.
+    3)  They affect availability in potentially negative ways.
+Lecture 72:
+    1)  You can disregard "dirty" packets as they arrive.
+    2)  Detection finds threats already within the system. Prevention tries to
+        stop them from happening.
+    3)  Over-provisioning, filtering, slow down processing, "speak-up"
+Lecture 73:
+    1)  False-negatives are way worse.
+    2)  Accuracy is if it detects all genuine attacks, precision is if it never
+        reports legitimate behavior as an attack.
+    3)  It is hard to do both simultaneously.
+    4)  You realize that you get more false-positives than necessary.
+Lecture 74:
+    1)  If date is between 1st and 19th of the month, generate a random list of 
+        IP addresses and attempt to infect those machines. On 20th to 28th of 
+        the month, launch a DoS flooding attack on www.whitehouse.gov. The worm
+        also defaces some webpages with the words "Hacked by Chinese."
+    2)  The worm uses a static seed in its random number generator and thus 
+        generates identical lists of IP addresses on each infected machine. Each
+        infected machine probed the same list of machines, so the worm spread 
+        slowly. The IP address for www1.whitehouse.gov was changed so the DoS 
+        attack failed.
+    3)  Resided in volatile memory of the machine. Restarting the computer fixed
+        the problem.
+    4)  It used a random seed in the RNG to generate IP addresses. It also 
+        forced the restart of network infrastructue.
+Lecture 75:
+    1)  They both used the same buffer-overflow vulnerability.
+    2)  More effective.
+    3)  Infect machines for future attacks.
+    4)  They could quickly be infected.
+    5)  If a known flaw exists, patch it quickly.
+Lecture 76:
+    1)  There should be a standard set of evaluation criteria for secure systems
+    2)  Investigate design, anticipated threats, incorporated controls, and
+        vulnerabilities.
+    3)  The hardware needs different kind of evaluation.
+    4)  Basic security requirements, including use of at least one Approved
+        algorithm or Approved security function. No specific physical security
+        mechanisms required.
+        Level 2: Improves physical security mechanisms by requiring features 
+        that show evidence of tampering.
+        Level 3: Attempts to deter an intruder gaining access to data.
+        Level 4: Physical security mechanisms provide a complete envelope of
+        protection around the cryptographic module with the intent of detecting
+        and responding to all unauthorized attempts at physical access.
+        Penetration of the cryptographic module enclosure from any direction
+        has a very high probability of being detected, resulting in the
+        immediate zeroization of all plaintext CSPs.
+Lecture 77:
+    1)  Common security evaluation criteria.
+    2)  Evaluations are respected by every country to a certain extent.
+    3)  Individual countries could have even more protection than required by
+        TCSEC
+Lecture 78:
+    1)  A description of a system including the potential threats and 
+        requirements.
+    2)  Breaking down each component of the system to explain the components.
+    3)  Maps threats to the way the system handles the threats.
+Lecture 79:
+    1)  Shows that the SIM operates as expected.
+Lecture 80:
+    1)  Specifies the rigor of the testing of a secure system.
+    2)  Independent labs within participating countries.
+    3)  Different countries have different high standards.
+    4)  No, they have to be unbiased certifications.
+    5)  You could introduce bugs that aren't actually in the original.

@@ -1,5 +1,0 @@
-Suppose you wanted to build a (library) system in which all subjects had read access to all ﬁles, but write access to none of them. What levels could you give to subjects and objects?
-	Every object can have a sensitivity level of secret and every subject a clearance level of top secret
-
-Why wouldn't you usually build an access control matrix for a BLP system?
-	Because said systems usually compromise thousands of objects and subjects. With this in mind, the matrix would be extremely big and most entries would be blank. A matrix would be a waste of space, since access permissions for BLP can be calculated on the fly

@@ -1,167 +1,0 @@
-Lecture 171. If a computer system complies with the BLP model, does it necessarily comply with non-interference? Why or why not?
-
-	No - non-interference is non-transitive, but BLP is inherently so. 
-2. What would the NI policy be for a BLP system with subjects: A at 
-(Secret: Crypto), B at (Secret: Nuclear)?
-
-	The NI policy would not allow A to interfere with B and B could not 
-	interfere with A. 
-3. Can covert channels exist in an NI policy? Why or why not?
-
-	No - the entire idea of an NI policy is that it is the general idea
-	that 
-4. If the NI policy is A− > B, in a BLP system what combinations of the 
-levels “high” and “low” could A and B have?
-
-	A = low, B = low
-	A = low, B = high
-	A = high, B = high
-Lecture 181. Why do NI policies better resemble metapolicies than policies?
-
-	They don’t give specific instructions on how to control information
-	flow - just in what directions information can flow. 
-2. What would be L’s view of the following actions: h1, l1, h2, h3, 
-. . . , hj, l2,l3,. . . ,lk
-
-
-	L would see only l actions. 
-3. What is difficult about proving NI for realistic systems?
-
-	Interferences are very common in real systems
-	Most involve low-level system attributes
-	Many “interferences” are benign. 
-Lecture 191. Explain the importance of integrity in various contexts.
-
-	It is important in determining who can supply/modify the data, in
-	determining how to separate/protect assets, to detect and/or correct 
-	erroneous or unauthorized changes to data, and determining if 
-	authorizations can change over time. 
-2. Why would a company or individual opt to purchase commercial software rather than download a similar, freely available version?
-
-	They can be more certain that the commercial software will hold the
-	integrity of their data and does not leak it out to undesired 
-	places. 
-3. Explain the difference between separation of duty and separation of func- tion.
-
-	Separation of duty requires more than one person to complete a 
-	certain critical section, while separation of function requires
-	that one person cannot contribute to the completion of 2 different
-	critical sections. 
-4. What is the importance of auditing in integrity contexts?
-
-	It allows a system to find out why information was compromised, or 
-	go back to a previous version to recover data.
-5. What are the underlying ideas that raise the integrity concerns of Lipner?
-
-	- Users will not write their own programs, but use existing production
-	software
-	- Programmers develop and test applications on a non production 
-	system, possibly using contrived data
-	- Moving applications from development to production requires a 	special process
-	- This process must be controlled and audited
-	- Managers and auditors must have access to system state and system 
-	logs. 
-6. Name a common scenario where integrity would be more important than confidentiality.
-
-	- The flight schedule for commercial airlines. 
-Lecture 201. Give examples of information that is highly reliable with little sensitivity and information that is not so highly reliable but with greater sensitivity.
-
-	A Well-known encyclopedia is highly reliable with little sensitivity, 
-	While anonymous tips are less reliable but more sensitive. 
-2. Explain the dominates relationships for each row in the table on slide 4.	Row 1: Label 1 dominates Label 2, because Expert > Student, and 
-	Physics is a superset of Physics. 
-	
-	Row 2: Label 1 does not dominate Label 2 or vice versa, because
-	Novice is Dominated by Expert, but {Physics, Art} is not 
-	dominated by {Physics}
-
-	Row 3: Label 1 dominates Label 2, because Student > Novice and 
-	{Art} dominates {}3. Construct the NI policy for the integrity metapolicy.
-
-	H -> L
-	High integrity information can flow down to Low integrity information.
-4. What does it mean that confidentiality and integrity are “orthogonal 
-issues?”
-
-	They are separate, and so should have different labels. 
-Lecture 211. Why is Biba Integrity called the “dual” of the BLP model?
-
-	It’s parts are the 
-	Simple Integrity Property (Subject can read O if i(s) <= i(o))
-	Integrity *-property (Subject can write O if i(o) <= i(s))
-
-	It’s the same rules in reverse order. 
-2. Why in the ACM on slide 5 is the entry for Subj3 - Obj3 empty?
-
-	Because {A,B} neither dominates or is dominated by {B,C}
-3. If a subject satisfies confidentiality requirements but fails integrity requirements of an object, can the subject access the object?
-
-	No
-Lecture 221. What is the assumption about subjects in Biba’s low water mark policy?
-
-	Subject’s level floats down to information’s level. Subject could
-	be corrupted. 
-2. Are the subjects considered trustworthy?
-
-	No
-3. Does the Ring policy make some assumption about the subject that the LWM policy does not?
-
-	no - they assume that the subject is smart enough to filter out 
-	bad information. 
-4. Are the subjects considered trustworthy?
-
-	Yes
-Lecture 231. Are the SD and ID categories in Lipner’s model related to each other?
-
-	Both have to do with development categories. 
-2. Why is it necessary for system controllers to have to ability to downgrade?
-
-	need to be able to change the label from production to development. 
-3. Can system controllers modify development code/test data? 
-
-	Yes
-
-4. What form of tranquility underlies the downgrade ability?
-
-	Weak tranquility
-Lecture 241. What is the purpose of the four fundamental concerns of Clark and Wilson? 
-
-	Authentication: identity all users
-	Audit: keep a record of what all users did
-	Well-formed transaction: users manipulate data only in constrained 
-	ways
-	Separation of duty: system associates with each user a valid set of 
-	programs
-
-2. What are some possible examples of CDIs in a commercial setting?	Bank Balances, Checks3. What are some possible examples of UDIs in a commercial setting?	Taking candy from a bowl at that bank 4. What is the difference between certification and enforcement rules?	Certification rules aim to authenticate and keep track of users, 
-	while enforcement rules aim to make sure data is only modified 
-	by trusted sources.5. Give an example of a permission in a commercial setting.	(user, TP, {CDI set})Lecture 251. Why would a consultant hired by American Airlines potentially have a breach of confidentiality if also hired by United Airlines?
-
-	There could be the inadvertent disclosure of information by that
-	consultant. 
-2. In the example conflict classes, if you accessed a file from GM, then sub- sequently accessed a file from Microsoft, will you then be able to access another file from GM?
-
-	Yes
-3. Following the previous question, what companies’ files are available for access according to the simple security rule?
-
-	GM, Bank of America, Wells Fargo, Citicorp, Microsoft
-4. What differences separate the Chinese Wall policy from the BLP model?	Chinese Wall policy is concerned with information flowing within
-	a conflict class, while BLP is concerned with information 
-	flowing down. Lecture 261. What benefits are there in associating permissions with roles, rather than subjects?
-
-	It simplifies the permissions, in that a system only has to keep 
-	track of roles, rather than individuals. 
-2. What is the difference between authorized roles and active roles?3. Whatisthedifferencebetweenroleauthorizationandtransactionauthoriza- tion?4. What disadvantages do standard access control policies have when com- pared to RBAC?
-
-
-
-Lecture 271. Why would one not want to build an explicit ACM for an access control system?
-
-
-2. Name, in order, the ACM alternatives for storing permissions with objects, storing permissions with subjects and computing permissions on the fly.Lecture 281. What must be true for the receiver to interpret the answer to a “yes” or “no” question?2. Why would one want to quantify the information content of a message?3. Why must the sender and receiver have some shared knowledge and an agreed encoding scheme?4. Why wouldn’t the sender want to transmit more data than the receiver needs
-to resolve uncertainty?
-
-
-5. If the receiver knows the answer to a question will be “yes,” how many bits of data quantify the information content? Explain.Lecture 291. Howmuchinformationiscontainedineachofthefirstthreemessagesfrom slide 2?2. Why does the amound of information contained in “The attack is at dawn” depend on the receiver’s level of uncertainty?3. How many bits of information must be transmitted for a sender to send one of exactly 16 messages? Why?4. How much information content is contained in a message from a space of 256 messages?5. Explainwhyveryfewcircumstancesareideal,intermsofsendinginforma- tion content.
-CS361 Questions: Week 2 5Lecture 301. Explain the difference between the two connotations of the term “bit.”2. Construct the naive encoding for 8 possible messages.3. Explain why the encoding on slide 5 takes 995 + (5 * 5) bits.4. Howcanknowingthepriorprobabilitiesofmessagesleadtoamoreefficient encoding?5. Construct an encoding for 4 possible messages that is worse than the naive encoding.6. What are some implications if it is possible to find an optimal encoding?Lecture 311. Name a string in the language consisting of positive, even numbers.2. Construct a non-prefix-free encoding for the possible rolls of a 6-sided die. 3. Why is it necessary for an encoding to be uniquely decodable?4. Why is a lossless encoding scheme desirable?5. Why doesn’t Morse code satisfy our criteria for encodings?Lecture 321. Calculatetheentropyofan8-sided,fairdie(alloutcomesareequallylikely).2. If an unbalanced coin is 4 times more likely to yield a tail than a head, what is the entropy of the language?3. Why is knowing the entropy of a language important?Lecture 331. Explain the reasoning behind the expectations presented in slide 3.
-CS361 Questions: Week 2 62. Explainwhythetotalexpectednumberofbitsis27intheexamplepresented in slide 4.3. What is the naive encoding for the language in slide 5?4. What is the entropy of this language?5. Find an encoding more efficient than the naive encoding for this language.6. Why is your encoding more efficient than the naive encoding?

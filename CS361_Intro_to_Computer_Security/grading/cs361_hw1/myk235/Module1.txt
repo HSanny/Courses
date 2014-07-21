@@ -1,0 +1,130 @@
+Lecture 1
+1. The word 'security' is relevant when it comes to the online accounts I have (social media, email, etc) and for my physical possessions.
+2. Both my online accounts and possessions have one thing in common: I am trying to protect them from being lost, stolen or tampered with
+3. No, I have never had anything major stolen from me.
+4. There is a decent chance that I don't have any malware on my laptop, since I scan it with anti-malware software regularly.
+5. As stated above, I use anti-malware software, and am careful about what I download
+6. I think my methods are effective enough to where I don't have to worry too much about malware.
+7. I don't think it overstates the case; there are many people out there who are very clueless when it comes to computers
+8. This course can help enhance my own protection, contribute to security in the workplace, and improve overall security in cyberspace
+
+Lecture 2
+1. Another reason security might be difficult could be that there is a human element to security: people can be coerced into giving away secure information
+2. There is no systematic way to enumerate all the 'bad things' that might happen, because there are so many different ways that a system can be attacked
+3. The defender has to make sure all possible points of access are secure, but the attacker needs to find only one security flaw
+4. I sort of agree. Against determined, experienced hackers, they are right, but for most users, this shouldn't be a huge concern
+5. Security in software comes at a price to some of the factors listed in the slide; you can opt for heavy security, but will lose out on some of those factors
+
+Lecture 3
+1. Risk is the possibility that a threat will negatively impact an asset through one of its vulnerabilities
+2. I agree that software security is about managing risk. It is impossible to have perfect security, so protecting the most important assets is very important
+3a. Risk acceptance: managing a store, and the cashiers' occasional mistakes at the registers cause the store to lose a few dollars a month: this is acceptable because it is a relatively small loss
+3b. Risk avoidance: don't walk through a dangerous neighborhood: taking the long way will prevent you from potentially being mugged
+3c. Risk mitigation: buying a security system: may not stop robbers, but will stop many of them from attempting a robbery
+3d. Risk transfer: buy life/house/car insurance: any risk on these assets is paid for by insurance when they are damaged
+4. Annualized loss expectancy is a helpful tool to see which threats are, on average, costing you more money, but is flawed in that expected value must be viewed with context in mind (a million dollar risk with low chance should still be priority)
+5. Rational risk assessment depends on technical, economic, psychological factors
+
+Lecture 4
+1. Slide 2 lists security goals, and slide 3 lists security mechanisms
+2. Availability and confidentiality is most important to me: I want to be able to use my computer however I want, whenever I want, but I also want to have some privacy
+3. Grouping and categorizing data is putting data of similar type and sensitivity in groups/labels
+4. Authorizations may change over time when something private doesn't need to be kept a secret anymore.
+5. The two are related because security measures can be taken to make sure availability isn't attacked
+6. Authentication: would be important when logging in to some account, non-repudiation would be important for an online store, so a purchase can't be cancelled (after receiving the item)
+
+Lecture 5
+1. cell phone network: information only flows from 1 phone to another; military database: information only flows upward
+2. metapolicy is very general, can be subject to different interpretations; policy can give specific and enforceable guidelines
+3a. Only the student and administrators can see that particular students' academic records
+3b. Only administrators may change academic records
+3c. Academic records cannot be deleted
+4. Yes, the stakeholders in an academic record are for the students to have better grades, but a rule only allowing admins to change grades would conflict with students' interests
+5. Keep students' SSNs safe and unable to be accessed by anyone
+6. Since the metapolicy is a guideline for the policy, if you don't understand it, then the policy will be even more difficult to make sense of 
+
+Lecture 6
+1. Military security is mostly about confidentiality because military actions need to be secret for the most part. Integrity is important as well, with availability not being a huge problem
+2. The major threat in our thought experiment is the leaking of confidential information
+3. The proviso is there so that we understand that the thought experiment will fall aprt if we try to protect availability and integrity
+4. The labels are linearly ordered in terms of priority; the top-secret is the most classified, and unclassified documents are not that important to protect
+5. We are not concerned with how labels are there because integrity is not a concern for this experiment
+6. From highest to lowest: 2, 6, 4/5, 1/3
+7. Warplan (2) Intelligence (6) Budgeting (4/5) Unimportant (1/3)
+8. The first rule makes sense because every top-secret document probably has some non-sensitive information. The second one just makes categorizing easier
+
+Lecture 7
+1. Labels are affixed to humans by rank/security card/etc
+2. Labels on docs indicate sensitivity, labels on humans indicate what levels of information they can access
+3. With computers the analogs of documents would be data, and the analogs of humans would be processes
+4. The principle of least privilege makes sense because there is no reason for a top secret x to need information from a top secret y
+5a. The first one makes sense because he has clearance for secret crypto, and the document is only confidential, and crypto
+5b. The second one doesn't make sense because the document is too high-level to be viewed with only a secret clearance
+5c. The third one makes sense because anyone should be able to see unclassified{}
+
+Lecture 8
+1. We changed the names so that it would be easier to translate from objects and subjects turning from docs and humans into data and programs
+2. There are security labals A and B, such that neither A >= B nor B >= A
+3. There are security labals A and B, such that neither A >= B nor B >= A
+4. Both labels would have to be the same, with the same set
+5. A subject can read an object only if it dominates the object
+6. It can depend on the system
+
+Lecture 9
+1. Simple security only tells what to do about read access, not about write access
+2. We do not want information from top secret to be written to unclassified
+3. This is important with computers because the programs are asking for clearance, and malware can be used to write data
+4. The star property says that you can write to an object only if the object dominates the subject
+5. The subject and object must be the same level, with the same set of labels
+6. Have an unclassified soldier write the order?
+7. This is an integrity problem, but it could be dealt with by needing approval from top-secret level subjects
+
+Lecture 10
+1. With weak tranquility, raising a subject's level is bad if they are unqualified, and lowering a level is bad if they are qualified
+2. Strong tranquility is not always desired, some things that are no longer top secret will be stuck at that level forever
+3. Lowering the level of an object is dangerous because there is the potential that top-secret infromation will flow down
+4. Lowering the level of an object would be safe if the objects' data were no longer sensitive
+
+Lecture 11
+1. All subjects would have high levels and all books would be low leel
+2. You wouldn't build an access control matrix for a BLP system because it is easy to see what things you have access to anyways
+
+Lecture 12
+1. L{} -> L{A} -> H{A} <- H{} <- L{}
+2. LUB: find the smallest common label GLB: find the largest commmon label
+3. Upward flow in lattice means that information will only flow upwards, which is the metapolicy for BLP
+
+Lecture 13
+1. BLP rules state that information can flow from L to H, but not form H to L
+2. Read only lets high priority subjects read low, information does not flow from H to L, Write only lets only higher priority objects to be written, info does not flow from H to L
+3. Create and destroy : create can only create at its own level, and you can only destroy objects higher priority than you (similar to write); no flow from H to L
+4. Both L and H have to be communicating at the same time for the covert channel to work
+5. The destroy statement is there to remove evidence that any data was sent, and so that this process can be repeated
+6. The contents of files are the same in both paths
+7. SL does the same thing in both cases because it has to act as a control
+8. SH must do different things because it needs to in order to signal
+9. This statement means that if SL can access anything that allows it to see differences when SH acts, then it can be used to move information from H to L
+
+Lecture 14
+1. Two humans talking over coffee is not a covert channel because a covert channel requires the use of things not typically used for communication
+2. No, read will be 0 in both cases
+3. The bit of information resides in the error messages
+4. The bit of information resides in the system timer/process p's allocation timing
+5. The bit of information resides in the location of the disk head
+6. The bit of information resides in the value of H
+7. A termination channel might have low bandwidth because it is very slow to keep checking whether something terminates or not
+8. You would have to be able to see how much power is being used at all times
+9. Power channels might arise from devices that measure how much power is being used (phones?)
+
+Lecture 15
+1. They are still very fast when used with real processors, and have negligible impact on performance
+2. It is infeasible because it would require so much additional code that would hinder the program's performance
+3. We can eliminate it by coding it out, can reduce its bandwidth by introducing noise, and monitor it for people who are exploiting it.
+4. A covert channel might exist in a network where process H sends bits by whether it has turned off a process or not
+5. The sender can send bits using the status of a program, which the receiver will be able to decode
+
+Lecture 16
+1. Create doesn't reference file existence because it returns 0 if the file already existed
+2. Because then you have means to read and modify data, which allows a sender to write, and a receiver to read
+3. This does not indicate a covert channel, since the other columns can have the same patterns in the corresponding rows
+4. To identify where potential covert channels exist, as a preventative measure.

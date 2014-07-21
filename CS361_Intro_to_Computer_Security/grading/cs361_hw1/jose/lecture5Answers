@@ -1,0 +1,25 @@
+Lecture 5:
+
+Describe a possible metapolicy for a cell phone network? A military database?
+	For a cell phone network the metapolicy could be to ensure security, confidentiality and integrity of the data being sent across the network.
+	For a military database, the metapolicy could be ensuring the confidentiality of the data stored in the database.
+
+
+Why do you need a policy if you have a metapolicy?
+	The policy is just a set rules in order to achieve the metapolicy. If you only have the metapolicy, you know what you have to protect, but not HOW to protect it. Furthermore, a metapolicy is very general so it needs a policy to narrow it down.
+
+Give three possible rules within a policy concerning students’ academic
+records.
+	Besides the student and certain family members, only administrative staff and system administrators are allowed to access the records.
+	Within the students family, only his parents are allowed to access the records.
+	The password required to access the records must be reset at the start of every month
+
+Could stakeholders’ interest conﬂict in a policy? Give an example.
+	Yes. For example in a social media application, the stake holder's interest might be to learn certain private information about a user. However, the policy might be that private info is encrypted and can only be accessed by the user.
+
+For the example given involving student SSNs, state the likely metapolicy.
+	Protect the confidentiality of the students SSN to prevent identity theft
+
+Explain the statement: ”If you don’t understand the metapolicy, it becomes
+difficult to justify and evaluate the policy.”
+	It is impossible to see if you goal is being achieved if you don't know what it is. In order to evaluate how efficient a set of rules might be, it is crucial to understand what it is that you are trying to achieve.

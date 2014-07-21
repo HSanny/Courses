@@ -1,0 +1,169 @@
+Questions Week 4
+Richard Salazar
+rs38783
+Due 7/03/14
+
+Lecture 53:
+	1Q: Why is it important for a digital signature to be non reusable?
+		1A: If it was reusable, it would allow for third parties to be able to use it.
+
+	2Q: Why is it the hash of the message typically signed, rather than the message itself?
+		2A: Public key encryption is expensive to apply. So you want to minimize the amount of stuff encrypted.
+
+	3Q: What assurance does R gain from the interchange on slide 4?
+		3A: It gets a message that is unforgeable, authentic, tamper proof, not reusable and has non repudiation.
+
+Lecture 54:
+	1Q: What is the importance of certificate authorities?
+		1A: They vouch for certificates by signing them, so they know it came from a certified source.
+
+	2Q: In the example on slide 5, why does X sign the hash of the first message with its private key?
+		2A:  So the receiver of Y's certificate knows that it came from a trusted source.
+
+	3Q: Why is it necessary to have a hash of Y and Ky?
+		3A: So you can check the integrity of Y and Ky by Hashing the one's from the receiver and the one from the trusted source. 
+
+	4Q: What would happen if Z had a public key for X, but it was not trustworthy?
+		4A: The certificate itself would not be valid, since certificate authorities need to be trustworthy. If undetected,  it could receive a different value for the hash there by disallowing communication between Z and Y.
+
+Lecture 55:
+	1Q: What happens at the root of a chain of trust?
+		1A: There is some unimpeachable authority that is trusted by everyone to check credentials.
+
+	2Q: Why does an X.509 certificate include a "validity interval"?
+		2A: We want certificates to expire and not last forever.
+
+	3Q: What would it mean if the hash and the received value did not match?
+		3A: The integrity of the value was compromised.
+
+Lecture 56:
+	1Q: What are some protocols previously discussed?
+		1A: X.509 certificate's, Covert channels.
+
+	2Q: What may happen if one step of a protocol is ignored?
+		2A: The entire process might be compromised. 
+
+	3Q: Why must the ciphers commute in order to accomplish the task in slide 4?
+		3A: If they don't commute we have no way of removing the second necessary encryption.
+
+	4Q: Describe how an attacker can extract M from the protocol in slide 6.
+		4A: They XOR the three messages together and the only one left is M.
+
+	5Q: Describe how an attacker can extract Ka from the protocol in slide 6.
+		5A: They XOR a -> B with M.
+
+	6Q: Describe how an attacker can extract Kb from the protocol in slide 6.
+		6A: THey XOR a -> B with B -> A.
+
+	7Q: Why are cryptographic protocols difficult to design and easy to get wrong?
+		7A: They have could have subtle flaws that result in infiltration.
+
+Lecture 57:
+	1Q: Explain the importance of protocols in the context of the Internet.
+		1A: The importance is to accomplish a communication-related function.
+
+	2Q: Explain the importance of cryptographic protocols in the context of the Internet.
+		2A: The importance is to accomplish a security- related function.
+
+	3Q: What are the assumptions of the protocol in slide 6?
+		3A: A,B have their respective private keys.
+
+	4Q: What are the goals of the protocol in slide 6?
+		4A: Unicity , Integrity, Authenticity, Confidentiality, Non-repudiation of origin /receipt.
+
+	5Q: Are the goals of the protocol in slide 6 satisfied? Explain.
+		5A: Mostly only Integrity and Confidentiality.
+
+	6Q: How is the protocol in slide 6 flawed?
+		6A:  If a third party sends the entire message disguised as a Key K' and sends it B. then the returned information allows the third party to extract the original Key K.
+
+
+Lecture 58:
+	1Q: Why is it important to know if a protocol includes unnecessary steps or messages?
+		1A: It could prevent over-head in the protocol.
+
+	2Q: Why is it important to know if a protocol encrypts items that could be sent in the clear?
+		2A: It might open it up to attacks.
+
+Lecture 59:
+	1Q: Why might it be difficult to answer what constitutes an attack on a cryptographic protocol?
+		1A: There a lot of factors and it is very easy to over-look certain vulnerabilities.
+
+	2Q: Describe potential dangers of a replay attack.
+		2A: The replayed message might cause the protocol to skip a step which could lead to an error in the protocols. 
+
+	3Q: Are there attacks where an attacker gains no secret information? Explain.
+		3A: It could do a Interleaving attack to stop communication between two parties. It doesn't gain information, it just prevents communication.
+
+	4Q: What restrictions are imposed on the attacker?
+		4A: They can't send arbitrary messages. 
+
+	5Q: Why is it important that protocols are asynchronous?
+		5A: They only know what is happening in their space and incoming messages only. The message gives the step in the protocol which allows the receiver to reply. 
+
+Lecture 60:
+	1Q: Would the Needham-Schroeder protocol work without nonces?
+		1A: No, 
+
+	2Q: For each step of the NS protocol, answer the two questions on slide 5.
+		2A: 1. A is trying to create a key between A,B using S / A,B want a key
+			2. S sends a nonce a Kab and a something encrypted with Kbs/ S created a key for a, b and and {Kab, A}Kbs should send the information needed to B.
+			3. A sends the encrypted key / If you decrypt it you get the identity and they key to communicate with said identity.
+			4. B sends a nonce stating it got the info/ A now knows B has got the message
+			5. A sends a new nonce to B saying it got the info / B knows that A got the message.
+
+Lecture 61:
+	1Q: As in slide 5, if A's key were later changed, after having Kas compromised, how could A still be impersonated?
+		1A: Yes because they could impersonate A to S.
+
+	2Q: Is it fair to ask the question of a key being broken?
+		2A: It is fair if it is executing for long enough time.
+
+	3Q: How might you address these flaws if you were the protocol designer?
+		3A: Introduce nonces for all Keys.
+
+Lecture 62:
+	1Q: What guarantees does Otway-Rees seem to provide to A and B?
+		1A: That the key's given are indeed fresh. 
+
+	2Q: Are there guarantees that Needham-Schroeder provides that Otway-Rees does not or vice versa?
+		2A: NS guarantees that all the messages sent are received while OR doesn't for the last message.
+
+	3Q: How could you fix the flawed protocol from slide 4?
+		3A: Introduce a hash value of the encryption to ensure that they are indeed the same and not modified.
+
+Lecture 63:
+	1Q: Why is the verification of protocols important? 
+		1A: You want to be able to evaluate how effective the protocol is. 
+
+	2Q: What is belief logic?
+		2A: formal system for reasoning about beliefs.
+
+	3Q: A protocol is a program; were do you think beliefs come in?
+		3A: The belief statements come in when two subjects are sending messages within an open channel.
+
+Lecture 64:
+	1Q: What is a modal logic?
+		1A: It is a belief that has several modal operators.
+
+	2Q: Explain the intuition behind the message meaning inference rule.
+		2A: If only A and B share a key and A sees something encrypted with it it must of came from B, since no one else could encrypt it.
+
+	3Q: Explain the intuition behind the nonce verification inference rule.
+		3A: If X is fresh and A believes B once said X then A believes B believes X since it is recent and has association with B.
+
+	4Q: Explain the intuition behind the jurisdiction inference rule. 
+		4A: If you hear something from a person of high integrity you are likely to believe that as true.
+
+	5Q: What is idealization and why is it needed?
+		5A: Changing messages sent into intended semantics. It is needed so you could use BAN Logic. It also omits parts of the message that do not contribute.
+
+Lecture 65:
+	1Q: Why do you think plain-text is omitted in a BAN idealization?
+		1A: It is omitted because it could be forged.
+
+	2Q: Some idealized steps seem to refer to beliefs that will happen later in the protocol. Why would that be?
+		2A: It's in an abstract way to do it and you need to do it to interconnect it.
+
+	3Q: One benefit of a BAN proof is that it exposes assumptions. Explain that.
+		3A: It might show assumptions that were subtle such as B believes any K it receives is a fresh key.

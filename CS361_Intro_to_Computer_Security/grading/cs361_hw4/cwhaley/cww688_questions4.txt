@@ -1,0 +1,87 @@
+Name: Colt Whaley
+EID: cww688	
+CS Login: cwhaley
+Email: coltwhaley@yahoo.com
+
+Lecture 53
+1. Because someone could use find it and claim to be that person
+2. To ensure that the message is the same, if the hashed message and hash are equal
+then the message hasn't been compromised.
+3. The message received equals the message sent.
+
+Lecture 54
+1.They are trustworthy sources that verify the integrity of messages/other sources
+2.To show the hash came from X
+3.To ensure the message hasn't changed.
+4. Nothing because the message has been hashed already and if he tried to alter it, the message
+would not hash to the equivalent in the signed hash.
+
+Lecture 55
+1. An unimpeachable authority decides what to trust
+2. Allowed time to receive message
+3. The value was tampered with.
+
+Lecture 56
+1. IP(internet protocol)
+2. integrity and confidentiality can not be guaranteed
+3. Otherwise, the order of encryption would change the value after decryption.
+4. M3 xor (M1 xor M2)
+5. M2 xor M3
+6. M1 xor M2
+7. Extremely difficult to verify
+
+Lecture 57
+1.Provides a way for information to be reliably transmitted
+2. Provides a way for information to be reliably transmitted in a secure manner
+3. Public keys are known, private keys are not.
+4. Transfer a key from A to B
+5. Yes
+6. Anyone could have signed the inside message as it was signed with a public key
+
+Lecture 58
+1. Clearing out redundancies and inefficiences
+2. You can save a lot of time by not encrypting
+
+Lecture 59
+1. Is it a bug or is it a feature? it's hard to determine whether it was an unintended side effect
+or still within the bounds of the protocol.
+2. Reading a message later
+3. Yes, an attacker can subvert the system by sending messages to people who shouldn't receive them
+4. Assusme the attacker has full access and try to limit his damage capability
+5. Systems are distributed and users dont even initiate it until they receive a message.
+
+Lecture 60
+1. No, the nonces make sure the messages are synchronized.
+2. Sending nonce and who to send message to to the server, a wants to send message to b
+Sending back the session key to a, server received message
+Sending session keys to b, a sent message to b
+Send b nonce to a, verify session key
+Send 1 less bnonce back to b, a received b's message
+
+Lecture 61
+1. because it is a's session key not public key
+2. no
+3. add a applicable time period to session keys
+
+Lecture 62
+1. a and b are communicating with each other
+2. sessions are more secure on OR as opposed to NS as the identifier is in the message
+3. i dont know
+
+Lecture 63
+1. shows theoritical protection and secureness of the protocol
+2. formal system for reasoing about beliefs.
+3. read/write access
+
+Lecture 64 
+1. study of deductive behavior of the expressions "it is necessary that' and 'it is possible that'
+2. A and B share knowledge of key x, and if A sees X, he can safely assume it was from B
+3. A believes B once said X and that X is fresh, therefore A believes that B said X
+4. If A believe B is trustworthy for X and A believes B said X, then A believes X
+5. Omit parts of the message that do not contribute to the beliefs of the recipients
+
+Lecture 65
+1. Far easier to read, and you understand that the plaintext is in the message
+2. The protocol has to be carried out in order for the message to be completely sent
+3. It shows you what you have assumed even if you have not realized it and exposes potential
+weaknesses you may have overlooked.

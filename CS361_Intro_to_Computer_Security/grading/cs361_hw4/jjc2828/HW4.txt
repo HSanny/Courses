@@ -1,0 +1,134 @@
+CS 361 Week 4 Questions
+
+Name: Joey Caudill
+EID: JJC2828
+CS Login: JJC2828
+Email: jjc2011@gmail.com
+
+Lecture 53
+
+1.	The signature should be bound to document, otherwise someone could detach and reused the signature for another message.
+	
+2.	Because public key encryption is expensive, and the hash is a fixed size
+
+3.	It is unforgeable, authentic, no repudiation, tamperproof, and not reuseable.
+
+Lecture 54
+
+1.	They vouch for the accuracy of the certificate, binding.
+
+2.	X's private key, is like the signature on the hash to vouch for the accuracy,. X is the certifying authority.
+
+3.	The hash provides integrity to Y and Ky, showing they weren't altered or corrupted.
+
+4.	If the public key wasn't trustworthy then Z wouldn't be able to open the private key encrypted message.
+
+Lecture 55
+
+1.	It is rooted at some unimpeachable authority that everyone is going to believe, trusted.
+
+2.	It shows how long it is valid for, if it expires then you can't trust it.
+
+3.	Then the received value could have been altered, modified and if so you can't trust it.
+
+Lecture 56
+
+1.	Public key encryption where you put their public key then your private key to message then they take off the public key and then the priavte key.
+
+2.	Someone may be able to get ahold of your message
+
+3.	Otherwise you wold have to "reach inside" the encrypted message to undo yours, which you can't do.
+
+4.	(M XOR Ka) XOR ((M XOR Ka) XOR Kb) XOR (((M XOR Ka) XOR Kb) XOR Ka)
+
+5.	((M XOR Ka) XOR Kb) XOR (((M XOR Ka) XOR Kb) XOR Ka) 
+
+6.	(M XOR Ka) XOR ((M XOR Ka) XOR Kb)
+
+7.	There are many subtle ways you can get the wrong, and in order to design them you must get rid of all these problems which is difficult.
+
+Lecture 57
+
+1.	Protocols are needed in order to effectively send information across the Internet
+
+2.	Cryptographic protocols are needed in order to safely send information across the Internet, which is a very insecure/ hostile environment
+
+3.	There is a public key infrastructure in place and they have reliable keys for each other.
+
+4.	They know that they are talking to each other and that they received the message.
+
+5.	No, if B gets the message and tried to send back that he did, but it never gets through then A doesn't know B got it.
+
+6.	If there is noise there could be wasted resends by A
+
+Lecture 58
+
+1.	You want your protocol to be as efficient as possible, since you could be using it over and over again
+
+2.	If it did work it didn't really need to do, it would just make it less efficient.
+
+Lecture 59
+
+1.	Be cause most good attacks you wouldn't have thought about
+
+2.	Attacker records messages and replays them at a later time, can interject them into the flow to confuse parties.
+	
+3.	Yes, in a replay attack and other attacks they could just attack to cause a denial of service attack.
+	
+4.	The attacker can not arbitrarily create messages
+
+5.	A party to a protocol won’t know anything about the current run of the protocol except the messages it has received and sent. Except for the initiator, other parties will not even know that they are participating until they receive their ﬁrst message.
+
+Lecture 60
+
+1.	It would work but it would be easy for a replay attack to take advantage of the system
+
+2.	1) A sending to the key server saying that it wants to communicate with B / That A is using Needham-Schroeder and wants a new key
+	2) S is sending key to A / It has all the trusted information from S and can send the message S made to B
+	3) A is trying to send the key to B / B has a trusted key knows that A is using Needham-Schroeder through S 
+	4) Sending to A to say that it got the key and can use it / A nows that it has the key
+	5) A sends to B to say it knows that B has the key and can use it / B knows A can use key and it knows that it has the key
+
+Lecture 61
+	
+1.	Someone else could use an old key of and pretend to be A 
+	
+2.	Yes and no, depends on strength of the encryption
+
+3.	Add another step where B communicates with S to get a key to A, so it can confirm A's identity
+
+Lecture 62
+
+1.	Authenticates A and B with S
+
+2.	It doesn't guarantee that the other got the message
+
+3.	Check the message to see if it is encrypted with your public key
+
+Lecture 63
+
+1.	You want to get the protocol yu are using right, or else you could lose valuable information
+
+2.	A formal system for reasoning about beliefs, allow reasoning about what principals within the protocol should be able to infer from the messages they see
+
+3.	Like an if statement, depending on what you get you are entitled to believe something different
+
+Lecture 64
+
+1.	Logic dealing with qualifying of a statement
+
+2.	That if you see a message with a key you share with someone, they must have been the one who sent it, since you 2 are the only ones who know it.
+
+3.	If someothing is fresh and someone once said they believed it, they must still believe it, since its not old.
+
+4.	If someone is an authority on something and they believe it, then you should believe it also
+
+5.	Process to get from protocol steps to logical inferences, it lets you know what a particular part of a protocol is trying to get accomplished.
+
+Lecture 65
+
+1.	Nothing hidden, the idealization isn't supposed to know what you want to say with your plaintext.
+
+2.	Because some steps are taken to set up other steps that are important later in the protocol
+
+3.	Forces you to write down assumptions, so you have to think about why all are used, and if there are some that are surprising you can expose them there.

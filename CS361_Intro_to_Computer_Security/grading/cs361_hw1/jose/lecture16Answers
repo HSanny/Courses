@@ -1,0 +1,11 @@
+Why wouldn’t the “create” operation have an R in the SRMM for the “ﬁle existence” attribute?
+	Because the operation create doesn't tell me that fact. I have to infer it. Worded differently, the operation gives me knowledge of an aspect of the attribute but it doesn't tell me anything about it.
+
+Why does an R and M in the same row of an SRMM table indicate a potential channel?
+		Because it means that there is a way to modify some info and also read the modification.
+	
+If an R and M are in the same column of an SRMM table, does this also indicate a potential covert channel? Why or why not?
+	No. The only way for a covert channel to work is by playing around with one attribute. A column is linked to a particular action and not an attribute. Therefore, R and M's in the same column provide no mechanism for passing information.
+
+Why would anyone want to go through the trouble to create an SRMM table?
+	Because it allows to you detect potential covert channels.

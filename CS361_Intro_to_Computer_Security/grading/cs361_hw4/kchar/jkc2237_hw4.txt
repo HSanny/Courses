@@ -1,0 +1,87 @@
+Jetharin Kevin Charoenworawat
+JKC2237
+KChar
+KevinCharoenworawat@gmail.com
+
+
+CS 361 Questions: Week 3
+
+Lecture 53:
+1. Then any signature could be taken and applied to any document.
+2. Because public key encryption is hard to apply but the hash is usually short/easy.
+3. Unforgable, authentic, non-reputable, tamperproof, and non-reusable.
+
+Lecture 54:
+1. So that someone who has never been involved with the party in question can gain trust.
+2. To create the certificate with X's signature using a small finite data set (hash).
+3. In order to create a small signature instead of signing the whole message.
+4. Then Y would be mislead as X should not be trusted (invalid certificate).
+
+Lecture 55:
+1. There is an unimpeachable authority that began the trust chain.
+2. A certificate cannot last forever as a party should be reeavaluated from time to time.
+3. Then the signature used on the hash is invalid.
+
+Lecture 56:
+1. Any form of encrpytion can be viewed as a protocol as you have steps to follow to ensure an end goal ie. Diffie-Hellman.
+2. Then information/data can be leaked/intercepted.
+3. Then the first cipher could not be taken off.
+4. The attacker must find Ka and Kb from analyzing the dual XOR operations.
+5. The attacker just has to spot the first time that the same XOR operation is done.
+6. The attacker has to spot the second time that that the same XOR operation is done.
+7. A protocol has to be essentially perfect as the slightest problem can be exploited.
+
+Lecture 57:
+1. Protocols need to be established so that there is a guideline for operation amongst all internet parties.
+2. Cryptographic protocols are important to establish security such as the case for online transactions.
+3. A public key infrastructure in place and each has the others public key.
+4. To deliver the secret key K.
+5. Yes in this simple example.
+6. A may never receive the acknowledgement.
+
+Lecture 58:
+1. The receiving party must be able to identify which step in the protocol in order to proceed.
+2. This can be used to furthur security as this throws off attackers.
+
+Lecture 59:
+1. One would have to know the all weak points of a protocol to outline a possible attack.
+2. An attacker could throw off the flow of a protocol by confusing the two parties.
+3. A DDOS is one example where the attacker simply shuts down a service.
+4. The attacker can't compose arbitrary messages as they are assumed to not have the keys.
+5. This is because each party should not keep a running log of what is going on, only the messages being transmitted.
+
+Lecture 60:
+1. No because the nonces show that the opposite party can correctly decrypt the transmitted message with freshness of the message.
+2. 
+Step 1: A says to S that it wants to communicate with B using its nonce.
+Step 2: S generates a Kab that it generated with the Na nonce. S also includes an encryption to be transmitted to B with Kas.
+Step 3: A sends to B what S sent with its encryption.
+Step 4: Now B knows A wants to communicate with it so it sends its nonce encrypted with their shared key to A.
+Step 5: Now A confirms and establishes the communication channel.
+
+Lecture 61:
+1. Yes because the other party would still have communication with the attacker that has the original Kas until A creates a new channel.
+2. Yes as security is never gaurenteed.
+3. Perhaps periodic refreshes of keys.
+
+Lecture 62:
+1. The guarantee that the other party truly is who they claim to be as S uses nonces from each party.
+2. Otway-Rees presents the party authentication.
+3. Add padding to the message that B receives so that the encryption does not cancel out when B sends out.
+
+Lecture 63:
+1. To ensure that a party is not communicating with a spy/attacker.
+2. Reasoning about what the principal parties can infer from the messages they receive.
+3. The beliefs could be carried out by conditional statements or asserts
+
+Lecture 64: 
+1. Logic with propositional and predicates which form the qualifications for a statement.
+2. If A receives a message with a key that only B shares with it than the message must have come from B.
+3. If A receives a nonce from B and it is fresh than A must think that B knows what it is saying.
+4. A takes B's word of trust over X.
+5. Idealization attempts to figure out what a message/transaction intends to communicate.  It is needed because there are limitless number of possible messages.
+
+Lecture 65:
+1. Because the plaintext does not change the sending principle's validity.
+2. Things have to be assumed such as that messages will make it to the other party.
+3. By using BAN logic you outline possible risks as you have to interpret messages in terms of beliefs in a secure channel.

@@ -1,0 +1,62 @@
+Lecture 17
+
+1. Yes, it will always comply with NI. This is because all BLP systems can be converted to NI systems since they both have the same metapolicies. Not all NI systems can be converted to BLP systems, however.
+2. The policy will be that no subject can interfere with any other subjects since neither of the subjects dominates the other.
+3. No, covert channels cannot exist in an NI policy because the view of the subjects will always cause information to flow exclusivelly in one direction.
+4. In this case, since A interferes with B, A would be LOW and B would be HIGH since the NI model allows information to flow from A to B.
+
+Lecture 18
+
+1. The NI policies better resemble metapolicies because they simply impose an overall rule for the flow of information between two objects, rather than set specific means to inforce those rules.
+2. 
+3. NI is difficult to prove for realistic systems since the view must be so large for some subjects that it would be almost impossible to check the relationship with all other subjects in this view.
+
+Lecture 19
+
+1. Integrity is important for making sure that information received is true. For example, HufffPost can use NYT newspaper articles and maintain integrity, but NYT cannot use HuffPost articles and still remain its integrity.
+2. They would opt to do this to ensure the integrity of the software that they purchase. Thy would rather buy from a reputable source than an unknown online vendor.
+3. Separation of duty describes how several different subjects must be involve to complete a critical function whereas separation of function describes how a single subject cannot complete complimentary roles within a process.
+4. Auditing is important in the case of integrity to maintain recoverability and accountability to ensure that information in a system does not lose its integrity.
+5. Lipner's concerns were as follows:
+	-Users should not write their own programs, but should use existing software.
+	-Programmers develope and test software on non-production systems.
+	-Moving applications into production is a special process that must be recorded/audited.
+	-Managers and auditors must have access to system state and system logs.
+6. A scenario where integrity is more important than confidentiality might be the content of a wikipedia page.
+
+Lecture 20:
+
+1. An example of information that may be highly reliable but not sensitive is the published research paper of a scientist who is an expert in their field. An example of the opposite may be when a general receives reports of enemy activiy from a lower-ranking officer.
+2. In row 1, the Expert dominates the Student since the Expert has a higher integrity and they both share the same categories. In row 2, the expert has a higher integrity level than the student, but does not share the same categories and so neither dominates the other. In row 3, the student dominates the novice in integrity and has a superset of the novice's categories so the student dominates the novice.
+3. The NI metapolicy for integrity would be that only high-integrity subjects are allowed to interfere with lower integrity subjects.
+4. They are othogonal because they allow the flow of information in different directions. In BLP, info can only flow from low to high whereas in integrity policies, info can only flow from high to low integrity subjects.
+
+Lecture 21:
+
+1. It is called the dual of the BLP policy because when considering the same levels and categories, the dominates relationship can be exactly switched between the two policies. For example, a table of BLP relationships can be converted to Biba relationships by changing all "reads" to "writes" and vise-versa.
+2. That box is blank because neither the subject nor the object dominates eachother (due to mismatched categories) so no read or write permissions are allowed.
+3. No, in a combined confidentiality/integrity system, a subject can only access an object if is dominates in both relationships.
+
+Lecture 22:
+
+1. The assumption about subjects in the low water mark policy is that they are of lower integrity than yourself.
+2. No, the subjects are not considered trustworthy. This causes you to lower your integrity level to the level of the subject that your read from.
+3. Yes, the ring policy assumes that subjects can tell when they are reading low-integrity information and therefore does not force them to lower their levels.
+4. Here, the subjects are considered very trustworthy because they are being trusted with accurately filtering out data with low integrity.
+
+Lecture 23:
+
+1. Yes they are related because they are the corresponding categories for confidentiality and integrity that are used by system controller subjects.
+2. System controllers need the ability to downgrade so that they can move software from development into production.
+3. Yes, system controllers are the only people able to change development code.
+4. Weak tranquility underlies the downgrade ability because it allows levels to change without violating the spirit of the metapolicy.
+
+Lecture 24:
+
+1. Their concerns helped craft a model based on BLP and Biba to fit the concerns and merits of actual commercial security.
+2. A CDI in a commercial setting might be the code that is about to be put into production.
+3. A UDI might be the information that an untrusted user puts into the software.
+4. Certification makes sure that every subject is held accountable through auditing and makes sure that no one subject has too much power. Enforcement is the policies of authentication that uphold the certification rules.
+5. A permission in a commercial setting may be the ability to change the code of a piece of software. Only developers should have authentication to do this.
+
+ 

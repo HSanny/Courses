@@ -1,0 +1,254 @@
+/*
+*Name: Norman E. Lopez
+*EID: nel349
+*CS Login: nel349
+*Email: noell.lpz@utexas.edu
+*/
+****************************************************************************************************
+Lecture 34
+****************************************************************************************************
+1. You can always find a better encoding to get within epsilon of that limit.
+
+2. It is possible to transimit messages with a small error rate. Covert channels in the system cannot be dismissed
+with the argument that they are noisy and hence useless. You can always get the message through by finding a more redundant encoding.
+
+****************************************************************************************************
+Lecture 35
+****************************************************************************************************
+1.  h = -(log 1/10)
+
+2.
+	-They contain significant redundancies.
+	- Requires complex models
+
+3. 
+	-zero order model - gives an approximation of the entropy. but the assumption is false.
+	-first order model - It says that some letters occur much more frequently than others.
+
+	-second order model - Computing the  entropy of digrams(combination of two letters)
+	-third order model - Computing the  entropy of trgrams(combination of three letters)
+
+****************************************************************************************************
+Lecture 36
+****************************************************************************************************
+1. Because it depends on the state of knowledge of the receiver. Hence, entropy is relative to a particular observer.
+
+2. Consider the entropy of the contents of an envelope marked “Best Picture” at the Academy Awards (assuming 5 nominees):
+If all were equally likely to win, the entropy would be
+log 5 ≈ 2.322.
+For everyone who knows that the odds aren’t even, it’s less,
+though hard to compute.
+For the auditors who stuffed the envelope, it’s 0 since they
+have no uncertainty.
+
+3. If the information content of a message is equal to the length of the encoded message, there is no redundancy.
+
+****************************************************************************************************
+Lecture 37
+****************************************************************************************************
+1. List your observations along with their relevance to cryptography about Captain Kidd’s encrypted message.
+	-7 is not used at all
+	-digits are used
+	-symbols "+;:)(*!" are used
+2. 	The purpose of encryption is to render the message less useful  meaningful to any eavesdropper. It depends if the desired encryption must have a unique characteristic that only certain entities may know about. eg. (password)
+3. 	Transform a text into another using functions.
+
+4. It provides leverage to the attacker
+
+****************************************************************************************************
+Lecture 38
+****************************************************************************************************
+1. Rewrite the following in its simplest form: D(E(D(E(P )))).
+
+C=E(D(E(P ))) , P = D(E(P )), P = D(C) => C= E(P)
+
+2. Rewrite the following in its simplest form: D(E(E(P, K E ), K E ), K D ).
+	C = E (P, K E ) and P = D(C , K D )
+3. Why might a cryptanalyst want to recognize patterns in encrypted messages?
+	To detect covert channels.
+
+4. How might properties of language be of use to a cryptanalyst?
+	Some languages have so much redundancy and redundancy is the enemy of secure encryption because it
+provides leverage to the attacker.
+
+****************************************************************************************************
+Lecture 39
+****************************************************************************************************
+1. Explain why an encryption algorithm, while breakable, may not be feasible to break?
+	The analyst can try all keys systematically. It can take a lot of time to break. Years.
+
+2.There are 2^n possible combinations , since many ciphers use n-bit string as key.
+
+
+3. 
+Almost all modern commercial symmetric ciphers use some combination of substitution and transposition for encryption.
+
+4. 
+	-Confusion: transforming information in plaintext so that an interceptor cannot readily extract it.
+	-Diffusion: preading the information from a region of plaintext widely over the ciphertext
+5. 
+Most symmetric encryption algorithms use some combination of substitution and transposition to accomplish both confusion and diffusion
+
+****************************************************************************************************
+Lecture 40
+****************************************************************************************************
+1. - Monoalphabetic - each symbol of the plaintext is exchanged for another symbol, done uniformly
+- Polyalphabetic - If different substitutions are made depending on where in the plaintext the symbol occurs
+2. What is the key in a simple substitution cipher?
+	Another text is the key.
+3. Why are there k! mappings from plaintext to ciphertext alphabets in simple substitution?
+	If we choose the kth element in the text then thera are k * (K-1)(k-2)..2 * 1 possible combinations.
+
+4. What is the key in the Caesar Cipher example?
+- A letter with a fixed distance away from the alphabet
+5. What is the size of the keyspace in the Caesar Cipher example?
+	- The size is the number of alphabet letters in the plaintext to be encrypted . 26 letters in the English alphabet
+6. Is the Caesar Cipher algorithm strong?
+	- No
+7. What is the corresponding decryption algorithm to the Vigenere ciphertext example?
+-Start with a key string and a plaintext to encrypt: 
+-Align the two texts, possibly removing spaces:
+-Then use the letter pairs to look up an encryption in a table
+-The Vigen`ere Cipher selects one of twenty-six different Caesar-Ciphers, depending upon the corresponding letter in the key.
+
+****************************************************************************************************
+Lecture 41
+****************************************************************************************************
+1. 26 possible letters of the alphabet so 26*26*26.
+
+2.substitute a letter and you reduce the possibilities to 26 * 25 * 1.
+3.  No, I think it is impossible to know everything about the ciphertext and the algorithm
+
+****************************************************************************************************
+Lecture 42
+****************************************************************************************************
+1. Every possible plaintext could be the pre-image of that ciphertext under a plausible key. Therefore, no reduction of the search space is possible.
+
+2. Given the need to communicate securely, how do the sender and receiver agree on a secret (key) that they can use in the algorithm.
+
+3. 
+	-If sender and receiver already have a secure channel, why do they need the key?
+	-If they don’t, how do they distribute the key securely?
+
+****************************************************************************************************
+Lecture 43
+****************************************************************************************************
+1. Since transposition reorders characters, but doesn’t replace them, the original characters still occur in the result.Letter frequencies are preserved in the ciphertext so it is easy to find a formula equation to decipher.
+
+****************************************************************************************************
+Lecture 44
+****************************************************************************************************
+1. Asymmetric
+2.Key distribution - how do we convey keys to those who need them to establish secure communication.
+	key management- given a large number of keys, how do we preserver their safety and make them available as needed.
+3. No, you still need to have access to a privatley held key Ks-1.
+
+4.Keys in the the two approaches have very different characteristics and are not directly comparable.
+
+
+****************************************************************************************************
+Lecture 45
+****************************************************************************************************
+1. Because stream ciphers have susceptibility to insertions/ modifications and algorithms care about integrity of information. ifficult to insert symbols without detection.
+2. If transformations on the ciphertext produce meaningful changes in the plaintext, then it is malleable. being able to manipulate ciphertext with predictable effects on plaintext.
+3. You can expose the cyphertext so that it will not expose the real intended message. This is because the cyphertext is just a representation of the real data without using real information.
+
+****************************************************************************************************
+Lecture 46
+****************************************************************************************************
+1.First step,for each byte in the array, use its value as an index into a 256-element lookup table, and replace byte by the value stored at that location in the table.
+
+2.
+	2-shiftRows-Let R i denote the i th row in state. Shift R 0 in the state left 0 bytes (i.e., no change); shift R 1 left 1 byte; shift R 2 left 2 bytes; shift R 3 left 3 bytes.
+
+	3 -mixColumns-for each column of the state, replace the column by its value multiplied by a fixed 4 × 4 matrix of integers
+
+3.The subkeys are used in reverse order. Inverting the MixColumns step requires multiplying each column by a fixed array.For that reason, decryption typically takes longer than encryption.
+
+4.AES uses a block of 128-bits. AES allows keys of size 128-bits, 192-bits, and 256-bits, with 10, 12, 14 rounds
+
+5. More rounds means more security against cryptanalysis, simply, since there is more confusion and diffusion.
+
+****************************************************************************************************
+Lecture 47
+****************************************************************************************************
+1.Identical blocks in the plaintext yield identical blocks in the ciphertext. Observed changes by an attacker.
+2. Using CBC and key stream generation
+3.-Observed changes by an attacker.
+	-Content leaks.
+4.Key stream generation modes use encryption algorithms to generate random appearing streams of bits in reproducible
+fashion.
+
+****************************************************************************************************
+Lecture 48
+****************************************************************************************************
+1. Secret key to decrypt(Private Key)
+  
+2.-easily computed, but diﬃcult to invert without additional information.
+3. -A public key encryption may take 10,000 times as long to perform as a symmetric encryption; the computation depends on more complex operations, not on simple bit-wise operations.
+
+4. 	{{P}}k-1
+
+5. Asymmetric algorithms are generally much less eﬃcient than symmetric algorithms.
+  -an asymmetric encryption algorithm depends on identifying a one-way function
+  
+****************************************************************************************************  
+Lecture 49
+****************************************************************************************************
+1. Yes, but ...
+	-encryption with the public key is a privacy transformation.
+	-encryption with the private key is an authenticity transformation
+
+2. If p1 and p2 are prime. It is very difficult to factor p1*p2 to recover p1 and p2. But, given p1*p2 and either of p1 or p2, it is straightforward to recover the other.
+
+3. No
+4. No one knows the private key Ka-1
+
+5. There is no signature on the encryption that came from kb
+6. It is a encypted with B's private key.
+7. Encryption with the private key is an authenticity transformation, not a privacy transformation. Someone can decrypt it using Kb public key.
+8. Need two pairs of keys: one pair for privacy and the other pair for “signing” (authenticity).
+
+
+****************************************************************************************************
+Lecture 50
+****************************************************************************************************
+1.
+	-it is dificult to construct a text that has a given hash,
+	-it is dificult to modify a given text without changing its hash
+2. What is the key difference between strong and weak collision resistance of
+a hash function.
+	-it is hard to ﬁnd m2 != m1 such that f (m1) = f (m2), in this case m2 cannot equal m1
+	-it is hard to ﬁnd two messages m1 and m2 such that f (m1) = f (m2), where m1 can equal m2.
+3. What is the difference between preimage resistance and second preimage
+resistance?
+	-it is hard to ﬁnd m2 != m1 such that f (m1) = f (m2), in this cas m2 cannot equal m1
+	-it is hard to ﬁnd two messages m1 and m2 such that f (m1) = f (m2), where m1 can equal m2.
+4. It takes 2.2 × 10^ 19 to generate collision using brute force
+5. it will take  alot more than 2.2 × 10^ 19 to generate collision using brute force
+6. 	-In a document retrieval system containing legal records, it may be important to know that the copy retrieved is identical to that stored.
+7. 	-it is diﬃcult to modify a given text without changing its hash
+8. Using RSA we can use it for confidentiality to hide our information. We use cryptographic hash functions to check for the authenticity of the message.
+
+
+****************************************************************************************************
+Lecture 51
+****************************************************************************************************
+1. No, because S does not know the private key of R and cannot encrypt it using R's private key.
+
+2.Yes, because S can use its private key to encrypt the message. Anyone could of performed the inner encryption. 
+
+3.Yes, because everyone knows the public key for S, so everyone can decrypt it.
+
+4.Key exchange requires both conﬁdentiality and authentication.
+
+
+****************************************************************************************************
+Lecture 52
+****************************************************************************************************
+
+1. An eavesdropper cannot discover this value p and g need not be protected.
+
+2. if A, g, p and gamodp were known then the attacker can discover the message.
+
+3.if B, g, p and gamodp were known then the attacker can discover the message.

@@ -1,0 +1,150 @@
+Name: Eric Lane
+EID: el9297
+CS Login: elane
+Email: e.lane@utexas.edu
+
+Questions-Week1
+
+Lecture 1:
+	1) Mostly personal security
+	2) Protection
+	3) Heartbleed vulnerability, had to change numerous passwords
+	4) I highly doubt it is infected.
+	5) Virus scans, network firewalls
+	6) Probably, although I don't actually know how they work
+	7) It seems like rhetoric to me. There are vulnerabilities in our computer
+    systems I'm sure, but I think the United States as a country can survive 
+    in spite of them.
+    8) To be able to improve security in various settings
+Lecture 2
+	1) Just adding on to the 5th topic, people will hate your security solution
+    if it is difficult or intrusive to use. Design occordingly.
+	2) It depends on the system. It is too difficult to think of all
+    vulnerabilities in a complex system.
+	3) The defender has to think of all possible vulnerabilities, while the 
+    attacker simply needs to think of one.
+    4) If perfect security is unattainable, then I agree. You can take some 
+    countermeasures, but there are always vulnerabilities.
+    5) Like I mentioned in my answer to question 1, your solution must be easy
+    to use.
+Lecture 3
+	1) Risk is the chance that your system can be compromised.
+	2) Yes, because there are tradeoffs when designing a secure system.
+	3)  Acceptance - Costs too much to secure trivial data
+        Avoidance - Don't do risky stuff
+        Mitigation - Actually do something to avoid a vulnerability
+        Transfer - It's not my problem
+    4) Makes sense, but it's unfortunate to have to think of security that way
+    5) Cost, frequency, time to fix
+Lecture 4
+	1) Aspects of security vs. Mechanisms to achieve those aspects
+	2) Availability. With the exception of financial info, I don't really have anything to hide. I want my data to be easily used and accessed by me.
+	3) Keep things categorized based on their worth/sensitivity
+    4) People come and go, the ones who went should not be able to access data
+    5) A system should operate as expected and should not lose or corrupt data.
+    That makes a system reliable, and security should not interfere with that.
+    6) Strong example would be finanicial contexts.
+Lecture 5
+	1) Don't allow phonecalls to be intercepted and eavesdropped on.
+        Don't allow civilian or outside access to the database.
+	2) The policy explains how to specifically implement the metapolicy.
+	3) Metapolicy is protecting the records. Policy would be, don't allow 
+    students to modify their records at all, don't allow professors to 
+    change grades without approval, and don't allow unauthorized access
+    from people outside of the university.
+    4) Yes. For example, a professor may attempt to change a grade, but the
+    university denies that request.
+    5) Do not store student's SSN.
+    6) You must know what you're doing before you set out to do it.
+Lecture 6
+	1) Mainly, you want to prevent unauthorized access to information.
+    You also want to keep it from being changed. Availability is 
+    important but arguably the least important out of the 3.
+	2) People from lower levels being able to see higher level data.
+	3) Adapting the policy to the other principles would change the policy.
+    4) It's just a way to group and categorize the underlying data.
+    5) We may be designing for a system we don't have full access to ourselves.
+    6 & 7)  The Normandy invasion is scheduled for June 6. {top secret}
+        The British have broken the German Enigma codes. {top secret}
+        Col. Smith didn’t get a raise. {classified}
+        Col. Jones just got a raise. {classifie}
+        The base softball team has a game tomorrow at 3pm. {unclassified}
+        The cafeteria is serving chopped beef on toast today. {unclassified}
+    8) You should always use the highest appropriate level to avoid problems.
+Lecture 7
+	1) To the "inside"
+	2) A document and a human may have the same label, but different clearance.
+	3) Files and processes
+    4) You wouldn't want someone from a lower level viewing top secret info.
+    5) They all make sense. You can't have someone with "secret" clearance
+    viewing "top secret" documents.
+Lecture 8
+	1) They are more generic terms that can apply to many systems.
+	2)  Reflexive: x >= x
+        Transitive: [x >= y ^ y >= z] -> x >= z
+        Anti-symmetric: [x >= y ^ y >= x] -> x = y
+	3) There are security labels A and B, such that neither A>=B nor B>=A.
+    4) Both labels would have to be the same level.
+    5) You can only read objects at level or below you, not above you.
+    6) Your access is not guaranteed.
+Lecture 9
+	1) It doesn't protect against bad writes.
+	2) So that information can't be "leaked" to lower levels.
+	3) A user may be cleared, but a program running in the context of the user
+        is not cleared.
+    4) You can't write to levels lower than you.
+    5) If it is trying to read down and write up.
+    6) Pass orders down through the hierarchy, or give the private higher 
+    clearance.
+    7) Yes. Don't allow lower clearance subjects to overwrite higher clearance 
+    objects.
+Lecture 10
+	1) You wouldn't want to move a subject down, but up is fine. 
+	2) You sometimes need to change the level of things.
+	3) You are giving lower subjects access to a higher level object.
+    4) Make sure the object has no residual content before lowering it.
+Lecture 11
+	1) The subjects would have to have higher level than the objects. That way,
+    no write-down could occur but a read-down is possible.
+	2) The matrix would be very large.
+Lecture 12
+	1)      H{A}
+            |
+            |
+            L{A}
+	2) In a subset of labels, there exists a Least Upper Bound and Greatest Lower
+    Bound.
+	3) Other flow of information would violate security goals.
+Lecture 13
+	1) No downward flow of information
+	2) Information can be written up and read down.
+	3) You can only create objects at the same level and destroy objects with lower ones.
+    4) Sh must be higher than Sl
+    5) So that the actions can be repeated with the same state.
+    6) The paths are the same but the information within could be changed
+    while reading it.
+    7) It has to be consistent. It has to perform this sequence.
+    8) SH could be created in the right column instead.
+    9) Basically you can tell that information is accessible because you can
+    receive different results based on the input.
+Lecture 14
+	1) The transfer of information is direct and in view.
+	2) No. The value was explicitly written.
+	3) F0
+    4) Within the ordering of events
+    5) Storage channels
+    6) Control flow
+    7) You have to wait for a computation to terminate.
+    8) One object uses more power than the other
+    9) Devices that require a lot of power to run.
+Lecture 15
+	1) Computers are very fast, and performance hits from covert channels are negligible.
+	2) They are incredibly difficult to spot.
+	3) You want to close it or restrict the bandwidth to a negligible amount.
+    4) The sender and receiver must both have access to an attribute.
+    5) Sender modifies the attribute, and he receiver views the attribute.
+Lecture 16
+	1) It overwrites the object that is there if it already exists.
+	2) You can change a value, and then be able to see what it was changed to.
+	3) It doesn't. 
+    4) It helps to discover potential threats to a system.

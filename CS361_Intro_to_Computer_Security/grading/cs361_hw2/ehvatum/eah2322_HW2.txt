@@ -1,0 +1,217 @@
+Questions Week 2
+
+Even Hvatum
+UT EID: eah2322
+CS Login: ehvatum
+Email: ehvatum@utexas.edu
+
+Lecture 17
+
+1. No, even though a MLS model can be rewritten as a NI model, the other direction does not always hold. In particular, the BLP model allows any reads and writes as long as the rules are not violated while the NI model explicitly states which objects may interfere with other objects. Therefore, a system might comply with the BLP model but violate a non-interference pair in the NI model.
+
+2. Neither A or B would be allowed to interfere with the other. They should not communicate in any way.
+
+3. In a perfect NI system, theoretically no. If the NI system is perfect then no objects should be able to make a change that another object can in any way see unless they are explicitly allowed to interfere.
+
+4. Possible combinations for A -> B are: (A: Low, B: High), (A: High, B: High), (A: Low, B: Low)
+
+Lecture 18
+
+1. The NI policy is so abstract that it is closer to a metapolicy than the policies of the MLS model. The policy is simply that H can’t interfere with L rather than involving subjects and objects with a hierarchy.
+
+2. l1, l2, l3, …, lk
+
+3. Interferences are extremely common in realistic systems and generally include completely benign entities and low level attributes. It would cripple functionality to have some object include everything in its view.
+
+Lecture 19
+
+1. The military wants to prevent unauthorized changes to the war plan, the University of Texas wants to prevent students from changing their own grades in the system, and a personal user wants to prevent other users on their home computer from deleting their personal files.
+
+2. There is more trust that a business that sells this software has a higher integrity than freeware of unspecified and potentially highly untrustworthy origins. The commercial software also comes with an accountable party.
+
+3. Separation of Duty states that one subject cannot complete a vital function in the system by itself while Separation of Function states that separate subjects are required to complete complementary roles.
+
+4. Auditing provides accountability within the system and maintaining a recovery trail. In other words, auditing forces people and systems in some sense to be accountable for the changes they have made and calls to light their errors if such exist. It also forces the system to maintain a recovery trail which may be used to recover accidentally or maliciously destroyed data vital to the integrity of the system.
+
+5. Software must be able to be moved between systems without threatening the integrity of those systems. This is especially important for Microsoft who make commercial and personal software to be used on a wide variety of systems and configurations.
+
+6. For a company providing a web hosting service where the majority of the information is meant to be accessed publicly anyways, integrity is much higher on the priority list than confidentiality. If they lose data, their customers will quickly move to their competitors.
+
+Lecture 20
+
+1. Information that is highly reliable but not very sensitive would be the cook informing the general that he intends to serve lamb chops for dinner that night. On the other hand, information that is unreliable but very sensitive would be if the general received an anonymous letter under his door that aliens were about to land in the Mojave desert.
+
+2. For the first row an expert in physics is expected to be of much more credible than a student in physics. In the second row the novice in physics doesn’t have more credibility than the expert in physics, even if the novice might know more about art. For the third row an art student is expected to have a higher degree of credibility than a novice who doesn’t know about anything.
+
+3. H -> L. A high integrity object should be able to interfere with an object of lower integrity but not the other way around.
+
+4. They should not be treated the same or even in any way overlapping. A high level in one does not confer any sort of influence in the other sphere. They should be completely separate, with separate labels, and treated as such.
+
+Lecture 21
+
+1. The Biba model has similar properties using the dominates relation and also utilizes labels to mark the relative strength of different objects and subjects to determine which are allowed to write and read which objects. This is extremely similar to the setup of the BLP model.
+
+2. The two are at the same level, but the subject has a higher integrity for category A so it can’t read the object in case it learns information of lower integrity. Similarly, the object has a higher integrity for category C so it can’t allow the subject to write information of a lower integrity to it. Therefore, the entry is empty.
+
+3. No. A subject must pass both the confidentiality and the integrity checks to be allowed to access an object to read or write.
+
+Lecture 22
+
+1. Subjects are assumed to be easily tainted by the information they have read so that they must be reduced to the level of the object they read.
+
+2. There is a very low amount of trust invested in the subjects. The instant they read any information below their level, they are now considered tainted and demoted to the level of the object they read.
+
+3. The Ring Policy seems to assume that a subject is able to decide the quality of the information it reads and filter it by integrity.
+
+4. Subjects are considered extremely trustworthy in judging the information they receive, but still not so trustworthy that they can write to an object of higher integrity than themselves.
+
+Lecture 23
+
+1. Yes, the SD and the ID are the confidentiality and integrity categories respectively for programs in development.
+
+2. Downgrading allows the controller to move a program from the development category to the production category. Without it, there would be no way to mark software as ready for release so that end users have access to it.
+
+3. No, controllers are of a higher confidentiality so they do not have write privileges to modify development code/ test data.
+
+4. The downgrade ability is founded on the policy of weak tranquility. This allows levels and labels to change over time rather than be limited to only what they originally were.
+
+Lecture 24
+
+1. The four fundamental concerns of Clark and Wilson seek to maintain consistency in the system, specially geared towards commercial applications.
+
+2. A commercial setting CDI could be the accounts a bank keeps, the order data that Amazon stores for every transaction, and shipping information stored by UPS on a daily basis.
+
+3. A commercial setting UDI could be the day’s lunch menu, company reviews, or inventory information.
+
+4. Certification rules seek to ensure that the action attempted by a user doesn’t threaten the integrity of the system, while Enforcement rules are in place to enumerate the mechanisms by which the system limits users and transactions to protect the system’s integrity.
+
+5. One example of a permission in a commercial setting could be that the Bank Manager has the permission to create corporate bank accounts for commercial customers. So user would be the bank manager, transaction would be to create the account, and the constricted data would be the accounts.
+
+Lecture 25
+
+1. A contractor or consultant may have access to sensitive information within a company which they may either blatantly share with the next company they work for, or base some of their work off previous knowledge acquired working for the competitor that isn’t available for public view. In other words, they have been privy to classified information that may help a competitor.
+
+2. Yes, there is no conflict between Microsoft and GM. They are not competitors and any cross access to information between the companies does not threaten the confidentiality of either.
+
+3. You can still access any of the bank files from Bank of America, Wells Fargo, or Citicorp.
+
+4. The BLP model focuses on a hierarchy of sensitivity for information and clearance level for subjects while the Chinese Wall policy focuses on groupings into classes instead where the overarching policy is to avoid conflicts of interest based on past accesses.
+
+Lecture 26
+
+1. The role is given exactly the permissions required to fulfill that role. Rather than give subjects a clearance level, you give them only the clearance required to fulfill their function and only as long as they are in that role. This prevents a subject from being given unnecessary access to any sensitive information.
+
+2. Authorized roles are the roles that a subject has permission to fulfill at any point in time, while active roles are the current roles that a subject is completing at the current time.
+
+3. Role authorization is a check that a subject is actually allowed to complete their current role. Transaction authorization on the other hand is a check that the role the subject is fulfilling is allowed to complete that particular transaction.
+
+4. Standard access control can be too general with the roles or tasks that a subject can fulfill, such as “read file” instead of “open bank account.” The standard system does not give a detailed enough breakdown of legal actions. The standard access control also makes it exceedingly difficult to transition between active roles to complete a function in a pinch.
+
+Lecture 27
+
+1. An ACM is expensive to create and store when these permission can either be computed on the fly, stored with subjects as capabilities, or stored with objects as an ACL.
+
+2. Storing permissions with objects is called an Access Control List, storing the permissions with subjects is called a Capability-Based System, and calculating them on the fly is storing them Implicitly as a series of rules.
+
+Lecture 28.
+
+1. The receiver must have some shared knowledge with the sender, specifically an agreed upon encoding scheme so that it knows how to interpret the message.
+
+2. Quantifying the information content of a message allows us to rate the channel’s transfer speed in bits per second. It gives a comparable rating of how fast that channel can transmit data and can be used to rate the effectiveness of channels or predict the abilities of a covert channel.
+
+3. Without a common encoding scheme, it would be impossible for the receiver to decode the message that the sender transmits and the channel would be useless.
+
+4. If the sender transmits more information than is necessary for the receiver to resolve uncertainty then there is an unnecessary taxation of system resources since any channel has limited bandwidth. It also opens up the possibility of breaching confidentiality if the sender sends something the receiver isn’t supposed to see.
+
+5. If the receiver already knows the answer to a yes or no question, the data content should be exactly 0 bits in length. There is no need to transmit any data if the receiver already knows enough to eliminate uncertainty.
+
+Lecture 29
+
+1. In an n-bit binary number, there are n bits of information. In a single decimal digit, there are 4 bits of information. And in a two digit decimal digit, there are 5 bits of information.
+
+2. It depends entirely on how much the receiver already knows, such as whether it is expecting to receive only information about when the attack is. In that case, the single word dawn might do. Or there could be pre-determined messages and it only needs to reference a lookup table. Worst case scenario, it must receive the whole message in binary and decode it to understand the content in which case it must have a scheme to decode it.
+
+3. 4 bits are required to send one of 16 messages. 4 bits with base 2 is exactly enough to create 16 different combinations of 0’s and 1’s. In other words, 4 bits encapsulate the numbers 0 through 15 which give 16 possibilities.
+
+4. A message from space of 256 messages contains 8 bits of information.
+
+5. An ideal circumstance of sending information would mean that the receiver already knows so much that the message is almost pointless. In most real cases, quite a bit of information is required to be sent to provide context. If decoding words, then each bit decoded will not reduce the uncertainty by half.
+
+Lecture 30
+
+1. One is simply a discrete binary digit while the other is a measure of the quantity of a continuous piece of information that can be transmitted through a channel.
+
+2. M0 - 000
+   M1 - 001
+   M2 - 010
+   M3 - 011
+   M4 - 100
+   M5 - 101
+   M6 - 110
+   M7 - 111
+
+3. There are 995 messages of only a single bit to communicate message 10, and then 5 messages of 5 bits each to transmit the other options. So the total bits transmitted are 995 + (5 * 5) bits.
+
+4. Knowing the prior probabilities of messages allow you to single out the most probable messages and assign them to a lower bit value to communicate that message in a less expensive manner. Then limit the longer bit messages to only those which are least probable to be transferred.
+
+5. The naive method of encoding would use 2 bits to transmit up to 4 messages. I will use 4 bits to show it in a way a non-CS student might think it works.
+   M1 - 0001
+   M2 - 0010
+   M3 - 0100
+   M4 - 1000
+
+6. If it is possible to find an optimal encoding that means that we know the exact number of each message transmitted. And then simply assign bit values such that the ones most often transmitted cost less and vice versa. However, for this to always hold as the optimal encoding, the means we also know exactly what the sender will communicate every time, making the sending of the message pointless.
+
+Lecture 31
+
+1. A string could be “2864286” assuming that each number can only one digit in length or it would be hard to decode correctly without some kind of delimiter.
+
+2. A non-prefix-free encoding for a six-sided die could be:
+   1 - 001
+   2 - 010
+   3 - 011
+   4 - 100
+   5 - 101
+   6 - 110
+
+3. If it isn’t uniquely decodable then the receiver might misunderstand the message. In my first example of a string of positive, even numbers if we didn’t agree that each number is a single digit, then the receiver will be uncertain if I meant to transmit 2 - 8 - 6 - 4 - 2 - 8 - 6 or 28 - 6 - 428 - 6. This uncertainty means that the message is useless to the receiver.
+
+4. If the encoding scheme isn’t lossless then we might be unable to retrieve all the information from the message and the intended message isn’t communicated. This can lead to the wrong decoding or not resolve the receiver’s uncertainty.
+
+5. In Morse code, a single dot for E is the prefix of three dots for S meaning that a receiver would have to look ahead to determine the message, and even then might decode it as EEE rather than S.
+
+Lecture 32
+
+1. The entropy of a fair 8-sided die is 3. That means on average any encoding which is 3 bits in length is the optimal encoding and it is impossible to encapsulate all 8 possibilities in less than 3 bits.
+
+2. For the unbalanced coin, the entropy of the language is 0.722 meaning that it is impossible to encode the language in less than 0.722 bits but realistically we are going to need a whole bit to do it.
+
+3. Knowing the entropy of the language gives you a lower bound on the bit size of the messages and allows you to see when you are approaching the optimal encoding by averaging your bit length for each message. In other words, it lets you measure your own encoding efficiency.
+
+Lecture 33
+
+1. HH has a probability of (9/16) because the probability of one head is (3/4) so HH = H x H = (3/4) x (3/4) = (9/16). Same goes with each of the HT and TH where HT = TH = (1/4) x (3/4) = (3/16). And finally two tails, TT = (1/4) x (1/4) = (1/16). Total them all up and you get (9/16) + (3/16) + (3/16) + (1/16) = (16/16) = 1. So we have accounted for all the possible outcomes and their probabilities.
+
+2. Since HH is the most probable outcome, we assign it a one bit encoding. And we expect it to show up 9 times. So that’s 9 total bits from HH. For HT, we assign a 2 bit encoding and expect it to show up 3 times so that makes for 6 total bits. And TH gets a 3 bit encoding while also being expected to show up 3 times so that’s 9 bits total. And finally we have TT which is also represented by 3 bits but only expected to show up once so that gives us an expected 3 bits. Total them all up and we have 27 total bits expected in the message.
+
+3. The naive encoding would simply be encoding it as if all outcomes were equally likely:
+   1 - 000
+   2 - 001
+   3 - 010
+   4 - 011
+   5 - 100
+   6 - 101
+
+4. The entropy of this language turns out to be 1.295.
+
+5. A more efficient encoding would be:
+   1 - 0
+   2 - 1
+   3 - 10
+   4 - 11
+   5 - 100
+   6 - 101
+
+Note that since there are no encodings of sequences of rolls, we need not worry about prefixes.
+
+6. The naive encoding has an average of 3 bits per message while the more efficient encoding has an average of 2 bits per message so it is 50% more efficient than the naive encoding.

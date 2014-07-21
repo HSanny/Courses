@@ -1,0 +1,129 @@
+Peter Luke Conlon
+PLC585
+
+Questions: Week 2
+
+Lecture 17
+
+1)	Yes, but not the other way around because NI is not transitive.
+2)	A    B, there is not domination relationship between them.
+3)	Yes, although NI is more strict than BLP, data can still sometimes leak from high to low through covert channels.
+4)	In A->B, B dominates A so the combinations are (A High, B High), (A Low, B High), (A Low, B Low)
+
+Lecture 18
+
+1)	NI policies better resemble meta policies than policies because they are very abstract; policies give specific instructions for satisfying the meta policy
+2)	L’s view: 	L1, … , L2, L3, … , Lk
+3)	In realistic systems, there are so many interferences, it is hard to prove that it is NI.
+
+Lecture 19
+
+1)	Integrity is important in many contexts: it is important for banks to make sure that their customers do not have write access to their own accounts so that they can’t change the amount of money held. Similarly, it is important for users on social media to not have write access to each others’ profiles or accounts.
+2)	The integrity of commercial software is likely to be higher than that of a free download from the internet.
+3)	Separation of duty says that two subjects must approve of one function for it to be allowed, whereas separation of function says that one individual can’t perform two functions.
+4)	Auditing is important in the case that an integrity problem arises. If it does, auditing allows a review to see where the fault occurred.
+5)	Sometimes you do not want someone writing their own code because it can incentivize them to write the program in such a way that they could exploit it. 
+6)	Integrity is probably more important than confidentiality in a bank. Although your customers would be very angry if their confidentiality was broken, a breach in integrity would likely put the bank out of business.
+
+Lecture 20
+1)	Information for a story in the New York Times may be high integrity, but low sensitivity. However, information that is secret in the military could be high sensitivity and lower integrity.
+2)	Row 1: Expert dominates Student, and the categories are equal so Label 1 dominates Label 2. Row 2: Novice is dominated by Expert so we automatically know that Label 1 does not dominate Label 2. Row 3: Student dominates Novice, and Art is a superset of the empty set, so Label 1 dominates Label 2.
+3)	The NI metapolicy can be displayed as: L <- H, where information cannot flow up.
+4)	The fact that they are orthogonal means that they are not related. Integrity and Confidentiality tell us two different things about security. One label cannot be both the integrity label and the confidentiality label.
+
+Lecture 21
+
+1)	Biba Integrity is called the dual of BLP because if you take all of the Reads and Writes in a BLP model, and flip them, you’ll have Biba Integrity.
+2)	On slide 5, Subj3 and Obj3 have no dominating relationship, so there is no read nor write access.
+3)	No, the subject can  only access the object if BLP and Biba Integrity are both upheld.
+
+Lecture 22
+
+1)	Biba’s LWM policy doesn’t give much credit to the subject. It assumes that if you read lower integrity objects, that you may be corrupted by that.
+2)	Not really, since they aren’t trusted to know when they are reading lower integrity objects.
+3)	The Ring policy assumes that the subject has the common sense to filter out the bad information.
+4)	The Ring policy trusts the subject a lot more than the LWM policy and the Strict Integrity policy
+
+Lecture 23
+
+1)	They are similar categories, but one is within confidentiality and the other in integrity. SD is a Development category within Confidentiality, while ID is a Development category within Integrity.
+2)	This allows them to be able to move software from development phase to production.
+3)	No, they can only write system software since they are ISP and not IO.
+4)	Weak tranquility underlies the downgrade ability.
+
+
+
+Lecture 24
+
+1)	These four fundamental concerns address what must be considered when devising commercial security.
+2)	In Amazon’s webapp, the items listed for sale would be CDI’s since you would not want customers modifying data like the price. The backend of Amazon would also contain CDI’s since you only want the customers accessing the frontend.
+3)	UDI’s on Facebook’s webapp could be things like a user’s profile picture since Facebook doesn’t really care what photo a user uploads. Other UDI’s would include taking candy from the bank.
+4)	Certifications are checks on previous processes to make sure that they were executed in the proper way. Enforcement rules are there to provide procedures for executing the process so that it doesn’t violate security.
+5)	Permissions grant a subject the right to do something to an object. So this could be like giving the System Controller the permission to move software from development to production.
+
+Lecture 25
+
+1)	They would inherently have a conflict of interest. The consultant cannot optimize the efficiency of one airline without directly or indirectly hurting the other.
+2)	Yes, because they are in different conflict classes; they are not competitors.
+3)	The files that are available for access are those that are within the same company, or in a different conflict class than the current company.
+4)	The Chinese Wall policy is dynamically changing, which the BLP model is static. Chinese Wall policy is also designed specifically for contractors or consultants.
+
+Lecture 26
+
+1)	Within a large organization, it makes more sense to give permissions based on a subject’s role within the organization. This eliminates the need to give specific permissions to every single person in the organization. For example, all bank tellers have the same permissions; they do not need to be individually assigned the same ones.
+2)	Authorized roles is a set of all roles a subject is allowed to fill, whereas active roles are a subset of authorized roles – the authorized roles that the subject is currently occupying.
+3)	Role authorization is the permission for a subject to take a certain position within an organization, and transaction authorizations are a certain roles’ permitted actions.
+4)	RBAC is more flexible generally than Standard Access Control. It’s easy to administer, permissions are appropriate to the organization, it recognizes that a subject often has many functions within the organization, and it allows the subject to transition between roles without having to change identities.
+
+Lecture 27
+
+1)	They wouldn’t want to build an explicit ACM because it would end up being millions of entries, which is inefficient. It is quicker to compute them on the fly.
+2)	The alternatives are (1) maintain a set of rules to compute access permissions on the fly based on attributes of subjects and objects, (2) store the permissions with objects, which is called Access Control List, (3) or store the permissions with subjects, which is called a Capability-Based System.
+
+Lecture 28
+
+1)	They need to know whether a 0 represents a no or yes; same with a 1.
+2)	The quantification of the content of a message is important because we need to know if it can fit in the channel.
+3)	The sender must communicate with the receiver so that he knows how to interpret the message. This is a similar issue to question 1.
+4)	Because we may be worried about the bandwidth of the channel.
+5)	If he knows the answer will be “yes,” this means that the sender only needs one bit of data to send the message. 0 can stand for no, and 1 can stand for yes. They need to communicate this.
+
+Lecture 29
+
+1)	In the (1) message, n bits are needed to convey the message. In the (2) message, you need 1 – 4 bits to convey the information. In the (3) message, you need 4 – 7 bits.
+2)	 It depends on the receiver’s level of uncertainty because the receiver may only need a specific part of the message, like when the attack is coming (dawn or dusk), in which case you would only need 1 bit of information. Or they could need the whole message.
+3)	4 bits of information must be sent, because that’s the log base 2 of 16.
+4)	8 bits of information content is contained in one of 256 messages.
+5)	The fewer the circumstances or potential messages to be sent, the less information content or bits that must be sent over the channel.
+
+Lecture 30
+
+1)	Bit is short for binary digit, which is a discrete thing (0 or 1). But the other connotation of bit is the content of information, a continuous thing.
+2)	The naïve encoding of 8 messages could be: 000, 001, 010, 011, 100, 101, 110, 111 for M0, M1, … M7.
+3)	The receiver only looks at the first bit, and if it’s a 0, then he knows it’s message 10. This happens 99.5% of the time so that’s 1 bit 995 times. The other 5 of the 1000 messages will be 5 bits, so that’s where the 5*5 comes from.
+4)	As seen on slide 5, if one message is much more prevalent than the others, then you can make that encoding a smaller number of bits, so that on average, you are sending fewer bits to the receiver.
+5)	This would be worse than the naïve encoding for 4 messages: M1- 0000, M2- 0001, M3- 0010, M4- 0011.
+6)	This implies that one message is being sent more often than the others, and therefore this message should be encoded in fewer bits.
+
+Lecture 31
+
+1)	Here’s a string in the language of positive even numbers: “82642882”.
+2)	This is a non prefix-free encoding of the 6 possible rolls of a die: R1- 00, R2- 001, R3- 0001, R4- 00001, R5- 000001, R6- 0000001.
+3)	If an encoding can be decoded in more than one way, then it doesn’t fully tell the receiver anything.
+4)	Lossless is desirable because if parts of the message are lost, it could change the message entirely. For example, “Do not go to war” could be interpreted as “go to war” if the beginning of the message is lost.
+5)	Morse code is not streaming; it has breaks.
+
+Lecture 32
+
+1)	The entropy of an 8-sided, fair die is -((1/8)*log(1/8))*8, which equals 3.
+2)	The entropy would be -(4/5*log(4/5) + 1/5*log(1/5)), which equals about 0.72.
+3)	The entropy of a language sets a lower limit on encoding efficiency for us, so we can decide if we have the optimal encoding.
+
+Lecture 33
+
+1)	We expect Heads ¾ of the time, so if we have two flips, we can say that there’s a 9/16 probability that it’s HH, which was just ¾ * ¾ . The same reasoning goes for the following 3 possibilities. So, we’d want to use the code  0 for HH, since it’s the most common and uses the least amount of information content.
+2)	The expected number of bits is 27, which is the sum of each row, where each row is the product of the count (# of times the combo of H & T occurred within 32 flips) and the bits in the code for this result.
+3)	The naïve encoding is: S1- 000, S2- 001, S3- 010, S4- 011, S5- 100, S6- 101.
+4)	The entropy of this language is about 1.295
+5)	 A more efficient encoding than the naïve encoding is: S1- 0, S2- 10, S3- 110, S4- 1110, S5- 11110, S6- 11111
+6)	My encoding is more efficient because in the naïve encoding because the naïve encoding has a 60 total expected bits to encode 20 rolls. My encoding has 49 expected bits to encode 20 rolls.

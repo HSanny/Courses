@@ -1,0 +1,111 @@
+David Barrón (db25633)
+CSf361 Young
+Homework 1
+L1
+1.	Personal, physical, corporate, communication, computer, network, system security. Though all of them are relevant in some way or another.
+2.	The end goal is to protect an asset from attack.
+3.	In terms of electronic security, the only thing that comes to mind is Sony losing customer payment data from Play Station Network in 2011. 
+4.	In terms of computer viruses and such, I did a fresh installation on Win8 a couple of weeks ago, so I feel confident it’s pretty clean right now. However, the reinstall was due to adware issues to begin with…
+5.	Not many security measures besides a few basic ones: requiring a password to log in every time, using WPA2 for wifi, and keeping software updated. The most knowing when it is and isn’t safe to click on something. 
+6.	They are pretty good, in my experience. I haven’t had serious adware issues on my computer in years. With the NSA revelations however, I’m pretty sure they are laughable at best. If somebody wanted to know what I was doing, it wouldn’t be too hard to get into my computer. 
+7.	I don’t think it overstates the case. Security is one of those things where “Hindsight is 20/20” really does apply. Nobody can prepare for every conceivable threat or attack.
+8.	It’s important because not everyone is an honorable and standup citizen. Some people will not hesitate to take advantage of a situation and hurting innocent people in the process. 
+L2
+1.	Another thing that makes security hard is that as more people have access to a computer, more bad people have access as well, and tools for conducting malicious activity are not too hard to find.
+2.	Yes and No. You may be able to enumerate vulnerabilities you are aware of but chose not to fix due to trade-offs, but it is impossible to know everything wrong with your system.
+3.	A defender has to try and protect his system from as many different attacks as he can possibly detect, while an attacker only has to find one vulnerability and exploit it.
+4.	Yes, since no system is 100% attack proof and secure, it logically follows that the only way to not be victim of any type of attack is to not own a computer.
+5.	Since it is impossible to guard against all forms of attacks, one must step back and consider where it is best to spend time and resources. Also, in order to improve security, some functionality must be sacrificed.
+L3
+1.	Risk is the possibility that a particular threat will adversely impact an information system by exploiting a particular vulnerability.
+2.	Yes, I do agree.
+3.	A risk I accept is the risk of dropping and breaking my laptop; it is too old to warrant a warranty. A risk I avoid is ruining my watch in the shower; I take it off every time. A risk I mitigate is developing cavities; I brush my teeth every day. A risk I transfer is having my apartment broken into; I have renter’s insurance.
+4.	You can use ALO to determine where you may spend your resources when securing a system. A certain attack may occur often, but the consequences may not be too severe, so you may want to spend some time to address the issue that a second attack that almost never happens but has very severe consequences is covered in some way.
+5.	Technical, economic, psychological
+L4
+1.	List 1 is things to consider and address in a system, while list 2 is a list of tools to address these topics.
+2.	Confidentiality; it’s the one of the three I have the least control over. I can address the other two by making multiple copies of things or backing up drives.
+3.	Group and categorize data means to determine what type of data you are dealing with (music, homework docs, or nuclear missile launch codes) and store it with other similar pieces of data. 
+4.	 Authorization changes over time because data categorization may change. 
+5.	Not having access to data or resources is a reliability because the expected behavior of the system is to provide that access.
+6.	Data integrity and reliability.
+L5
+1.	Phone network: Only people who have dialed a number or answered a call may have access to a data stream and anyone else cannot. Military database: members have access to documents of a certain level and below only.
+2.	The metapolicy is usually stated to achieve the general goal of reliability/accessibility/integrity while a policy is more specific in addressing an issue and a mechanism as a solution.
+3.	Only a Student and certain university members can view the student’s records. Only certain university members can make changes to the records. A written request must be made by the student in order to release the records to anyone else.
+4.	They could. In the academic record example, it could be that the student may want his/her parents to always have access to their academic records, so the university may have to make an exception for every student’s parent.
+5.	Only certain documents and university individuals may be able to view a SSN, and they should not disseminate that SSN elsewhere.
+6.	If you don’t know the overall goal of the security for a system, then you may be using incorrect tools to provide that security and just be wasting resources.
+L6
+1.	Military security is mainly about confidentiality because many of the data handled contains sensitive information like top secret government projects and nation security. Integrity is also important because a random person should not be able to alter the information on files either.
+2.	The major threat in the MLS experiment is a lower ranked individual reading higher ranked government documents.
+3.	We only care about confidentiality.
+4.	One label denotes the security level and the other denotes the categories of information within a folder.
+5.	We don’t care how the labels got there because it is not our role to categorize the data.
+6.	2,6,5,4,1,3
+7.	Security levels are unclassified, sensitive, and top secret. 
+8.	A reader must have an equal or greater security level to the document and also have clearance to read all of the categories inside.
+L7
+1.	 Labels on humans could be assigned via passwords or security cards, or even uniforms. Unless you want to go the silly route and have them wear t-shirts with the labels.
+2.	Labels for documents denote exactly what they contain, while labels for humans denote the maximum amount of documents they can read.
+3.	Documents can be electronic documents and humans can be humans or software.
+4.	You want an individual to only have access to what they need to know, and nothing more if possible.
+5.	Secret is higher than confidential and both have crypto as a category only, so access. Secret is outranked by top secret, so no access. Everything outranks unclassified empty, so access.
+L8
+1.	It makes it easier to identify what we are to concern ourselves with when writing policies.
+2.	.
+3.	.
+4.	They would have to be exactly the same label.
+5.	Simple Security says a subject can read an object if it has a greater or equal classification.
+6.	It’s “only if” and not “iff” because other restrictions may be put in place.
+L9
+1.	SS does not address writing privileges, another important aspect of ensuring the incorrect subjects have access to information.
+2.	We have to take care that information doesn’t flow down to lower classifications by both read and write.
+3.	Computers can process information much faster than humans, and if a computer is connected to the internet, there is the possibility that anyone with another computer can get access to it. 
+4.	The *-Property says that a subject can only write to an object with a higher or equal classification.
+5.	The labels must be exactly the same.
+6.	Do it in person and forgo email?
+7.	It is a problem. One way to deal with incidental overwrite is to not actually overwrite information, but instead add it to the bottom of a document, or create a new document with the desired information and appropriately label it.
+L10
+1.	In weak tranquility, raising a subjects level without constraint may cause issues with Simple Security and lowering a subjects level without constraint may cause issues with the *-property.
+2.	In Strong Tranquility, no security levels may change, so that officer may never be able to email the platoon members.
+3.	Lowering an objects level may be dangerous because new subjects have access to read a document, and that may be undesirable. Also, it may take away of the right to write from other subjects.
+4.	The object must not contain information that may jeopardize security. 
+L11
+1.	The books would be have the lowest level assigned, and all subjects would have any level higher than the books but not equal.
+2.	The matrix would could be massive and the BLP system is simple enough that access can be determined on the fly.
+L12
+1.	(L,{A}) --> (H,{A})
+2.	The GLB will have the arrow pointed to it, the LUB will have the tail.
+3.	That is the metapolicy because a BLP system’s only concern is that information does not flow downward.
+L13
+1.	BLP says information may only flow in one direction, up. Thus High dominates Low.
+2.	High can read Low only, and Low can write to High only.
+3.	Create makes an addition object at its own level, not higher or lower. Destroy only gets rid of objects with its own level or higher, similar to Write.
+4.	Sh and Sl must agree on a constant name for the object created and how long to wait between reads.
+5.	Destroy is to clear the field for the next potential bit of information.
+6.	Yes, In transmission 1, Sh didn’t create an object, so when Sl executes destroy, it is Sh’s object being deleted.
+7.	To determine if Sh has created an object, and yes it must do this.
+8.	The difference in creation of object by Sh is the information being passed down, which must happen, but in whatever form Sh has determined.
+9.	The Read function returns information on an object regardless of if it exists, or if it’s allowed to read. If a pattern is somehow constructed, then binary information is being passed down from Sh to Sl.
+L14
+1.	A coffee house is a public place, anybody with ears may overhear the conversation. 
+2.	No, if Sh can write, Sl cannot read, and vice versa.
+3.	Whether a resource exists or not.
+4.	How long the CPU ran.
+5.	Where the last access on the HDD occurred.
+6.	Whether a value was even or odd.
+7.	It’s a simple yes no question.
+8.	The lower subject must have access to that system information.
+9.	Power channels may arise in systems that may be doing constant power toggles to other systems.
+L15
+1.	Computers are fast!
+2.	There may be a lot, and more importantly is that one has to find them first.
+3.	Eliminate, introduce noise, or monitor for intrusion.
+4.	At night, someone outside your home may know if you are home if your lights inside are on or not.
+5.	The receiver can observe the times when the light is on or off and determine when the subject is asleep or out, possibly planning an entry into the house for burglary.
+L16
+1.	Create doesn’t return any kind of information on a file, we only know that after the operation a file exists and nothing more.
+2.	In that level, someone can modify and some can reference an attribute, so a covert channel may be there. 
+3.	No, because the R/M would apply to different resources.
+4.	To aid in identifying covert channels in a systematic ways. 

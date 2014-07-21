@@ -1,0 +1,121 @@
+Name: Robinson Nguyen
+EID: rn5644
+CS Login: rnguyen
+Email: robinson_nguyen@hotmail.com
+
+Lecture 34
+1) If the entropy is h, then you can't get a better entropy than h so you can't transmit signals greater than C/h.
+2) Increasing redundancy ensures that the receiver gets the intended message.
+
+Lecture 35
+1) -log(1/10)
+2) There are many factors that determine the frequencies of a language.
+3) Zero order assumes all symbols are equally likely. First order has a frequency for symbols. Second and third order have frequencies depending on the previous symbols.
+
+Lecture 36
+1) Prior probabilities may depend on many different randomized factors.
+2) The observer could possibly already know the content of the message.
+3) Entropy can be used to measure the redundancy of a message.
+
+Lecture 37
+1) Knowing what the message is about can give clues to decrypting the message. Who it's from could give a clue about the underlying language.
+2) You may not need a key to break an encryption or decryption.
+3) It should change or move the symbols but the information content should be the same. 
+4) The redundancy can be used to deduce what the key is to decrypting the message.
+
+Lecture 38
+1) P
+2) D(E(C,Ke),Kd)
+3) The patterns can be used to figure out the key to decrypt the message.
+4) The properties of languages are fixed so it will be easier to decrypt a message if you know any clues to how the encryption works.
+
+Lecture 39
+1) There could be an many possibilities for breaking the algorithm.
+2) It could be if n was really small.
+3) They both are used in almost all encryption operations.
+4) Confusion gives trouble at extracting a symbol, while diffusion displaces content to other areas over other positions.
+5) It depends on what you want for the encryption to do.
+
+Lecture 40
+1) Monoalphabetic is uniformly changing a symbol for another symbol while polyalphabetic is replacing symbols depending on where they are.
+2) Mapping one alphabet to another alphabet.
+3) Because after you eliminate one symbol, you have k-1 left each time.
+4) Moving the symbol depending how many you want to shift.
+5) 26 or 25 depending on how many symbols.
+6) Probably not, because you don't have to try all the keyspaces to find the right one.
+7) It uses two symbols as indicies to lead to the right symbol for the text.
+
+Lecture 41
+1) 26^3 is 17576 since there are 26 different symbols for each letter.
+2)  Simple substitution reduces the possibilities to 650 which is 27 times less than the other one.
+3) No because it has to make some sense for the intended receiver can decode it.
+
+Lecture 42
+1) You can't determine or remove possibilities of the text.
+2) So it can randomize the key so it will be hard to decipher the text.
+3) Both the sender and receiver need to have a key if there exists a secure channel, then there would be no need for ciphertexts and if there isn't, how would they communicate the key.
+
+Lecture 43
+1) It doesn't change any of the symbols in the text, so you can solve the text by using the frequency of the language.
+
+Lecture 44
+1) They're a symmetric algorithm. 
+2) Key management is keeping track of the keys for communicating, and key distribution is concerned with trying to exchange private keys.
+3) No because only the people with S's private key can decrypt it.
+4) I think public key systems provide more security than symmetric. It depends on how you want the information to flow in the system.
+
+Lecture 45
+1) Probably because the text are extremely large as opposed to small text where it will take longer.
+2) If a text is malleable, then an attacker can easily change the information context in a text.
+3) Homomorphic encryption schemes can make it so that encryption and decryption algorithms are the same.
+
+Lecture 46
+1) The substitution, mix, and add process replaces a block with using a subkey.
+2) The shift process moves the rows of the blocks.
+3) Inversing the mix column process takes a long time.
+4) You use the substitution, transposition, mixing, adding on the blocks, and you can use as many rounds as you want to make it hard to decrypt. 
+5) More rounds will make it harder to decrypt without the key.
+
+Lecture 47
+1) Each block could be identical and you can have the same blocks in the ciphertext as well.
+2) You can apply CBC and randomize the plaintext blocks before encrypting.
+3) If you can tell the difference inbetween encryptions, you could develop a decryption.
+4) Key stream generation is more random than standard block encryption modes.
+
+Lecture 48
+1) The key that can decrypt your ciphertext should be kept secret.
+2) So you can't easily decrypt a message without the key. 
+3) You don't have to worry about unintended people having the public key.
+4) {P}K^-1
+5) Symmetric algorithms are faster but not as secure as asymmetric.
+
+Lecture 49
+1) Yes because the key are used in a symmetric fashion.
+2) Prime numbers make it hard to find the key to decrypt or encrypt.
+3) Probably but it will be difficult to invert.
+4) Only the person with the private key can decrypt it.
+5) Because everyone has B's public key.
+6) Because only B has his private key.
+7) If the person uses B's public key to decrpyt the message.
+8) You can encrypt it with B's private key and then A's public key.
+
+Lecture 50
+1) So it will be fast and easy to sort through.
+2) strong collision resistance means it's hard to find any two messages that has to the same value;
+3) preimage means it's hard to find a message that hashes to a particular value while second preimage if it's difficult to find a different message that hashes to the same value.
+4) On average there are 1.25sqrt(2^128) values before you can find a collision. 
+5) On average there are 1.25sqrt(2^160) values before you can find a collision.
+6) Anyone can use cryptographic hash functions to retrieve the files.
+7) Changing a message in a text will change the hash values.
+8) You encrypt a file with B's key and then use the cryptographic hash function on it.
+
+Lecture 51
+1) No because anyone with a public R key can decrypt the outer layer and if they had a public S key they could decrypt that as well.
+2) You could but then you wounldn't know if it went to the intended receiver correctly or not.
+3) No because only the sender can decrypt that outer layer.
+4) That you encrypt it with your private key and then encrypt with the public key of the intended receiver so you know that it goes to the right person.
+
+Lecture 52
+1) As long as the eavesdropper doesn't know what a and b are, they still have the secret kept.
+2) It would be extremely hard to compute b with only g, p, and a(taking longer than the lifetime of the universe).
+3) It would still be hard to compute a with only g, p, and b.

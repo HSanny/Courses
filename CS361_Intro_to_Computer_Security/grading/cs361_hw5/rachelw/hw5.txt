@@ -1,0 +1,95 @@
+FIRSTNAME: Rachel;
+LASTNAME: WONG;
+UTEID: rcw956;
+CSACCOUNT: rachelw;
+EMAIL: rachelcwong168@gmail.com;
+
+Lecture 66:
+1. an "end-run" around government restrictions.
+2. Zimmerman had a strong distrust of the government and believed strongly that everyone had an absolute right to privacy.
+3. Yes.
+4. To help provide better security for their product. 
+
+Lecture 67:
+1. The sender creates a message M, sender generates a hash of M. Sender signs the hash using his private key and prepends the result to the message. Receiver uses the sender's public key to verify the signature and recover the hash code. Receiver generates a new hash code for M and compares it with the decryoted hash code.
+2. Sender generates a message M and a random session key K. M is encrypted using key k. K is encrypted using the recipient's public key, and prepended to the message. Receiver uses his private key to recover the session key. The session key is used to decrypt the message.
+3. Combine them. PGP will take care of it for you.
+
+Lecture 68:
+1. COmpression, email compatibility, segmentation.
+2. To save bandwidth.
+3. It is preferable to sign an uncompressed message so that the signature does not depend on the compression algorith. Versions of the compression algorithm behave slightly differently, though all versions are interoperable.
+3. Encryption after compression strengthens the encryption since compression reduces redundancy in the message.
+4. It is to map groups of three octets into 4 ASCII characters. Use of radix-64 expands the message by 33%. This is usually more than offset by the compression.
+5. Because email systems often restrict message length. Longer message must be broken into segments which are mailed separately.
+
+Lecture 69:
+1. Session, public, private, passphrase-based keys.
+2. Single message, only used once. 
+3. The encryption algorithm E is used to generate a new n-bit key from a previous session key and two n/2 bit blocks generated based on user keystrokes. The two blocks are encrypted using E and the previous key, and combined to form the new key.
+4. 
+5. Whenever the user wants to access the private key, he must supply the passphrase. Because the security of the system depends on protection private keys.
+
+Lecture 70:
+1. Send the public key along with the message, associate a unique ID with each key pair and send that with the message, generate an ID likely to be unique for a given user. This is PGP's solution.
+2. Timestamp, keyID, public key, private key, userID
+3. Timestamp, keyID, public key, User ID
+4. PGP retrieves receiver's encrypted private key from the private-key ring, using the Key ID field in the session key component of the message as an index. PGP prompts the user for the passphrase to recover the unencrypted private key. PGP recovers the session key and decrypts the message.
+5. It indicate the extent to which PGP trusts that this is a valid public key for this user.
+6. The owner issues a signed key revocation certificate. Recipients are expected to update their public-key rings.
+
+Lecture 71:
+1. the consumer problem: the attacker gets logically between the client and service and somehow disrupts the communication. the producer problem: the attacker produces, offers or requests so many services that the server is overwhelmed. The producer problem is more common.
+2. When the transaction may involve some handshake(protocol); the attacker does not respond and the server ties up resources waiting for a response. 
+3. a) each connection takes 600 bytes of storage. b) might disallow connections by slower clients. c) may be hard to determine.
+
+Lecture 72:
+1. It tries to detect which packets are malicious.
+2. An intrusion detection system can analyze traffic patterns and react to anomalous patterns. However, often there is nothing apparently wrong but the volume of requests. An IDS reacts after the attack has begun. An intrusion prevention system attempts to prevent intrusions by more aggressively blocking attempted attacks. This assumes that the attacking traffic can be identified.
+3. Over-provisioning the network, filtering attack packets, slow down processing, "speak-up" solution.
+
+Lecture 73:
+1: False negative: a genuine attack is not detected. False positive: harmless behavior is misclassified as an attack.
+2. Accurate: if it detects all genuine attacks. precise: if it never reports legitimate behavior as an attack.
+3. It's hard to do both simultaneously. 
+4. When frequent false alarms can lead to the system being disabled or ignored. The IDS classifies an attack as an attack with probability 90%. The IDS classifies a valid connection as attack with probability 10%
+
+Lecture 74:
+1. The worm used a static seed in its random number generator and thus generates identical lists of IP addresses on each infected machine. Each infected machine probed the same list of machines, so the worm spread slowly.
+2. Because of the static seed especially, CodeRed did very little damage. Also was memory resident. All you needed to do was reboot to get rid of the worm.
+3. Memory resident meaning the worm lived in the memory. All you needed to do was to reboot the machine to get rid of the worm.
+4. It had a random seed in the random number generator. It infected more machines, infected more hosts, routers, printers, etc. They either crashed or rebooted when an infected machine attempted to send them a copy of the worm.
+
+Lecture 75:
+1. Worm, infects hosts, creator knew about Code Red versions 1 and 2.
+2. to set up a botnet later on
+3. Looks to see if a host is infected, sets up a "backdoor" into the infected machine, begins a process of propogating itself. Launches 300 or 600 threads in propogation attempt. generate a random IP address and then applies a mask to produce the addresses to probe. 
+4. A large number of machines remained vulnerable; not a lot were patched at all.
+5. People are slow to respond. We should do better because it makes the internet less vulnerable.
+
+Lecture 76:
+1. to help customers assess needs to determine requirements, identify the product that will meet those requirements, purchase the product and deploy it.
+2. A set of requirements defining security functionality, a set of assurance requirements needed for establishing the functional requirements, a methodology for determining that the functional requirements are met, a measure of the evaluation result indicating the trustworthiness of the evaluated system.
+3. Because cryptogrophy is sensitive and does not have as many experts, they have a separate evaluation mechanism.
+4. a) basic security; at least on approved alogorithm, b) improved physical security; tamper-evidence packaging, c) strong tamper-resistance and countermeasures, d) complete envelope of protection including immediate zeroing of keys upon tampering.
+
+Lecture 77:
+1. set of documents and methodology for applying the criteria
+2. common among the countries: cc documents, CC evaluation methodology.
+3. at a certain level countries stop accepting other country's evaluations except their own.
+4. Protection profile: a "protection profile" is a formal descriptions of secuirty for a class of systems. Security taget: a specific system of family of systems.
+
+Lecture 78:
+1. Detect invalid ID tags, detect invalid bin-cleared messages, fault tolerance.
+2. Generate a hash value for a definitive document that may be used as verification of the validity or authenticity of its information content.
+3. Helps you determine if the methods are adequet. 
+
+Lecture 79:
+1. For managing user access privileges stored in directory services.
+2. Security targets are specific systems or classes of systems submitted for evaluation. Protection profile evalutions are for idk.
+
+Lecture 80:
+1. EAL: evaluation assurance level. The person that submits whatever to be evaluated specifies how much evidence to put forward to be tested. 
+2. The vendor.
+3. Because different countries have different standards
+4. no. otherwise any vendor could "test" their own product and give it any level they want. 

@@ -1,0 +1,134 @@
+
+Name: Brian Jenkins
+EID: baj645
+CS Login: baj645
+Email: bjenkins92@gmail.com
+
+
+Lecture 1:
+1. Credit card security, banking security, apartment security, etc.
+2. They are all protecting something from malicious users/people
+3. Yes, my computer gets infected
+4. 100%, because there is no such thing as perfect security if you are on the internet
+5. I uses firewalls and anti-virus
+6. They likely prevent lots of viruses but not all of them
+7. It doesn't overstate the case because although it would be extrememly difficult and the incidence is minimal, the threat is still there and shows how important security should be 
+8. To understand risks and how to diminish them
+
+Lecture 2:
+1. There are many more people trying to harm your computer than the one person (you) who is trying to defend it
+2. no, because the potential threats are limitless
+3. The attackers outnumber the defenders and the attackers only need to find one flaw where as the defender must protect against all flaws
+4. I agree, there is no such thing as perfect security. Especially when you are accessing the internet
+5. To acheive perfect security you could essentially have a brick, but the more functionality you want (more users, internet access, saving your private information, etc.) the more potential security threats open up
+
+Lecture 3:
+1. The possibility that a particular threat will adversely impact an information system by exploiting a particular vulnerability
+2. Yes, there is no such thing as perfect security so the best approach is to see what potential vulnerabilities pose the biggest threats
+3. Accept: the fact that the earth could be destroyed by a meteor any day, avoid: doing drugs, mitigate: eat healthier foods to mitigate risk of poor health, transfer: car insurance
+4. It is a good tool, but sometimes even when a threat has a very low occurance chance, the threat is so big that it should be accounted for anyway
+5. Technical, economic, psychological, incidence rate, and how much you can mitigate the risk (the whole meteor destroying the earth thing)
+
+Lecture 4:
+1. The aspects of security (slide 2) are the goal you are trying to accomplish while the topics (slide 3) are the tools used to accomplish those goals
+2. Availability, as there is no confidential information on my computer or Integrity, because obviously any malware that changed up my computer would seriously harm it and inhibit availability
+3. To arrange data based on sensitivity
+4. Because someone may be promoted (or demoted) or more/less trust may be placed in an individual
+5. One major job of security is to ensure reliability
+6. In online retailers, oth are important because you don't want to pay for something and then have them deny the transaction before sending the product
+
+Lecture 5:
+1. Cell phone: Don't allow other users to listen to conversations they are not a part of, Military: don't allow people to see information above their authorization level
+2. The policy contains the guidelines and mechanisms to actually achieve the metapolicy
+3. Don't let students see other students' grades, don't allow students to change their own grades, don't allow students to log into other students' accounts
+4. Yes, like the example above, a student may want to ba able to change his/her grade but the teachers and university would not want that
+5. Do not allow private student information to be leaked
+6. If you don't understand the security goals in general, you will not be able to design or comprehend the specific tools used to acheive those goals
+
+Lecture 6:
+1. Because military secrets are of the upmost concern. There are still aspects of integrity and availability such as don't allow these secrets to be altered (or deleted) and don't allow access to be denied when it shouldn't be
+2. A leak of classified information
+3. The way the system is implemented there is a clear lack of integrity (blind write up)
+4. There is a label that contains a security level and then a linear set of need-to-know categories within that level
+5. Because it has strong tranquility and these are not allowed to be changed
+6. The Normandy Invasion, then the Enigma Code being broken, then Col. Jones getting a raise, then Col. Smith not getting a raise, then the softball game, then the cafeteria menu
+7. Normandy-> Top Secret:Strategy, Enigma-> Top Secret: Crypto, Jones & Smith-> Classified: Personnel, Softball->Unclassified:Recreational, Menu->Unclassified:Janitorial
+8: Always use highest appropriate level and use all categories related to it
+
+Lecture 7:
+1. With identification cards and secure logins
+2. Labels on documents indicate the sensitivity of contained information where as labels on humans indicate classes of information that person is authorized to see
+3. Documents are the files and the humans are any users
+4. So that information has the least likely chance of being leaked
+5. They all make sense because all the labels on the left dominate the ones on the right (in their same row) which means they should have read access
+
+Lecture 8:
+1. So that security problems could be more generalized
+2. There are security levels A and B such that neither A>=B nor B>=A
+3. There are security levels A and B such that neither A>=B nor B>=A
+4. If the labels are exactly equal
+5. An individual asking to see a document must show that his clearance level dominates the sensitivity level of the document
+6. Because dominance can only go one direction in this case (subject dominates object or does not dominate object)
+
+Lecture 9:
+1. Because of write access
+2. Someone with top secret could copy something in top secret and then write it to unclassified, thus breaking confidentiality
+3. A computer wouldn't intuitively know that that doesn't break confidentiality
+4. You can only write up
+5. Their labels are equal
+6. He can give the orders personally
+7. To deal with that we would have to have a new security plan that accounts for integrity
+
+Lecture 10:
+1. You have to change it in a way that does nt violate the spirit of the security policy
+2. Because that's unrealistic. There are promotions, demotions, new users, etc.
+3. Now the information is less secret and more easily accessed
+4. It does not contain any information that is above the new (lower) level
+
+Lecture 11:
+1. You would need two levels, and all users would be on the higher level while all objects would be on the lower level
+2. Most systems would be too large and variable for this to be practical
+
+Lecture 12:
+1. 		H{A}
+	   / | \
+	 L{A}| H{}
+	   \ | /
+	    L{}
+2. The LUB would be where both points' upward arrows meet, the GLB would be the point where both arrows meet going downward
+3. Information cannot flow down
+
+Lecture 13:
+1. They don't allow information to flow down
+2. Read requires subject dominance and write requires object dominance
+3. Create and destroy just essentially write up, they do not allow information to flow downward
+4. A read that is unsuccessful returns a 0, it doesn't just quit/crash
+5. So that a for loop would allow faster and easier transmission using the same create
+6. No, it's just accessability that is different
+7. Because it doesn't know which case to do because it won't know until it actually finishes and gets the answer. Don't put the cart before the horse
+8. So that it can transmit different numbers. A channel of just 0s or just 1s will not leak information
+9. If you have two varying results than the two results can be made to symbol 0 and 1. And with a constant stream of controllable 0s and 1s you can leak any information (eventually)
+
+Lecture 14:
+1. A covert channel is one that utilizes a system not designed for communication. Talking is for communication
+2. No. because both reads are just going to return a 0 as both times the read was unallowed and because reading and writing are intended for communication
+3. The different states of the error messages received
+4. In the different lengths of time utilized by the first process which is checked by the clock
+5. The bit is whether q reads from the first or second cylinder which is caused/stored by what p reads
+6. The bit is determined by how l reacts to h
+7. You would constantly have to wait for computer termination and reboot
+8. You would have to be able to vary and read the amount of power consumed
+9. Any device that can very quickly and efficiently power off and then restart
+
+Lecture 15:
+1. On modern processors they can operate at thousands of bits per second and don't affect performance
+2. Because it is impossible to identify every single possible channel on a reasonably sized system
+3. Modify the implementation, introduce noise to reduce bandwith, and monitor patterns of usage to check for exploitation
+4. A sender has access to modify a flag such as file size and the receiver can view that flag
+5. A sender modifies a flag such as file size, or recently read, and a receiver while not being able to access the file can access these flags not intended for communication and get different values depending on the flag's state
+
+Lecture 16:
+1. It doesn't actually tell you if the create succeeded so there is no info received
+2. Because then a sender could modify that data and a receiver could view that same data, thus allowing a channel of communication
+3. No, because the column is one operation modifying different attributes. A covert channel requires multiple operations on one attribute
+4. To find all potential covert channels

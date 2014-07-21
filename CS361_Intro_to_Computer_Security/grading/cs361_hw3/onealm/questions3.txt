@@ -1,0 +1,196 @@
+Name: Melanie O'Neal
+EID: mfo264
+CS Login: onealm
+Email: melanie_oneal@yahoo.com
+
+Lecture 34:
+	1. C is the capacity of a channel and h is the lowest amount of bits per symbol
+	possible. It is impossible to send at a rate fater than what the channel's 
+	maximum rate already is. Dividing by the best possible encoding shows how many 
+	symbols, on average, are able to be sent rather than just how many bits.
+	2. By sending some data over and over again, it will eventually reach the other 
+	side, so the more redundant you are, the more likely you are to get your 
+	message accross.
+
+Lecture 35:
+	1. -{log(1/10)}
+	2. There is a lot of redundancy in a natural language. There are also different 
+	probabilites for sets of characters. It requires very complex models.
+	3. Zero order assumes that all characters are equally likely. First order 
+	assumes that there are different probabilities, but that all the symbols are 
+	independent. Second order accounts for the probabilities of digrams. Third 
+	order accounts for the probabilities of trigrams.
+
+Lecture 36:
+	1. Because information content is based on what the observer knows, so 
+	probabilites can change per person.
+	2. If an observer already knows what the message is, no new information is 
+	gathered, hence, how much an observer knows makes the amount of real 
+	information stored in a message vary.
+	3. Entropy can be used to measure redundancy. The closer the length of a 
+	message is to the information content, the less redundancy there is.
+ 
+Lecture 37:
+	1. There is a picture of a goat on the message which could be a pun for Captain 
+	Kidd, which would mean that the message is probably in English since the pun 
+	only works in English.
+	2. A key may be optional because there are many ways to encrypt, including 
+	shifting characters.
+	3. It should have no effect on it. The information content should stay the 
+	same.
+	4. It gives the attacker more clues to work with.
+
+Lecture 38:
+	1. P
+	2. C because P is encrypted twice - {{{P}KE}KE}KD
+	3. Patterns could help give more clues in the messages.
+	4. Properties of language can help cryptanalyst understand better ways to 
+	decrypt messages, like looking at probabilities of symbols and such.
+
+Lecture 39:
+	1. It could take much too long to break. The time it would take to break it 
+	might not be worth it.
+	2. There are 2^n possibilities of an n-bit string and you find the right one 
+	about half way down on average.
+	3. They are important because they help hide the meaning of a message but still 
+	make it possible to decrypt again.
+	4. Confusion is changing the text, while diffusion is moving the text around.
+	5. Confusion seems to be better to me, but using both is even better.
+
+Lecture 40:
+	1. Monoalphabetic is when substitution is done uniformly. Polyalphabetic is 
+	when different substitutions are done depending on where the symbol occurs.
+	2. They key is whatever way you choose to specify the mapping for the 
+	substitution cipher.
+	3. There are k! permutations of k symbols in an alphabet and any one of those 
+	permutaions could be the correct mapping.
+	4. The key is the number of positions you shift.
+	5. The size of the keyspace is the length of the alphabet minus one.
+	6. No. It's not. You can break it with brute force.
+	7. Decryption involves going to the row of the key's symbol and using the 
+	column label as the decrypted symbol.
+
+Lecture 41:
+	1. There are 26 different letters that each encoded symbol could be. There are 
+	26^3 possible sets of three letters which could be the decryption and it may 
+	not be simple substitution.
+	2. We know that the y can only correspond to one symbol and that it can't be 
+	the same symbol that x corresponds to.
+	3. I think anything is possible, but a perfect cypher is also probably possible 
+	because even if you knew the algorithm, it could be that the key is necessary 
+	to decrypt and the ciphertext has no patterns, so you would still need brute 
+	force.
+
+Lecture 42:
+	1. Every possible plaintext could be what the ciphertext was since the key is 
+	random and just as long as the plaintext.
+	2. It's random so that you can never decrypt the ciphertext unless you know it.
+	3. They key distribution problem involves being able to agree on a key between 
+	a sender and receiver because sending one would have to be on a secure channel. 
+	If you had a secure channel, you wouldn't need to encrypt any messages.
+
+Lecture 43:
+	1. The frequency of the characters in the encoding would stay the same as the 
+	frequency of the characters in the alphabet.
+
+Lecture 44:
+	1. Symmetric.
+	2. Key distribution is about how to get keys to people who need them. Key 
+	management is about how to safeguard keys and make them available.
+	3. No. Only the holder of Ks^-1 can decrypt the message.
+	4. You can't really compare them. Both have their benefits and problems.
+
+Lecture 45:
+	1. Block ciphers allow for less patterns and are difficult to tamper with.
+	2. Malleable encryptions are more prone to tampering.
+	3. Homomorphic encryption is supposed to be malleable. It uses algebraic 
+	operation to encrypt and decrypt.
+
+Lecture 46:
+	1. subBytes is confusion. Each byte in the array is replaced by one in a lookup 
+	table. mixColumns is confusion. Each column is replaced by its value multiplied 
+	by a fixed matrix. addRoundKey is confusion. The state is XOR with a 128 bit 
+	round key.
+	2. shiftRows is diffusion. Each row Ri, with i being the row number, is shifted 
+	over by i bytes.
+	3. Inverting mixColumns requires multiplying each column with another fixed 
+	array that has less simple numbers than the original mixColumns that can't be 
+	as easily optimized.
+	4. Blocks are sets of data that are worked on in rounds. Rounds in AES have 
+	four steps in which substitutions and transpositions occur. The rounds happen 
+	numerous times.
+	5. More rounds mean that decrypting would have even more steps because each 
+	step is inverted.
+
+Lecture 47:
+	1. Identical blocks in plaintext are still identical in ciphertext	
+	2. It can be fixed with CBC. XORing each successive plaintext block with the 
+	previous ciphertext block makes it appear more randomized.
+	3. There can be observed changes and content leak. It is also slower because 
+	you have to wait for previous blocks to be encrypted before you can move on.
+	Watermarking attacks are also possible.
+	4. The key stream generation modes can be used more like a psudorandom number 
+	generator, so you can use it like a one-time pad.
+
+Lecture 48:
+	1. A private key, or secret key that pairs with the public key used.
+	2. Because they are easy to compute but hard to invert without more 
+	information. So, it's not difficult for people to use, but it is difficult for 
+	people to crack.
+	3. The key distribution problem is largely solved because there is no problem 
+	about having a secure key transfer. They key to encrypt is public, so it 
+	doesn't need protection.
+	4. {P}K^-1
+	5. Public key encryptions take much much longer to perform because they are 
+	more complex. Symmetric is bit-wise. Public key is not very efficient.
+
+Lecture 49:
+	1. Yes. RSA keys can be used for encryption or decryption (Either key in a 
+	pair).
+	2. They make RSA keys hard to factor.
+	3. Yes, but it's difficult.
+	4. Only the private key can decrypt the message.
+	5. Anyone can use the public key, so it's not guaranteed that B sent the 
+	message.
+	6. Only B has the private key, so if A can decrypt the message using B's public 
+	key, it must have come from B.
+	7. Since the public key can be used for decryption as well, the person 
+	intercepting the message can just use the public key and read it.
+	8. B can sign the message with his private key and then encrypt again with A's 
+	public key.
+
+Lecture 50:
+	1. So that it can be performed efficiently and quickly by a system.
+	2. They key difference is that it's difficult in weak to find another message 
+	that hashes to the same value, and in strong, it's hard to find any two values 
+	that hashes to the same value.
+	3. Preimage resistance means that, given h, it's hard to find a message that 
+	hashes to a particular value. Second preimage resistance means that it's hard 
+	to find another message that hashes to the same value.
+	4. On average, you'll have to look at 1.25 * (2^64) values before you find a 
+	collision.
+	5. On average, you'll have to look at 1.25 * (2^180) values before you find a 
+	collision. 
+	6. Cryptographic hash functions make alterations to a file apparent, but don't 
+	do a good job of hiding data.
+	7. It's strong collision resistant.
+	8. B can use a hash function and encrypt using A's public key so that any 
+	changes are evident when recomputing the hash, and only A has the private key 
+	to decrypt the message.
+
+Lecture 51:
+	1. No, because anyone can read K. Both public keys are available.
+	2. Yes. If reversed, someone may be able to get to {K}KR with S's public key, 
+	but they still won't be able to read it. It's also ensured that S sent it 
+	because it's signed with their private key.  
+	3. No.
+	4. Key exchange needs confidentiality and autentication because you need to 
+	make sure that only the right people see the key and that the right people sent 
+	it.
+
+Lecture 52:
+	1. Nothing. The eavesdropper would need b to get the key.
+	2. The key would be compromised.
+	3. The key would be compromised.
+
+

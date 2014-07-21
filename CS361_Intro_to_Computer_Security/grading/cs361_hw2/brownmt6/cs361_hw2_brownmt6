@@ -1,0 +1,214 @@
+Name: Maximilian Brown
+EID: BROWNMT6
+CS Login: BROWNMT6	
+Email:	maximilian.brown@gmail.com
+
+Questions: Week 2
+
+Lecture 17
+1.	Yes, the non-interference policy is more general than the BLP model. Any BLP model is also a non-interference policy.
+
+2.	A can not intefere with B and 
+	B can not intefere with A
+
+3.	By definition no. NI policies explicitly state direction that information can flow. 
+
+4.	A - low, B - high
+
+Lecture 18
+1.	NI policies are very general and don't provide details of how to accomplish the policy
+
+2.	l1, l2, l3, ... ,  lk
+
+3.	In realistic systems there are lots of interferences and it would be impossible to prove a system is non-interfering with respect to all interferences. The definition of view has to be specific in order to prove NI. Many interferences are benign or may involve low-level system attributes.
+
+Lecture 19
+1.	Integrity of news is important. People value acurate news. If news sources publish incorrect information people would lose faith in credibility. 
+	Integrity of wikipedia is important. People would stop using it if the information was incorrect.
+
+2.	A paid application would have a higher level of integrity. You have more information about where the software comes from.
+
+3.	separation of duty - several subjects have to be involved to complete a critical function
+	separtaion of function - a single subject cannot complete complementary roles within a critical process
+
+4.	Ability to recover from or detect the occurance of problems and implement solutions
+
+5.	Users don't write their own programs
+	Programmers develop applicaitons using contrived data
+	Moving applications from dev production requires a special process
+	Process needs to be controlled and audited
+	Managers and auditors must have access to system state and system logs
+
+6. 	News reporting
+
+Lecture 20
+1.	News is highly reliable w/ little sensitivity
+	
+
+2.	Expert: {Physics} dominates Student: {Physics} b/c Expert is higer than Student and Physics is a subset of Physics
+	Novice: {Physics, Art} does not dominate Expert:{Physics} b/c Novice is lower than Expert
+	Student:{Art} dominates Novice:{} b/c Student is higher than Novice and {} is a subset of {Art}
+
+3.	High Integrity |--->  Low Integrity
+
+4.	Confidentiality and Integrity are inversely related. They are not really related to eachother.
+
+Lecture 21
+1.	Biba Integrity's relationships between high and low are the exact opposite of BLP
+
+2.	Subj3 x Obj3 is empty b/c {A,B} is not a superset or subset of {B,C} so there is no dominance relationship
+
+3.	No, both integrity and confidentiality rules have to be satisfied in order for an access to be allowed
+
+Lecture 22
+1.	The assumption is that if a subject reads an object at a lower level, the subject will sink to that level. 
+
+2.	Subjects are not considered trustworthy.
+
+3.	The ring policy makes the assumption that subjects are able to discern the integrity of what they read and will not sink to the level of the lowest material they read.
+
+4.	Subjects in this case are considered trustworthy.
+
+Lecture 23
+1.	One is Development Confidentiality and the other is Development Integrity
+
+2.	They have to be able to move software from development to production
+
+3.	yes
+
+4.	Weak Tranquility
+
+Lecture 24
+1.	Authentication - who each person is taking action within system
+	Audit - know what each person did. Record of actions can not be changed
+	Well-formed Transactions - only legitimate accesses are allowed
+	Separation of duty - preserves integrity
+
+2.	bank balances, checks
+
+3.	candy in a bowl
+
+4.	Certification makes sure system is in a good state
+	Enforcement - when doing something make sure system stays in a good state
+
+5.	(Bank Teller, Read, {account balance})
+
+Lecture 25
+1.	American Airlines and United Airlines are competing interests
+
+2.	Yes, there is not conflict
+
+3.	GM, Bank of America, Wells Fargo, Citicorp, Microsoft
+
+4.	Permissions change dynamically based on what has been accessed already. It addresses a very specific problem of conflicts of interest
+
+Lecture 26
+1.	It makes it easier to manage many subjects.
+
+2.	authorized roles - roles which are allowed at various times
+	active role - currently occupied role
+
+3.	role authorization - a subjects active roles must be authorized roles
+	transaction authorization - a subject can execute a transaction only if the transaction is authorized for one of its active roles.
+
+4.	Standard access control policies are harder to administer, they do not specific to an organization, makes it harder for subjects to transition between roles
+
+Lecture 27
+1.	In realistic systems, most subjects don't have access to most objects. It's not efficient to create a large matrix.
+
+2.	use rules to comput on fly
+	Store permissions with objects (Access Control List)
+	Store permissions with subjects (Capability based system)
+
+Lecture 28
+1.	The sender and receiver must have shared knowledge, including and agreed encoding scheme
+
+2.	By quantifying the information content you can begin to determine the efficiency of a channel
+
+3. In order for the transmitted data to have meaning to both parties
+
+4.	Inefficient
+
+5.	No bits would be needed. Information does not need to be sent if 
+
+Lecture 29
+1.	n bits,  4 bits, 7 bits, depends on reciever's level of uncertainty
+
+2.	They may already know there is an attack that will either be dusk or dawn in that case they would only need one bit to know the message. 
+
+3.	4 bits
+
+4.	8 bits
+
+5.	Rarely will you know how many possible messages could be sent. So more inefficient encoding methods are typically used.
+
+Lecture 30
+1.	bit can mean a binary digit (discrete)
+	or a measure of quantity of information (continuous)
+
+2.	0	000
+	1 	001
+	2 	010
+	3 	011
+	4	100
+	5	101
+	6	110
+	7	111
+
+3.	message 10 only takes one bit to encode * 995 = 995
+	all other messages take 5 bits, 5 messages * 5 bits = 25
+
+4.	You can develope an encoding scheme that uses less bits for higher probability messages, resulting in less bits overall.
+
+5.	message 1 	10001
+	message 2 	10010
+	message 3  	10011
+	message 4 	10100
+
+6.	Implies that it is the best possible encoding scheme and none are more efficient 
+
+Lecture 31
+1.	"24262886"
+
+2.	1 	1
+	2 	01
+	3 	1010
+	4 	1011
+	5 	1100
+	6 	1101
+
+3.	Encodings should be uniquely decodable or they would not be useful for transmitting data.
+
+4.	Lossless encoding schemes are desireable because you want the entire message that was sent
+
+5.	Morse code requires a break between each letter. It is not streaming.
+
+Lecture 32
+1.	log8
+
+2.	-(1/5log1/5 + 4/5log4/5)
+
+3.	The entropy is the measure of information content of an average symbol in the language. This information can be used to create an efficient encoding.
+
+Lecture 33
+1.	After multiplying the probabilities of H and T, you get the probability of the entire variable.
+
+2.	You take the numerator of all the probabilites multiplied by the number of bits for the encoding and add them up.
+
+3.	1 	001
+	2 	010
+	3 	011
+	4 	100
+	5 	101
+	6 	110
+
+4. 	-(6/20log6/20 + 6/20log6/20 + 3/20log3/20 + 3/20log3/20 + 1/20log1/20 + 1/20log1/20)
+
+5.	6 	0
+	5 	10
+	4	11
+	3 	101
+	2 	110
+	1 	111
+
+6.	I use less bits for the higher probability rolls. 

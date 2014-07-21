@@ -1,0 +1,123 @@
+Lecture 1
+1. Personal security, physical security, communication security, computer/network/system security
+2. All protect assets (body, items, or data) against threats
+3. Yes, family credit card number stolen
+4. High, historical lack of attention spent on its security
+5. MSE, password lock
+6. MSE effective against many but not all online threats, password lock fairly easily broken with physical access to laptop
+7. Yes, it is unlikely that enemies of the US would be able to dismantle the country entirely with the information they can take from computer systems, though it could be damaging to the economy due to intellectual property theft and possibly the military. The use of cyber threats in an openly hostile manner would provoke the US to do the same thing, though they can be corrosive.
+8. Helps to design systems that are less vulnerable and understand how attacks happen
+
+Lecture 2
+1. General apathy from busy programmers
+2. No, attacks can occur at a system or hardware or even compiler level or be extremely program-specific and can attack any part of the program
+3. Defender needs to defend everything, attacker only needs to exploit one weakness
+4. Yes, cannot be sure all components of the system are safe unless you built and compiled everything from scratch
+5. Ensuring security takes time that could be spent advancing functionality of a project
+
+Lecture 3
+1. Risk is the possibility that a particular threat will adversely impactan information system by exploiting a particular vulnerability.
+2. Yes
+3. Accept risk of meteor hitting Earth and killing everyone, avoid bears and the risk of being eaten by them, mitigate risk of heart disease through dieting, transfer risk of losing money due to costly surgeries to insurance company
+4. Not always good because it doesn't account for extremely costly risks being more than a business can sustain
+5. Technical, economic, psychological factors
+
+Lecture 4
+1. Slide 3 has a list of ways to help ensure that the concepts listed on slide 2 are upheld
+2. Confidentiality; identity/credit card theft and password stealing are most relevant threats to me, don't have clearance or resources for integrity and availablility to be as important
+3. Make it easier to access particular pieces of that data
+4. Promotions/demotions, once-classified knowledge becomes common
+5. Unreliable systems are succeptible to attacks on availability through unreliable parts
+6. Logging into an account, one saying they did something that they didn't
+
+Lecture 5
+1. Ensure availability and reliability of network services for customers/Ensure that people only see the information they are allowed to and that the database does not contain falsified information
+2. To ensure that the implementation of the metapolicy is well-understood
+3. Encrypt student records, make sure those attempting to change grades have proper authorization, make sure those requesting to see grades have proper authorization
+4. Yes, perhaps some are more interested in speeding up the process and want only minimal security measures in the way while others are more interested in protecting data.
+5. Don't let anyone who shouldn't see SSNs see them
+6. If you don't know why data's being protected, it's hard to protect it the right way
+
+Lecture 6
+1. Enemy forces absolutely cannot know certain information for the military to be effective, but integrity and availability are also important in that data should be accurate and available so the nation doesn't become vulnerable
+2. That information flows downwards (from top secret towards unclassified)
+3. Protecting the other two require complicating the protection of confidentiality
+4. Linearly ordered set of classification levels and need-to-know categories
+5. Have to assume that at least that much is trustworthy
+6. 2, 6, 5/4, 1/3
+7. Top Secret Army, Top Secret Crypto, Confidential Personnel, Confidential Personnel, Unclassified Personnel
+8. Someone needs to be able to see all of the information in a document to be able to see any of the information in a document
+
+Lecture 7
+1. Clearances
+2. Indicate classes of information that a person can access rather than what is contained
+3. Files; programs
+4. If they can see more than they need to, that information can spread outside of its category
+5. All make sense; first and third clearances dominate the sensitivity while the classification level of the second is not met by the authorization level of the corresponding clearance
+
+Lecture 8
+1. To make it easier to apply rules to both computers and humans
+2. Reflexive: any label dominates itself; Transitive: if one label dominates another, it dominates all labels the other dominates; Anti-symmetric: if one label dominates another and the other dominates it, they must be the same
+3. There can be distinct levels A and B such that neither A>=B nor B>=A
+4. They would have to be the same
+5. Subjects can read on their level or below and within their allowed categories
+6. There could be other factors (e.g. someone with proper clearance is found to be a spy)
+
+Lecture 9
+1. Only cares about read access, not other system operations
+2. To ensure that data does not get written down to lower/separate security levels/categories
+3. Processes are less trustworthy than people
+4. One can only write above and outside their own clearance
+5. Their clearance label and the object's label must be the same
+6. Implement a weak tranquility policy
+7. Have attempted writes require clearance by someone at the security level being written to
+
+Lecture 10
+1. Information can be freely raised but lowering is equivalent to writing down.
+2. Information may need to be declassified
+3. Need limits on how far it can be lowered and can cause residual information to flow down
+4.  Object must be stateless (no residual information) to be lowered securely
+
+Lecture 11
+1. Top secret subjects and unclassified objects
+2. Matrix would be huge for realistic systems and is implicit in the BLP rules
+
+Lecture 12
+1. (L, {A}) -> (H, {A})
+2. LUB found by following lattice of subset up, GLB found by following lattice of subset in reverse 
+3. Downward flow in the lattice implies that information could move to lower security levels
+
+Lecture 13
+1. Information cannot be written down or read up, so information cannot flow downwards with reads and writes
+2. S cannot read anything above its level and cannot write anything below, so there is no transfer from higher security levels to lower ones
+3. No information is read downwards and the only overwrite (destroy) follows the same dominates requirement as write
+4. The subjects must be able to communicate in secret to determine the object name
+5. Repeat the process to send arbirtary amounts of data
+6. No
+7. So SL can determine what SH wants to tell it, yes as it does not know what SH wants to send ahead of time
+8. To signal the appropriate bit to SH, yes
+9. If SH can do something that SL can watch, information can effectively be transmitted downwards
+
+Lecture 14
+1. The relevant flow is between subjects within the system
+2. No, reads and writes are intended to be used for communication between subjects
+3. The state of the created object in the system
+4. The system clock
+5. Position of the read head
+6. Value of h
+7. Termination can require processes to run to completion or timeout
+8. Low level process must be able to read energy consumed by high level process
+9. Smartcards where energy is supplied by the host computer
+
+Lecture 15
+1. Can transmit thousands of bits per second without impacting system performance
+2. Requires predicting every possible misuse which might be invented
+3. Eliminate it, introduce noise, or determine who is misusing the system
+4. Both sender and receiver have access to some attribute of a shared object, sender must be able to modify that attribute, reveiver must be able to reference that attribute, both processes must be able to be coordinated
+5. Sender modifies that attribute, receiver references it in sequence
+
+Lecture 16
+1. Result of the create isn't reported to the creating subject
+2. Indicates that something can modify that resource and that something else can read that resource
+3. No, it would just mean that a syscall must reference and modify different parts of the system state
+4. To check for possible covert channels

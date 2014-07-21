@@ -1,0 +1,272 @@
+Lecture 66
+1)
+  It is a publically available tool for encrypting email messages with some of the best algorithms packaged in a very nice way.
+
+2)
+  He was motivated by a strong distrust of the goverment.
+
+3)
+  Private company or groups with commercial purposes could want to buy
+  support.
+
+Lecture 67
+1)
+  The authentication protcol involes creating a message and getting its' 
+  hash value then signing that value and sending it along with the message.
+
+2)
+  A random session key is generated and is then used to encrypt the
+  message then the key is encryted with the recipients' public key. 
+  
+3)
+  This is done by first applying the authentication protcol to the messge 
+  then applying the confidentiality protocol after it with the 
+  authenticated message.
+
+Lecture 68
+1)
+  Compression, email compatibility and segmentation.
+
+2)
+  Compression is needed in order to save bandwidth when sending a message 
+  across the internet.
+
+3)
+  This is good because you do not want the signature to depend on the 
+  compression algorithm.
+
+4)
+  It converts octetes into four ascii characters so that the systems 
+  recieving the message do not mistake part of a message for a command
+  the device knows.
+
+5)
+  Segmentation is needed because a lot of email services have message
+  size restrictions and it allows it to send arbitrarily long messages.
+
+Lecture 69
+1)
+  Session keys, public keys, private keys, passphrase-based keys.
+
+2)
+  The algorithm used to generate it must have a high entropy and must
+  be very hard for someone to guess or generate.
+
+3)
+  This is done by taking the previous key and taking entropy data
+  from things such as key strokes and combining them to make a new
+  key.
+
+4)
+  A very large number of appropriate size and test it for being a prime
+  until you get one.
+
+5)
+  Private keys are protected by encryption from the generated passphrase
+  based key and then stored. It is necessary to protect private keys so 
+  that an attacker is not able to look at all of your messages freely.
+
+Lecture 70
+1)
+  This is done by generating an ID likely to be unique for
+  a given user by taking the least significant 64 bits.
+
+2)
+  The private key ring keeps a users private keys, the timestamp of 
+  when it was created, the key id, the associated public key and
+  the user idea.
+
+3)
+  The public key ring  has a timestamp of when the entry was created,
+   the key ID the public key itself, and a user ID.
+
+4)
+  To retrieve a private key a user has to input their passphrase,
+  it is then hashed and that is used to decrypt the message.
+
+5)
+  Key legitimacy field is used to store certificates for public
+  keys.
+
+6)
+  A key is revoke by sending out revocation certificates to all
+  users they are talking to.
+
+Lecture 71
+1)
+  The difference is that in the consumer problem an attacker is blocking the consumer from getting
+  to a site while the producer problem is when an attacker prevents a producer from being able
+  to recieve new clients.
+
+2)
+  An attacker sends the synchronization packets to ther server and when the server saves the packets
+  and eventually there is no room for legitimate clients.
+
+3)
+  They are not ideal because either cost a lot more, cause slower clients to not be able to connect
+  and the third has a possibility is difficult to do correctly.
+
+Lecture 72
+1)
+  It does not work very well because it is hard to determine what is a 
+  "good" packet and what is a bad packet well but very easy to get
+  wrong.
+
+2)
+  Instrusion dection recognizes when something bad is behind a firewall while intrusion
+  prevent trys to keep things from getting in.
+
+3)
+  Overprovisioning: having too many servers to be overwhelmed
+  filtering attack packets: distinguish between an attack packet and a normal one
+  slow down processing: slows down all requestors
+  speak up solution: request additional traffic from all requestors
+
+Lecture 73
+1)
+  A false negative is worse because something bad is actually
+  happening but you did not notice. Though in certain instances
+  flase positives can be more harmful.
+
+2)
+  Accurate means that it detects all guine attacks and has no false negatives.
+  Precise means it never reports legitimate behavior as an attack so no false
+  positives.
+
+3)
+  It is easy to be over protective and have a lot of false positives or
+  Be more lax and only report real attacks but hard to find a middle ground
+  between the two that works well.
+
+4)
+  Base rate fallacy is the rate at which an attack occurs this is relevant
+  because it can help you determine how you want to set up a system given
+  the amount of times an attack is likely to occur. The smaller the likelyhood
+  the more accuracy required.
+
+Lecture 74
+1)
+  It attempted a denial of service attack against the white house or to infect other
+  computers.
+
+2)
+  It was ineffective because it used a static seed point from which to start its'
+  psudo random number generation. This meant that it only affected a certain range of computers.
+
+3)
+  Memory resident which means that it was in volitile memory of a computer which meant that
+  to get it off a computer all you had to do was reboot the computer.
+
+4)
+  It has a randomly generated seed instead of a static one so it was able to reach a lot 
+  more machines.
+
+Lecture 75
+1)
+  They were not related except for the fact that the writer of two knew
+  that Code Red existed.
+
+2)
+  Code Red II probably used an elaborate propagation scheme in order to 
+  reach the largest possible number of computers.
+
+3)
+  Code Red II was trying to install back doors in computers that it infected.
+
+4)
+  A large population of unpatched machines means that the worms will continue to propgagate.
+
+5)
+  The lesson is that people are bad at patching their machines and that is something
+  that makes the internet a more vulnerable and dangerous place.
+
+Lecture 76
+1)
+  It is necessary and useful because it allows people who are not experts to
+  buy and use software that meets their needs.
+
+2)
+  A set of requirements defining security functionality
+    defines what different levels of security mean
+  A set of asurance requirements needed for establishing the funcitonal requirements
+    defines the policies of catagories
+  A methodology for determining that the functional requirements are met
+    defines the way evaluations happend
+  A measure of the evaluation result indicating the trustworthiness of the evaluated system
+    goves grade to suites that help people understand how good they are
+
+3)
+  They would have a seperate evaluation mechanism because cryptology is something
+  that is sensitive to the government because they don't want criminals hiding
+  the bad things they do.
+
+4)
+  Level 1:
+    basic security at least one approved algorithms or functions
+  Level 2:
+    improved physical security tamper evident packaging
+  Level 3:
+    strong tamper-resistance and countermeasures
+  Level 4:
+    complete envelope of protections including immediate zeroing of keys upon tampering.
+
+Lecture 77
+1)
+  The common criteria is a set of documents and methodology that show how
+  secrure systems evaluation are completed in signing countries for the most part.
+
+2)
+  It is common because it is used between 26 countries which have adopted it.
+
+3)
+  The is a need for "National Schemes" at higher levels of security some nations
+  might allow of require more from security.
+
+4)
+  A proctection profile is a descirption of a fanily of products and the criteria for what they can
+  be attacked and protected while a security target is the security requirements of a single product not a family.
+
+Lecture 78
+1)
+  The overal goal of the protection profile is to create a layout of what they system needs to protects and show
+  the different ways that have been thought up to attack the system.
+
+2)
+  The various parts of the protoections profile are supposed to give someone an overview of the situation from 
+  varying view points so that someone can understand what is being considered and how it is being protected.
+
+3)
+  The purpose of the matrix is so that you can systematically decide whether the system being proposed is
+  adequate enough to solve the problem.
+
+Lecture 79
+1)
+  The overall goal of the security target evaluation is to show what is being protected and the ways in which
+  it is achieving the goals which are in accordance with a certain level of security.
+
+2)
+  A security target evaluation differs from a protection profile evaluation is that a security target evaluation
+  is on a specific matter giving ways to protect something while a protection profile merely gives a general 
+  overview of what should or needs to be protected with general solutions.
+
+Lecture 80
+1)
+  EALs are evaluation assurance levels, and are used to show the level 
+  of which a protection profile or security target someone submits is assured
+  to have been tested.
+
+2)
+  The government of the country where the evaluation is sought 
+  perform Common Criteria evaluations.
+
+3)
+  They are not neccesssarily mutally recognized because of differing standards 
+  and potentially laws in different countries.
+
+4)
+  No they cannot. This would cause a sever conflict of interests.
+
+5)
+  It is probably bad to reverse engineer a model from code because it means that the code
+  was not built upon a formal mathmatical proof that the algorithm worked and if you try to reverse
+  engineer the model your code may not reflect the proof once it is fully reverse engineered.

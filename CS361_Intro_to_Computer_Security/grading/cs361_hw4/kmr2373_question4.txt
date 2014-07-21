@@ -1,0 +1,87 @@
+Kevin Roesner
+kmr2373
+CS361
+
+Week 4 Questions
+
+Lecture 53
+1. So the signature cannot be detached and used for another message.
+2. It is typically unforgeable and is also smaller.
+3. Only R's key can decrypt it.
+
+Lecture 54
+1. To give credibility/validity to a certificate.
+2. Guarantees that only X could have signed the certificate.
+3. To assure that data items Y and KY were not altered.
+4. Y might get by with an invalid certification.
+
+Lecture 55
+1. It is ideally rooted at some unimpeachable authority.
+2. So that granted access can be limited to a definite time rather than indefinitely. Controls the times when access is allowed.
+3. That it is an invalid certificate.
+
+Lecture 56
+2. A proper channel of communication may not be opened. Or the security of the communication could be compromised. 
+3. Because they are being applied in different orders but need to result in the same end result. Aka commutative property.
+4. XOR all three to get M.
+5. XOR 1 and 2 and then XOR the result of that with 1 and 3 to get Ka.
+6. XOR 1 and 2 to get Kb.
+7. Because they are very subtle and it's hard to imagine all possible scenarios for attackers.
+
+Lecture 57
+1. Protocols help give structure to interaction and communication that is necessary for things to function, among other things.
+2. Third parties can see a lot of what goes on through the internet and if you want to keep information secure or secret at all, you need protocols to initiate communication otherwise it would be easy for a third party to get the information sent.
+3. That each A and B has the necessary key and that they are who they claim to be.
+4. To share a secret key.
+5. Somewhat, but it is flawed...
+6. Someone could obtain the first message, intitiate with it a new run of the protocol, and then using the response, extract the original message.
+
+Lecture 58
+1. The more steps or messages, the more opportunities an attacker has to interfere.
+2. Because it would be unnecessary (which has the problem stated above) and it could be an impediment to a goal, if that goal requires the message to be openly available/readable.
+
+Lecture 59
+1. It is difficult to know what an attackers motivations and possibilities are, as well as judging the consequences.
+2. It could throw off a protocol process or initiate a new one.
+3. Yes, maybe one where the goal is just to interfere rather than discover something.
+4. The designer of a protocol should assume that an attacker can access all of the traffic and interject his own messages into the flow. The attacker's messages cannot be completely arbitrary though.
+5. Because besides the initiator, other parties will often not know they are participating in the protocol until they receive their first message.
+
+Lecture 60
+1. Not really, otherwise the different parties would be far easier to impersonate.
+2. 1. Sender: A and B are trying to communicated
+      Receiver: A and B want to communicate, this request is fresh.
+   2. Sender: Here is the key for you two, and here it is encrypted for B so that you can send it to him.
+      Receiver: I have a fresh key, I can send this encrypted key to B.
+   3. Sender: Here is a key that you can decrypt and get, we can use it to communicate.
+      Receiver: We can use this key to communicate. The party who sent it to me is the one that initiated the protocol.
+   4. Sender: I got the key.
+      Receiver: Key was received, this message is fresh.
+   5. Sender: We're good to go.
+      Receiver: We're good to go and that last message was sent after I signalled that I got the key.
+
+Lecture 61
+1. Resend the third and then fifth messages.
+2. Maybe not, the idea is that the key's should be strong and maybe we should just evaluate protocol's on how well they keep keys secret.
+
+Lecture 62
+1. That A and B both share a key with S.
+2. Not entirely sure.
+3. Maybe use nonces?
+
+Lecture 63
+1. So we know that protocols are functional and (at least very close to) correct.
+2. Belief logics allow reasoning about what principals within the protocol should be able to infer from the messages they see. Allows abstract proofs, but may miss some important flaws.
+3. For how people interact with the protocol and how they use it to communicate with other parties.
+
+Lecture 64
+1. Modal logic is a type of formal logic primarily developed in the 1960s that extends classical propositional and predicate logic to include operators expressing modality. Modals—words that express modalities—qualify a statement.
+2. If two people share a key, and one sees a message (that that person did not encrypt) encrypted in that key, the inference is that the other person encrypted, and thus said, the message.
+3. If you think a message is fresh, and that a specific person said it, then they must have recently said it meaning that they believe it.
+4. If someone has jurisdiction over a certain area, and a message related to that area, and that person believes that message, then you should maybe also believe that message.
+5. 'Translating' messages sent in protocol steps in their intended semantics, the idea being that it helps us understand what the actual goal of the communication is.
+
+Lecture 65
+1. Because nothing truly meaningful to the overal communication is said in plaintext.
+2. Because that is the intended goal?
+3. Given inference rules, BAN shows that some assumptions are needed for these communications to take place. Strong assumptions put limitations on the usefulness of a protocol.

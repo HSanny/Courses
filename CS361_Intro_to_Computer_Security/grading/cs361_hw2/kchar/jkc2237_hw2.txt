@@ -1,0 +1,122 @@
+Jetharin Kevin Charoenworawat
+JKC2237
+KChar
+KevinCharoenworawat@gmail.com
+
+
+CS 361 Questions: Week 2
+
+
+Lecture 17:
+1. Yes because information can only flow up in BLP.
+2. These subjects would not be able to infere with each other as neither dominates the other.
+3. Yes because the lower level subjects can interfere with the higher level subjects and thus the higher subjects can communicate through a covert channel.
+4. A has to be low and B has to be high; or they could both be low and both be high in the case of reflection.
+
+Lecture 18:
+1. Because there are no specific rules of allowed actions, just that information can only flow up.
+2. l1, l2, l3, ..., lk
+3. Cannot make the low-level view all encompassing.
+
+Lecture 19:
+1. Information seen on the New York Times may be resepcted vs the National Enquirer.
+2. The commercial software might be more reliable/integrity as they are charging for it.
+3. Separation of duty means that separate subjects will independtly work to complete a critical function.  Separation of function means that a sole subject cannot perform more than one critical function.
+4. Auditing would refer to recovering from a problem through accountability.
+5. Want to have separation of function where tellers do not write their own programs for keeping their money count.
+6. A bank would have a higher need of integriy than confidentiality as it doesn't explicitly harm anyone if account totals are seen.
+
+Lecture 20:
+1. The New York Times could be an example that is highly reliable with little sensitivity as they are very credible but their information is out to the public.  A criminal saying that a politcian is corrupt has low reliability but the information has great sensitivity.
+2. The expert dominates the student and the category physics is a superset/set in both subjects. The second example doesn't have dominance as subject two has higher reliability. In the third example the student has a higher reliability and his category is a super set of label 2 (empty).
+3. The non-interference policy for integrity would be that we don't want bad information (low integrity) to corrupt high integrity information.
+4. These two issues are discrete as they each have their own labels.
+
+Lecture 21:
+1. This is because read and write access are reversed for integrity in this model.
+2. This is empty because dominance is not established as the categories are not supersets of each other.
+3. No because both must be valid for access to be granted if both confidentiality and integrity are enforced.
+
+Lecture 22:
+1. That subjects will become corrupt from reading low integrity information so their labels must be lowered.
+2. Thus the subjects in LWM Policy are not considered trustworthy.
+3. The assumption is opposite as the subject is deemed to filter out the bad information.
+4. Thus the subjects in the Ring Policy are trustworthy.
+
+Lecture 23:
+1. Yes as you must have good information (high integrity) in order to successfully work on development.
+2. So that software can move from the development side to production.
+3. No as they are simply there to transfer the software.
+4. That the downgrade does not allow for modification.
+
+Lecture 24:
+1. The purpose is to instill consistency of the system.
+2. Bank balances, SSNs, home addresses.
+3. Candy at a counter, water at a car dealership.
+4. Certification makes sure that the state is consistent at a current time.  Enforcement uses rules on actions.
+5. A bank teller can access your bank account.
+
+Lecture 25:
+1. They might bring over American Airlines' ways of doing things to United Airlines.
+2. Yes because there is no competition conflict as these are different conflict classes.
+3. Bank of America, Wells Fargo, Citicorp, Microsoft, and GM.
+4. The Chinese Wall policy encompasses more than just an individual database but competing databases.
+
+Lecture 26:
+1. It allows for a more encompassing label as individuals most likely have many permissions so assigning each permission to individuals is inefficient.
+2. Authorized roles are the positions/functions the subject can take but the active roles are the ones that the subject is actually partaking in (a subset).
+3. Role authorization means that an active role must be authorized for the subject.  Transaction authorization means that any transaction you can carry out must be part of the functions of your active role.
+4. Subjects can easily come in and out of roles when needed, easy to administer, and make for appropriate permissions as opposed to overly broad terms of read and write.
+
+Lecture 27:
+1. Most subjects and objects don't even interact so making an explicit ACM would be mostly unused.
+2. Access control list, capability-based system, and using these two alternatives to get the access control for any given subject.
+
+Lecture 28:
+1. The receiver must do the same things for both scenarios of yes/no because it doesn't know what the sender will be relaying.
+2. We can find out the bandwidth of a channel (amount of information that can flow/be transferred).
+3. This is because both parties must know how to handle the relay of data or else no communication can occur.
+4. The receiver has to know how to interpret the relayed data and a simple bit is the easiest.
+5. Only one bit is needed as a zero can represent a no and a 1 can represent a yes.
+
+Lecture 29:
+1. N, 4, 7.
+2. Different encoding/decoding schemes could be used so the number of bits would change per scheme.
+3. 4 bits as there are 2^4 possible messages.
+4. 8 bits of information content.
+5. It is very unreasonable to amass a table/collection of all possible messages/information as there is usually a large amount of uncertainty.
+
+Lecture 30:
+1. A bit can be discrete as a binary digit or continuous as a quanitity of information.
+2. You would need 3 bits for 8 possible messages:
+   m0- 000  m3- 100
+   m2- 010  m4- 101
+   m5- 110  m5- 111
+3. It takes 995 bits as the message 10 only requires one bit to transmit and the remaining 5 messages take 5 bits each.
+4. Knowing prior knowledge can eliminate unnessecary bits like in questions 3.
+5. m0- 1000 m2- 1001
+   m3- 1010 m4- 1100
+6. It's only possible to find this if you know exactly how a machine/system will operate.
+
+Lecture 31:
+1. Any string using bits will suffice; i.e. 10010.
+2. If you append a 4th bit with a 1 this prefix may show that the ensuing message will represent a die-roll.
+3. If things can be decoding in different ways then messages may be confused.
+4. In order to maintain message integrity.
+5. It is uniquely decodable but it requires breaks which isn't implementable for what we need.
+
+Lecture 32:
+1. The entropy is 3 (log2 8).
+2. 0.722
+3. This shows us the minimum number of bits on average to successfully transmit the message.
+
+Lecture 33:
+1. The expectations take in to account that each flip is independnt of the other so the prob. are multiplied.
+2. 27 is calculated by taking then number of bits for each messsage multiplied by the expected count from the probability of each of the flip possibilities.
+3. The naive encoding would be:
+   one- 000   two- 001
+   three- 010 four- 100
+   five- 101  six- 111
+4. Entropy of this language is 2.871.
+5. If roll is 1 or 2 then append bit of 1. Remaining possibilities will use only 3 bits.
+6. This is more efficient than the naive encoding as the prob. of a 1 or 2 is over half of the total possibilities.

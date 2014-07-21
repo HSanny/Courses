@@ -1,0 +1,87 @@
+me: Hanah Luong
+EID: hkl289
+CS login: hanahx3
+Email: hanah.luong@utexas.edu
+
+LECTURE 53
+1. You don’t want the signature to be taken off and used to sign another document
+2. Public encryption can be expensive and the message can be arbritrarily long. a hash function is short and finite
+3. all! 
+	1- unforgeable 2-authentic 3- no repudiation 4- tamperproof 5-not reusable
+
+LECTURE 54
+1. it establishes a trust relationship among the parties
+2. so that Z knows the identity of y is trustworthy; vouching 
+3. To know the data was not altered or corrupted
+4. Then there wouldn’t be a point in X signing with it’s private key
+
+LECTURE 55
+1. An authority everyone trusts ex: notary public
+2. How long is the validity go for; is this certificate expired?
+3. Then the certificate is not correct/ not valid or real
+
+LECTURE 56
+1. one time pad
+2. the secure communication the two parties are trying to create can be compromised
+3. don’t share keys
+4. An eavesdropper who has stored the 3 messages can XOR combinations of them to get M Ka and Kb : XOR 
+message 1 with message 3
+5. (same as number 4) if he XOR two of the messages anything that is the same will cancel out : after getting the message XOR it with message 1 to get Ka
+6. XOR msg 1 with msg 2
+7. because even some famous protocols have flaws in them
+
+LECTURE 57
+1. Sending an e-mail or moving a file: protocols control the syntax, semantics, and synchronization
+2. cryptographic protocols help achieve the protocol goals
+3. public key infrustructure
+4. to communicate from A->B
+5.Yes; the only way B can confirm they recieved the message is to use his  key to excrypt the message he sent
+6. Message from B could not really be from B because there is no nounce.
+
+LECTURE 58
+1. for efficiency
+2. to know when it is appropriate to encrypt and how crucial encrypting it will be
+
+LECTURE 59
+because typically the best attack is something we haven;t thought of and is purposely difficult to evaluate
+2. corruption of files
+3. yes; is an attacker sends false information pretending to be someone else
+4. “its hard to specify” 
+5. the nature of systems are distributed and must be designed so that messages are sent then recieved before a protocol can be put in place/ action
+
+LECTURE 60
+1. No, it uses/ relys on symmetric protocols and without keys shows freshnesa dn coorolates two messages together.
+2. 
+   -1. what is the sender trying to say with this message?
+   generate keys for me please!
+   -2. what is the reciever entitiled to believe? 
+   that he is participating in NS
+
+LECTURE 61
+1. It is possible for A to send a message to B
+2. No
+3. restart the protocol when it is compromised
+
+LECTURE 62
+1. That when A sends a message to be the communication channel exist and A will know that B has recieved the message.
+2. Needham-Schroeder tells both ends of the conversation that the last message is recieved or not.
+3. Maybe you can have A check to see if they did send the message.
+
+LECTURE 63
+1. Because it validates that the protocol is running in the correct way.
+2. The session identifier in addition to nonces.
+3. The belief comes from the fact that there are specific sequential steps that must take place for the connection to be established between two people or servers
+
+LECTURE 64
+1. Is a type of formal logic that extends classical propositional and predicate logic to include operators expressing modality.
+2. If A believes (A share(K)B) and A sees {X}k then A believes (B said X).
+3. If A believes X is fresh and A believes B once said X, then A believes B believes X.
+4. If A believes B has jurisdiction over X and A believes X, then A believes X.
+5. Idealization is the process of getting protocol steps to logical inferences.
+
+LECTURE 65
+1. plaintext cannot be forged
+2. It depends on the interpretation of the meaning of some steps. 
+3. One purpose of idealization is to omit parts of the message that do not contribute to the beliefs of the recipients. Idealization of the protocol is not defined unambigiuosly. 
+
+

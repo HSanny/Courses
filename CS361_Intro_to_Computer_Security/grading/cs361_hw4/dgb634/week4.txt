@@ -1,0 +1,163 @@
+Danny Banh
+EID: dgb634
+CS login: dgb634
+email: dannybanh@utexas.edu
+
+CS361 Questions: Week 4
+
+Due 5 pm, Thurs. July 3
+
+Lecture 53
+1. The digital signature should not be reusable because of authorization issues.
+Someone could receive a signature, authorizing one document, and move the signature to an unrelated document that was not authorized.
+
+2. The hash of the message will be a fixed length, finite value. This makes it easier to sign than a variable length message.
+
+3. The scheme is unforgeable, authentic, non-repudiable, tamperproof, and not reusable.
+
+Lecture 54
+1. Certificate authorities allow the establishment of trust. 
+They confirm the connection between a user's identity and their public key.
+
+2. X signs the hash of the first message with its private key to sign Y's certificate. 
+It assures that Y is bound to Ky.
+
+3. A hash of Y and Ky is necessary to connect Y and Ky in a compact manner that a trusted individual (X) can vouch for this binding.
+
+4. If Z had a public key for X, but it was not trustworthy, Z would not be able to trust the binding of Y and Ky.
+
+Lecture 55
+1. The root of a chain of trust is a position that is trusted to check credentials of other members of the chain.
+
+2. A validity interval allows a certificate to expire. 
+This forces people to re-valididate certificates if they do expire, so that the information does not become obsolete while still being validated.
+
+3. If the recomputed hash and the received value do not match, the signature may have been tampered with.
+
+Lecture 56
+1. Some protocols previously discussed include the Caesar Cipher, the Diffie-Hellman algorithm, the Vigenere cipher, AES, and ECB.
+
+2. If one step of a protocol is ignored, the message that the protocol is trying to send could be unreachable by the receiver, or accessible by unwanted readers.
+
+3. The ciphers must commute in order to accomplish the task in slide 4 because encryption cannot be done by the receiver that allows the sender to take off its own encryption while leaving the receiver's encryption.
+
+4. An attacker can extract M from the protocol in slide 6 by finding Ka (as in question 5 right below) and XORing Ka with (M xor Ka).
+
+5. An attacker can extract Ka from the protocol in slide 6 by XORing (((M xor Ka) xor Kb) xor Ka) with ((M xor Ka) xor Kb).
+
+6. An attacker can extract Kb from the protocol in slide 6 by XORing (M xor Ka) with ((M xor Ka) xor Kb).
+
+7. Cryptographic protocols are difficult to design and easy to get wrong due to many subtle reasons. As it deals with security, the principle of least penetration applies. 
+
+Lecture 57
+1. Importance of protocols in the context of the internet: since a protocol is a structured dialogue between 2 or more parties, every time a user interacts with another user or program, a protocol is involved to move information around.
+
+2. Importance of cryptographic protocols in the context of the internet: protocols are ubiquitous on the internet, and sometimes users want security. This is where cryptography comes into play, to protect assets from any threats.
+
+3. The assumptions of the protocol in slide 6 are that there is a public key system in place, with reliable public keys for both parties. 
+
+4. The goals of the protocol in slide 6 are to make sure A and B are communicating while knowing they are communicating with each other. They also want to communicate the key securely.
+
+5. Yes, one goal of the protocol in slide 6 are satisfied. A wants B to know they are communicating, and B wants A to know they are communicating.
+However, another goal, the secure transfer of the key message and private keys, may not be fulfilled, and there might be a security danger to A and B from a third party.
+
+6. The protocol in slide 6 flawed in this way: an attacker C can intercept message 1: {{K}Ka^-1}Kb
+C can set up communication with B with that message 1 as the key being protected by C's key:
+{{{{K}Ka^-1}Kb}Kc^-1}Kb
+Kb responds with {{{{K}Ka^-1}Kb}Kb^-1}Kc
+Which C can decode and the Kb and Kb^-1 cancel each other out.
+
+Lecture 58
+1. Unnecessary steps or messages could be inefficient, or even pose a security threat to the protocol that does not have to exist.
+
+2. Items that get encrypted that do not need to be encrypted are at best inefficient, and at worst can give away some of the algorithms used to encrypt the messages, or information that is supposed to be kept safe by the protocol.
+
+Lecture 59
+1. A protocol can have multiple different goals, and it can fail any one or combination in multiples of ways from different attacks. 
+There can be multiple ways to fail and multiple ways to attack, so it could be hard to answer what an attack on a cryptographic protocol is.
+
+2. Potential dangers of a replay attack are that messages can be recognized as current when they are in fact from a previous time period. 
+Perhaps a receipt from a purchase from a week ago is used to obtain a new item when it should not be able to be reused.
+
+3. There are attacks where an attacker gains no secret information - an attacker can disrupt a protocol and other parties with a replay or interleaving attack.
+
+4. Restrictions imposed on the attacker include having access to only the traffic (not private information) and messages from previous iterations of the protocol. 
+The attacker also cannot generate an arbitrary message with a key it does not have, otherwise there would be no defense.
+
+5. It is important that protocols are asynchronous because the system is highly distributed. Parties other than the initiator will not know they are participating until they receive their first message that they can identify and respond to.
+
+Lecture 60
+1. The Needham-Schroeder protocol would not work without nonces. The nonces allow for security that an attacker will not be able to get information from. 
+
+2. For each step of the NS protocol, answer these 2 questions:
+a)What is the sender trying to say with this message?
+b)What is the receiver entitled to believe after receiving the message?
+
+Step 1: A -> S: A, B, Na
+a) A is telling S, please give me keys to talk to B with this nonce Na.
+b) S can believe A wants keys to talk to B with given nonce Na.
+
+Step 2: S -> A: {Na,B,Kab, {Kab,A}Kbs}Kas
+a) S tells A it received the request and gives A the key Kab to talk to B, as well as a message to give to B to give B's key to talk to A.
+b) A can believe S received the message and has created these keys and messages with the nonce.
+
+Step 3: A -> B: {Kab,A}Kbs
+a) A sends the key to B
+b) B knows it came from A once he decrypts it
+
+Step 4: B -> A: {Nb}Kab
+a) B confirms he received Kab
+b) A confirms B received Kab
+
+Step 5: A -> B: {Nb - 1}Kab
+a) A confirms he received Nb
+b) B confirms A received Nb
+
+Lecture 61
+1. If Kas is compromised then changed, A can still be impersonated by some third party C as long as C has keys like Kab.
+C could have obtained Kab from S with the key Kas when Kas was not changed.
+
+2. It depends on the strength of the encryption as to whether or not it is fair to assume compromised keys.
+If the encryption of the keys is strong enough then perhaps compromised keys may not be as important to fix.
+
+3. As a protocol designer, it may be possible to implement expiration dates on keys to make it harder for replay attacks to occur.
+
+Lecture 62
+1. Otway-Rees seems to guarantee to A and B that Kab is delivered and A and B are authenticated.
+There are two nonces to guarantee freshness and protect against replay attacks.
+
+2. B does not know that A has the key in Otway-Rees because message 4 might have been lost.
+Needham-Schroeder guarantees exchanges to both A and B so that they know that they are confirmed to be communicating.
+
+3. A way to solve the fatally flawed protocol would be for B to acknowledge without sending the Key back.
+Thus an attacker cannot use B's reply to decode for the key.
+
+Lecture 63
+1. Verification of protocols is important because they can be widely used. 
+A security flaw could be devastating based on how it is abused.
+
+2. A belief logic is a way to reason what the parties "believe" at every state in the protocol.
+
+3. Beliefs come in for the parties involved using the program. 
+If two users try to communicate, they have to believe certain things in order to make the protocol work correctly and securely.
+Beliefs are established before the protocol begins, and after every step of the protocol.
+
+Lecture 64
+1. A modal logic is a logic that has statements that express modality, relationships between 1 or 2 parties.
+
+2. The intuition behind message meaning inference is that only A and B share a specific Key that means that they can communicate with trust.
+
+3. The intuition behind the nonce verification inference rule that a fresh nonce (new to current run) is believable.
+
+4. The intuition behind the jurisdiction is that an expert of something is believable, so we can trust the expert on that subject.
+
+5. Idealization turns messages into their intended semantics and beliefs that they cause. 
+
+Lecture 65
+1. Plaintext is omitted in a BAN idealization because it can be potentially forged by an attacker.
+
+2. Idealized steps seem to refer to beliefs that happen later in the protocol because the protocol is designed towards that goal.
+The protocol can be designed to work towards developing such beliefs with its steps.
+
+3. Assumptions would have to be established outside of the protocol. 
+This is important because it means the protocol may be incomplete.

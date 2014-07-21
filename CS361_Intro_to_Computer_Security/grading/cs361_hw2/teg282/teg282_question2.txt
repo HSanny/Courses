@@ -1,0 +1,112 @@
+Taylor Gregston
+teg282
+gregstont@gmail.com
+
+Week 2
+
+Lecture 17:
+ 1. No. Under the BLP model covert channels may still exist.  By definition Sh should never communicate with Sl to comply with non-interference.
+ 2. (A)  (B) with no arrows because they should not interfere with one another.
+ 3. No because by definition if a covert channel exists it is not a NI policy.
+ 4. If B was high then A could be high or low.  If B was low then A would have to be low.
+
+Lecture 18:
+ 1. Because they are more general and abstract.  There are no specific rules of which subjects can read/write which objects. 
+ 2. l1, l2, l3, ..., lk
+ 3. Because you have to prove that nothing A does can be seend by B.  You have to prove no covert channels exist.
+
+Lecture 19:
+ 1. Integrity is important because people rely on data being consistent and not modified by unknown sources.  It also provides confidence in a product or program.
+ 2. A certified application may have more integrity than the freeware version.
+ 3. Seperation of Duty means there will multiple subjects involved to complete a function and seperation of function means that the same subject will not complete complementary roles within the same function.
+ 4. It allows you to find integrity breach and to trace where they came from.  It provides recoverability and accountability.
+ 5. That non tested programs could be a source of integrity breach.
+ 6. The balance of my bank account.  It is more important that my money doesn't disappear than it is that people see my balance.
+
+Lecture 20:
+ 1. Realiable: The price of gas as reported on my phone, if it's wrong its not a big deal; Not so reliable: cable man says he will be there between 3 and 6.  If not true, I won't be there.
+ 2. An expert in physics dominates a student in physics.  A novice cannot dominate an expert.  Anybody can dominate a novice with no categories.
+ 3. Lower level information cannot interfere with higher level information. high -> low
+ 4. They aren't really related.  You could have high integrity low confidentiality and vice versa.
+
+Lecture 21:
+ 1. It uses similar rules as the BLP in regards to reads and writes but with arrows opposite direction.
+ 2. Because neither L(A,B) nor L(B,C) dominate one another.
+ 3. No, you need to satisify both in order to access the object.
+
+Lecture 22:
+ 1. That the subjects are easily corrupted by low integrity information.
+ 2. No.
+ 3. It assumes that the subject is able to filter out low integrity information.
+ 4. Yes.
+
+Lecture 23:
+ 1. No, SD is a confidentiality category and ID is an integrity category.
+ 2. They need to be able to push software from the development side to the production side.
+ 3. No because the confidentialy level of the controller dominates the level of development code.
+ 4. Weak tranquility because the controller can change the label on a object.
+
+Lecture 24:
+ 1. Authentication: identity of all user must by authenticated; Audit: modifications should be logged and recorded; Well-formed transactions: only legitimate accesses are allowed; Seperation of duty: each user gets valid set of programs.
+ 2. Bank balances and checks.
+ 3. Candy at the bank. Deposit slips.
+ 4. Certification is about integrity and recoverability and enforcement is about confidentiality.
+ 5. A programmer is allow to write to development code.
+
+Lecture 25:
+ 1. Because both AA and UA operate in the same realm. The consultant would be tainted with info from the other company. (Same conflict class)
+ 2. Yes because microsoft and GM are in different conflict classes.
+ 3. After accessing GM and microsoft you could not access anybody in either or their conflict classes.
+ 4. The permissions change dynamically depending on the history of the subject.
+
+Lecture 26:
+ 1. It makes managing a large organization more possible.
+ 2. Every individual has a set of authorized roles and the set of roles it currently occupies is the active roles (a subset).
+ 3. Role authorization means a subjects active role must be an authorized role.  Transaction authorization means that transaction must be permitted by the role you are given.
+ 4. RBAC is easier to administer, permissions are appropriate to the organization, subjects can have various functions, allows changing roles without chaning identity.
+
+Lecture 27:
+ 1. In realistic systems, most subjects don't have access to most objects. (Would be a huge matrix).
+ 2. The Access control list, the capability-based system, and maintain a set of rules to compute on the fly.
+
+Lecture 28:
+ 1. The sender and receiver must have some shared knowledge, including an agrred encoding scheme.
+ 2. In order to transmit the information we need to quantify it to transform it to bits.
+ 3. Otherwise the bits would have no meaning.  You need a mapping to transmit information with bits.
+ 4. It is unnecessary and will lower the rate at which you can transmit information.
+ 5. Zero because no data needs to be sent.  The receiver knows the answer so the sender does not neee to send anything.
+
+Lecture 29:
+ 1. n-bit binary number: n bits, single decimal: 4 bits, two digit decimal: 7 bits, text message could be 8 bits * 21 characters (but actaully could be less)
+ 2. It depends on what information the receiver already knows.  If the only options were either at day or night, it could be done with a single bit.
+ 3. 4 bits because there are 16 distint patterns with 4 bits.
+ 4. There are 8 bits of information content from a space of 256.
+ 5. Both the receiver and sender must know in advance the space of possible transmissions and have an agreed upon encoding.
+
+ Lecture 30:
+ 1. A binary digit (discrete) and as quantity of information (continuous).
+ 2. We would number each of the messages and use that numbers binary representation to inidicate that message.
+ 3. The common message is represented by a single bit and the remaining 5 messages are sent using 5 bits.
+ 4. It allows you to represent the most common messages with a lower number of bits which make it more efficient.
+ 5. You could use the naive encoding but throw in junk bits (ie, 110000, 110001, 110010, 110011)
+ 6. You must know the probability of the incoming messages in order to represent the correct messages with the lower number of bits.
+
+ Lecture 31:
+ 1. 246864246842
+ 2. 0001, 00011, 00010, 00100, 00101, 00110
+ 3. Otherwise you could not have confidence in the integrity of your message.  It could have multiple meanings.
+ 4. Lossless encoding schemes allow the entire sequence to be recovered by the receiver, maintaining integrity.
+ 5. It is not streaming because there is a break between each letter in order to distinguish the non-prefix free symbols.
+
+ Lecture 32:
+ 1. h = -(log1/8) 
+ 2. h = -(4/5log(4/5) + 1/5log(1/5))
+ 3. It shows us the lower limit on encoding efficiency.
+
+ Lecture 33:
+ 1. When flipping a coin in series you multiply the probabilities of each flip. Therefore 3/4 * 3/4 is 9/16, etc.
+ 2. It is 27 because we encode the most probable pattern with 1 bit instead of the initial 2 using the naive approach.  Even though the other patterns take more than 2 bits, the average is still lower than the naive.
+ 3. 000, 001, 010, 011, 100, 101
+ 4. h = -(4/14log(4/14) + 4/14log(4/14) + 2/14log(2/14) + 2/14log(2/14) + 1/14log(1/14) + 1/14log(1/14))
+ 5. 10, 11, 001, 010, 011, 100
+ 6. This encoding will use the shorter combinations more often resulting in a more efficient bits per symbol.

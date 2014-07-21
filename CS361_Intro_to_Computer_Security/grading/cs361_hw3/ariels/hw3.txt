@@ -1,0 +1,122 @@
+Ariel Sibille
+as53547
+ariels
+arielsibille@gmail.com
+
+Lecture 34
+1. Because h, the entropy, is the minimum number of bits per symbol and C is the number of bits per second. You cannot transmit more quickly than symbols that take the minimum number of bits at the highest bit rate. 
+2. Redundancy means sending the same message more than once, which makes it more likely that the message will be transmitted eventually despite the noise.
+
+Lecture 35
+1. h = -(log1/10)
+2. Because the underlying assumption that all symbols are equally used is false.
+3. Zero order is the basic entropy calculated for the alphabet using the number of characters. First order assumes that all symbols are independent of one another and uses the basic probabilities of each letter in written language. Second order takes the probability that a letter will come after another letter/that two letters are written together, and third order takes the probability that three letters will be written together.
+
+Lecture 36
+1. Because they depend on who is the observer and how they relate to the event. 
+2. Because the uncertainty of a message is dependent on the knowledge of the observer, and information content boils down to uncertainty within a message.
+3. The better the encoding is, the less redundancy there is. A better encoding is closer to the encoding given by the entropy calculation.
+
+Lecture 37
+1. There appear to only be 21 characters, so it may or may not be a substitution cipher for English. This may aid in decryption if we can use frequencies or other types of analysis according to information about the English language. 
+Being an old text, the encryption algorithm is very likely unsophisticated, which would make it easier to decrypt. 
+2. A key may be optional in cases like the Caesar Cipher, where the letters are just swapped out for letters in another place in the alphabet. In this case, all you would need is the number of shifts to decode the message. 
+3. It maintains the information content but makes the message illegible to others.
+4. In something like a natural language, redundancy may reflect real-life probabilities of symbols, which makes guessing the decryption of the message simpler.
+
+Lecture 38
+1. P
+2. E(P, KE)
+3. Because you don't have to know anything about the content of a message to receive some data about it.
+4. A cryptanalyst may have an easier time guessing at the decoding of a message if she knows about the regularities of the language in which the original message was written. Some words and letters are more common in certain languages, which may help with more frequent symbols.
+
+Lecture 39
+1. Just because an encryption algorithm is breakable does not mean that breaking it will be an easy or guaranteed task. It may take a lot of time and resources to successfully break an algorithm.
+2. For a bit string of length n, there are 2^n possibilities, so the right answer can generally be found half the operations, so 2^(n-1).
+3. Transposition is weak at generating confusion and substitution is weak at generating diffusion, but together they make messages very difficult to decode by making up for the weaknesses for one another.
+4. Confusion means making the message difficult to read, diffusion means spreading different parts of the original message into different areas of the encrypted message.
+5. I would say diffusion, simply because it would interfere with useful patterns for decryption.
+
+Lecture 40
+1. If there is a one to one mapping between the symbols in the plaintext and the symbols in the ciphertext, it's a monoalphabetic substitution. If the mapping change depending on location of the original symbol in the plaintext, it's a polyalphabetic substitution.
+2. The key is however the mapping of symbols to symbols is specified.
+3. Because for each letter that is mapped, you have a shrinking pool of letters to which you can map the remaining letters. 
+4. The key is the fixed constant for the shift.
+5. For English, 25/26.
+6. No, because you will not have to try very many keys before you choose the correct one.
+7. Using the Vigenere Tableau and the key, you could look up the letter in the ciphertext and the key letter and find the corresponding plaintext letter.
+
+Lecture 41
+1. Because there are three letters in the string and 26 letters in the English alphabet, 26^3 = 17576.
+2. Because you know that it's a simple substitution cipher. 
+3. Yes, a perfect cipher does exist, if the number of possible keys is the same as the number of possible plaintexts.
+
+Lecture 42
+1. Because every possibly plaintext could be the plaintext for that ciphertext, seeing as the key could be anything.
+2. The key has to be random or else you could work backwards from information about the key and the ciphertext to eliminate some possible plaintexts.
+3. If you can already communicate the key securely, then why do you need encryption? If there isn't a secure channel, then how can you communicate the key safely?
+
+Lecture 43 
+1. The frequencies of the plaintext are preserved in the ciphertext. In consideration of a columnar transposition, you only have to guess and keep guessing the length of the columns until you get the correct plaintext.
+
+Lecture 44
+1. A onetime pad is a symmetric cipher.
+2. Key distribution deals with how to dole out keys to parties who need to encrypt and decrypt messages. Key management deals with how to handle keys that have already been distributed 
+3. No, because the key needed to decrypt the message is Ks^(-1), not Ks.
+4. In terms of distribution, and number of keys needed, public key systems are definitely better. However, they come with their own problems, such as a special structure and difficulty to generate. Which keys will be better for a system depend on the needs and the capabilities of the system.
+
+Lecture 45
+1. Because encrypting the block has higher diffusion and immunity to tampering, which make it a very safe encryption to use for integrity and confidentiality.
+2. Malleability is significant because a malleable encryption may be subject to tampering that will change the meaning of the message.
+3. Homomorphic encryption preserves the relationships between symbols in the plaintext in the ciphertext, so that an attacker may be able to use the relationships in the ciphertext to learn information about the plaintext. 
+
+Lecture 46
+1. subBytes uses confusion because it is a byte substitution using a lookup table.
+2. shiftRows uses diffusion because it shifts around the bytes in the text according to which row each byte is in.
+3. In the MixColumns step for decryption, you must multiply each column by the inverse of the original array. 
+4. Blocks and rounds are intended to make the inversion of the process incredibly difficult without the key (mangling the text). Blocks increase diffusion, as well.
+5. Increasing the number of rounds would serve to further garble the original message, creating a more secure ciphertext. 
+
+Lecture 47
+1. A disadvantage to using ECB is that identical blocks in the plaintext will look identical after having been converted to the ciphertext.
+2. Cipher block chaining fixes the identical blocks issue by effectively randomizing block before they're encrypted using the XOR operator.
+3. If an attacker finds two identical ciphertext blocks, she can determine information about the plaintext blocks by XORing them. She also might watch for changes in how identical plaintexts are encrypted and derive information about the encryption algorithms that way. 
+4. Key stream generation uses the block algorithms to generate random-seeming strings of bits to use as keys for something like a one-time pad.
+
+Lecture 48
+1. The decryption (private) key must be kept secret.
+2. Because one-way functions are easy to computer but extremely difficult to invert, making the ciphertext nearly impossible to decrypt.
+3. Public key systems solve the key distribution problem by making the encryption key very insensitive and essentially useless in the decryption process.
+4. {P}K^(-1)
+5. Asymmetric encryption is much less efficient than symmetric encryption.
+
+Lecture 49
+1. Yes, because the keys are symmetric.
+2. Prime factorization is extremely difficult, which makes decrypting RSA messages more difficult as they rely on the powers of two primes.
+3. Theoretically, but only with great difficulty.
+4. Only A has the key to allow the decryption of the message, so no other parties can decrypt the message.
+5. Many parties may have access to A's public key, so there is no guarantee that B is the one who sent the message.
+6. B is the only party with access to B's private key, and is therefore the only party that could send a message with that key.
+7. Although B's key is private, it is decrypted with the public key, which is public.
+8. Two pairs of keys are needed: one for authentication and one for privacy.
+
+Lecture 50
+1. Because a one-way function should be easy to compute in one direction and difficult to compute in the other.
+2. Strong collision resistance ensures that no two messages hash to the same value, weak collision resistance states that given a message it is difficult to find a message with the same hash value.
+3. A hash function is preimage resistance if it is difficult to find a message that hashes to a given hash value. It is second preimage resistance if it is difficult to find two messages that hash to the same value.
+4. You will have to look at 1.25sqrt(2^128) = 1.25(2^64) values before finding a collision.
+5. You will have to look at 1.25sqrt(2^160)  = 1.25(2^80) values before finding a collision.
+6. Hash functions are optimized more for integrity than for confidentiality. As long as you have not changed a file, the hash function will not have changed.
+7. Collision resistance; if there is any change in the file, the new computed hash function will not appear the same as before.
+8. B sends a message that is encrypted with its private key and computes a hash function, then sends it off. A receives it and decrypts it, and also computes the hash function. They should be the same if B also sends its hash function to A. 
+
+Lecture 51 
+1. No, because this message uses the receiver's public key and the sender's public key, so there is no confidentiality.
+2. No, because any party could decrypt the sender's public key and then apply its own private keyoto the message.
+3. No, it is equivalent to {K}KR.
+4. Confidentiality, to make sure that only the intended party receives the key, and authentication, to make sure that only a trustworthy party has issued the key.
+
+Lecture 52 
+1. The eavesdropper would receive no information because they would still not know b.
+2. Unless the eavesdropper knew g and p or could impersonate person a, this information would be useless.
+3. Unless the eavesdropper knew g and p or could impersonate person b, this information would be useless.

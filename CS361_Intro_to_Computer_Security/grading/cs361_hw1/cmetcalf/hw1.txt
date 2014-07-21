@@ -1,0 +1,494 @@
+Name:  Christopher Metcalf		
+EID:  csm2556	
+CS Login:  cmetcalf	
+Email:  csmetcalf@gmail.com
+
+Note:  Apologies about the formatting.  I transferred from Word, and my VIM
+tab skills should be better!
+
+Lecture 1: 
+1.	Security means different things in different contexts.  In my everyday
+life, there is personal security, computer security, monetary security, and
+communications security. Also, there is security for food and habitation.  In
+a broader sense, we rely on energy security and homeland security for
+protection of the nation in both the short and long term.
+
+2.	The definition of security is what they have in common, mainly that
+they encompass protection of assets against threats.
+
+3.	I have been a victim of lax security.  My hotel room was broken into
+because of a faulty lock, and my wallet was stolen.
+
+4.	With anti virus software that is updated, the likelihood is low, but
+not non-existant.  There are threats that the software hasn’t been updated to
+catch because they may be very new.  If my computer slows down or something
+happens with one of my accounts, that may be an indication it may be infected.
+
+5.	Security measures will include firewalls and anti-virus software, as
+well as password protection to prevent unauthorized use.  If I visit a website
+that entails giving it information, I want authentication that the website is
+the one I want. If I have an online account, I have passwords that I change
+for authorization purposes.  This helps ensure the confidentiality and privacy
+of my data.   It also can protect my data from deliberate damage or
+modification. 
+
+6.	There is a certain amount of trust that anti-virus coders and
+website security systems are robust, but they are human too.  No
+system is full proof, but I believe that they are effective against
+most attacks.  
+
+7.	The FBI usually overstates the case.  Not every critical
+system is connected in a way that it is subject to attack.  Plus, the
+US has a lot of smart people in security that can and do prevent and
+counter attacks.  Finally, the country is stronger than a bunch of
+computer failures, if they would happen.  If people could live in the
+1700s without computers, they can do it today.  The government
+typically fear-mongers to try to justify its trampling of the
+public’s privacy rights, and to try to justify the large budgets it
+spends.   Statements like this are typically used to justify a power
+grab in some area by the government.  This is no different. 
+
+8.	Computer security is important because the world is
+increasingly connected.  There are many valuable assets online, and
+there is a low threshold to access.   There are also many attack tools
+available.  Computer security is important to 1. Preserve computing
+resources against abuse and unauthorized use and 2. Protect resources
+from accidental or deliberate damage, disclosure, or modification.
+
+Lecture 2: 
+1.  Reasons include:
+	a.	Security is about ensuring bad things don’t happen, and you need to
+		identify system features that are susceptible.
+	b.	We live a world of imperfect information and cannot predict all bad
+		things and all attack scenarios.
+	c.	You are opposed by many malicious attackers who only have to be right
+		once, while you need to be right all the time. 
+	d.	Systems are complex by nature, and an intruder will use the principle
+		of easiest penetration to find the weakest link.
+	e.	Security is an afterthought.
+Additional factors are cost/benefit and the law of limited resources.  Also
+relevant is  a tradeoff between functionality, usability, efficiency, and
+simplicity. 
+
+2.	There can be systemic ways to enumerate bad things.  You can look to
+critical systems and put procedures/safeguards in place around the critical
+systems.  You can analyze all past attacks to guard against those, and try to
+run scenarios based on those attacks to predict future attacks.  You can also
+constantly test the system.   You can your risk management procedures like
+from Viega and McGraw (assess risks, threats, vulnerabilities, risks,
+prioritize countermeasures, and make risk management decisions). 
+
+3.	The defender has to find and eliminate all exploitable
+vulnerabilities.  The defender has to predict all possible future attacks.
+The attacker need only find one.  The attacker can use any available means to
+subvert a system, and will only need to find the weakest link (law of easiest
+penetration). 
+4.	It’s a bit radical, but to be 100% effective this is likely correct.
+However, with enough resources, protection can reduce the probability of
+successful attack, and rise to an acceptable level on par with other risks in
+life.
+5.	A tradeoff is required because a side-effect of increased security is
+that it often prevents useful things from happening.  So you need a tradeoff
+with other useful project goals like functionality, usability, efficiency,
+time to market, and simplicity. 
+
+Lecture 3: 
+1.	Risk is the possibility that a particular threat will adversely impact
+an information system by exploiting a particular vulnerability.
+  
+2.	Software security is about managing risk because perfect security is
+impossible.   Managing risk involves risk acceptance, avoidance, mitigation,
+and transfer.  
+
+3.	
+  Accept:  Risk that someone can clone your credit card at a restaurant.
+  If you don’t accept it you’ll never go out to eat except with cash. 
+  Avoid:  Don’t run in a lightning storm.
+  Mitigate:  Always lock the car, mitigating possibility of theft. 
+  Transfer:  Have car insurance in case there is theft. 
+
+4.	Annualized loss expectancy can be a table of possible losses, their
+likelihood, and their expected value.  However, even if an incidence of
+large loss has low probability, and an expected value on par with other
+risks, annualized loss expectancy must be viewed with an eye towards
+different risks.  Even though the bank teller fraud has a high probability
+and a higher expected value than a low probability SWIFT fraud, the risk
+profile to the organization may not be fully reflected in this analysis.
+That is because if the SWIFT fraud does occur, the company is out of
+business.  So you want to dedicate resources toward low probability events
+too. 
+5.	Risk assessment depends on a number of factors, including assessing
+maximum loss and the probability of loss, as well as expected loss.  It
+involves assessing technical likelihood, economic loss, and psychological
+effects on the organization and it customers (reputational risk).  Risk
+assessment includes assessing assets at risk, threats, vulnerabilities, and
+risks, prioritizing countermeasures, and making risk management decisions.
+Security should be relative to the threat, and should be considered from an
+overall systems point of view.  It should be simple, affordable, and cost
+effective.
+
+Lecture 4: 
+1.	Slide 2 lists the metapolicy, or overall higher goals, of security
+(confidentiality, integrity, availability) while Slide 3 lists policies, or
+mechanisms, for one or more of the aspects of the metapolicy.  
+2.	It all depends on the context.  For me, since I do banking online,
+integrity of my data is important.  Availability to the school computers is
+important when doing assignments.  Confidentiality is important in working
+on programming assignments.  So it all depends. 
+3.	 Not all data is equally sensitive.  In a military setting, grouping
+data means putting data of similar sensitivity together.  This sensitivity
+depends on how important it is to remain confidential.  Categorizing data
+means to put a label on that data, such as top secret, secret, etc.  
+4.	Authorizations may change for a number of reasons.  For people,
+perhaps they no longer work at an institution or have lost the trust of the
+institution.  For data, it may change categories (top secret to
+unclassified) because of time – it is just no longer relevant and need not
+be confidential. 
+5.  Availability is about having resources available when needed.  Reliablity
+is an aspect, or a subset, of availability.  It is a particular subject that
+may deal with for example, if you have multiple concurrent users, ensure that
+their data is reliable (can't interfere with each others data).   	
+6.  Authentication is about verifying identity.  This would be important
+in accessing your bank accounts, or your email.  Non-repudiation is important
+in financial transactions.  If you buysomething, you don't want Amazon
+denying it owes you the book after taking your money.  
+
+Lecture 5: 
+1.	A metapolicy for a cell phone network may be availability, which is a
+matter of survival.  For a military database, confidentiality may be
+paramount.
+2.	A policy is a set of rules to accomplish the metapolicy, the overall
+security goal of the system.  The metapolicy is too general for implementation
+and may be subject to interpretation, so you need a policy, a set of specific
+rules to achieve the metapolicy, and which is adequate for the intended goal.
+The policy provides specific and enforceable guideline to the system
+user/developer.  
+3.	Possible rules include:
+	a.	Faculty/staff can’t use student SSNs in documents.
+	b.	Documents containing SSNs must be destroyed unless deemed necessary.
+	c.	Documents with SSNs must be kept in secure storage. 
+4.	Yes, stakeholders’ interests could conflict in a policy.  Students
+care about confidentiality of their records.   They should have access. The
+student’s parents are stakeholders, but they shouldn’t be able to see the
+student’s records.    For integrity, the policy should be that students
+shouldn’t be able to change records. Neither should faculty without a
+procedure.  The registrar should be able to change them.   So we have several
+stakeholders in the student records and they conflict, so we have different
+policies for each stakeholder.  
+5.	The likely metapolicy of the student SSNs is confidentiality to
+prevent identity theft.
+6.	The metapolicy is the overall goal.  The policy is in terms of
+mechanisms like firewalls, encryptions, etc. If you cannot explain the
+metapolicy, the rules will seem arbitrary and capricious.  If you cannot
+explain the goal, it is hard to make rules to implement it.  
+
+Lecture 6:
+1.	Military security is mostly about confidentiality  (no person
+authorized to view a piece of info may have access to it) because if an enemy
+knows your plans, he can more easily defeat you.  There are aspects of
+availability – you want individuals with need to know to have the battle plan
+available to them, or it does them no good in the heat of battle.  There are
+also aspects of integrity – you don’t want the enemy to have the ability to
+change your battle plan.  
+2.	The major threat in our MLS experiment is having more privileged
+information flow to someone not having the level of trust that is needed to
+see that level of privileged information.  
+3.	I’m not sure the question is clear or what it is asking, but the
+proviso is that more sensitive information does not flow to someone who is not
+authorized to see it.   
+4.	One part is taken from a linearly ordered set (unclassified ..  top
+secret).  It is hierarchical.  The next part is the set of categories from an
+unordered set expressing membership within some interest group (Crypto,
+Nuclear).
+5.	We aren’t concerned because some security officer is making this
+labeling decision.  We are not concerned with that level of granularity, which
+is a procedure for determining the level of information’s privilege, and how
+categories are determined.  It is too specific and complex for our example. 
+6.	From least sensitive to most sensitive – 1, 3, 4, 5, 6, 2  
+7.   		
+(1) unclassified
+(2) top secret
+(3) unclassified
+(4) Confidential
+(5) Confidential
+(6) top secret
+
+8.  The point of the label is how much we have to protect the info.  So we
+must label it at highest level.   If you label it lower, you could have
+someone see the classified info for which they are not authorized.  Similarly,
+if you have cryto and nuclear info, you must be cleared for both in order to
+access it, otherwise you have the same issue. 
+
+Lecture 7:
+1.	Labels are given by clearance or authorization levels.  So a human can
+have a hierarchical security level indicating the degree of trustworthiness to
+which he has been vetted. In addition, the individual can have a set of need
+to know categories indicating domains of interest in which he is authorized to
+operate. 
+2.	Labels on documents indicate the sensitivity of the contained
+information.  Labels on humans indicate classes of info that a person is
+authorized to access.  
+3.	In the context of computers, analogues of documents are files and user
+and system programs.  Analogues of humans can be processes or threads, and
+also users.   
+4.	The Principle of Least Privilege makes sense because if you don’t
+give information to someone, they can’t leak it. 
+5.	(1) The subject dominates the object.  Secret > Confidential and
+	Crypto is a subset of Crypto so have access. 
+	(2) Secret of the subject < Top Secret of the object so no access.  
+	(3)  Secret of the subject > unclassified of the object and {} is a subset of
+	Nuclear so access is allowed. 
+		
+Lecture 8: 
+1.	We introduced terms because be need specific definitions for these
+general words as it pertains to the security policy. 
+2.	Dominates is the conjunction of the two properties, the hierarchical
+levels and categories.   So each property would need to satisfy the following:
+
+	reflexive:  For every element a in A, (a,a) is in R.  Here, if H is equal to
+	H, then H dominates H and vice versa.  If A = A, then A is a subset of A. 
+   	 
+   	transitive: If ordered pairs (a,b) and (b,c) in R, (a,c) in is R.
+   	Here, if H dominates M, and M dominates L, H dominates L.  Also, if
+   	(A) is a subset of (AB), and (A,B) is a subset of (ABC), then (A) is
+   	a subset of (ABC). 
+
+   	anti -symmetric:  if R(a,b) and R(b,a), then a = b.  Not too sure
+   	about this one but I tried.  
+
+3.	Dominates can be proved as not being total order by giving a
+counter-example to show that neither A>= B nor B >=A.  An example
+would be A = Top Secret – Crypto and B = Top Secret –Nuclear
+Neither dominates the other. 
+4.	For two labels to dominate each other, the hierarchical
+components would be equal, and the need to know categories would also
+be the same.  So the subject Secret – Nuclear an the object Secret
+–Nuclear would dominate each other (L1, S1) >= (L2, S2) and (L2, S2)
+>= (L1, S1). 
+5.	Informally, Simple Security shows us how to use the dominates
+relation to decide whether a read should be allowed.  A read should
+be allowed when the security level of the subject dominates the
+security level of the object.  You can always read at your level or
+down, but not up. 
+6.	It is only if because it is a necessary constraint, but not a
+sufficient constraint.  There may be other security constraints
+other than the simple security policy.
+
+Lecture 9:
+1.	Simple security codifies restrictions on read access only to
+documents.  Someone with access could read it, write it to an unclassified
+folder.  That would seem to violate confidentiality.  So we need to worry
+about write access too. 
+2.	As described above, info can flow through someone with read
+authorization writing to a place where it should not be.  For example, a top
+secret clearance could read a secret document and write it into an
+unclassified document, whereby giving read access to someone who shouldn’t
+have it.  Thus, we need constraints on write access too. 
+3.	With computers, you worry about all the programs a person is running.
+Those programs may be malicious and take your info that you are allowed to see
+and send it somewhere else. We need to constrain those programs that may be
+operating with your permissions.  
+4.	Informally, the * Property says that a write should be allowed when
+the level of the object dominates the level of the subject.  Thus, one can
+only write to his level and those levels above.  
+5.	To have both read and write, a subject must satisfy both Simple
+Security and the *Property.
+6.	We could deal with it by the general logging into an unclassified
+account and then sending the info.  We trust the general but not the email
+program, so this prevents that. 
+7.	Yes, this is a problem that the corporal could overwrite the war plan.
+This is not a violation of confidentiality but of integrity.  We can deal with
+it by using rules restricting writes using integrity labels.  
+
+Lecture 10: 
+
+1.	Changing a subject’s level up arbitrarily is bad because a low level
+subject could view higher level information.  With a downgrade of level, you
+need to worry about that individual having residual information, taking him
+down a level.  That might be a write down which is problematic.  A stateless
+subject with no residual information would seem not to violate the spirit of
+the security policy. 
+2.	We wouldn’t use strong tranquility all the time because there may be
+reasons to raise/lower the levels of a subject or object.  An example of
+lowering is that a high level person loses the trust of his peers so his level
+should be lowered.  For objects, perhaps info that was once important (the
+time for D-Day) is no longer important 20 years later so the object’s level
+can be lowered. 
+3.	If you lower the level of an object arbitrarily, then the info
+contained in it would be accessible to lower levels, which could be a
+violation of the security policy.  You don’t want to lower in an
+unconstrained manner.  Someone must look at it to make sure there is no
+violation of the security policy. 
+4.	You should insist there is no violation of confidentiality by having
+someone looking carefully at the object.  You wouldn’t want to have a rule
+that an object can lower the level of another object. Levels should not be
+changed that would violate the goals of the system (the spirit of the security
+policy) .   It should  not do something that you wouldn’t want to have happen
+with respect to Simple Security and the * Property. 
+
+Lecture 11: 
+1.  Since you can read at your level or down, and you can write at your level
+or up, you would give High level to all subjects, and Low level to objects. 
+
+2.  You could have thousands of subjects and objects.  The matrix would be
+huge for the most realistic systems.   In addition, there is no reason to
+build it because can you can do it on the fly using the rules according to
+Simple Security and the * Property.  
+
+Lecture 12: 
+1. 
+  (H, {A})
+     ^
+     |		
+     |
+     |		
+  (L, {A})
+
+2.  For the least upper bound, it is the smallest thing that dominates both
+things.  For the greatest lower bound, it is the smallest thing that is
+bigger than both sets.  
+For example,  if you have sets L(A,B) and L(A,C), the LUB is L(A,B,C), which
+is the union of the two sets.  The GLB is L(A), the intersection of the two
+sets.  
+
+3.  The metapolicy is the real security goal of any BLP system, and it is to
+control the flow of information in the system.  It is what we really care
+about.  Information should not flow down from a high to a low level.
+Information must flow through the lattice only along upward channels.  That
+is the metapolicy that drives and justifies the access control rules. 
+
+Lecture 13: 
+1.	According to simple security and the * policy, the information is
+allowed to flow from low to high, but not vice versa.  This captures the
+metapolicy (control the flow of information) of this simple system.
+
+2.	For Read, if level of the subject dominates the level of the object,
+then a read is good and return the current value.  This satisfies the simple
+security – you can read at your level or down.  For Write the level of the
+subject is dominated by the level of the object, and you can change it’s
+value.  This satisfies the * property – you can write at your level or up. 
+
+3.	For Create, if no object with that name exists on the system, you can
+create it at level LS.   This seems satisfy the goals of BLP.  Create doesn’t
+explicitly tell the low level that the object exists or not.  For Destroy, if
+an object exists, and the level of the subject is dominated by the level of
+the object (write access), you can destroy it.  It is similar to write (can
+destroy up) and satisfies the * property.  
+
+4.  In order for the covert channel to work, SL has to do the same operations
+on the right as it does on the left.   Also, SH has to do nothing on the right
+hand side.  
+
+5.  The DESTROY statement is there so that SL can now re-create the object and
+repeat the process.  If the statements are put in a loop, the more than one
+bit (an arbitrary amount of information) can be sent from SH to SL. 
+
+6.  The contents of the files in the two paths should be the same. 
+
+7.  The SL does the same thing because if it didn’t, it wouldn’t know that
+SH is doing different things.   SL may think the varying results are something
+that SL did, not what SH did.   SL must do the same thing in order to see that
+SH is doing something different.  If SL sees varying results based on varying
+actions by SH, then that could be used to send a bit of info from SH to SL. 
+
+8.   If SH doesn’t do different things, the results will always be the same,
+and no information could be sent from SH to SL in violation of the metapolicy.
+In order for the convert channel to exist, SH must do different things.  
+
+9.  I think the example on slide 5 justifies it.  On the left hand side, SL
+sees a value of 0 while on the right it sees a value of 1.  The results differ
+because on the right, SH creates FO and on the left it does nothing.
+Because of the differing actions, a bit is send from SH to SL in violation of
+the metapolicy. 
+
+Lecture 14:
+1.	The flow must be between subjects within the system.  We care about
+the mechanisms of the system implementing the flow.  Two humans talking
+outside is not within the system.
+
+2.   This is not a covert channel.  SH is doing the same thing on the right
+and left. In order for it to be a convert channel, SH would need to do nothing
+on the right. 
+
+3.  I believe that the bit of information transmitted resides in the error
+message.  SH is modulating the status of the resource, and SH is recording
+information within the system state, mainly the status of the resource which
+is used as the vehicle for sending that particular bit of information. 
+
+4.  Process Q can note when he relinquishes the processor and when he regains
+it.  No info is stored in the system, but Q is noticing something about either
+the timing or sequencing of events on the system.  So Process P could send a
+bit to Q by either using its total allocation or giving up the processor
+early.  It is a covert channel because the information is recorded in the
+ordering or duration of events on the system. 
+
+5.  P leaves the read head closer to A or B.  Q can then attempt to read those
+sectors.  Depending on what is returned first from Q’s read, P has sent one
+bit of information to Q.  So the bit of information is the order is which P
+requested the information, shown by which cylinder is currently closest to the
+read head in Q’s request and the order Q’s request is fulfilled.
+
+6.  The bit is information is contained in the value of L, which is dependent
+on the value of H.   This is an implicit channel, one that uses the control
+flow of the program.   When L changes based on the value of H, there is a
+transmission of a bit of information.
+
+7.  Computations/ processes can be very time consuming so there are not that
+many terminations.  P can terminate or not, and Q must also notice it and
+interpret as a 0 or a 1. 
+
+8.  For a power level channel to be true, the high level process would have to
+be able to modulate how much energy is consumed by a calculation, and the low
+level process would have to be able to sense that. 
+
+9. A smartcard might give rise to this.  It takes more power to generate a 1
+vs. a 0.  So you may be able to get the processing key. 
+
+Lecture 15: 
+1.	Covert channels on real processors operate at thousands of bits per
+second with no appreciable impact on system processing.  Thus, millions of bit
+of information can be sent, which is a real problem.
+
+2.	It is infeasible to eliminate every potential because you need to be
+able to detect it, determine how much information can be transmitted per
+second, and also determine if the information can be transmitted without loss.
+From a cost and benefit analysis, it may be too costly (time and money) to
+close the channel given the benefit of doing so.  It may also add too much
+complexity to the system. 
+
+3.	Once detected, several responses are possible.  We can eliminate it by
+modifying the system implementation.  We can reduce the bandwidth by
+introducing noise into the channel.  We can also monitor it for patterns of
+usage indicating someone is trying to exploit it.  
+
+4.	You have a high level (H) and a low level (L) process, and H is
+modifying some system attribute and L is observing this.  
+
+	a.	So both H (sender) and L (receiver) must have access to some attribute
+		of a shared object. 
+	b.	H must be able to modify the attribute, and 
+	c.	L must be able to sense or view that attribute.  
+	d.	In addition, the processes must be able to coordinate so the L knows
+		that H has made a change.  There needs to be a mechanism for initiating both
+		processes and sequencing their accesses to the shared resource.
+
+5.	The sender is modifying some system attribute, and the receiver is
+observing and referencing it.  By recording information within the system
+state, the sender can send a bit of information on each view by the receiver.  
+
+Lecture 16: 
+1.	Create doesn’t tell you explicitly that a file exists.  Instead, you
+must infer this, and that is why you should not have an R in the SRMM model.
+2.	An R and an M in the same channel indicates a potential channel
+because a convert channel requires that both the sender be able to modify the
+attribute and the receiver is able to reference the attribute.  If you have
+both, you have a potential channel.
+3.	This does not indicate a potential covert channel because the
+attribute requires that both the sender be able to modify the attribute and
+the receiver is able to reference the attribute.   The attribute is listed on
+the left in the table, so you read the table left to right.
+4.	BLP can be used to control standard information flows, and it can
+close overt channels.  However, if you want to identify potential covert
+channels, you need the SRMM model to describe system commands and their
+potential effects on shared attributes of objects.  
+

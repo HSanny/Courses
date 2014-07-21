@@ -1,0 +1,115 @@
+Vivian Nguyen (vn2699) 
+CS361 Questions: Week 4
+CS Login: ngugenv
+Email: nguyenv@utexas.edu
+
+****************
+** Lecture 53 **
+****************
+1: If it were easily removed then anyone could re-use that signature for any message and pose as S.
+2: Because hash encryption helps preserve the integrity of a message and shows R that it has not been tampered or corrupted on the way from S.
+3: There is confidentiality with the outer encryption, authentication with the inner encryption, and integrity with the hashed M.
+
+****************
+** Lecture 54 **
+****************
+1: They are needed in order to establish trust in an environment that is insecure and where every party is mutually suspicious.
+2: It is hashed to maintain integrity and encrypted with X's own private key to authenticate that it is from them.
+3: To show that it has not been modified or corrupted.
+4: It wouldn't matter because the message is only certifying that Ky is the public key for Y.
+
+****************
+** Lecture 55 **
+****************
+1: The chain is rooted at some unimpeachable authority.
+2: Because over a period of time, any entity may no longer be trustworthy, so it must be checked periodically.
+3: It means the certificate has been tampered or corrupted.
+
+****************
+** Lecture 56 **
+****************
+1: BLP, Biba's, Chinese Wall, Clark-Wilson, Lipner, etc.
+2: You may not get the outcome you intended for. It may mess up previous and/or upcoming steps.
+3: You have to "reach inside" to decrypt the inner layer before doing the outer layer.
+4: (2 XOR 3) XOR 1 = M
+5: 2 XOR 3 = Ka
+6: 1 XOR 2 = Kb
+7: Because it is difficult to think of every possible means of attack or find any hole in the algorithm that could occur.
+
+****************
+** Lecture 57 **
+****************
+1: Protocols are needed to establish a structured dialogue among two or more parties. It controls the syntax, semantics, and synchronization of communication.
+2: A cyptographic protocol uses cyrtographic mechanisms to accomplish some security-related function.
+3: Nobody has A or B's private keys and that A and B both have access to each other's public keys.
+4: Trying to exchange a secret key K between A and B.
+5: Yes because in 1 nobody can access the key except for B and in 2 nobody can access the key except for A. No one has the private keys for A or B except A and B themselves.
+6: If an attack sees both protocols and knows they contain the same messaage, secret key K, they may be able to figure something by using multiple layers of encryption to decrypt.
+
+****************
+** Lecture 58 **
+****************
+1: That decreases the effiency of sending or recieving messages and increases the redundancy of the message, making it easier to attack.
+2: Because there is no point in going through the process of encrypting a message if there is no need to.
+
+****************
+** Lecture 59 **
+****************
+1: Because it is impossible to name every issue that could possibly happen in a protocol. Also some attacks may not have to do with the actual protocol, but the improper implelmentation of it.
+2: An attack records messages and replays them at a later time.
+3: Yes because an attack could pose as one of legitimate parties in a network but the other party or parties may end up not disclosing any information. In the interleaving attack, the attacker only disrupts or subverst the messages but does not gain any information from it.
+4: There are no restrictions on the attacker. They can attack from any point.
+5: No one except the intiator should know that a protocol is running until they actually recieve the first.
+
+****************
+** Lecture 60 **
+****************
+1: No because nearly every step is dependent on them.
+2: 
+	1. A wants S to generate a private key for communication with B. 
+	The message is from A.
+	2. S has generated the key for communication between A and B. 
+	The message is fresh and only A has access to the message.
+	3. A is trying to establish a connection with B and has sent the private key. 
+	Only B has access to the message.
+	4. B has established communication using the private key. 
+	The message is fresh and A and B have access to the message.
+	5. A is able to open and modify the nonce sent by B. 
+	A and B have access to the message.
+
+****************
+** Lecture 61 **
+****************
+1: The impersonator could just sent an old {Kab, A}Kbs and the reciever would not know if it were actually A or an impersonator either way.
+2: It may not be fair because we presume in any of these cryptographic protocols that the encryption is strong so it would be exetremely difficult to break the in key anyways.
+3: Use a nonce in step 3.
+
+****************
+** Lecture 62 **
+****************
+1: In step 4, when A recieves the message from B, A knows that B recieved the original message. B also assumes A knows to expect that message because it was A who sent the request in the first place.
+2: B does not know for sure if A recieved the message or can access the message with Kab to decrypt, modify the message, and re-encrypt it.
+3: Use a protocol with an intermediary like Needham-Schroeder or Otway-Rees.
+
+****************
+** Lecture 63 **
+****************
+1: So what we expect to occur actually occurs. 
+2: Belief logics allow reasoning about what principals within the protocol should be able to infer from the messages they see.
+3: The sender and reciever.
+
+****************
+** Lecture 64 **
+****************
+1: Modal logic is a form of logic that allows subjects to attach expressions of belief, attitude, and obligation to statements.
+2: The reciever believes that they share a key with themselves and a particular sender. If the reciever sees that a message has been encrypted with that key, then the reciever believes that that particular sender said what was in the message.
+3: If the reciever believes a message that the sender sent was fresh, then the reciever believes what the sender sent.
+4: If the reciever believes the reciever has jurisdiction over the message and the reciever believes the sender believes in the message, then the reciever believes in the message.
+5: Idealization attempts to turn the message send into its intended sematics. This helps to omit parts of the message that do not contribute to the beliefs of the recipients.
+
+****************
+** Lecture 65 **
+****************
+1: Because plaintext can be forged and BAN only deals with parts of the message that contribute to the beliefs of the recipients.
+2: Those steps are needed in order make those later steps true.
+3: It shows that something that we did not expect to occur which means there might be a flaw in the protocol that was not intended for.

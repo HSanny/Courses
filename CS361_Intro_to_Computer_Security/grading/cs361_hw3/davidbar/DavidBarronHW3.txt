@@ -1,0 +1,89 @@
+David Barrón
+db25633
+davidbar
+CS361 Young HW3
+L34
+1.	You can always get closer and closer to the entropy of a language.
+2.	If you repeat something enough times, eventually the message will get through.
+L35
+1.	–(log(1/10))
+2.	 There are lots of redundancies, and probabilities of letters are not always independent.
+3.	Zero: All letters are equally likely. First: Letters have probabilities independent of each other. Second:  Letter probabilities are no longer independent. Third: blablabla.
+L36
+1.	There are many dependencies in the real world.
+2.	If the observer already knows what a message contains, then to the observer it contains nothing.
+3.	To the observer for which it is intended for, it shouldn’t have any effect, for anyone else it could change the information completely. 
+4.	The less redundancy, the less you can compress a string. It’s already represented in its most efficient way.
+L37
+1.	You have to note the time period, location, possible language used, etc. This can get you at least pointed in the right direction on how to start decoding the message.
+2.	A key is only optional because that would be assuming more simple encryption processes, like replacement encryption.
+3.	Encrypting a file makes that information available only to those who know how to decode it, and hides it from everyone else.
+4.	Redundancy can help you find patters in the encryption.
+L38
+1.	P
+2.	{{{P}KE}KE}KD 
+3.	Patterns can provide clues on different scenarios. 
+4.	More Clues!!! Frequency of symbols, etc.
+L39
+1.	It will take too much time to break.
+2.	Because you’re searching the entire keyspace for the key, and if the string is n bits long, you will likely find it somewhere near the middle, so in 2^(n-1) operation.
+3.	They seem simple, and are, but in combination they are very powerful.
+4.	Confusion uses transformation to make data harder to extract, and diffusion spreads the data out using transportation. Usually.
+5.	Why not both?
+L40
+1.	Mono replaces a symbol with exactly one other symbol, poly replaces a symbol with more than one other symbol.
+2.	The 1-1 mapping of the symbols.
+3.	The first symbol would have one of k possible symbols, the next one (k-1), etc etc.
+4.	How many letters to shift over.
+5.	25 or 26.
+6.	NOPE! But not too weak either. 
+7.	You take the letter you want to encrypt, another letter from the key, corresponding to your original letter’s place, and then look in a table using the two letters as indices for row and column to find the latter you will write down in the encrypted file. 
+L41
+1.	26^3, and it’s not a simple substitution cypher.
+2.	NOW it’s a simple substitution cypher.
+3.	No, unlikely.
+L42
+1.	Even knowing the algorithm and having the ciphertext, without the key no possible plaintexts are more likely to be correct compared to another. 
+2.	So you know nothing about the key, and by transitive property also the unwanted descriptor. 
+3.	You have to find some secure channel to deliver the key through; else the key could be intercepted and used on the ciphertext.
+L43
+1.	Character frequencies are preserved in the ciphertext.
+L44
+1.	Symmetric.
+2.	Key distribution deals with how to convey a key to another subject in a secure way, while key management deals with keeping large volumes of keys secure.
+3.	If it’s a public key, no.
+4.	Depends on where your priorities lie. Symmetric is easy to generate, but you must keep it confidential. Public keys don’t really need to be kept confidential but are more difficult to generate.
+L45
+1.	It’s more efficient to take in an entire block than a single symbol.
+2.	If you make a change on the ciphertext, say remove some symbols, it will also have an effect on the plaintext.
+3.	Encryption where a specific algebraic operation performed on the plaintext is equivalent to another (possibly different) algebraic operation performed on the ciphertext.
+L46
+1.	subBytes and addRoundKey use confussion.
+2.	mixColumns and shiftRows use diffusion.
+3.	You have to multiply by an array.
+4.	Information is taken in and encrypted in blocks, and you run it through rounds of functions to further increase encryption.
+5.	To increase encryption and thus security of the data.
+L47
+1.	Identical blocks in the plaintext yield identical blocks in the ciphertext, so it’s pretty easy to decrypt.
+2.	Randomize, use CBC.
+3.	It’s possible to observe changes and then use that information in content leaks to derive information from encrypted blocks.
+4.	Key stream generation modes use encryption algorithms to generate random appearing streams of bits in reproducible fashion.
+L48
+1.	Private Keys
+2.	If someone gets ahold of a key it makes it easier to decrypt other messages. 
+3.	Everyone has access to the Public Keys anyway.
+4.	PK-1
+5.	Asymmetric algorithms are much less efficient.
+L49
+1.	Yes, the keys work both ways.
+2.	.
+3.	Depends on how you look at it, and where your priorities like.
+4.	Because they need the private key to decrypt.
+5.	Because everyone has access to A’s public keys.
+6.	Because only B has access to his private Key.
+7.	By using his public key.
+8.	Include two types of certification instead of one.
+L52
+1.	Nothing
+2.	A lot of computing would be required to decrypt a file
+3.	Same as 2.

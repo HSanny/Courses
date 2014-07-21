@@ -1,0 +1,136 @@
+Name: Michael Both
+EID: mjb3299
+CS Login: mjboth
+Email: mjboth@earthlink.net
+
+
+Lecture 53
+1) It's important for a digital signiture to not be reusable so someone cannot copy it and slap it onto another item to forge authenticity.
+
+2) The message may take to long to sign, but the hash will be a short value.
+
+3) That the message was definitely sent by S.
+
+
+Lecture 54
+1) To ensure that the subject being introduced is actually trustworthy to work with.
+
+2) To prove that X has recieved the public key and that the certificate sent to Y was actually made by X, which will be proven when decrypted with X's public key.
+
+3) The hash is for Z to evaluate the certificate to make sure there was no modification of the certificate.
+
+4) Then the decryption of the hash will not work and the hash values will not equal.
+
+
+Lecture 55
+1) An unimpeachable authority distrubutes trust between subjects that will go on to distribute trust at lower levels in the chain.
+
+2) To understand if the certificate is valid or expired.
+
+3) Then the some of the credencials of the certificate were modified and it is not valid.
+
+
+Lecture 56
+1) RSA encryption, Diffie-Hellman key distribution, Huffman Encoding
+
+2) The message will become just a garbled mess
+
+3) The message will need to be encoded twice, once from each party,  to enable secured communication without keys.  The ciphers need to commute to decode the sender's encoding so you can decode your own.
+
+4) An attacker can XOR message 2 with message 3 to get A's key, then XOR that on message 1 to get the original message.
+
+5) XOR message 2 with message 3
+
+6) XOR message 1 with message 2
+
+7) No matter how complex or airtight an encryption may look, it may be easy break, the crack may even be staring right in front of you.
+
+
+Lecture 57
+1) Protocol, being the agree rules for communication, is the only way for computers on the internet to communicate.  It lays out the format and meaning for the messages sent and lays it out for the user to understand.
+
+2) On websites that need secure communication, cryptographic protocol will make sure that the user and the server will only communicate with each other without intrusion from an attacker.
+
+3) That both A and B have the other's public key.
+
+4) To securly distribute an new symmetric key between A and B
+
+5) No, this key distribution method is not secure.
+
+6) An attacker could just copy the message A sent to B and send it to B, who would then encode it with his private key, then A's public key.  Since the message is lastly encrypted with B's public key, B's private key will decrypt it.
+
+
+Lecture 58
+1) To understand if there is a faster, cleaner way to complete the objective.
+
+2) Encryption can be expensive.  We only need to ecrypt what needs to be encrypted.
+
+
+Lecture 59
+1) A breach of authentication/confidentiality/integrity.
+
+2) A replay message can be used to send false information or create confusion.
+
+3) An Interleaving attack in where the attack sends in messages in between parties to cause something bad to happen.
+
+4) Reject messages not encoded with a valid key.
+
+5) Parties won't know what is happening outside of what they send and recieve, they may not even know if a protocol is occuring.  This is good for keeping attackers out.
+
+
+Lecture 60
+1) Yes, just wouldn't be as secure
+
+2) i) I am A, I want to talk to B, send me back Na after creating a key
+      A wants to talk to B, wants to recieve Na back
+   ii)Here's the nonce, this key is for talking from A to B, here's the key, here's the key for B to talk to A(encrypted with out key) and its all encrypted with the key we share
+      The Nonce, for talking to B with, the key, a block to send to B
+   iii)Here's a block encrypted by S
+       The key, for communicating with A
+   iv)A nonce, encrypted with our key
+      A nonce, encrypted with our key
+   v)I modified the nonce and encrypted it again
+     The nonce was modified, yes we definitely have the same key
+
+Lecture 61
+1) The attacker could have requested another key for communication with another user
+
+2) Yes, there are many keys in a protocol, and an attacker only needs one.
+
+3) Each key would have its own timeframe for which it is valid, after that, you would need a new key.
+
+
+Lecture 62
+1) The keys the are recieving are fresh
+
+2) Needham-Schroeder has a handshake confirmation to ensure that both parties have recieved their keys.
+
+3) B will send a confirmation message back to A instead of the actual key itself.
+
+
+Lecture 63
+1) Because protocols are difficult to get right.  We need a clean way for creating a solid protocol.
+
+2) A system for reasoning about beliefs.
+
+3) Beliefs come in when laying the foundation for the protocol, trying to determine how to set it up.
+
+
+Lecture 64
+1) Using characters and symbols as statements.
+
+2) If A believes that it shares a key with B and sees a message encrypted with that key, then B must have sent that message.
+
+3) If A believes that X is fresh and that B said X, then B believes X
+
+4) If A believes B controls X and A believes that B believes X, then A believes X
+
+5) Idealization is taking a sent message and breaking it down into logical statements.  It's important because these logical statements can be used as a proof.
+
+
+Lecture 65
+1) Plaintext can be forged.
+
+2) Idealization is about reasoning about what is and working from that to see what is going to be after a certain steps are applied.
+
+3) Since it is a modal logic, it breaks down each step of the protocol into straightforward reasonable logic statements that cannot be left to interpretation.

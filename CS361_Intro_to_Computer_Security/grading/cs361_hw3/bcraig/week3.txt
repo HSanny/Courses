@@ -1,0 +1,104 @@
+Brandon Craig
+bsc526
+bcraig
+
+Lecture 34:
+1. Because 
+2. More redundancy allows for a greater chance of recovery of data in a noisy channel by decreasing the chance 
+a piece of data will be corrupted by noise
+
+Lecture 35
+1. 4.75
+2. Natural languages contain high amounts of redundancy, and it requires very complex models to compute properly
+3. The difference is the complexity of the models. Zero-order uses 
+
+Lecture 36
+1. Its based on the relative knowledge of the receiver
+2. Because the level of certainty is different and thus the probability will change per person
+3. 
+
+Lecture 37
+1. 
+2. OPtional because the encryption may just shift the letters by a fixed amount of ascii value which requires no key
+3. 
+4. Redundancy can help figure out the probability of a cipher symbol representing 
+
+Lecture 38
+1. {{{{P}}}
+2. {{{P}_ke}_ke}_kd
+3, To break cipher texts, infer meaning without breaking an algorithm
+4. 
+
+Lecture 39
+1. Because the size of the keyspace is too large for a brute-force algorithm to search through
+2. 
+3. Because they act as simple building blocks for more complex algorithms such as AES
+4. Confusion is the transforming of information in plaintext so that an interceptor cannot readily extract it
+Diffusion is the spreading of information from a region of plaintext widely over the ciphertext
+5. confusion
+
+Lecture 40
+1. monoalphabetic: each symbol of the plain text is exchanged for another symbol uniformly
+   polyalphabetic: different substitutions are made depending on where you are in the plaintexts
+
+2. its the one-one mapping of symbols
+3. Because there are k! possible different keys that could possibly be the 
+4. The key is the distance away the symbols will be away from the plaintexts
+5. 25
+6. No
+7. 
+
+Lecture 41
+1. because there is 26 possible letters per each letter index. since xyy is 3 letters long its 26^3 possibilities
+2. 
+3. No. The key must be chosen randomly and computers cant make truly random strings
+
+Lecture 42
+1. Every possible plaintext could be the pre-image of that ciphertext so you cant reduce the keyspace
+2. If they arent random the keyspace can be reduced
+3. If sender and receiver already have a secure channel they dont need a key, and if they dont then how can they agree on the key in a secure way
+
+Lecture 43
+1. 
+
+Lecture 44
+1. symmetric
+2. key distribution refers to how do we get keys to the ones who need them
+   Key management refers to how do we preserve theiry safety and make them available as needed
+3. No. That key is for encryption
+4. asymmetric
+
+Lecture 45
+1. 
+2. malleable if transformations on the ciphertexts produce meaninful changes in the plaintext
+3. 
+
+Lecture 46
+1. subBytes which takes each byte in the array and replaces it from a 256 element lookup table. 
+2.
+3. because is requires multiplying each column by a fixed array
+4. 
+5. To increase the difficulty of decryption
+
+Lecture 47
+1. ECB will use the same key for every block
+2. Randomized blocks before they're encrypted
+3. content leak by finding identical cipher blocks
+4. 
+
+Lecture 48
+1. private key
+2. because then they would be symmetric and only need a public key
+3. because the private key which is internally computed is whats needed to decrypt
+4. asymmetric takes more time to compute both ways
+
+Lecture 49
+1. No. The encryption/decryption is one way based on the keys
+2. 
+3. yes
+4. because its encrypted with A's public key
+5. because the key is public
+6. Because its only decrytable with b's public key
+7. by applying the public key to it
+8. sign the messages with pricate keys first
+ 

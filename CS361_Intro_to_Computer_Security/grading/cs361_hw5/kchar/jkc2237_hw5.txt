@@ -1,0 +1,97 @@
+Jetharin Kevin Charoenworawat
+JKC2237
+KChar
+KevinCharoenworawat@gmail.com
+
+
+CS 361 Questions: Week 5
+
+Lecture 66:
+1. A package of strong security protocols put together for the general population.
+2. Zimmermann wanted to provide strong cryptographic protocols for the public as the govt. would not allow for it.
+3. Yes as many higher level operations had trouble with cracking the code.
+4. There is always a need for readily-accessible maintaintence which freeware does not offer.
+
+Lecture 67:
+1. A hash of the message is prepended to the message and signed with the sender's private key where the receive decrypts using the sender's public key and then compares its own hash of M to the decrypted hash code.
+2. Use randomly generated session key K to encrypt a message and then encrypt and prepend K with the recipient's public key where the recipient can then read the message. 
+3. To achieve both, a session K and a hash of the message would have to be prepended to the message.
+
+Lecture 68:
+1. Compression, Email Compatibility, 
+2. Compression saves bandwidth.
+3. So that the signature does not depend on the compression.
+4. Radix-64 converts everything to ascii as ascii is never mis-interpreted.
+5. Because email systems often restrict message length.
+
+Lecture 69:
+1. Session, public, private, and passphrase-based keys.
+2. These are high entropy as they should be random appearing.
+3. Previous session key is manipulated with collection of entropy on a system.
+4. Must generate two large primes that are random in nature following an algorithm.
+5. Private keys are stored with encryption using a hash of the user-supplied passphrase key.
+
+Lecture 70:
+1. He will carry out an exhaustive search through the keys he has using the least signif. 64 bits of the sender's public key. 
+2. The user's own public and private key pairs.
+3. The public keys of correspondants.
+4. Find the key using the associated key ID and then decrypt the key with the user passphrase.
+5. Improves confidentiality as this measures how authentic a public key is for a user.
+6. The owner of the key issues a signed key revocation certificate.
+
+Lecture 71:
+1. The attacker gets between the client and the service for the consumer and the attacker with offers/requests for so many services that the server is overwhelmed for the producer problem.
+2. The attacker does not respond to some handshake in a some protocol.
+3. An attacker could simply send more requests ti fill the larger table. Shortening the time-out period might cause dos for legitimate clients. It is hard to determine whether or not a packet is legitimate.
+
+Lecture 72:
+1. Packet filtering will explicitly ignore the malicious packets that are identified.
+2. Intrusion detection analyzes traffic patterns within the system to find attacks where as intrusion prevention manages outside attacks trying to get in.
+3. Over-provisioning the network increases the number of servers. Filtering attack packets is the method of ascertaining attacking packets. Slow down processing is self-explanatory but it disadvantages not only attackers but also requestors. The speak-up solution goes to request additional traffic from all requestors to find out who the legitimate requestors are.
+
+Lecture 73:
+1. A false positive is a harmless behavior that is misinterpreted to be an attack. A false negative is a genuine attack that goes undetected. It depends but most likely the false negative is worse as harm may result.
+2. Accuracy is attained by detecting all real attacks and preciseness is attained by never reporting a false positive.
+3. This is because you can simply go all or nothing (all attacks/all legit) when analyzing packets.
+4. The base rate fallacy states that even upper percentile attack reporting results in high false positives as most traffic is legitimate.
+
+Lecture 74:
+1. Expose a buffer-overflow vulnerability in Microsoft's IIS webservers; DDOS the whitehouse site; deface sites with "Hacked by Chinese".
+2. A static seed was used for the pseudo-random number generator so there were a limited number of machines attacked.  The whitehouse IP was simply changed as the attack was leaked.
+3. The virus resided in the volatile memory so a reboot got rid of it.
+4. Version 2 implemented a randomly generated seed, infected smaller machines (printers, routers...).
+
+Lecture 75:
+1. Nothing but the name.
+2. So that the virus would have an easier time spreading out as it infects computers.
+3. Attempted to gain remote-access to machines but was not take advantage of this.
+4. The general population does not go out of their way to patch their machines.
+5. A result of unpatched machines creates for a more vulnerable infrastructure of machines.
+
+Lecture 76:
+1. So that certificates are available to the general populous that may not know what they need. This also increases the authenticity of certificates issued.
+2. The evaluation standard includes, a set of requirements, a set of assurance, a methodology for determining the functionality, and a measure of the overall evaluation result.
+3. This is because cryptology is a sector that is sensitive in-nature.
+4. The FIPS 140-2 starts with basic security (level 1), level 2 has improved physical secutity, level 3 has strong tamper-resistance and countermeasures, and level 4 has the complete envelope of protection which includes immediate data erasure upon tampering.
+
+Lecture 77:
+1. Involved producing a standardization for secure system evaluation.
+2. All countries will respect the evaluation.
+3. It would be effective to have a single country carrying out evaluations.
+4. A security target evaluation pertains to security products. A protection profile pertains to a security policy for a particular system.
+
+Lecture 78:
+1. To maintain integrity of the transactions between the waste company and the public they serve.
+2. To outline the possible threats and the legitimate neccessities.
+3. This matrix creates for a systematic way to outline the methods to counteract certain vulnerabilities.
+
+Lecture 79:
+1. To create a system of confidentiality by imposing certain rules via a protocol.
+2. A protection profile differs as the system is evaluated against a particular given policy.
+
+Lecture 80:
+1. EALs represent the level of assurance that the artifact meets the policies needs.
+2. The National Institute of Standards and Technology (NIST) certified independent labs carry out the majority of evaluations but each countries' govt. take care of the high level EALs.
+3. Different countries have different security infrastructures in place.
+4. No as this would not instill the correct certification as things can become biased.
+5. Every system performs differently so rever engineering the model would not yield similar results.

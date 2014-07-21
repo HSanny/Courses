@@ -1,0 +1,15 @@
+Explain why covert channels, while appearing to have such a low bandwidth, can potentially be very serious threats
+	Because a powerful message can be delivered with just 1 bit. A yes or no answer can be extremely powerful. For example a 1 could inform a spy that the security cameras or off-line and therefore he can infiltrate the base. Furthermore, modern processors are extremely fast so they could still send high amounts of information despite a low bandwidth
+
+Why would it be infeasible to eliminate every potential covert channel?
+	Because real system contain thousands of potential covert channel. Moreover, most of this channels will be too noisy to allow communications.
+
+If detected, how could one respond appropriately to a covert channel?
+	Eliminate it, restricting the bandwidth by introducing noise into the channel or just monitoring it.
+
+Describe a scenario in which a covert storage channel exists.
+	The create action on a BLP system returns a 1 on success and 0 on failure
+
+Describe how this covert storage channel can be utilized by the sender and
+receiver
+	If a general wants to send "0" to a private, he would create a file named X. Then the private tries to create a file named X and gets a "0" error message. If the general wants to send "1", he would not create a file named X. This way when the private creates X, he would get a success message "1"

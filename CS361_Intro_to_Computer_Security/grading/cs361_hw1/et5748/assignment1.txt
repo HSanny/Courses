@@ -1,0 +1,238 @@
+Eric Tang
+et5748
+
+Lecture 1
+
+1. Security can be applied to finances, identity, vehicles, etc.
+
+2. "Protection of assets from threats".
+
+3. Yes
+
+4. The likehood is high - I've turned it on and connected to various sites and 
+	used various programs.
+
+5. Anti-virus, Anti-spyware, firewall
+
+6. I think they effective for what they advertise.
+
+7. Yes and no. A personal computer could leak some personal but non top secret
+	information. However, the methods used could be widespread and 
+	effective enough to penetrate more important systems.
+
+Lecture 2
+
+1. Yes, but these 5 five reasons emcompass most of the more specific factors.
+
+2. Not entirely sicne programs first and formost are for completing certain 	tasks. In doing these tasks exploits could be found by using the
+	program.
+
+3. The attacker needs to only find one hole. 
+	The defender needs to find all/most holes if they want security.
+
+4. Yes I agree. The number of malware being developed is constantly increasing
+	at an alarming rate. In addition, many times, the malware is prevented
+	only after it has already done damage (fixed rather than prevented).
+
+5. A program might have to trade in user functionality in order to increase
+	security; ie. permissions might be denied or constantly asked for.
+
+Lecture 3
+
+1. "The possibility that a particular threat will adversely impact
+	an information system by exploiting a particular vulnerability."
+
+2. Yes
+
+3. Accept: driving a car; Avoid: playing with fire; Mitigate: wearing a 
+	seat belt; Transfer: buy insurance
+
+4. Use money to save money - more specifically, the money is limited
+	and the money spent cannot be spent for other security liabilities.
+
+5. Functionality, speed, efficiency, etc.
+
+Lecture 4
+
+1. The list on slide 2 compasses the one on 3
+
+2. Everything - a balance (risk management) most effectively keeps security.
+
+3. Not all data is equal - some are more security sensitive than others, so
+	we must group them by priority and by need-to-know's.
+
+4. Change in users, or change in the importance of files
+
+5. Example DDoS attacks. Withough security, availability might be compromised
+
+6. Purchasing items off of Amazon.com
+
+Lecture 5
+
+1. Phone: conntect calls and prevent drops. Military: keep people out, protect
+	weapons and information.
+
+2. Policy are the individual rules that build the metapolicy.
+
+3. Students cannot change grades; teachers can change grades, viewing available
+	to both.
+
+4. Yes, conflict w/ policy but not metapolicy.
+
+5. Do not leak SSN information.
+
+6. If there is not goal, there is not road
+
+Lecture 6
+
+1. Because of the amount and severity of sensitive information. Yes.
+
+2. The major threat depends of which of the C.I.A. is most important.
+
+3. To focus on one aspect of security to simplify the example.
+
+4. Priority {need-to-know}
+
+5. Policy matters more
+
+6. Highest to lowest: 2, 6, 4, 5, 1, 3, 7
+
+7. ?
+
+8. Mixed documents - similar to weakest link, but the highest in the case. 
+	You want the most sensitive factor protected, so everything in that 
+	document must cater to that.
+
+Lecture 7
+
+1. Rank and job description
+
+2. Documents is priority{need-to-know}. Humans are by the earned rank and
+	what field they're in.
+
+3. Different ranked accounts. Army
+
+4. Don't want to leak information that is not needed for their job.
+
+5. They all make sense, b/c the "yes" clearance is as high as the sensitivity 
+	with the right need-to-know, the "no" b/c clearance is lower or wrong 
+	need-to-know.
+
+Lecture 8
+
+1. To identify the entities in a security system.
+
+2. transitive property
+
+3. 
+
+4. Both read and write - same level
+
+5. Read down
+
+6. 
+
+Lecture 9
+
+1. Other actions are allowed (eg write)
+
+2. Writing to the wrong place can leak info
+
+3. Many reads/writes are done w/o knowledge of the user.
+
+4. Write up
+
+5. Same level - dominate each other.
+
+6. Log in as lower than private and send information
+
+7. Deny the rewrite, but don't let him know about the failure.
+
+Lecture 10
+
+1. OK: Subj moving up and Obj moving down, Not OK: opposites
+
+2. Sometimes subjects/objects change - maybe due to user discretion.
+
+3. Lowing a Subj means it carried information down - bad.
+
+4. Make sure it doesn't carry sensitive info that the lower level doesn't know
+	about.
+
+Lecture 11
+
+1. highest subj, lowest obj
+
+2. matrix = policies, BLP = metapolicy
+
+Lecture 12
+
+1. A points to itself
+
+2. 
+
+3. Information should never flow down - leaked.'
+
+Lecture 13
+
+1. read down, write up.
+
+2. information doesn't flow down
+
+3. information doesn't flow down.
+
+4. the created folder has no priority
+
+5. 
+
+6. No
+
+7. Yes it must - shouldn't change until it gets response
+
+8. SH does what it wants - it's higher up.
+
+9. If SL changes depending on SH, then some information was leaked.
+
+Lecture 14
+
+1. Two subject - both can only read 
+
+2. No, nothing leaked
+
+3. Storage - file
+
+4. Timing
+
+5. Both storange and time
+
+6. implicit
+
+7. Termination doesn't occur too often
+
+8. Being able to record/read power usage.
+
+9. Phones
+
+Lecture 15
+
+1. Processors are fast - many happening maybe even concurrently
+
+2. Risk management - might lose too much
+
+3. Fix it... Remove the modifying of a record
+
+4. 2 processes share processor - differnt usage of time depending on need of 
+	process
+
+5. Sender uses less time, receiver keeps track of own time stamps.
+
+Lecture 16
+
+1. Create doesn't know if the file existed or not to begin with along with
+	no error message.
+
+2. Leak of info - someone is modifying something that someone else can read.
+
+3. No, same process
+
+4. To search for covert channels.

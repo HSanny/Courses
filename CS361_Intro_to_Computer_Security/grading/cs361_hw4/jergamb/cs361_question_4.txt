@@ -1,0 +1,95 @@
+Name: Gerardo Gamboa
+EID: gg8745
+cs_login: jergamb
+email: ggambo_13@utexas.edu
+
+				CS361 Questions Week 4
+
+Lecture 53
+1. Because the signature on the check confirms authenticity.
+2. Because the signature cannot be detached and reused for another message.3. That only the person with the signature can decrypt the signature.
+
+Lecture 54
+1. A public key and user’s identity are bound together within a certificate.
+2. Because X is believed to be a trusted source and we trust their vouch for who we are sending the message too. 
+3. Because you will then know that the message certifies the binding of Y and Ky and the data items Y and Ky were not altered or corrupted.4. Then Z wouldn’t know whether the message is trustworthy. 
+
+Lecture 55
+1. The chain is rooted at some unimpeachable authority.
+2. Because you want to be able to see that it is not an old certificate or one that has been reused.
+3. Verify the signature and check the validity interval to see where something could have changed the hash values. Lecture 56
+1. RSA
+2. It could mess up the encryption.
+3. The two parties don’t share a secret/key.
+4. If they had A’s private key.
+5. By using A’s private key again.
+6. By using B’s private key.
+7. Because an eavesdropper who stores the three messages can XOR combinations of them to extract any of M, Ka, and Kb.
+
+Lecture 57
+1. Sending an email or moving a file.
+2. Cryptographic protocols help achieve the goals.
+3. public key infrastructure.
+4. To communicate between A and B (A->B)
+5. Yes
+
+Lecture 58
+1. Efficiency
+2. Its so that you know when its appropriate to encrypt and how crucial encrypting it will be.
+
+Lecture 591. The best attack is something we haven’t thought of and is purposely evaluate.
+2. Corruption of files.
+3. Yes.
+4. Its hard to specify.
+5. The systems are distributed and must be designed so that messages are sent then received before a protocol can be put in place/action.Lecture 60
+1. No because we won’t know if the message is fresh and could be a replay from an earlier exchange.
+2. - A is sending S (A, B, Na)
+   - A sent the message
+
+   - S is sending A {Na, B, Kab, {Kab, A}Kbs}Kas
+   - S sent the message
+
+   - A is sending B {Kab, A}Kbs
+   - A sent the message
+
+   - B is sending A {Nb}Kab
+   - B sent the message
+
+   - A is sending B {Nb-1}kab
+   - A sent the message	
+Lecture 61
+1. A might be able to send messages to B.
+2. No
+3. Maybe start the whole protocol over because it has been compromised.
+
+Lecture 62
+1. You are always able to look at the session identifier.
+2. The session identifier in addition to nonces.
+3. Maybe you can have A check to see if they did send the message.
+
+Lecture 63
+1. Because it validates that the protocol is running in the correct way.
+2. Allows reasoning about what principals within the protocol should be able to infer from the message they see. Allows abstract proofs, but may miss some important flaws.
+3. You have to postulate some reasonable initial assumptions about the state of knowledge/belief of the principles. 
+
+Lecture 64
+1. Is a type of formal logic that extends classical propositional and predicate logic to include operators expressing modality.
+2. If A believes (A share(K)B) and A sees {X}k then A believes (B said X).
+3. If A believes X is fresh and A believes B once said X, then A believes B believes X.
+4. If A believes B has jurisdiction over X and A believes X, then A believes X.
+5. Idealization is the process of getting protocol steps to logical inferences.
+
+Lecture 65
+1. Because plaintext can be forged.
+2. Idealization of the protocol is not defined unambiguously. It depends on the interpretation of the meaning of some steps. 
+3. One purpose of idealization is to omit parts of the message that do not contribute to the beliefs of the recipients. Idealization of the protocol is not defined unambigiuosly. 
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,105 @@
+---------------------------
+Week 4 Question Responses
+---------------------------
+CS361, Summer 2014, Bill Young
+
+Author: Mark Watts
+csid: markw
+eid: mw27428
+email: mark.watts@utexas.edu
+
+Lecture 53
+==========
+1. A reusable signature would allow 'stripping' the signature from the message and using it to authorise actions that were unintended by the original signer.
+2. A hash is a fixed size, so it shouldn't take as long to encrypt as the message itself for use as a signature.
+3. 1. No one tampered with the message: Otherwise, it couldn't be decrypted with R's private key.
+   2. The signature is actually from S: Otherwise, it couldn't be decrypted with S's public key.
+
+Lecture 54
+==========
+1. CAs provide a trusted third party for establishing authenticity with unknown others.
+2. To establish that the final signature came from X.
+3. The encrypted hash, once decrypted provides verification for others both that X signed the certificate and that the packaged name and public key belong to the actor that X meant to authorise.
+4. If the public key for X was untrustworthy, then X could be spoofed to Z by the real owner of the key.
+
+Lecture 55
+==========
+1. Nothing happens, you just have to trust that the root authority is legitimate.
+2. Validity runs out so that, hopefully, the authority reevaluates its certificates periodically.
+3. It would mean that someone attempted to tamper with the certificate or that it was corrupted.
+
+Lecture 56
+==========
+1. DH key exchange, certificate signing.
+2. Ignoring one step of a protocol could result in the transaction failing or it could result in information leaks depending on how the protocol is broken up.
+3. If they don't commute, then I won't be able to unlock my lock after Ivan has affixed his own.
+4. An eavesdropper gets the first transmission, XORs with the second to get K_b, and decrypts the third transmission with K_b.
+5. Once the attacker has the message using the steps given in 4, he can XOR the message with the first transmission to get K_a.
+6. See 4.
+7. There are subtle interaction between the steps in a protocol that feed into security guarantees.
+
+Lecture 57
+==========
+1. As a distributed system with unreliable communication links between strangers, the internet relies on protocols for all communications.
+2. Cryptographic protocols provide privacy for high-value communications like bank transactions and your Facebook posts.
+3. Assumed that A and B can get the public keys of the other.
+4. The goal is that A and B have K and that both are authenticated to each other.
+5. No, because B shouldn't be satisfied that A is who it says it is. B can decrypt with A's public key, but it has no way of knowing that the decryption succeeded because it doesn't know K.
+6. Let the first transmission be K' and Xpriv,Xpub denote the private and public keys for an actor X. 
+   To get K, the attacker M sends to B {{K'}_Mpriv}_Bpub. B interprets this as the first transmission in the protocol (it doesn't matter if A's original transmission was received or not) and sends back {{K'}_Bpriv}_Mpub. M then has {{K}_Apriv}_Mpub since B decrypted the Bpub on K'. M then decrypts with Mpriv then Apub to get K.
+
+Lecture 58
+==========
+1. Unnecessary messages or message parts could reduce throughput for communications.
+2. Each encryption provides example ciphertexts for an attacker. If the encrypted thing is predictable, but varying (e.g., depends entirely something an attacker sends), this can give an arbitrary number of message/ciphertext pairs to an attacker.
+
+Lecture 59
+==========
+1. It's not always clear what ways a protocol can be exploited and the goal isn't always just to get some key.
+2. In some authentication protocol, a replay could let an unauthorised user impersonate someone else. In a financial transaction, a replay that uses relative updates could result in many times the original transaction being transfered.
+3. Denial of service attacks can bring down a server without the attacker gaining secret info.
+4. Computational and time resources are bounded, but how depends on the protocol in question. Also, with high probability, the attacker won't be able to send messages encoding data that it has no access to.
+5. The assumption of distributed systems with lossage and unreliable channels makes synchrony difficult to achieve.
+
+Lecture 60
+==========
+1. Without nonces, the last to steps in N-S wouldn't be possible, so A and B could not establish to themselves that the other has the key Kab.
+2. 1. Saying: I'm A and I'd like to talk to B.
+      Belief: A wants to set up a symmetric key with B.
+   2. Saying: If you want to talk to B, in the context of your nonce Na, you can use Kab. Send X = {Kab,A}_Kbs to B.
+      Belief: Sending X to B will give Kab to B. S actually sent the message. B is certified to S since S sent an encrypted message with B's name in it.
+   3. Saying: I'd like to talk to you, B.
+      Belief: If I want to talk to A, I can find a key in X. S made X. A is authorised to S (since its name is in X and S encrypted X).
+   4. Saying: I got your key. Prove to me that you have it.
+      Belief: B got the key (since it has Kab)
+   5. Saying: I have got the key.
+      Belief: A has the key.
+
+Lecture 61
+==========
+1. Just changing Kas wouldn't solve the problem because an attacker could still impersonate A by passing off the step 3 message as fresh. It would be necessary either to change A's name such that B would no longer accept the old name in step 3 or to change all of the other keys Kxs for every actor X that S knows or else the step 3 messages could be replayed whenever.
+2. It is a fair question because it's never 100% certain that the key won't be broken and if it is, there should be a remedy or at least a threat assessment.
+3. I would attempt to rewrite the protocol formally and prove the absence of these exploits.
+
+Lecture 62
+==========
+1. A is is entitled to believe that B has the key it receives. B can't know whether or not A received the key it sends.
+2. N-S guarantees to both parties that the other can *use* the key that's been created. Otway-Rees guarantees to the protocol initiator that the key is received.
+3. Not sure.
+Lecture 63
+==========
+1. Protocols are crucial to the internet. Exploitation of protocols can be subtle, so informal inalysis may miss important potential threats.
+2. A belief logic is a modal logic that formalises the a description of what actors are entitled to take as true (i.e., to believe).
+3. For a program, a 'belief' is a pre-condition that is assumed to be met.
+Lecture 64
+==========
+1. A modal logic is a logic with operators for qualifying statements in the language.
+2. Only two actors should have the key k: A and B. A didn't send X, so it must have been B.
+3. If B sent something (in this run of the protocol), then B must believe it. In other words, B isn't a liar.
+4. Since B's an authority on X, it should know when an X is true.
+5. Idealization is translating from the steps of a protocol to the modes of belief for participants in the protocol. It's needed because the messages in a protocol lack a direct mapping to fragments of BAN logic.
+Lecture 65
+==========
+1. A plaintext message could be generated from any source, so it doesn't admit of any belief about origins.
+2. There isn't any notion of sequence in the logic. All of the theorems in a proof must be stated ahead of time.
+3. To complete the proof, you must identify all of the assumptions for all of the statements you wish to prove. For instance, one may make a strong statement about what a participant in a protocol can believe while that statement may not be obvious from the protocol itself.

@@ -1,0 +1,137 @@
+Name: Alex Fortin
+CS Login: afortin
+EID: AF22574
+Email: alexfortin@utexas.edu
+
+Assignment 1
+
+Lecture 1
+1. Website security comes to mind. I dont want my information on a website to be public knowledge. Also security in general is protection of my property from others
+2. They all include protecting assets
+3. Yes. When target didnt secure all of their credit card information my information got stolen
+4. Not likely. I use norton anti software to keep it clean from viruses. Ran a check and it passed
+5. Use antivirus, avoid illegal downloads, and sketchy websites
+6. I feel like it has been. No viruses yet. 
+7. I dont. We are gearing towards a fully wireless world where everything is stored in cloud or somewhere in the internet. So accessing any computer is access to everyones personal information, including the governments.
+8. So when we write software, we can write it in a secure fassion so it is safe for everyday consumers
+
+Lecture 2.
+1. Most users are not aware of what they are doing. We have to make software dummy proof so users do not hurt themselves, which is very hard
+2. No. We have to prevent ALL bad things from happeneing, which is an infinite number.
+3. A defender has to defend against all attacks in all forms. An attacker just needs to find 1 loop hole. Defender has a lot more to think about.
+4. He is saying you will always have security flaws and I totally agree. There is just too much to account for
+5. If a system has perfect security, but nobody can use it, it might as well not exist. There will always be a tradeoff between security and usablility, functionality, etc
+
+Lecture 3
+1. Possiblity that a particular threat will adversely impact an information system by exploiting a particular vulnerablility
+2. Yes. You will not have perfect security. The best thing you can do is minimize the risk of something bad happening. The lower the risk something going on, the less likely it will be that your system is compromised.
+3. Risk acceptance: Risk amazon will be compromised and my credit card will be leaked. I love amazon. 
+   Risk Avoidance: Dont buy things with my credit card at websites I am unfamiliar with.
+   Risk Mitigation: Keep less money in my checkings and more in my savings so if my credit card does get stolen I lose minimum amount
+   Risk Transfer: Use my moms credit card so if it is stolen, its not my money being lost
+4. Its bad since you only evaluate expected loss. What if you do lose something with a lower possibility but a huge loss. If it does happened, youre sunk
+5. Technical, economic, psychological risk
+
+Lecture 4
+1. Slide 3 are mechanisms for how to accomplish the main topics in slide 2
+2. Depends on the context. If I am a bank and I want to protect the balance, then integrity is the highest priority so nobody can change or steal money
+3. If all your data isnt equally sensitive, you will want to group and caregorize your data. Group based on level of sensitivity
+4. You get promoted, Information becomes more sensitive and needs to be in a higher group
+5. For a system to always be avaliable, which means reliable, you need to have it secure so nobody can take over
+6. Usernames and passwords
+
+Lecture 5
+1. Cell phone- When someone makes a phone call, nobody can hear but designated people. Military - Base will only contain people with clearance
+2. Policies are more specific and help you attain your metapolicy
+3. Only students with correct user and password can access records. Only faculty with credentials can modify records. Records must be stored in a secure database.
+4. Yes. Company may want certain information to be secure while stakeholders want it to see if their investment is worth keeping
+5. Social security numbers of students should be protected from disclosure 
+6. If you dont understand the overall goal of what you want to do, it will be difficult to break it up and achieve this said goal since you dont know what needs to be done
+
+Lecture 6
+1. They have a lot of confidential information that could be used against the USA if gotten into the wrong hands. Yes, you want the information to be accurate and readily avaliable to the people with access when needed. If you had a battle plan, you want it to be ready to use and correct, but you dont want the enemy to get a hold of this information.
+2. We dont want an individual who should only know the menu to have the war plan
+3. To protect people from information they should not have. Protect the holder of information from giving information to people they shouldnt
+4. We are labeling items based on levels of sensitivity
+5. Our job isnt to label things, but discern who should have what information based on the labels. If the labels are assigned wrong, that is on the person assigning them, not the software
+6. From lest to most: Cafeteria food->softball team->jones raise->smith non raise->invasion->enigma code
+7. Cafeteria food and softball game would be unclassified, the raises would be confidential, the invasion would be secret, and the engima codes would be top secret
+8. Use the highest since it does have some part that is high, becuase it tells how much you need to protect. If you label lower, it doesnt fully protect it
+
+Lecture 7
+1. By clearances
+2. Label for documents indicates sensitivity, labe for humans indicate trustworthyness
+3. Humans would be admin labels, and read/write access for documents(Who can read/write a file)
+4. You should be provided only the minimum amount of information you need. Helps prevent leaks of information/keeps the amount of information out lower
+5. 1st row - clearance and sensitivity are the same so yes access. 2nd row - has top secret as highest lvl and he only has secret access so no. Last has secret acess and it is unclassified so yes access.
+
+Lecture 8
+1. Generalize categories and apply to all fields in computer science, not just humans
+2. l1 dominates l2. l2 dominates l3. l3 does not dominate l1 becuase it is not a superset. That is why its partial
+3. Not at total order because you can have a situation where neither object/subject dominates the other
+4. They have to be the exact same label and categories
+5. You have clearance to read only if the you dominate what you are trying to read
+6. There can be other security measures that arent just acess. Maybe only certain places can something be reached at
+
+Lecture 9
+1. Doesnt consider writing
+2. You dont want someone with high clearance accidentally writing really sensitive information on a document thats low level
+3. You dont know what programs an individual is running. Some malware could write information it can read to a place you wouldnt want it to
+4. You can write to an object only if the object dominates the subject
+5. Must have the same sensitivity and categories
+6. General logs out of top secret account, logs in to lower level account and then sends it
+7. You dont, this is an Integrity problem. These are confidentiality security measures
+
+Lecture 10
+1. Some high level object is lowered and now it is accessible to anyonw, even though you may not want it to
+2. The user might need to operate at a different level during the course of the day
+3. Might violate the goals of simple security or the * property. 
+4. Must not violate the spirit of the security policy
+
+Lecture 11
+1. Make the object the lowest sensitivity and category. Then make sure all subjects are at least 1 lvl up in sensitivity or category
+2. It would be really big and inefficient
+
+Lecture 12
+1. (L,{}) -> (L, {A}
+      |          |
+      ->(H,{})   ->{H,{A})
+      |         -> 
+      ----------| 
+2. Follow there path to the highest node (LUP) and the lowest node connected to it (GLB)
+3. Flowing upward is how BLP is suppose to work. When we write, we are pushing down. When we read, pull up. Both start from higher nodes, so flowing up
+
+Lecture 13
+1. Information flows from low to high, but not high to low
+2. You cannot write down, or flow downward. Only higher nodes read lower nodes, so information is flowing up.
+3. You can only create objects at your level, which is like writing at your level. If you can write to an object, you should be able to destroy it since it is dominated by it
+4. Whether the high level object creates a high level object or not
+5. So the object can be created again and it can start over. If it isnt deleted, then you cannot create a high level object with the same name
+6. Same 
+7. Yes, it is like the control. Must do the same thing in both cases
+8. SH is like an attribute you control. If you dont change it, you will never get different results
+9. If you ever see it once, you can abuse it and use it over and over again. Which is why it becomes a channel
+
+Lecture 14
+1. They are not within the system
+2. No. You will get an access denied from both like the system is designed for
+3. storage
+4. timing
+5. timing and storage 
+6. implicit
+7. Processes run for a long time, so not much informationn gets passed
+8. Be able to sense how much power is being used
+9. processor, graphics cards
+
+Lecture 15
+1. Over time the information can add up
+2. There are too many. Also a channel may be there but there is too much noise so no point in eliminating them
+3. Modify implementation, reduce bandwidth, or monitor or intrusion detection
+4. Both sender and receiver have access to some attrinute. Sender must be able to modify, receiver must be able to reference, and mechanism for initating both processes and accesing shared resource
+5. You can send/recieve information which you are not suppose to have access too
+
+Lecture 16
+1. An unsuccesful create might return nothing
+2. You fufill the conditions of modifying an attribute and referencing it which is needed in a channel
+3. Doesnt not identify them, just suggests them since covert channels need these conditions
+4. You dont want to be leaking information, especially if it is sensitive. SRMM can help you detect these covert channels do you can decided what to do with them

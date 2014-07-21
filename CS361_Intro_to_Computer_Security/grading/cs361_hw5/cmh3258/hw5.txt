@@ -1,0 +1,123 @@
+Chris Hume
+hw5
+7/4/14
+cmh3258
+cs361
+---------------
+
+Lecture 66
+
+1. a strong encryption system
+2. because he believed everyone had right to privacy 
+3. yes
+4. so cna have maintained or watched over by a company - they can set it up for you, just like any other software
+
+Lecture 67
+
+1. digital signature function. Creats message M, has of M, signs and uses private key and prepends the result. Receiver uses senders public key to decrypt then compares hash with generated hash
+2. random key K, message encrypted iwht K, K encrypted with R public key. 
+3. apply auth to original and apply conf to result message
+
+Lecture 68
+
+1. compression, email compat and segmentation 
+2. it reduces size and redundancy, makes encryption stronger
+3. sign first so that the signature does not depend on compression
+4. groups three octets into four ascii. this is done because the email systems wouldn't work
+5. becuase if messages are too large they need to be send seperately, thus segment. 
+
+Lecture 69
+
+1. session, public, private, passphrase based keys
+2. associated with single messaged and used only once
+3. by previous session key and blocks - very complex stuff
+4. by finding prime bit strings, very sexpensive
+5. by a passphrase. why? because you can't let people know your private key
+
+Lecture 70
+
+1. use least sig 64-fits of the key as an ID - most likely to be the key
+2. timestamp, key id, public key, private key, user id
+3. timestamp, key id, public key, user id
+4. retrieves private key form ring with key id, enters passphrase, then recovers session key and decrypts the message
+5. to make sure it is legit, that it is a trusted key
+6. when compromise is suspected or to imit the period of use of the key
+
+Lecture 71
+
+1. the consumer - gets between two. producer - offers requests to server so that it is overwhelemed
+2. when attacker forges return address of syn packets so that the server is clogged with half open connections
+3. size means could fill up with more half open connections, slower clients wouldn't be able to connect, difficulty of filtering
+
+Lecture 72
+
+1. you can just get rid of the request if it matches some pattern
+2. detection - waits until attack is happening, then detects while prevention tries to stop attack from ever happening
+3. a lot of servers makes it difficult to attack, filter - take out bad packets, slow down the requests - might be useful to through of the attacker, speak-up - send all traffic, might be like slowing down process where it floods the machine and is hard to get traffic flowing in/out
+
+Lecture 73
+
+1. neg-attack not detected, pos - harmless behavior mis-classified as attack. false negative is worst. 
+2. acc - if detects all genuine attacks. precise - if doesn't wrongly classify behavior
+3. its hard to build both accurate and precise
+4. its at 92% of when a raised alarm is false. It is relevant because most alarms are false. 
+
+Lecture 74
+
+1. was a buffer attack in which attacked some microsoft servers, the worm would generate ip address and place those on other infected machines, places a worm on each
+2. since it always copied itself it was really slow to be effective
+3. you can just reboot and kill the worm
+4. used a random seed instead of static
+
+Lecture 75
+
+1. different worm, exploit same vulnerability
+2. to spread the worm faster
+3. it attacked same thing as the first codered. 
+4. machines are vulnerable and still are. 
+5. there was already a patch for a fix but people didn't install it so hackers took advantage of it. Kinda dumb that people were told publicly there was a vulnerability - now everyone including hackers know
+
+Lecture 76
+
+1. so customers know what they need secure and if the product does it
+2. requirements defining secure function, what is needed to establish the functions, making sure the function requirements are met and a measure of how trustworthy the system is
+3. because they are encrypted and need extra testing
+4. each level is a different strength of testing and secuirty
+
+Lecture 77
+
+1. it is the common critieria to evalutate secure systems
+2. every country uses it
+3. so there would be a national understanding of what security is - you need to talk to other countries
+4. ST - is security requirements used as basis of eval while PP - is implementation-independite for products. PP-is the family of products while ST is a doc that contains security requirements to be evaluated
+
+Lecture 78
+
+1. make sure the data isn't ruined
+2. protect authentication, protect data transfer and storage
+3. to see how threats and asuumptions are takin care of
+
+Lecture 79
+
+1. to protect
+2. security is specific for this product while PP describes security for a certain class of systems
+
+Lecture 80
+
+1. they are the testing, used to test certain levels
+2. the country
+3. the higher ones are probably for government usage, so we don't want governments getting into other governments stuff
+4. no. Cause government or a certified place needs to do so. 
+5. because of hackers won't have the code? 
+
+
+
+
+
+
+
+
+
+
+
+

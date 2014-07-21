@@ -1,0 +1,240 @@
+Name:     Michael Both
+EID:      mjb3299
+CS Login: mjboth
+Email:    mjboth@earthlink.net
+
+Lecture 1
+1) When I am logging into my bank account, its good to know that our connection is secure and that no one is watching what I browse or finds my log in information.  Or if I am working on a project, only I need to have access to it and be sure no one can steal it.
+
+2) Its all about keeping my own property (whether informational or physical) between me and the party whose job it is to store and secure that information so that only we have access to it.
+
+3) Target leaked my debit card information last year and I got a suprise $1000 purchase on some website (Which was refunded by my insurance).
+
+4) The chances are pretty good actually. Who's to say that some freeware I installed didn't come with malware that I may have accidently given access to the kernel of my OS or that browser cookies that track where I go on the web don't automatically count?
+
+5) I use free anti-virus software that regularly scans my system for malware.
+
+6) Considering its the free version, it makes me wonder what protection the pro version comes with that I don't have right now.  Or when I do a system scan, if the software actually checks EVERY part of my computer for known malware, or if there is malware on my machine that the software doesn't even know about yet.
+
+7) Unless we have nuclear launch codes stored on a server that was connected to the global network, I find that very unlikely.  This nation has survived before the introduction of computers, it can survive without it.  There are other forms of information storage and communication.
+
+8) Knowing about computer security and being up to date with the latest flaws and attacks is the best way to protect oneself and others from said attacks.
+
+
+Lecture 2
+1) Should there be a cyber-attack, you will actually need to find out that it has occured.  Otherwise, you will not know that there is an exploit being used against you and you won't try to fix it.
+
+2) No, it's not so easy to characterize all the bad things that you don't want to happen.  The number of possible things that can go wrong are infinite.
+
+3) The defender has to think of all possible exploits that attackers may use and protect the system from them.  An attacker only needs to find one exploit that the defender didn't think of.
+
+4)I agree, reciting from point 4 about why security is hard: computers are complex.  There are so many parts to protect from attacks and as time goes on computers become more complex potentially allowing for more vulnerabilities.
+
+5) Sometimes there may be an exploit available, but fixing it would make the program no longer function properly, so it may have to be left as it is for now.
+
+
+Lecture 3
+1) Risk is the possibility of something bad happening.
+
+2) Since you can't solve every problem, you have to take a look at the current risks and see what problems would be more efficient to solve
+
+3) a) Acceptance: When you get on a plane there is a possibility that it will crash, but the chances of that are so low you just accept that risk.
+   b) Avoidance: You don't speed past a patrol car because you don't want to be pulled over.
+   c) Mitigation: You don't drive during rush hour in order to deal with less traffic.  Or even avoid the chance of wrecks on the highway.
+   d) Transfer: You buy insurance so when something damages you or your property, the cost comes out of the insurance company's pocket.
+
+4) Annualized Loss Expectancy determines the weight of a risk and the chances of it happening per year to determine the gravity of a risk and what would be more efficient to prepare for.
+
+5) Determining what risk will have a greater impact in the long-term and short-term (i.e. SIWFT fraud or Teller theft).  The chance a risk may be explotited, and how much damage can be done by the risk.
+
+
+Lecture 4
+1) The list on slide 2 is full of concepts and terms used in security. The list on slide 3 is the methods for which we achieve some of those concepts.
+
+2) Confidentiality would be most important.  I wouldn't want others to know every little detail of what I was looking at/working on/storing/messaging/etc.  Integrity isn't so important when an attacker doesn't know what they're changing.
+
+3) To group and categorize data is to determine which information is most vital to you and which data you can do without if it were lost/stolen.
+
+4) Someone may be promoted to a higher position where they are given more freedom and permissions, or information may become declassified overtime.
+
+5) Availiability is about resources being able to reach the client when requested which is a case of something good happening (reliability), but should a DoS attack occur and availability is diminished, its a case of something bad happening (security).
+
+6) Authenitcation and non-repuditation are important for defining the validity of the transactions/communication between two parties.  To make sure someone is not who they say they are in order to steal information from the other group, or make a false purchase on someone's and send it to an different location.
+
+
+Lecture 5
+1) Cell phone company: to transfer information between two clients securly
+   Military:  that information be kept on a need-to-know basis so that only the trusted and qualified may know sensity data.
+
+2) Now that you have a goal in line, you need the set up the rules to follow those guidelines.
+
+3) a) Only Instructors/TAs may have the ability to read and wrtie to their own students' grades
+   b) Students may have read access to thier own grades
+   c) Academic staff may have access to all student grades
+
+4) Yes, they may try to give themselves more access than others users, creating a high risk vulnerability if they not be careful.
+
+5) Social Security Numbers may not be stored unless necessary
+
+6) If you don't understand what you are trying to accomplish, you can't create clear rules to reach that goal.
+
+
+Lecture 6
+1) It's all about a need-to-know basis, if an untrusted user gains control of some military secrets than those secerts can become availiable to other nations who can use that information against them.  The more access everyone has, the greater the risk is.
+
+2) The main problem is determining how to keep which information accessable to which personnel.
+
+3) Becuase this experiment is about making sure that classified information is not leaked.
+
+4) The labels are classefied, in order, as: Top Secret, Secret, Confidential, and Unclassified, where Top Secret has the highest authority, in order to determine the sensitivity of the object or the clearance of the subject.
+
+5) Becuase it's not in our position to determine what needs to remain Secret and what should be Top Secret. This is only about who has access to read.
+
+6/7) a) The Normandy invasion is scheduled for June 6         Top Secret
+     b) The British have broken the German Enigma codes       Secret
+     c) Col. Jones just got a raise.                          Classified
+     d) Col. Smith didn't get a raise.                        Private
+     e) The cafeteria is serving chopped beef on toast today  Open
+     f) The base softball team has a game tomorrow at 3pm     Unclassified
+
+8) Principle of Least Privilege, if a document has Top Secret and Classified information, only those with Top Secret access will be able to read that document.
+
+
+Lecture 7
+1) Labels on humans determine who has access to what documents
+
+2) Labels on humans determine that this person has access to this category of documents and all documents that rank below it in terms of sensitivity.
+
+3) Objects and Subjects
+
+4) If a document had Top Secret and Unclassified information, we wouldn't want to let the whole world know about the war plan well in advance of it happening.
+
+5) a) Secret Crypto dominates Confidential Crypto
+   b) Secret does not dominate Top Secret
+   c) Unclassified is open to all
+
+
+Lecture 8
+1) To simplify who is interacting with what and in what way.
+
+2) The Categories all hold value where no one flag is greater than the other, only sets that contain all the same flag (or even more) can be said to be dominant over another set.
+
+3) Should the both have at least one flag that the other does not, then neither is dominant.
+
+4) They have the same label level and have the same category sets
+
+5) A subject can read from an object if it's clearance dominates (or equates) to the object's clearance.
+
+6) There may be cases where someone with the proper clearance must be denied access.
+
+
+Lecture 9
+1) Someone with clearance may copy a Secret document and write it again as an unclassified.
+
+2) To make sure someone who knows sensitive information does not leave it in a vulnerable place.
+
+3) Humans are trusted not to misplace documents, malware on computers may be programed to intentionally do so.
+
+4) A subject can only write to objects that are of greater or equal clearance than the subject.
+
+5) Both the subject and the object must have equal clearance
+
+6) The general logs out of his top secret account and logs into his Unclassified one to write a message (or maybe sending physical notes/verbal communication is too old fashion?)
+
+7) Yes, we could create and attach another category flag to all lower clearance personnel so that the object no longer dominates them.
+
+
+Lecture 10
+1) Lowering a subject's clearance may viloate *-property, and raising literally violates Simple Security.
+
+2) People get promoted, gain trust, privileges, and with it more sensitive information.  Also information may become declassified over time.
+
+3) Lowering an object's level makes it more availiable to others and makes it more likely to be stolen.
+
+4) Use the Bell and LaPadula model.
+
+
+Lecture 11
+1) Give all subjects a high level and all objects a low level
+
+2) In an access control matrix there is discreationary access control where you can determine access rights for whatever object where BLP is a mandatory access control policy that follows Simple Security and the *-property
+
+
+Lecture 12
+1)
+
+
+(H,{})-------->(H,{A})
+  ^              ^ ^
+  | ------------/  |
+  |/               |
+(L,{})-------->(L,{A})
+
+
+
+2) GLB: x <= L1,L2
+   LUB: x >= L1,L2
+
+3) Information can only flow up. You can only write upwards or read from below but information never goes back down.
+
+
+Lecture 13
+1) Information is only allowed to flow up to higher clearance.
+
+2) Read can only be done if Ls >= Lo (Simple Securtiy), and write can only be done if Ls <= Lo (*-Property)
+
+3) Create can have any level, since there's nothing there to start with, confidentiality is maintained. With destroy, the subject still cannot see the content of what was destroyed, again, confidentiality is still maintained.
+
+4) SH > SL
+
+5) The Destroy command is there to clean the slate with that file in case another subject tries to create it again
+
+6) The contents of the files are the same (SL just can't read it in the first case).
+
+7) SL performs the same actions, yet what SH did caused it to recieve a different result. This is necessary.
+
+8) SH creates the file first so SL won't be allowed to read from it. This is necessary.
+
+9) By creating a file before SL, SH was able to prevent SL from reading from the file so that SL would read a 0 when it could have read a 1.  An action that SH preformed sent information downwards to SL.
+
+
+Lecture 14
+1) A covert channel has to be illegal communication that violates the metapolicy, and it has to take place through the system.
+
+2) No, SL does not have access to read for F0, the result will always be 0
+
+3) In the resource itself
+
+4) In the system clock
+
+5) In which cylinder was accessed
+
+6) In the value of l
+
+7) Termination channels are based on if a computation came to an end, which can only happen once per process
+
+8) The low level process has to detect power consumption while the high level process modifies its power use.
+
+9) A desktop? Supercomputer? Powerplant?
+
+
+Lecture 15
+1) It's an illegal communication channel that allows information to flow from the top-down and they do operate rather fast.
+
+2) You have to determine if the channel is there, how much information it's broadcasting and how clean the signal is.
+
+3) Monitor it to see if it is being exploited.
+
+4) There is a high level process (a sender), a low level process (a reciever), and an attribute that the sender can modify and the reciever can reference.  Like a mailman delievering mail to a personal mailbox.
+
+5) The mailman would set the flag on the mailbox in an upright position to signal that mail has arrived for the reciever, who will place the flag back down when grabbing the mail.
+
+
+Lecture 16
+1) The create command does not return a signal to the process if the operation failed or succeded.  It will just attempt to create a file if one does not exist yet and will set the existance to true after the operation.
+
+2) It lets you know that at that level there is a possible form of read/write communication between two processes using those operations.
+
+3) No, each row represents a different resource of where information can be stored.  If you can only read file existance and modify file size then there is no channel of communication.
+
+4) To determine possible covert storage channels within a system.

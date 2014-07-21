@@ -1,0 +1,131 @@
+Connor Lirot
+ccl676
+
+Week 2 Questions
+
+Lecture 17
+1. No because BLP is subject to the exploitation of covert channels, which is something that non-interference does not allow
+2. A cannot interfere with B, and B cannot interfere with A.
+3. No because covert channels are a form of interference.
+4. A could be low and B could be high
+
+Lecture 18
+1. Because they are not concrete enough to be implemented. Simply saying that one subject should not interfere with another does not help in actually achieving that goal. Policies like BLP actually provide concrete ways to implement a metapolicy.
+2. l1, l2, l3, ..., lk
+3. It's either difficult to find any possible covert channels that can be exploited, or it's difficult to prevent the covert channels because it would require changing system implementation
+
+Lecture 19
+1. Integrity means that an object remains free from harmful interference from other objects.
+2. The commercial software might have higher integrity
+3. Separation of duty - several different subjects must be involved to complete a critical function. Separation of function - a single subject cannot complete complementary roles within a critical process
+4. Auditing allows you to record every transaction that occurs in a system so if integrity is compromised, we can know when it happened and who was responsible for it
+5. How to manage a large system and maintain integrity
+6. Banking
+
+Lecture 20
+1. Wall Street Journal - highly reliable, little sensitivity. A high-sensitivity object in a system running BLP could have poor integrity if they are only looking to support confidentiality and not integrity
+2. Row 1: physics is a superset of physics. Expert is above student. Row 2: Physics, art is a superset of physics, but novice is below expert. Art is a superset of the null set, and student is above novice.
+3. Low integrity subjects cannot interfere with high integrity objects, and high integrity subjects cannot interfere with low integrity objects
+4. Confidentiality and integrity don't necessarily have to have anything to do with each other. Something can be high-sensitivity and low-integrity, or it can be high-integrity and low-sensitivity. To construct an access control matrix, you would have to look at both the integrity and confidentiality labels of the subjects and objects
+
+Lecture 21
+1. If you construct an access control matrix using BLP, the Biba version will be exactly the opposite of that matrix.
+2. Neither {A,B} nor {B,C} is a superset of the other
+3. Not if you're using Biba Integrity
+
+Lecture 22
+1. That they cannot be trusted to look at low integrity objects and not become tainted
+2. No
+3. Yes, it assumes the subject can discern good information from bad information
+4. Yes
+
+Lecture 23
+1. Yes
+2. So that the object can be seen by lower level subjects
+3. No
+4. Weak tranquility
+
+Lecture 24
+1. To provide integrity
+2. bank balances and checks
+3. free samples sitting out in the open
+4. Certification checks that the system state is okay. Enforcement prevents bad things from happening before it happens
+5. (teller, update, {account balance})
+
+Lecture 25
+1. He has information about both those airlines, so he could possibly leak one airline's information to the other
+2. Yes
+3. Any company's files whose access levels are below the level of the subject trying to access them
+4. Chinese Wall policy brings the notion of groups and classes to provide further protection against breaches of confidentiality
+
+Lecture 26
+1. It makes managing a large system easier, and you can be sure that certain groups of people only have the permissions necessary to do their jobs
+2. Authorized roles are roles that a subject is allowed to use. Active roles are roles the subject is currently using
+3. Role authorization - a subject's active role must be an authorized role for that subjects. Transaction authorization - a subject can execute a transaction only if the transaction is authorized for one of the subject's active roles.
+4. RBAC is easier to implement for a large system. RBAC recognizes that a subject often has various functions within an organization.
+
+Lecture 27
+1. It's not necessary and it's very large
+2. access control list - objects, capability-based system - subjects, maintain set of rules to compute permissions on the fly
+
+Lecture 28
+1. The receiver must know what message the sender would send to indicate a yes or a no
+2. To know how few bits the sender must send in order for the receiver to be certain of the message
+3. So that the receiver can interpret the message
+4. Because it's a waste of bits
+5. 0. If the receiver knows the answer in advance, why is the receiver even waiting for the message to be sent?
+
+Lecture 29
+1. first - n bits. second - 4ish bits. third - 7 or 8ish bits
+2. The amount of new information conveyed by the statement will vary depending on how much prior knowledge of the attack the receiver has.
+3. 4 bits if they are all equally likely to occur because you need 4 bits to represent 16 things.
+4. 8 bits
+5. In order for the circumstances to be ideal, the sender and receiver must be perfectly synchronized. The receiver must know what all possible messages are
+
+Lecture 30
+1. bit is either a binary digit or a small piece of information
+2. 000, 001, 010, 011, 100, 101, 110, 111
+3. 995 of the messages will only take one bit to convey, while 5 of the messages will take 5 bits to convey
+4. You can make the encoding such that messages with higher probabilites will take fewer bits to communicate
+5. 1 - 1, 2 - 11, 3 - 111, 4 - 1111,
+6. That you know the exact probabilities of the occurences of each message, and that the probabilities are actually realized in every instance you use the encoding
+
+Lecture 31
+1. "1214654131"
+2.
+1 - 0
+2 - 01
+3 - 001
+4 - 0001
+5 - 000001
+6 - 0000001
+
+3. If an encoding is not uniquely decodable then you won't even know what the message was supposed to be.
+4. A lossy coding scheme would result in corruption or miscommunication in at least a few of the messages
+5. It is a non-prefix-free encoding
+
+Lecture 32
+
+1. -log(1/8) = 3
+2. -(1/5log(1/5) + 4/5log(4/5)) = .72
+3. It provides a lower bound to the number of bits required to transmit a single message. This helps you measure your encoding against the optimal encoding
+
+Lecture 33
+1. The probabilities of a single flip are the same for 2flips as for 1flip, so you can use the results from 1flip to get what should happen with 2flips
+2. add up bits/message with each occurence of the message
+3.
+1 - 001 
+2 - 010
+3 - 011
+4 - 100
+5 - 101
+6 - 110
+4. 2.38
+5.
+1 - 0
+2 - 10
+3 - 110
+4 - 1110
+5 - 11110
+6 - 111110
+6. It has lower entropy than the naive encoding.

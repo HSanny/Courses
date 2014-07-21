@@ -1,0 +1,263 @@
+CS 361 Week 1 Questions
+
+Name: Joey Caudill
+EID: JJC2828
+CS Login: JJC2828
+Email: jjc2011@gmail.com
+
+Lecture 1
+
+1.	Personal security, communications security, network security, and system security
+
+2.	Deal with the computer
+
+3.	Yes, credit card information stolen
+
+4.	Not likely, based on the preventative measures I take
+
+5.	Antivirus, password, firewall
+
+6.	No, but I think they lower the risk
+
+7.	No, with access to secure files, data, etc. these cyber-adversaries could threaten our country economically, with access to secure financial documents, and/or militarily, with access to classified government documents
+
+8.	Allows us to know more about how to make sure we are secure as well as where we work
+
+Lecture 2
+
+1.	Making sure you dont have negative effects from your security measures
+
+2.	No, there are many threats to your computer, including all the ones that you cant think of
+
+3.	While there is the one defender trying to find every "bad thing" there are many attackers trying to find just one unnoticed "bad thing"
+
+4.	Yes, because there are almost too many ways for attackers to  threaten your computer security there is only one way to guarantee your computer is safe, by not using it
+
+5.	Sometimes you must sacrifice some efficiency, functionality, etc. in order to make sure you're secure, which in the end is more important
+
+Lecture 3
+
+1.	Possibility that a particular threat will adversely an information system by exploiting a particular vulnerability
+
+2.	Yes, because there are so many "bad things" that can harm your system and since fixing them can make you sacrifice functionality, etc., you must manage the risk you take
+
+3.	a.	Accept: Driving your car instead of staying at home
+	
+	b.	Avoid: Don't drive at night
+
+	c.	Mitigate: Using a cheaper car
+
+	d.	Transfer: Buying car insurance
+
+4.	It allows you to see the areas that you want to focus, because it gives you the expected value. However, there is still the unlikely but most hurtful losses that you want to definitely make sure don't happen, the high risk high reward scenarios.
+
+5.	Technical, economic, psychological
+
+Lecture 4
+
+1.	Those on slide 3 are mechanisms for protecting those on slide 2, which are different aspects of security
+
+2.	Confidentiality and integrity, because the most important thing is that my private information/data is not taken or changed
+
+3.	Dividing up how much protection is needed for each group of data
+
+4.	Example in military, promoted so you get a higher level of clearance
+
+5.	The more secure your system is the more reliable it is, because there are less threats to lower the reliability of the system
+
+6.	Non-repudiation: for websites that carry out transactions they don't want someone getting their product but saying they don't have to pay for it
+
+	Authentication:  logging into accounts like email, etc., making sure the person on the other end is who they say they are
+
+Lecture 5
+
+1.	Availability / Confidentiality
+
+2.	The policy is the set of mechanisms you use in order to accomplish the metapolicy, having only the metapolicy is too general and subject to interpretations
+
+3.	Faculty cant us student SSNs in documents, documents with the SSNs must be destroyed unless deemed necessary, and documents deemed necessary for retention with SSNs must be kept in secure storage
+
+4.	Yes, there may be multiple acceptable policies that accomplish the security goals
+
+5.	Confidentiality
+
+6.	Without a firm goal of what you want to accomplish with the policy it is hard to justify using or even evaluating the policy you have because you don't know what you are getting out of it.
+
+Lecture 6
+
+1.	Only want information to be seen by people that you can trust seeing it, not concerned with integrity or availability
+
+2.	People seeing information that they are not permitted to see
+
+3.	Because we will have to sacrifice integrity and/or availability to get confidentiality
+
+4.	Label the folder that the information is, that is based off the level of their sensitivity
+
+5.	Because we will end up assigning people's clearance levels depending on what information is in each label
+
+6.	1. The Normandy invasion is scheduled for June 6
+
+	2. The British have broken the German Enigma codes
+
+	3. Col. Smith didnt get a raise
+
+	4. Col. Jones just got a raise
+
+	5. The base softball team has a game tomorrow at 3pm
+
+	6. The cafeteria is serving chopped beef on toast today
+
+7.	1. The Normandy invasion is scheduled for June 6 - Top Secret
+
+	2. The British have broken the German Enigma codes - Secret
+
+	3. Col. Smith didnt get a raise - Confidential
+
+	4. Col. Jones just got a raise - Confidential
+
+	5. The base softball team has a game tomorrow at 3pm - Unclassified
+
+	6. The cafeteria is serving chopped beef on toast today - Unclassified
+
+8.	If we labeled it lower then someone without authorization for the files would be able to see them when they shouldnt
+
+Lecture 7
+
+1.	Humans get clearance levels that shows the level of trustworthiness they have, this decides what level of information they can see
+
+2.	Humans have labels of trustworthiness and documents have labels of sensitivity
+
+3.	Files and Users
+
+4.	You dont want to keep someone from being able to do their job by not letting them see certain information
+
+5.	For the first he has clearance higher than confidential in Crypto so he has access / For the second he has clearance lower than top secret in Crypto so he doesnt get access / For the third since it is just unclassified information, lowest clearance level they have access
+
+Lecture 8
+
+1.	Make it more general, not just for this one thought experiment
+
+2.	Reflexive: 	If L1 = L2 and S1 = S2 then L1 >= L2, L1 <= L2, S1 subset of S2,  S2 subset of S1
+			So (L1,S1) >= (L2,S2)  and (L2,S2) >= (L1,S1), then (L1,S1) = (L2,S2)
+
+	Transitive: 	If (L1,S1) >= (L2,S2)  and (L2,S2) >= (L3,S3) then L1 >= L2 >= L3, S1 subset of S2 subset of S3
+			So (L1,S1) >= (L3,S3)
+
+	Antisymmetric: If (L1,S1) >= (L2,S2)  and (L2,S2) >= (L1,S1) then L1 >= L2, L1 <= L2, S1 subset of S2, 
+	 		   S2 subset of S1, So L1 = L2, S1 = S2, Then (L1,S1) = (L2,S2)  
+
+3.	Totality is not true, (L1,S1) >= (L2,S2) or (L2,S2) >= (L1,S1) is not necessarily true. If L1 > L2 and S2 subset of S1 (S1 not equal S2), neither could dominate one another
+
+4.	They would be equal
+
+5.	A person can only gain access to a document if they have dominate status over that document
+
+6.	The Simple Security Property gives you a hurdle to gain access, but it doesnt mean that you necessarily gain access
+
+Lecture 9
+
+1.	It provides the restrictions on read access, but not write access
+
+2.	Otherwise someone could read from Top Secret and write it into the unclassified folder, since they have access to both
+
+3.	We can trust people, but computers can have malicious programs which can write where they arent supposed to 
+
+4.	You can only write at your level or above, so the information doesnt get to those without access to the information
+
+5.	It must be of the same clearance level
+
+6.	Log out of the Top Secret account and log into an unclassified account to send the orders
+
+7.	Yes a problem with integrity, we must add other rules for integrity
+
+Lecture 10
+
+1.	You can promote or demote someone, giving them more or less access. Must make sure they dont carry down with them higher level information.
+
+2.	Then we couldnt change the levels of subjects and objects, means we cant promote someone and we cant move documents to more appropriate levels
+
+3.	It may bring down with it higher level information, which shouldnt be given to those with the lower clearance
+
+4.	Make sure that the object doesnt have any information from the higher level, so all the information is appropriate at the new downgraded level.
+
+Lecture 11
+
+1.	Give all subjects high security level and all objects low security level
+
+2.	You can, but the matrix would be huge for most realistic systems, like if you have thousands of subjects and objects. No real reason to build one when you can compute the access permissions on the fly.
+
+Lecture 12
+
+1.          (H, {A})
+            /       \
+     (L, {A})	   (H, {})
+	    \	    /	  
+	    (L, {})
+
+2.	LUB: find all the points that the two points are both dominated by, these are the upper bounds, and find the one of these that is dominated by all the other upper bounds
+
+GLB: find all the points that the two points both dominate, these are the lower bounds, and find the one of these that dominates all the other lower bounds
+
+3.	If it flows in any other way then the rules we have are not enforcing the confidentiality we wanted to accomplish.
+
+Lecture 13
+
+1.	No info can be written from level below and no info can be read from level above, so the info can only move up.
+
+2.	The information cannot flow down, because no one can read information above them and no one can put the information they know below them, so it can only flow up or in the same level.
+
+3.	You cant create an object at a level below you, so the information you know isnt flowing down, and you cant destroy an object unless you have write access to it, so the information change flows up, not down.
+
+4.	They have to be creating the same object and the low level subject has to be doing the same thing either way, if its a 0 or 1.
+
+5.	To loop through again
+
+6.	No, they are the same
+
+7.	Yes, because it has no way of knowing if the high level subject is sending a 0 or 1
+
+8.	Yes, because it must do something different in order to signify if the bit is a 0 or 1
+
+9.	If the high level subject is sending a bit of information to the low level subject it could send, one bit at a time through a loop, a message with information from its level down to the low level subject, which means that information is flowing down, violating BLP.
+
+Lecture 14
+
+1.	A covert channel is a flow of information between two subjects, but not something that can be avoided like human error. 
+
+2.	No, because in order for SH to write to F0, F0 would have to be at or above SHs level of security, so SL could not read it no matter what.
+
+3.	You have 0 for one message, and 1 for another error message, use difference of message
+
+4.	You have 0 for one length of time, and 1 for another length of time, use varying of clock
+
+5.	You have 0 for given back a and b, and 1 for given back b and a, use of order of values
+
+6.	You have 0 for when the high level variable is 0, and 1 if h is 1, use of control flow of program
+
+7.	It can take a while until you see that the computation is not going to terminate 
+
+8.	The low level subject would have to be able to sense power levels and the high level subject would have to be able to change power levels
+
+9.	Computers, where it uses up a different amount of power
+
+Lecture 15
+
+1.	If looped, over time, you can send many bits of information which means you can have the information flow down.
+
+2.	It would be infeasible to find every potential covert channel, let alone eliminate them all
+
+3.	Modify the implementation, introduce noise to reduce bandwidth or use intrusion detection.
+
+4.	Both sender and receiver have access to some attribute and sender can modify the attribute, the receiver must be able to see the attribute, and a mechanism for initiating both processes, and sequencing their accesses to the shared resource, must exist.
+
+5.	Both the sender and receiver have access to some attribute of a shared object, both have access to a storage reference (error message, etc.), the sender is able to change the storage reference, and a mechanism for initiating both processes, and sequencing their accesses to the shared resource, must exist.
+
+Lecture 16
+
+1.	Because the operation create does not tell you something about the files existence, you have to infer it after the fact.
+
+2.	For that attribute, there is a mechanism where one person can modify it and another can reference it
+
+3.	No, because you want to look at a single attribute and how it is changed
+
+4.	It gives you a technique to identify potential covert channels, then you can find them and take care of them.

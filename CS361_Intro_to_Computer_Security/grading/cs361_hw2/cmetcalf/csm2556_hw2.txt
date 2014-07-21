@@ -1,0 +1,377 @@
+Name:  Christopher Metcalf		
+EID:  csm2556	
+CS Login:  cmetcalf	
+Email:  csmetcalf@gmail.com
+
+
+Lecture 17:
+1.  If a system complies with BLP, it does comply with non-interference.  BLP
+is more specific than non-interference, and any BLP can be turned into a
+non-interference policy (but not vice-versa).
+
+2.  There is no NI policy because neither A nor B dominate each other.  
+S1 |--> S2.  S1 can interfere with S2 only if S2 dominates S1. Interfere with
+means do something that has an effect visible to. 
+
+3.  No, covert channels cannot exist.  If a system satisfies NI, no actions by
+H should have any effect visible to L.  For a covert channel to exist, the
+receiver must be able to view a shared attribute.
+
+4.  A would need to be low and B high.  B would need to dominate A.  Both A
+and B could be either low together or high together, so they are the same
+level, assuming their objects are the same as well.
+
+Lecture 18: 
+1. NI policies do resemble metapolicies.  L is allowed to interfere with H is
+saying that information is allowed to flow from L to H.   This resembles the
+confidentiality metapolicy.
+
+2. Assuming the NI policy is satisfied, L's view should be the same even if
+you throw H out.  L should see l1, l2, l3, ..., lk.
+
+3.  If you expand L's view to include everything L could ever observe, then
+there is nothing H can use to send info to L.  However, if it is that
+inclusive, it is impossible to prove in real systems.  Interferences are very
+common in real systems, and most involve low level system attributes, and most
+are benign.
+
+Lecture 19: 
+1. Integrity doesn't require a collaborator to receive the into outside the
+system.   Different aspects of integrity depend on the context. Some contexts
+may concentrate on who is authorized to modify data while the issue in other
+contexts is how do you separate/protect assets, how do you detect/correct
+unauthorized or erroneous changes, and can authorizations change over time.
+
+2. Integrity relates to how much we trust an entity to produce, protect,
+or modify data.  A company that sells something signals through the price its
+quality and reputation, and stands to lose business if the software is bad.
+So you would prefer to buy the software because the seller is signaling that
+they are a trusted source, versus frees software where the source is unknown
+and cannot be trusted. 
+
+3.   Separation of duty is requiring different subjects to be involved to
+complete a critical function (ie. bank needs 2 signatures). 
+Separation of function means a single subject cannot complete complementary
+roles within a critical process (ie.  someone cannot be both teller and
+auditor). 
+
+4.  Auditing is important for recoverability and accountability in case
+something bad happens   
+
+5.  The underlying ideas are that too much power in one person or program is
+not a good thing.  So you create checks and balances by separating duties and
+functions, and creating an audit trail.  Some concerns in a data processing
+environment are that: 
+
+  a. users cannot write their own programs.
+  b. Programmers develop and test apps on a nonproduction system with
+  contrived data.
+  c.  Moving apps from development to production requires a special process
+  that is controlled and audited. 
+  d.  Auditors must have access to system state. 
+
+6.  Integrity is more important than confidentiality in a commercial setting,
+like that of a bank. 
+
+Lecture 20: 
+1.  Info with high reliability and little sensitivity: perhaps the timing of
+the tides each day.  
+Info that is not highly reliable but high sensitivity: perhaps the
+personal habits or prescription drug regime of an elected official
+
+2.  Row 1:  Expert >= Student, and Physics is a subset of Physics so Label 1
+dominates 2. 
+Row 2:  Novice is not greater than Expert so Label 1 does not dominate 2.
+Row 3: Student is greater than Novice, and the null set is a subset of Art so
+Label 1 dominates 2. 
+
+3.  The integrity metapolicy is don't allow information to flow up in
+integrity.  A subject should not be allowed to write up or read down in
+integrity.  So the NI policy can be H|-->L.  H can interfere with L. Allow
+high integrity info to flow into a low integrity object.  
+
+4. It means that confidentiality and integrity require different sets of
+labels and can be enforced separately or jointly.
+
+Lecture 21: 
+1.   Biba integrity is called the dual of BLP because we apply the same
+policies as BLP but in the opposite order.  Eg. For simple integrity only
+allow a read if the level of the object dominates the level of the subject
+(only read up). For the *Property, the level of the subject must dominate the
+level of the object (can only write at your level or down).  
+
+2.  It is empty because although the subjects are both L, neither object is a
+subset of the other so neither label dominates.
+
+3.  If you are using both BLP and BIBA, then an access is allowed only if
+allowed by both the BLP rules and BIBA rules.  So access would be denied if
+you fail the integrity requirement but pass confidentiality.
+
+Lecture 22: 
+1.  In low water mark, if a subject reads down, his levels floats down to the
+level of the info read.  The assumption is that the subject is corrupted, and
+we don't trust him.
+
+2.  In the low water mark, we do not trust the subjects after they have read
+info below their level.  Their integrity level must float down to the level of
+the info read.
+
+3.  Yes, the Ring Policy says the subject can read any object, and his level
+remains the same.  It is more trusting of the subject, assuming a subject can
+properly filter the info it receives. 
+
+4.  In the Ring Policy, as above, it is more trusting of the subject, assuming
+a subject can properly filter the info it receives. 
+
+Lecture 23: 
+1.  The SD refers to programs under development and is a confidentiality
+category in the label for confidentiality contraints under BLP.  ID refers to 
+development and is an integrity category in the label for integrity
+constraints under BIBA.  They are both part of the Integrity Matrix Model and
+help determine a security level for a subject based on roles in the
+organization and objects based on who should access them.   
+
+2.  Downgrade means the ability to move software from development to
+production (changing the label).  This is important because someone must be
+responsible to change the label of an object, which isn't possible with BLP or
+BIBA alone  
+
+3.  System controllers are SL, SP SD for confidentiality but the object (SL,
+SD) does not dominate the subject so you shouldn't be able to write.  
+integrity, they are ISP, IP ID for integrity which means that they can write at that level and
+down.  For integrity the subject dominates the object (ISL, ID) so you should be able to
+modify it. But since you need the intersection of confidentiality and
+integrity, they can't write. 
+
+4. This would be weak tranquility.
+
+Lecture 24: 
+1. The overriding concern is consistency among the various components of the
+system state.  The four concerns include:
+a.  Authentication:  identity of all users must be authenticated.
+b.  Audit: modifications should be logged to record every program executed and
+by whom
+c.  Well formed transactions: users manipulate data only in contrained ways
+d.  Separation of duty:  system associates with each user a valid set of
+programs they can run and prevents unauthorized modifications 
+
+2.  Constrained data items are the objects whose integrity is protected.
+Examples would be bank balances, loan documents, and customer information like
+social security numbers.
+
+3.  UDIs are objects not covered by the integrity policy, and they might
+include the candy at the bank, and maybe the plants, pens, etc. 
+
+4.  Certification rules pertain to satisfying certain requirements while
+enforcement rules are about the manner in which the policy is preserved.  
+
+5.  Permissions are a set of triples (user, transaction procedure, on a given
+set of CDIs).  A permission may be (bank teller, accept customer cash, update
+bank balances).
+
+Lecture 25: 
+1.  There would potentially be a breach of confidentiality as the consultant
+may carry info from AA to UA that may disadvantage AA. 
+
+2.  Yes, you should be able to access another file from GM because you have
+never accessed infor from a different company in the same conflict class.
+
+3.  Any files in different classes are available, except files from another
+company in the GM conflict class and also files from another company in the
+MSFT conflict class. 
+
+4.  One difference between the Chinese wall and the BLP is that accesses are
+sensitive to the history of past accesses. Also unlike the BLP, it is designed
+to address a specific concern - conflicts of interest by a consultant.
+
+Lecture 26:
+
+1.  Some benefits include that RBAC is easy to administer.  Everyone in the
+teller role has the same permissions.  Also, the subject often has various
+functions or roles within the organization.  In addition, RBAC allows a subject to
+transition between roles without having to change identities. 
+
+2.  Authorized roles are are those which an individual is allowed to fill at
+various times.  An active role is one which it currently occupies.  Active
+roles are a subset of authorized roles. 
+
+3.  Role authorization means that the subject's active role must be an
+authorized role for that subject.  Transaction authorization means that a
+subject can execute a transaction only if the transaction is authorized for
+one of the subject's active roles.  
+
+4.  Standard access control policies are less flexible than RBAC and less easy to
+administer than RBAC. RBAC also allows permissions that are appropriate to the
+organization.  RBAC also recognizes that a subject often has various functions
+in the organization, and allows a subject to transition between roles without
+having to change identities. 
+
+Lecture 27:  
+1.  ACM gives an explicit representation of every access permitted by every
+subject to every object.  We usually don't build an ACM because most subjects
+don't have access to most objects.  Instead of doing an explicit store, we can
+do this implicitly in a set of rules to do it on the fly. 
+
+2. Storing permissions with objects: access control list
+Storing permissions with subjects:  collection of capabilities
+Computing permissions on the fly:  implicitly as a series of rules, like BLP. 
+
+Lecture 28:
+1.  
+In general, the receiver must know how to interpret a 1 or 0 in advance.  
+a.  Receiver has to know that Sender has one of those possibilites, but
+not which.
+b. Sender wants to transmit enough data but not more to resolve R's
+uncertainty.
+c. Sender has either a yes or no.
+d. Sender must transmit one bit of data, 1 or 0. 
+
+2.  You want to quantify the info content because computers only read 1s and
+0s, which is the basis of all computing.  It also allows the us to measure
+bandwidth, the amount of info flowing through a channel.
+
+3.  They need to have a shared knowledge and agreed upon encoding scheme
+beforehand because otherwise no communication will occur.
+
+4.  If the Sender transmits more data than the receiver needs, then it creates
+noise and reduces capacity/efficiency.  Also, sending more data may create
+uncertainty in the Receiver. 
+
+5.  If Receiver knows it will be a yes, there is no uncertainty and no bits
+are needed.
+
+Lecture 29:
+1. a.  n-bit binary - need n-bits
+b. single decimal - need 4 bits
+c. 2 digit decimal - need 7 bits
+d. Ascii - 21 characters x 8 bits = 168 bits
+
+2.  It depends on the level of uncertainty by the receiver.  If the only
+uncertainty is whether dusk or dawn, one bit.  If the attack can come any time
+or any day, then we don't know the number of bits.  
+
+3.  It would be 4 bits because there are 2^4, or 16 possibilities that need to
+be encoded.
+
+4.  The information content would be log 256, base 2. 
+
+5.  In the ideal situation, you know in advance beforehand what messages can
+be sent, and have an agreed upon encoding.  If you know each bit transmitted
+can reduce uncertainty by half.  But rarely do you know in advance what
+messages could be sent. 
+
+Lecture 30: 
+1. Bit1 is a binary digit (discrete). Bit2 definition is a quantity of
+information (continuous).  The information content of a message is measured in
+bit2s and the capacity of the channel is in bit2s per second. 
+
+2.  
+M0 000
+M1 001
+M2 010
+M3 011
+M4 100
+M5 101
+M6 110
+M7 111
+
+3.  On average 995 messages will be M10, which has one bit encoding.  The
+other 5 times it will be not M10, each of those has 5 bit encoding.  So it is
+995 * 1 bit/message for M10 and 5 * 5 bit/message for the other 5 messages.
+
+4.  If you know the prior probabilites, you can assign the message with the
+highest probability the fewest bits, and the more unlikely messsage a greater
+number of bit encoding.  On average, this encoding allows us to do better than
+the naive encoding. 
+
+5.  Perhaps the following is worse than naive because it uses more bits to
+encode than is necessary for 4 messages:
+M1: 000
+M2: 001
+M3: 010
+M4: 011
+
+6.  Optimal encoding means that we use the fewest bits to transmit messages in
+a language, allowing us to transmit messages faster.  It also reduces
+overhead.   
+
+Lecture 31: 
+1. Not entirely sure what this is asking, but a language is any set of symbols
+used to form strings.  It could be 246824682468 as an example.
+
+2.  Non-prefix free
+1  1
+2  0
+3  10
+4  01
+5  11
+6  00
+
+3.  There must only be one possible decoding because the receiver needs to
+unambiguously receive a consistent mapping in order to remove uncertainty. 
+
+4.  Lossless encoding is desirable so that the receiver can completely recover
+the entire sequence of symbols from the transmission.  Otherwise, the receiver
+is still in a state of uncertainty if symbols are missing and unrecoverable. 
+
+5.  Morse code is not streaming because there is a break between each letter,
+in order to solve the prefix-free problem.  
+
+Lecture 32: 
+1. Entropy is the information content of an average symbol in the language.  
+For an 8 sided die, it would be -(sum from i= 1 to 8 of (1/8 x log(1/8))).
+That should be approximately 3 bits.    
+
+2.  Entropy = -(4/5xlog4/5 + 1/5xlog1/5), or approximately .72 bits.
+
+3.  Entropy measures the average information content of symbols in the
+language.  It give theoretical lower limit on coding efficiency.  You can't do
+better than coding that matches the entropy. 
+
+Lecture 33:
+1.  There are 16 2-flip combinations.  To calculate say HH, it's .75 x .75,
+the probability of one head times probability of the next H, or 9/16, because
+each toss is indepedent.  Other combinations are calculated similarly.
+
+2.  We have assigned the fewest number of bits to the result that is the most
+probable. The next most probable has more bits assigned and so one.  For the
+naive, we would use 1 bit per flip.  But here we assign 1 bit to HH, the most
+probable, resulting in 9 x 1 bit = 9 bits, then 3 HT results x 2 bits/HT
+result, then 3 THs x 3 bits/TH, then 1 TT x 3 bits/TT for a total 27 bits.  
+
+3.  Naive
+
+1 000
+2 001
+3 010
+4 011
+5 100
+6 101
+
+4.  Entropy = -(2 * (6/22)log(6/22) + 2 * (3/22)log(3/22) + 2 *
+(2/22)log(2/22)))
+
+5.  More efficient
+
+1   0
+2   10
+3   110
+4   1110
+5   11110
+6   111111
+
+6.  In 22 rolls, the naive would be 22*6 = 132 bits
+For the more efficient, it would be:
+For 1  6 * 1
+For 2  6 * 2
+3      3 * 3
+4      3 * 4
+5      2 * 5
+6      2 * 6
+
+for a total of 61 bits, which is less than the naive number of 132 bits.  
+  
+
+
+
+  

@@ -1,0 +1,135 @@
+me: Hanah Luong
+EID: hkl289
+CS login: hanahx3
+Email: hanah.luong@utexas.edu
+
+
+LECTURE 34:
+1. You need a perfect encoding, you can get abritrarily closer to entropy
+2. If there is any bandwidth at all or any physical way of sending the message, then even if some redundent msg gets lost, some must eventually be successful
+
+LECTURE 35:
+1. h = -(log(1/10))
+2. There is some redundency b/c you can be missing a number of letters and still read the message
+3. zeero and first have 0 memory;
+	they claim every symbol is indepedent of each other
+	2nd and 3rd  groups common letter combinations
+	2nd - groups of 2
+	3rd - groups of 3
+
+LECTURE 36:
+1. entropy is relative to the observeer
+2. Bill talked about the example of the academy awards guy stuffing the winning envelope, so he knows who is the winner
+3. Entropy can be used to measure the amount of redundency
+
+LECTURE 37:
+1. - what is the underlaying language?
+	- clues about the message (12 paces)
+	- nature/ complexity of the encryption
+	- have any transformations or compression occured
+2. sometimes they can be the same and so then it is not necessary
+3. hides information but does not destroy it
+4. regularities
+
+LECTURE 38:
+1. D(E(P))
+2. {{P}Ke}Kd
+3. for traffc analysis patterns show something may happen soon
+4. frequencies of letters  in english or another language
+
+LECTURE 39:
+1. you mudy be able to recognize successes
+2. you can typically find your search half way down the linear search
+3. replacing symbols and moving them around, almost all modern day ciphers use it and it can be powerful
+4. you cant readily extract the content and spread the info so its not all in one place/ smearing it
+5. diffusion, it is much harder to piece together than something that you need to hunt down all the pieces for
+
+LECTURE 40:
+1. monoalphabetical : substituition is done uniformlly
+	polyalphabetical : different substituitons depending on where in plaintext the symbol occurs
+2. could be a table; depends on you.
+3. depends on the size of the alphabet you are using
+4. depends on your shift
+5. 26 or 25
+6. not especially, but not nesscessarily weak
+7. vigenere tablaeu
+
+LECTURE 41:
+1. 26^3; 26 possible letters in the alphabet to th 3rd number of spaces
+2. went from 26^3 to (26*25) because it is a simple substitution
+3. yes; have no reduction from search when you know the encryption algorithm and ciphertext
+
+LECTURE 42:
+1. The key is the same length as the plaintext
+2. if you know something about the key you could eliminate half the possibilities
+3. the other side must know the enture key 
+	you need a secure channel, but if you have this what is the point of having a key or encrypting your message
+
+LECTURE 43:
+1. They are not very strong by themselves
+
+LECTURE 44: 
+1. symmetric
+2. -key distribution: how do we convey keys to those who need them to establish secure comminication
+	- key management: given a large numbr of keys how do we preserve their safety and make them available as needed.
+3. no that is just the public key; you need the public and private key to decrypt
+4. public key systems sove the key distribution problem 
+
+LECTURE 45:
+1. block ciphers are stronger encryptions
+2. malleability is a bad thing that can corrupt the meaning of the text, but not appear in the plaintext
+3.
+
+LECTURE 46:
+1. 
+	subBytes: for every byte, substitute it with a value stored in the location
+	of a 256 element lookup table
+	mixColumns: for each column of the state, replace the column by 
+	its value multiplied by a ﬁxed 4 × 4 matrix of integers
+	addRoundKey: XOR the state with a 128-bit round key derived from the original key K by a recursive process.
+2.
+	shiftRows: shift R0 in the state left 0 bytes (i.e., no change); shift 
+	R1 left 1 byte; shift R2 left 2 bytes; shift R3 left 3 bytes.
+3. The numbers you have to multiply are not as optimized
+4. you user fixed sized blocks of plaintext to encrypt. Rounds are similar operations repeatedly performed on the "state" of the block 
+
+LECTURE 47:
+1. Identical blocks in the plaintext yield identical blocks in the cipher text.
+2. randomize blocks before they’re encrypted so that it is harder to decode the original message for eavesdroppers. 
+3. An attacker able to observe changes to cipher text over time will be able to spot the first block that changed. If an attacker can find two identical cipher text blocks, he can derive the information about two plaintext blocks. 
+4. for key stream generation modes the cipher is used more as a pseudorandom number generator. The result is one-time pad key stream. Block encryption generate cipher text that stores the message in encrypted but recoverable ciphers. 
+
+LECTURE 48:
+1. private keys are secret.
+2. it is easily computable as well as difficult to invert without additional information. 
+3. public keys are public and should be accessible to anyone who wants to send messages. It is okay for this information to be known
+4. {{{P}k-1}k}k-1 = {{P}k-1}
+5. Symmetric encryption remains the work horse of commercial cryptography, with asymmetric encryption playing some important special functions. Asymmetric algorithms are generally much less efficient than symmetric algorithms. 
+
+LECTURE 49:
+1. Yes it would still work. You can use either key to decrypt and the other to encrypt because the keys are used in a sort of symmetric fashion.
+2. You need two prime numbers for generating a RSA key pair. If you are able to factorize the public key and find these prime numbers, you will then be able to find the private key. 
+
+LECTURE 50:
+1. You don't want the hashing to potentially corrupt your code or be too complicated the value can vary too often   
+2. Strong collision resistance means it is hard to find two messages that a hash function will map to the same value    
+3. preimage resistant - given a hash value, its hard to find a message that hashes to that hash value.
+	second preimage resistant - given a message its hard to find another message different from the first that hashes to the same hash value
+4. 1.25 * 2 ^64 hash values before finding a collision
+5. 1.25 *2 ^80 hash values before finding a collision
+6. Hash functions can not be used to encrypt data and decrypt because it is not possible to recreate the original message from a hash value. Since you are going from an infinite source of messages to a finite number of hash values it is impossible to accurately recreate the original message.
+7. The attribute of preimage resistance makes it likely that any change to the message would result in a different hash value. Therefore message M is bound to the hash value H(M).
+8. You could hash a message then use RSA public key to encrypt it before transmitting. On the other side the recipient could decrypt it with the private key then apply the hash function on the message to make sure the file had not changed.
+
+LECTURE 51:
+1.{{K}ks-1}kr-1. No S can't access R's private key. Also the key K could be compromised using R and S's public keys.
+2. No, you cant do encryptions in the other order
+3. An extra layer would cause the Receiver to be unable to access the key because the Sender’s private key is needed to perform the initial decryption.
+4. Key exchange needs confidentiality and authentication. You need the key to be secure and you need to know who the sender is.
+
+LECTURE 52:
+1. The eavesdropper would still need a private number to be able to decode the message
+2. They would need to know  g and p, but if they did they would be able to compute one of the sides
+3. "same as number 2"
+
+

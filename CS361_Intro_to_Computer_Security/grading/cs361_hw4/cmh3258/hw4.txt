@@ -1,0 +1,112 @@
+Chris Hume
+cmh3258
+6/29/14
+HW4
+
+--------------------------------
+
+Lecture 53
+
+1. if resuable then someone else can get it and use it = bad
+2. so you can decrypt the hash with a private key if in RSA. It keeps the signiture safe
+3. if it gets signiture it will get signiture and message successfully. 
+
+Lecture 54
+
+1. for verification. 
+2. X is vouching for y's authenticity and so it will get secure
+3. you have to secure both the message and certificate
+4. then you wouldn't want to trust X
+
+Lecture 55
+
+1. the root can abind trusts together - the roots cannot by impeached, they are rooted and stable
+2. maybe the certificate can only be valid for a certain time period
+3. then had a wrong key possibly
+
+Lecture 56
+
+1. RSA
+2. won't be able to safely send and deliver it
+3. if they don't have the same protocol it would mess things up
+4. if someone stores the three messages, they can xor combinations of them to get M
+5. same as 4, but with Ka
+6. same as 4, but with Kb
+7. you have to communicate to the other side and not allow hackers to get in. 
+
+Lecture 57
+
+1. protocols are what people use to communicate
+2. crypt protocols are how people key communication secure
+3. there are secret keys in which a user knows how to decrypt it
+4. to send a message securely
+5. yes, if a and b are really authenticated toward each other
+6. a and b have to share a key - but no one else can find this out. Need to secure key. 
+
+Lecture 58
+
+1. so we can know what happens before hand. for example in slide 2, we need to know if B is expecting a message or not so it can recieve
+2. because it might be unecessarily encrypting info
+
+Lecture 59
+
+1. it is hard to tell how the system might be flawed and how the attacked is actually atacking
+2. with replay an attacker can replay a message, thus the attacker can find the key from replaying your messages or could even use these to impersonate
+3. ya sure. man-in-the-middle or impersonation can be where they are acting like someone else but not gain any 'secret' info
+4. the attacker has to go along with the protocol. It has to attack where there is weakness, so in a sense that is it
+5. so you have confidentiality and integrity and know who is talking to who
+
+Lecture 60
+
+1. no
+2. sender is trying to say that he wants to communicate
+   the receiver is suppose to believe that they can communicate securely and it    is actually the sender they believe it is
+ 
+Lecture 61
+
+1. if it knew kbs
+2. sure, you can ask any question you want... but no in the sense that all systems are vulnerable
+3. put in a nonce/don't write a system
+
+Lecture 62
+
+1. that it is a fresh message - puts in nonces
+2. yes
+3. use a sender like Needham
+
+Lecture 63
+
+1. to make sure there are no flaws 
+2. it is the logic about reasoning about what princials within the protocl should be able to infer from the messages they see. Abstract profs.
+3. beliefs are like the thinking stage
+
+Lecture 64
+
+1. modal is logic that you write out, its like a proof 
+2. A believes that it shares K with B and thus trusts B if a message is encrypted with K. 
+3. if the message is fresh, then can believe it
+4. this is like trusting X, because you trust B and B trust X
+5. process from message sent to semantics. Its like putting a protocol to an easy to read version
+
+Lecture 65
+
+1. its not necessary? 
+2. they can tell the future
+3. when you assume, you believe something to be. With ban you can actually prove if your assumption is correct. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

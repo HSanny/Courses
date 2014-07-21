@@ -1,0 +1,83 @@
+Name: Taylor Gregston
+EID: teg282
+CS Login: teg282
+Email: gregstont@gmail.com
+
+Lecture 53:
+ 1. Somebody could take that signature and apply it to a different message.
+ 2. Public key encryption is computationally expensive and the  has will usually be smaller than the data.
+ 3. R knows that the message came from S because it was signed with S's private key.
+
+Lecture 54:
+ 1. It allows people to trust that a certain key is tied to a particular entity.
+ 2. To ensure that it was signed by X (the trusted party) and nobody else.
+ 3. We need a hash to ensure that Y or Ky never changed.  The hash binds them together.
+ 4. If X wasn't trustworthy then they could vouche for untrustworthy parties.
+
+Lecture 55:
+ 1. The root of the chain should be grounded at some unimpeachable authority.
+ 2. The certificate will expire at some time and the validity interval depicts when the certificate is valid.
+ 3. It would mean that the certificate was modified, or the hash was modified.
+
+Lecture 56:
+ 1. RSA, AES, diffie-hellman, etc.
+ 2. If one step is ignored then the outcome will possibly have no meaning or integrity.
+ 3. The two parties don't have any shared key and they need to communicate.
+ 4. If the eavesdropped overhears all three messages they can XOR them together to extract data. (The 2nd and 3rd message would yield Ka which could be XORed with the first message to yield M)
+ 5. If the eavesdropped overhears all three messages they can XOR them together to extract data. (The 2nd and 3rd message would yield Ka)
+ 6. XOR the first and second message together to yield Kb
+ 7. They contain subtlties that can be hard to see.
+
+Lecture 57:
+ 1. Protocols allow communication to happen on the internet. Without them nobody would know how to talk to somebody else.
+ 2. Cryptographic protocols allow people to trust one another on the internet.  They provide integrity, autenticity and confidentiality.
+ 3. That there is a public key infrastructure in place and each have each others private key.
+ 4. The goal is to agree on some shared key to provide authentication.
+ 5. No because there is a fatal flaw in the protocol.
+ 6. The flaw allows someone to impersonate B and get information from the session by signing with their own key.
+
+Lecture 58:
+ 1. Unnecessary messages could be interpreted wrongly and mess up the communication.
+ 2. Encrypting data that you could be sending in the clear would cause unnecessary computation which could be fairly expensive.
+
+Lecture 59:
+ 1. It depends how you define attack.  Is authentication or confidentiality compromised? 
+ 2. A third party could interject information into the data flow and abrupt the communications of the original party.
+ 3. Yes, replay attacks may not leak information but they can disrupt communications. Also an interleaving attack does not require any known information.
+ 4. We assume the attacker can't generate a message encrypted with a key it does not have.
+ 5. They are asynchronous because it is highly distributed.  The recievers will not know they are part of a communication until they recieve the first message.
+
+Lecture 60:
+ 1. It would work but would be prone to replay attacks.  Nobody would know if the message was fresh or a replay.
+ 2. 1. Hey server, I am A and want to talk to B; A wants to talk to B
+    2. Hey A, here is a key for you and B; I have a key for A and B
+    3. Hey B, here is a key that S generated; B wants to talk to me and S made a key
+    4. Hey A, I got your message; A knows that B has the key.
+    5. Hey B, I got your message; B knows A got B's last message
+
+Lecture 61:
+ 1. There is no nonce used so it is hard to tell whether the key is new or old.
+ 2. It is possible given enough time, but if you assume a key can be broken then none of these protocols could work without tight synchronization.
+ 3. You would need syncrhonization so you know the key is relatively new and nobody has had time to crack it yet.
+
+Lecture 62:
+ 1. It authenticates both A and B to one another and S knows it is A and B.
+ 2. Otway-Rees makes it more difficult to replay an old message because it uses a sesssion ID and it communicates with B before S.
+ 3. If you used nonces on every message it would prevent someone from seeing the key.
+
+Lecture 63:
+ 1. Verification is important because protocols are notoriously difficult to get correct, and may take many years to uncover flaws.
+ 2. It is a formal system for reasoning about beliefs.  Consisting of a set of logical operators and rules of inference.
+ 3. Beliefs can allow one to see what information is visible to whom.  It is a formal way to verify protocols.
+
+Lecture 64:
+ 1. It is a form of logic containing both operators and inference rules.
+ 2. It means that if A believes A and B share key K and A sees Xk then A believes B said X.
+ 3. It means if A believes X is fresh and A believes B once said X then A believes B believes X.
+ 4. It means if A believes B has knowledge of X and A believes B believes X then A believes X.
+ 5. It is when you look at a certain message and ask yourself what is the message allowing the parties to believe.
+
+Lecture 65:
+ 1. Plaintext is ommited because the contents are known to all, and it is no secret.  It is also hard to tell where the info came from.
+ 2. Because once the K becomes known to B later then the idealized steps will hold true.
+ 3. It forces you to write down your assumptions necessary for the proof.  Then you can analyze the assumptions and verfiy they make sense.

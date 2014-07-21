@@ -1,0 +1,46 @@
+Holden Smith
+EID: hrs534
+CS login: holden
+email: holden.smith08@gmail.com
+
+Lecture 53:
+
+1. It is important because it ensures that the signer knows that their signature won't be used to sign documents that they are unaware of.
+2. Because public key encruption is computationally expensive. Running a hash function is much easier.
+3. R can be assured that the message was from S, since the message was signed with S's private key.
+
+Lecture 54:
+
+1. The certificate authority is important because it is a trusted third party that vouchers for the validity of the binding between a sender and their certificate.
+2. So that anyone reading the certificate will know that the validity of Y's public key has been signed by the private key of the boss, X.
+3. So that the public key can be associated with Y's specific identity.
+4. Then recievers would know that the messages are not vaild because Z will not be able to sign new messages with X's private key, which is still secret.
+
+Lecture 55:
+
+1. The root of the chain should be grounded in a widely trusted public authority so that everyone knows the trustworthyness of the root.
+2. So that the subject is required to provide their credentials at regular intervals to ensure that their identity has not changed.
+3. It means that the certificate may have been tampered with or hat it not genuine.
+
+Lecture 56:
+
+1. DES, AES, RSA
+2. Then the receiver may not be able to determine the validity of the message sent by the sender or it may not be decipherable at all.
+3. Because it allows you to undo your own encryption without being able to decrypt the sender's portion of the encryption.
+4. Because if an attacker is able to store all 3 messages, then the attacker can XOR them to extract Ka, Kb and M.
+5. No, because whle secure in theory it is weak due to the fact that it can be easily broken simply by intercepting all of the encrypted messages.
+6. To extract Kb, the attacker can peform: (M XOR Ka) XOR ((M XOR Ka) XOR Kb)) which is simply the XOR of the first two messages since the Ka and the M will all cancel.
+7. Because it is difficult to think of the ways in which your encyption may be broken while creating it.
+
+Lecture 57:
+
+1. Protocols are impotant because all participants must agree on the steps needed to perform a specific action or else there is no guarantee that the action will actually take place.
+2. They are important to the internet because they establish the security needed to protect your online identity. Without the protocols, anyone might be able to perform actions online in the name of someone else.
+3. The assumptions are that a PKI is in place and that both parties have access to the keys and can use them.
+4. That A sends a message to B and B receives a receipt of delivery from B, all securely.
+5. Yes, since both messages are signed with the sender/receiver private key and encrypted with the other's public key, the transaction is secure. Since B replies, the other goal of confirmation of receipt is satisfied as well.
+6. It is flawed because there is no way to ensure that the message is actually received without hearing the reply.
+
+Lecture 58:
+
+1.  

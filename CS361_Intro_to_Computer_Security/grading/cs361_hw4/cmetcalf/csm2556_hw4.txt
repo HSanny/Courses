@@ -1,0 +1,308 @@
+Name:  Christopher Metcalf		
+EID:  csm2556	
+CS Login:  cmetcalf	
+Email:  csmetcalf@gmail.com
+
+
+Lecture 53: 
+1. Non reusable means that the signature cannot be detached and reused for
+another message.  This is important because if it were not true, an attacker
+could take your signature, attach it to a message they create, and pretend
+that their message is from you.  
+
+2. The hash of M is signe rather than M itself because public key encryption
+is expensive, and the hash is a fixed, finite, short value. 
+
+3.  From the inner encryption, we know that the message is:
+unforgeable:  Only S can use his private key
+authentic:  A third party can verify the signature with S's public key
+no repudiation: Only S can use his private key
+
+From the other encryption, we know that the message is:
+tamperproof:  It is encrypted with R's public key and only R has the private
+key to decrypt
+not reusable:  The signature is tightly bound to the message M becaue there is
+no way to separate the signature from the message. 
+
+Lecture 54: 
+1. A certificate is a reliable binding between a public key and a user's
+identity.  It is signed by a certification authority which vouches for the
+accuracy of the binding.  Essentially, a trusted individual is vouching for
+another party, and this is needed to establish a web of trust in a distributed
+environment. 
+
+2. X signs the hash of the first message with its private key so that when Y
+presents its certificate to Z (Y's id, Y's public key, and the signed hash
+value), Z can verify X's signature with X's public key.  Z can recompute the
+hash of Y, Ky, and compare it to the value received in the signed message to
+see that they were not altered or corrupted.  The signature certifies the
+binding of Y and Ky as X is the certifying authority.  
+
+3. It is necessary to have the hash so that once received by Z, Z can recompute the
+hash of Y, Ky, and compare it to the value received in the signed message to
+see that data items Y and Ky were not altered or corrupted.   
+
+4.  It the public key for X were not trustworthy then Z could not trust that
+this message is a certified binding of Y and Ky.  The validity of the binding
+(identity to public key) would be suspect.  Z could then not be certain that the
+public key Y presents is really Y's public key and not someone else's. 
+
+Lecture 55: 
+1.  The root at a chain of trust is a root certification authority, like
+Verisign.  The root must be an unimpeachable authority if certificates are to
+be combined to produce a chain of trust.  
+
+2. The validity interval is the start and end time for validity.  This is
+necessary as it is possible for an identity over time to no longer be
+associated with a pubic key. Perhaps they leave the company or something
+happens.  It's always best to have a time of validity to make the certificate
+fresh, beyond which it is stale and not as trustworthy.  
+
+3. If the hash and the received value did not match then one can assume that
+the data items relating to the identity and the public key are either altered
+or corrupted, and they are not to be trusted.  So the certificate would be be
+valid.  
+
+Lecture 56: 
+1. One protocol is with the signature of a message, whereby the sender 
+encrypts the message with his private key and then with the receiver's public
+key.  R can decrypt the outer layer with his private key and the inner with
+S's public key.  So R knows the message is authentic from S, and that it is
+confidential because of R's public key used in encryption. 
+
+2. If one step of a protocol is ignored, then the protocol will likely fail.
+The content meant to be sent confidentially in an insecure environment is
+subject to attack and discovery.
+
+3.  Ciphers must commute because you have to be able to reach inside the
+sender's encryption to undo yours. The goal is to do them in either order
+with the same result. 
+
+4.  An attacker can extract M by having 3 messages, or rather the results of the three
+messages. M can get Ka by xor'ing the result in step 3 with M xor KA xor Kb).
+He can get Kb by xor'ing the result in step 2 with (M xor Ka).  Once he has
+Ka, he can xor the result in step 1 with Ka to get M. So he's 
+
+5.  An attacker can extract Ka by xor'ing the result in step 3 with (M xor KA xor
+Kb)
+
+6.  An attacker can extract Kb by xor'ing the result in step 2 with (M xor Ka). 
+
+7.  Cryptographic protocols are difficult to design and easy to get wrong
+because logical flaws don't always reveal themselves until they are exploited.
+The logic may be sound but maybe a step is not complete, and this isn't
+noticed until attacked.  It is difficult to predict all weaknesses and where
+attacks may come from. 
+
+Lecture 57: 
+1. Protocols are structured exchanges of messages in a distributed context 
+controlling the syntax, semantics, and synchronization of communication.
+They are designed to accomplish a communication related function which is why
+they are important for the internet, which is a communication medium. 
+ 
+2.  Cryptographic protocols have several goals:
+unicity: secret is shared by exactly two parties
+integrity: message arrived unmodified
+authenticity:  message claim of origin is true
+confidentiality:  message contents not accessible by attacker
+non-repudiation of origin: sender cannot deny sending
+non-repudiation of receipt: receiver cannot deny receiving
+
+They are trying to accomplish a security related goal, which for the internet
+could be with an email, moving a file, or anything online.
+
+3. The assumptions are that there is a public key infrastructure in place, and
+each party has a version of each other's public key.   
+
+4. The goals are that A can share with B a secret key K, and that each party
+is authenticated to the other.  The goal is to know that each party has each
+other's key and can use it.  We want to be sure A is talking to B and B is
+talking to A.  Goals in general are unicity, integrity, authenticity,
+confidentiality, non-repudiation of origin, and non-repudiation of sender.
+
+5.  The goals are satisfied to a degree except for a flaw relating to
+confidentiality, as in number 6 below.
+
+6.  An eavesdropper E can send B the message M ((k)ka-1)kb and sign it with
+E's private key and do an outer encryption with B's public key.  B gets it and
+sends E a response with the inner encryption being with B's private key and
+the outer encryption being E's public key.  E can decrypt the outer with his
+public key.  B's public key cancels the inner encryption used with B's private
+key (kb-1)(kb) to reveal the inner message signed with A's private key.  E can
+then use A's public key to decrypt the inner message and obtain the K.  
+
+Lecture 58: 
+1.  It is important to know if the protocol includes unnecessary steps or
+messages because those items are just additional data or steps for an attacker
+to exploit which may lead to a succussful attack on the critical steps.  Plus,
+unnecessary steps may lead to incomplete protocol implementation as users
+lose patience with unnecessary steps, leading them to possibly leave them out
+on their own.  This could weaken the protocol if users begin to leave out
+critical steps as well out of frustration with unnecessary steps. 
+Protocals need consistency, and that consistency is ensured when users believe
+in each step, and each step is critical. 
+
+2. It is important to know if the protocol encrypts items that could be sent
+in the clear because this would be an unnecessary step, which is bad as
+described above.  Encrypting everything gives the attacker more points of
+attack and more information on the protocal itself potentially. Users are less 
+likely to be vigilant in the protocol if they see unnecessary info being encrypted,
+leading to inconsistent practices with the protocal.   
+
+Lecture 59: 
+1. A good attack is one the engineers never thought of.  We want to ask - 
+ does the protocol really accomplish its goals. So an defining an attack asks
+ several things of the protocol, including whether both authentication and
+ secrecy are assured, the possibility of impersonating one or more parties,
+ the possibility of interjecting messages from an earlier exchange, what tools
+ an attacker may deploy, and the consequences if a key is compromised.  All of
+ these issues may not have readily foreseeable answers.
+
+2.  A replay attack is when the attacker records messages and replays them at
+a later time, interjecting them into the flow.  The danger is that the parties
+get confused, or possibly redo a step, like wire money twice instead of once.
+
+3.  It is possible that there are attacks where an attacker gains no secret
+information.  In a replay attack, the attack may record a message but have no
+clued as to its content.  In an interleaving attack, the attacker may inject
+spurious messages into the run to subvert it but gain no secret information
+about the protocol, as an example. 
+
+4.  There are some limits on the attacker, mainly that the attacker's messages
+cannot be arbitrary.  We assume that they can't encrypt a message with a key
+it doesn't have (unless have grabbed it in a previous run).  Otherwise, there
+wouldn't be a defense.
+
+5.  Asynchronous means that a party won't know anything about the current run
+of the protocol except the messages it has sent/received.  Also, the other
+parties will not even know they are participating until they receive their
+first message. Each message is of the form where a recipient can identify it
+and respond. It is important protocols are asynchronous because of the
+distributed nature of the system.  
+
+Lecture 60:
+1.  In Needham Schroeder, nonces are used to show the message is fresh, that
+it is a response to an earlier message (that the two messages are related to
+one another).  This is important so that the original sender, when it gets a
+response, knows that it is not a replay of an earlier exchange.  So NS would
+not work without nonces it that it would be fatally flawed and subject to
+attack.  An attacker could resuse an old session key and pass it off as though
+it were fresh.  Without nonces, it gives an attacker an unlimited time to
+crack an old session key and resuse it as if it were fresh. 
+
+2. 
+Step 1: A is saying to S wake up, generate some keys for A and B, and here is
+A's nonce.  S is entitled to believe that this is A.
+
+Step 2: S generates KeyAB, and sends A back the nonce, B, the KeyAB, and the
+package KeyAB, A which is encrypted with KeyBS.  S encrypts it all with KeyAS.
+A is entitled to believe the message is fresh from the nonce, and that it is
+confidential because the KeyAS that it shares with S.
+
+Step 3: A is trying to say to B, I am sending you my identity and a key so we
+can communicate, which you can verify by your shared key with S, KeyBS.  B
+knows it is legitmate because S is a trusted source and B shares a key with S.
+B is entitled to believe that A is actually A and the KeyAB is a secure key B
+can use with A, because it is encrypted with KeyBS, a key that B shares with
+S, a trusted source. 
+
+Step 4: B is saying to A that B received the key and can use it.  A is entitled to believe
+that this is B because it is encrypted with the KeyAb, that shared trusted
+source S generated at A's request.
+
+Step 5:  A is trying to say A has the key and can use it on a function (nonce
+-1).  A can decrypt it, apply the function, and then encrypt it to send to B.
+B is entitled to believe that A got the key and can use it. 
+
+Lecture 61: 
+1. If A's key were compromised, and then changed later, it isn't clear that 
+A could still be impersonated with any new keys being issued by S.  S is a trusted
+source and won't issue a key on the broken key.  However, if E had S issue
+keys previously to C, and E and C share a key, then E may be able to continue
+to pose as A, as it relates to C.   
+
+2.  It is somewhat fair (yes and no) to ask the question of a key being
+broken, depending on the strength of encryption.  We presume that in any
+cryptographic protocol that the encryption is strong. 
+
+3.  For one, I would make the key as strongly encrypted as possible. Specific
+to Needham Schroeder, I would add a nonce to step 3 so that B knows the
+message is fresh.  In that way, an intruder would not be able to reuse an old
+session key and pass it on as though it were fresh. 
+
+Lecture 62: 
+1.  In Otway-Rees, A speaks to B first.  Through the protocol, both parties are
+authenticated to each other and to S.  The use of nonces in each step guarantees
+the messages are fresh and prevents replay attacks between current sessions.
+However, within a session, an attacker could reuse a message by intercepting
+message 4 and resending message 2 so S generates a new key Kab sent to B.
+Since A or B aren't performing a function on the nonces, the attacker within a
+session can reuse them. E can then intercepts this message too and sends A a
+(Na, KnewAB) signed by Kas.  So A ends up with the new Kab key and B has a different Kab.  
+
+2.  NeedHam Schroeder provides in step 5 demonstrates to B that A has the key
+and can use it.  Otway Rees does not have a step 5 so in OR, B has no
+guarantee that A has the key.  
+OR does provide nonces in each step, whereby NS does not have a nonce in step
+3, leaving NS subject to an attacker reusing an old session key and passing it
+off as though it were fresh.  By doing this, if E cracks Kab from the last
+run, E can impersonate A.  
+
+3.  You could potentially fix the flawed protocol in slide 4 by adding a nonce
+in the message from A to B, and have B perform a function on the nonce and
+resend to A to indicate he got the message and can decrypt it.  This would
+prevent C from using a message from this run in a new run of the protocol. 
+
+Lecture 63: 
+1. The verification of protocols is important because protocols are important
+to the internet, and it would be great to get them right. Protocols are
+difficult to get correct, and through the verification process, they can be
+strengthened or discarded.  By verifying them, we make a successful attack
+significantly less likely to succeed.  
+
+2.  Belief logic is a formal system for reasoning about beliefs.  It allows
+reasoning about what principals should be able to infer from the messages they
+see.  It allows abstract proofs but may miss some important flaws.
+
+3.  Programs are sequences of message exchanges, so beliefs come in when you
+take these sequences of message exchanges and generate a collection of belief
+statements.  Beliefs have reasonable assumptions about the state of
+knowledge/belief of the principals.  
+
+Lecture 64:
+1.  Modal logic is a standard propositional and predicate logic with some
+additional primitives and rules of inference built into reason about a
+particular domain. 
+
+2.  The message meaning inference rule says that if A believes A and B share
+a key, and A gets a message encrypted with the key, A is entitled to believe
+it came from B.  
+
+3.  The nonce verification inference rule says that if A believes a message is
+fresh, and A believes B once said X, then A is entitled to believe that B
+believes X. 
+
+4.  The jurisdiction inference rule formalizes that if I hear something from
+an expert, I'm entitled to believe that. 
+
+5.  Idealization is a process to get from protocol steps to logical
+inferences.  We want to figure out what it is a message is trying to
+accomplish in terms of the making the receiver believe a certain thing.  It is
+important to get from sending of messages to the state of the belief logic. 
+One purpose of idealization is to omit parts of the message that do not
+contribute to the beliefs of the receipients. 
+idealization is to omit 
+
+Lecture 65:
+1.  Plaintext is omitted in a BAN idealization because it can be forged. 
+
+2.  When S gets a message from A to generate a key in Needham Schroder, we can
+infer that later in the protocol that A will share this key with B.  So the
+point of view of idealization is the protocol has run and in hindsight we are
+asking what was the purpose of each step.  Some steps foreshadow the occurence
+of future steps.  
+
+3.  A BAN proof forces you to write down your assumptions, and it shows how
+those assumptions are used in carrying out the proof.  If you have surprising
+assumptions, that can be a source of insight. The proof can exhibit some
+assumptions that were not apparent. 

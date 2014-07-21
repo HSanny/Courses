@@ -1,0 +1,129 @@
+Name: Adan Briones
+EID: asb2227
+CS Login: adanb26
+Email: adidan26@yahoo.com
+
+  Lecture 1
+	1. Personal security, network security, and system security are relvant to my everyday life.
+	2. All of these have to do with the protection of something against threats.
+	3. No, I have not been a victim of lax security.
+	4. I think it is unlikely, because I have never encountered something on my computer to believe it is infected.
+	5. I use typical security software that uses firewalls and anti-malware/anti-spyware.
+	6. I think they are effective because they have kept my laptop safe as far as I can tell.
+	7. I think it overstates the case a lttle bit. I think threats may challenge our current way of life, but not the existence.
+	8. Security is becoming more important because both the amount of digital information and the number of threats are increasing, and learning about security can
+		help you protect yourself as well as others.
+  Lecture 2
+	1. Other factors that make security hard is the fact that threats are always evolving and it is impossible to defend against everything.
+	2. No, because you can't be sure that you are aware of all the possible threats.
+	3. The defender needs to find and eliminate all vulnerabilities to be successful, but the attacker only needs to find one that is not secure.
+	4. Yes, there will always be new threats or holes in security that can be exploited. Security can never promise 100 percent success.
+	5. The statement just says that some risks need to be accepted in order to maintain the goals of the project, because trying to 
+		secure those risks will hinder the project's functionality.
+  Lecture 3
+	1. Risk is the possibility that a particular threat will adversely impact an information system by exploiting a vulnerability.
+	2. Yes, not all threats can be addressed equally, so decisions must be made on how to handle the risks differently.
+	3. A risk I accept is the possibility of being struck by lightning when walking in the rain,
+		A risk I avoid is sky diving,
+		A risk I mitigate shoe damage when I wear old shoes when it is raining,
+		A risk I transfer is liability by having car insurance.
+	4. I think it can be misleading because the risk with the highest ALE is not always the top priority.
+	5. Some factors to consider when assesing risks are the probability of the risk occuring, the ALE of the risk, and the cost of handling the risk.
+
+  Lecture 4
+	1. Slide 2 contains aspects of security while slide 3 containsmechanisms to protect the aspects of security.
+	2. I think availability is most important for me. If my system was not available, I would not be able to do school work.
+	3. It means you group your data based on the level of sensitivitl of that data.
+	4. In a business setting,authorizations may change if a person is promoted or demoted within a company.
+	5. These are related because a reliable system secures the availability of resources.
+	6. Authentication and non-repudiation are important when shopoing online. Authentication can confirm a shoppers identity and non-repudiation
+		would help ensure transactions are carried out ethically.
+  Lecture 5
+	1. Phone Network: Keep clients' phone records confidential. Military: Maintain the integrity of all documents.
+	2. The policy is the set of rules used to implement the metapolicy goals.
+	3. Do not post academic records, destroy documents containing records unless needed, and secure documents with records if they are needed.
+	4. Yes, a student may want to view their academic records that a school is trying to keep confidential.
+	5. Keep students' SSNs confidential
+	6. If you don't understand a security project's goals, you can't write effective rules to support the project's goals.
+  Lecture 6
+	1. Confidentialiy is important because national security is at risk. Yes, there are aspects of integrity and availability.
+	2. THe major threat in the experiment is the unauthorized access of information.
+	3. To explain that we are only worried about confidentiality because it is known there are integrity issues with this experiment.
+	4. Each label contains a hierarchial component and a set of categories.
+	5. Our only concern is to make sure only people with the correct authorization to view information does so.
+	6. From most sensitive to least: Normandy invasion, British jave broken German Enigma codes, raise info, softball game, cafeteria menu
+	7. Top Secret{Plans}, Secret{Allies}, Confidentail{Employee Finances}, Unclassified{Recreation}, Unclassified{Cafeteria}.
+	8. A document needs the highest appropriate level based on its contents in order to ensure the security of that information.
+		Using both categories to label mixed information also adds more security to that document.
+  Lecture 7
+	1. Labels are assigned to humans using clearances or authorization levels.
+	2. Labels on documents indicate information sensitivity, while labels on humans indicate what information they can access.
+	3. Files and User IDs.
+	4. No person should have acces to information that is irrelevant to their job.
+	5. The two yes answers make sense because the clearance dominates the sensitivity, and the no makes sense because the clearance 
+		doesn't dominate the sensitivity.
+  Lecture 8
+	1. These terms were introduced because they are most commonly used in real world settings.
+	2. Reflexive: The label l{} >= l{}, Transitive: if H{a}>=l{a} ^ l{a}>=l{} then H{a} >= l{},
+		Anti-Symmetric: the label l{} >= l{} ^ l{} >] l{} therefore l{} = l{}.
+	3. Consider the labels L{a} and L{b}, neither label dominates the other, therefore dominates isn't total order.
+	4. The labels would have to be equal.
+	5. A subject is granted read access to an object if the clearance of the subject dominates the object sensitivity level.
+	6. There may be other factors that are used to determine if access is granted.
+  Lecture 9
+	1. Simple Security does not address write access, only read access.
+	2. We need to ensure that someone doesn't write sensitive information somewhere that can be accessed by someone without proper clearance.
+	3. Programs operating on behalf of users are not as trustworthy as the users themselves.
+	4. The *-property states that a subject is granted write access to an object if the sensitivity level of the object dominates the subject's clearance.
+	5. The clearance of the subject must be equal to the sensitivity of the object.
+	6. We could add a different attribute that allows certain people such as the general to have special clearances.
+	7. We could limit the level that the corporal can write up to.
+  Lecture 10
+	1. A subject's level going up is not okay because it would be like a read up. However, a subject's level going down is okay because that is like a read down.
+	2. There may be instances where labels change. In the military context, this could be the result of promotions or demotions of subjects.
+	3. It is equivilent to a write down and can jeopardize confidentiality.
+	4. In order for a downgrade to be secure, the downgrade must not violate the simple security or *-property.
+  Lecture 11
+	1. All of the subjects' levels would be above the objects' levels
+	2. There would be just too many objects and subjects for the matrix to be worth the time.
+  Lecture 12
+	1.         h{A}   (h{A} dominates all others, h{} donimates l{}, l{A} dominates l{}, l{} is dominated by all)
+	          / | \
+               l{A} |  h{}
+                  \ | /
+	           l{}
+	2. You can arrange the labels into a lattice and use the lattice to find the LUB and GLB.
+	3. The upward flow of information in the lattice is the metapolicy for BLP because it constrains the flow of information in only one direction.
+  Lecture 13
+	1. They are supposed to only allow information to travel from L to H.
+	2. They are in accordance with the read down, write up allowances of BLP.
+	3. Create is a Write at a subjects own level. A destroy is a write at ones own level or above. These are equal to writing up and are supported.
+	4. The order of operations must be the same each time.
+	5. So that the process can be repeated.
+	6. No.
+	7. Yes, to ensure the info over the channel is only a result of one variable.
+	8. SH does different things in order to get the desired info to SL.
+	9. SH can purposefully vary the result seen by SL in order to send information to SL.
+  Lecture 14
+	1. A covert channel describes information flow through the system. Two humans talking does not go through the system.
+	2. No, SL would not be able to read F0.
+	3. The bit of information is in the system state. Based on whether the resource exists or not.
+	4. This bit resides in the system clock.
+	5. I think this is a storage channel and the bit of onfo resides in the system state.
+	6. This bit is contained in a program and is determined using a variable in the program.
+	7. It requires very little bandwidth to send the information.
+	8. Power would have to be used and recorded somewhere that can be referenced.
+	9. Devices that vary power use based on operations such as devices with processors, like computers.
+  Lecture 15
+	1. Covert channels are capable of operating at thousands of bits per second with very little impact on processing.
+	2. There are just too many possibilities to be able to eliminate every single one.
+	3. The channel can be eliminated, its bandwidth can be restricted, or the channel can be monitored.
+	4. Both the Sender and Receiver must have access to an attribute of a shared object,
+		the sender must be able to modify the attribute, and
+		The receiver must be able to reference the attribute.
+	5. The receiver can record the attribute being modified by the sender in order to recieve some kind of message.
+  Lecture 16
+	1. After the create operation is executed we know that the object exists, however the operation itself tells us nothing.
+	2. It shows the object can be both modified and referenced.
+	3. Yes, because if create provides feedback, such as if the file exists already, information could be taken that.
+	4. The table would expose the potential covert channels so that they can be addressed.

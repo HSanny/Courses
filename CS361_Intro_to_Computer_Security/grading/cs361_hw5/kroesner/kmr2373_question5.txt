@@ -1,0 +1,127 @@
+Kevin Roesner
+kmr2373
+CS361
+
+Week 5 Questions
+
+Lecture 66
+1. PGP is a data encryption and decryption computer program that provides cryptographic privacy and authentication for data communication.
+2. Phil Zimmermann had the goal of providing strong encryption for the masses, in the form of an encryption system for email that is (1) extremely strong, using state of the art cryptographic algorithms, and (2) easy to use and accessible to all.
+3. Yes, it seems that it does.
+4. So that they can rely on maintenance and customer service.
+
+Lecture 67
+1. It's a digital signature function:
+   - Sender creates a message M.
+   - Sender generates a hash of M.
+   - Sender signs the hash using his private key and prepends the result to the message.
+   - Receiver uses the sender’s public key to verify the signature and recover the hash code.
+   - Receiver generates a new hash code for M and compares it with the decrypted hash code.
+2. It provides encryption for messages sent or stored as files:
+   - Sender generates a message M and a random session key K.
+   - M is encrypted using key K.
+   - K is encrypted using the recipient’s public key, and prepended to the message.
+   - Receiver uses his private key to recover the session key.
+   - The session key is used to decrypt the message.
+3. Apply the authentication step to the original message, and then apply the confidentiality step to the resulting message.
+
+Lecture 68
+
+1. Compression, email compatability, segmentation.
+2. So it takes up less memory.
+3. It is preferable to sign an uncompressed message so that the signature does not depend on the compression algorithm, and encryption after compression strengthens the encryption, since compression reduces redundancy in the message.
+4. Many email systems would choke on certain bit strings they’d interpret as control commands. So, PGP uses radix-64 conversion to map groups of three octets into four ASCII characters.
+5. Email systems often restrict message length. Longer messages must be broken into segments, which are mailed separately.
+
+Lecture 69
+1. Session keys, public keys, private keys, passphrase-based keys.
+2. Each session key is associated with a single message and used only once.
+3. The encryption algorithm E is used to generate a new n-bit key from a previous session key and two n/2-bit blocks generated based on user keystrokes, including keystroke timing. The two blocks are encrypted using E and the previous key, and combined to form the new key.
+4. For new RSA keys, an odd number n of sufficient size (usually > 200 bits) is generated and tested for primality. If it is not prime, then repeat with another randomly generated number, until a prime is found.
+5. The private key is stored encrypted with a user-supplied passphrase. Whenever the user wants to access the private key, he must supply the passphrase.
+
+Lecture 70
+1. Generate an ID likely to be unique for a given user. 
+2. His/her own public/private key pairs.
+3. The public keys of correspondents.
+4. - PGP retrieves receiver’s encrypted private key from the private-key ring, using the Key ID field in the session key component of the message as an index.
+   - PGP prompts the user for the passphrase to recover the unencrypted private key.
+   - PGP recovers the session key and decrypts the message.
+5. It indicates the extent to which PGP trusts that this is a valid public key for this user.
+6. The owner issues a signed key revocation certificate. Recipients are expected to update their public-key rings.
+
+Lecture 71
+1. Consumer Problem: the attacker gets logically between the client and service and somehow disrupts the communication.
+   Producer Problem: the attacker produces, offer, or requests so many services that the server is overwhelmed. This is the more common problem.
+2. A SYN Flooding attack happens when an attacker forges the return address on a number of SYN packets. The server fills its table with these half-open connections. All legitimate accesses are denied until the connections time-out.
+3. Increasing the server’s queue size isn't ideal because: typically only 8 connections are allowed; could consume considerable resources.
+   Shortening the time-out period isn't ideal because: might disallow connections by slower clients.
+   Filtering suspicious packets isn't ideal because: if the return address does not match the apparent source, discard the packet. May be hard to determine.
+
+Lecture 72
+1. A filter or packet sniffer can detect patterns of identifiers in the request stream and block messages in that pattern.
+2. An intrusion detection system (IDS) can analyze traffic patterns and react to anomalous patterns. However, often there is nothing apparently wrong but the volume of requests. An IDS reacts after the attack has begun. 
+   An intrusion prevention system (IPS) attempts to prevent intrusions by more aggressively blocking attempted attacks. This assumes that the attacking traffic can be identified.
+3. over-provisioning the network: have too many servers to be overwhelmed (expensive and unworkable).
+   filtering attack packets: somehow distinguish the attack packets from regular packets (may not be possible).
+   slow down processing: disadvantages all requestors, but perhaps disproportionately disadvantages attackers;
+   “speak-up” solution (Mike Walfish): request additional traffic from all requestors. Assumes that the attacker’s bots are already maxed out. So this solution raises the proportion of valid to invalid requests.
+
+Lecture 73
+1. False negative: a genuine attack is not detected.
+   False positive: a harmless behavior is mis-classified as an attack.
+   A false negative is definitely worse, one-to-one. Depends how often each happens overall.
+2. An IDS is accurate if it detects all genuine attacks and it is precise if it never reports legitimate behavior as an attack.
+3. If it flags everything as attacks it would be accurate but not precise. It it allows everything then it is precise but not accurate.
+
+Lecture 74
+1. It worked as follows:
+   - If date is between 1st and 19th of the month, generate a random list of IP addresses and attempt to infect those machines. 
+   - On 20th to 28th of the month, launch a DoS flooding attack on www1.whitehouse.gov
+   - The worm also defaced some webpages with the words “Hacked by Chinese."
+2. - The worm used a static seed in its random number generator and thus generates identical lists of IP addresses on each infected machine.
+   - Each infected machine probed the same list of machines, so the worm spread slowly.
+   - The IP address for www1.whitehouse.gov was changed so the DoS attack failed.
+3. The code for the worm is stored in memory and not on the disk. So a machine can be disinfected by simply rebooting it.
+4. It used a random seed in the random number generator.
+
+Lecture 75
+1. It contained the string "CodeRedII" in its code and generated random IP addresses to infect.
+2. To make its spread unpredictable.
+3. It installs a mechanism for remote, root-level access to the infected machine. This backdoor allows any code to be executed, so the machines could be used as zombies for future attacks.
+4. It puts many computers at risk and though destabilizes the internet in general.
+5. We should patch our shit.
+
+Lecture 76
+1. It helps people have an idea of the security of a product without doing a whole lot of research themselves.
+2. - A set of requirements defining security functionality.
+   - A set of assurance requirements needed for establishing the functional requirements.
+   - A methodology for determining that the functional requirements are met.
+   - A measure of the evaluation result indicating the trustworthiness of the evaluated system.
+3. Because they are easy to get wrong, and getting the wrong can cause serious problems.
+4. Level 1: basic security; at least one approved algorithm or function.
+   Level 2: improved physical security, tamper-evident packaging.
+   Level 3: strong tamper-resistance and countermeasures.
+   Level 4: complete envelope of protection including immediate zeroing of keys upon tampering.
+
+Lecture 77
+1. An international standard for evaluating secure systems.
+2. It's international, 26 countries use it.
+3. Different countries have their own sets of problems (and even values) that could contribute to different needs.
+4. A Protection Profile is a description of a family of products in terms of threats, environmental issues and assumptions, security objectives, and requirements of the Common Criteria.
+   A Security Target is a document that contains the security requirements of a product to be evaluated, and specifies the measures offered by the product to meet those requirements.
+
+Lecture 78
+1. To give a set of threats, assumptions, objectives, and requirements that have to be met for a certain kind of secure system.
+3. Allows a way to link threats/assumptions to security objectives/requirements.
+
+Lecture 79
+1. To see how a specific product or implementation of a secure system measures up to the requirements and objectives spelled out by a Protection Profile (or in some way attached to the security targets submission for evaluation or something).
+2. Protection Profile is like the specifications of a class. A Security Target evaluation is kind of like an instance of that class (or wants to be an instance of it) depending on the evaluation.
+
+Lecture 80
+1. They are the evaluation assurance levels of the Common Criteria. 
+2. Independent labs test up to EAL4, above that the NSA does it.
+3. Similar as the answer to 77.3. Also above that level security might be so important that each country would rather just double check before approving anything.
+4. No, because that's a clear conflict of interests.
+5. The goal is for the model to reflect what the security policy should be, not just whatever the code is.

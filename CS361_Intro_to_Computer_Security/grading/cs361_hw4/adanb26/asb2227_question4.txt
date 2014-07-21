@@ -1,0 +1,101 @@
+Name: Adan Briones
+EID: asb2227
+CS LOGIN: adanb26
+Email: adidan26@yahoo.com
+
+
+Lecture 53
+	1. It is important so that the signature can't be removed and used on another message that may be forged.
+	2. The hash is signed because public key encryption is expensive to apply and the message can be an arbitrary length. However, the hash is a fixed value that is easier to encrypt.
+	3. R gains the assurance that the message is unforgeable, authentic, non repudible, tamper proof, and non reusable.
+
+Lecture 54
+	1. They determine the trustworthiness of certain parties, and help inform users of parties they can trust or parties they can't trust.
+	2. X signs with its private key so that it is clear that X is assuring that the key does indeed belong to Y.
+	3. To ensure that neither Y or Ky was altered.
+	4. If Z doesn't trust X then Z doesn't have to take part in the interraction with Y.
+
+Lecture 55
+	1. The root of a chain of trust is an unimpeachable authority.
+	2. It contains a validity interval to show how long a certificate is valid and can be trusted.
+	3. If the hash and the recieved value do not match, it shows the information that is certified can't be trusted. It can mean the certification was forged, or that the information has been altered.
+
+Lecture 56
+	1. The Diffie-Hellman key exchange and the steps taken to certify a key are two protocols we have discussed.
+	2. Id one step is ignored, the integrity and confidentiality of information are at risk. Every step is important.
+	3. They have to commute so that A has a way to remove their encryption even when B encrypted the message using B's key..
+	4. If an attacker stores all three messages, he can XOR the ((M XOR Ka) XOR Kb) and (((M XOR Ka) XOR Kb) XOR Ka) messages and be left with Ka. He can then decode the M XOR Ka message to get M.
+	5. If an attacker stores all three messages, he can XOR the ((M XOR Ka) XOR Kb) and (((M XOR Ka) XOR Kb) XOR Ka) messages and be left with Ka.
+	6. If an attacker stores all three messages, he can XOR the (M XOR Ka) and ((M XOR Ka) XOR Kb) messages and be left with Kb.
+	7. They are difficult to design and easy to get wrong because some flaws are very subtle and hard to get around.
+
+Lecture 57
+	1. Protocols are important online because they are used for alot of things, such as emails and moving files.
+	2. Cryptographic protocols are important becuase they ensure the sucurity and integrity of sensitive information that is sent over the internet. This could be banking information or classified government info.
+	3. The assumptions are that there is a public key infrastructure in place, and A and B have reliable versions of each others' public key. 
+	4. The goal is to share a private key between A and B confidentially, and ensure each is authenticated. 
+	5. Yes, if there were a way to ensure the message is recieved by the target recipient. However, there is no way in the protocol to prove A recieved the last message so the goal wouldn't be accomplished in this case.
+	6. An attacker, C, could Encrypt the first message, K({{K}k-1a}kb), as {{K}k-1c}kb. B would then send back {{K}k-1b}kc. Then the k-1b and the kb outside of K would cancel and leave the attacker with {{K(original)}Kc. Then C can get the original key.
+
+Lecture 58
+	1. It is important because unnecessary steps or messages can slow down the protocol and make it less efficient.
+	2. It is important because encrypting items that can be sent in the clear wastes time and resources.
+
+Lecture 59
+	1. It is hard to determine what constitutes an attack because there are so many questions that need to be answered before an action can be determined to be an attack. 		
+	2. An attacker could use previous messages and inject them into the current conversation to send possibly out of date or wrong info.
+		This obviously disrupts the protocol.
+	3. Yes, the interleaving attack is the act of an attacker injecting messages into a protocol run to disrupt of subvert it.
+	4. The only restriction noted in the video is that attackers can't send arbitrary messages. Other than that
+		Attackers are assumed to have access to all traffic and can interject his own messages into the flow.
+	5. It is important to understand that protocols are asynchronus because it is a big property of protocols.
+		Because protocols are asynchronus, each message must be clear enough that the recipient can interpret it and respond. And a party may not know they are participating in a protocol until they recieve their first message.
+
+Lecture 60
+	1. No, nonces show that a message is "fresh", and without them there is no way of knowing that. If nonces aren't used, old messages may be treated as new messages. Also, B wouldn't be able to ensure it is securely communicating with A.
+	2. A -> S: A, B, Na
+		SENDER: Hey S, I want to communicate with B and need a fresh key paried with Na.
+		RECEIVER: Believes A wants a key to communicate with B based on Nb
+	   S -> A: {Na, B, Kab,{Kab, A}Kbs}Kas
+		SENDER: Hey A here is the fresh key you wanted for communication with B and a secure way to send it to B.
+		RECIEVER: This is a secure fresh key that I can confidently share with B.
+	   A -> B: {Kab, A}kbs
+		SENDER: Hey B, its A. This is a key so that we can speak securely
+		RECEIVER: Knows that the key is for communication with A and it came from S.
+	   B -> A: {Nb}Kab
+		SENDER: A, I received the key and can use it. Let me know if you can too.
+		RECEIVER: B recieved the key and awaits a response
+	   A -> B: {Nb - 1}Kab
+		SENDER: B I got your message and successfully used the key.
+		RECEIVER: B and A can now securely communicate.
+
+Lecture 61
+	1. A can be impersonated at any time by sending and receiving a message from S because
+		S thinks the Kas is secret, and would respond as if the message came from A.
+	2. No, as the protocol assumes keys are encrypted with strong algortithms.
+	3. I would ensure the encryptions of keys are strong to avoid having to deal with compromised keys.
+	
+Lecture 62
+	1. Otway-Rees seems to guarantee that a fresh key will be generated for communication between the two principals A and B.
+	2. Needham-Schroeder has final steps that ensure both principals received and can successfully use the key but Otway-Ress does not.
+	3. Based on the specific flaw in this protocol, you could assign Keys hash values and impose a rule or step where all users attempt to decrypt key values with their private and public keys. This would uncover any hash value of a key that was trying to be stolen and produce trivial results for a valid key.
+
+Lecture 63
+	1. Verification of protocols is important so that we can formally reason about protocol correctness.
+	2. A belif logic is a modal logic that allows you to reason about what principals within a protocol should be able to infer from messages they see. Belief logics allow for abstract proofs but miss some flaws.
+	3. If the protocol is a program, the beliefs could be viewed as the state of the program is changed or updated after each step of the program.
+
+Lecture 64
+	1. A modal logic is a type of formal logic that uses operators to express modality.
+	2. A can reasonable believe that B sent message X if X is encrypted witha Key that only A and B share.
+	3. A can believe that B believes X is A knows X is fresh and B once said X, because B would have had to say X recently for it to be fresh.
+	4. The jurisdiction inference rule just shows that A can believe X if B, an expert on X, believes X.
+	5. Idealization is the process of attempting to turn a sent message into its intended semntics. This is needed to omit parts of the message that do not contribute to beliefs of the recipients of a message.
+
+Lecture 65
+	1. Plaintext is omitted because plain text can be forged.
+	2. The goal of idealization is to turn messages into their intended semantics. So if A wants be to believe they share a key, there is a good chance that an idealized message of A refers to this before B actually believes it.
+	3. BAN proofs can expose assumptions by forcing you to write down assumptions and the proof shows how those assumptions are used. If you find surprising assumptions, you can deal with them when the proof makes them apparent.
+	
+
+

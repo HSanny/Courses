@@ -1,0 +1,23 @@
+Why do you think we introduced the vocabulary terms: objects, subjects,
+actions?
+	So the initial military example can be expanded to other contexts such as digital systems. For example in a Linux environment:
+	 Document = object = file
+	 Subject = military personnel = user
+	 action = access the document = read, write, delete, etc
+
+Prove that dominates is a partial order (reﬂexive, transitive, antisymmetric)
+	An object can have sensitivity level Top secret and need to know Crypto. A subject can have sensitivity level secret and need to know Crypto and Nuclear. In this example neither one dominates the other. It is therefore a partial order
+
+Show that dominates is not a total order.
+	In total order, every element must be comparable. For example in this two labels: TopSecret{nuclear,Crypto}, TopSecret{Watermelons,Apples}. This two labels are not comparable and therefore dominates is not a total order
+	
+What would have to be true for two labels to dominate each other?
+	They both have the exact same clereance/sensivity level and the exact same need to know categories. 
+
+State informally what the the Simple Security property says.
+	A subject can read an object if he has a higher clearance its sensitivity and the subjects need to know categories include all the need to know categories of the object.
+
+Explain why it’s “only if” and not “if and only if.”
+	Because it is not the only requirement. For example, a subject might have clearance to read a certain file, but it might turn out he is a spy therefore he cannot read it. 
+
+

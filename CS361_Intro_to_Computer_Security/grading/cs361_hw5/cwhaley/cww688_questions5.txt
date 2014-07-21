@@ -1,0 +1,116 @@
+Name: Colt Whaley
+EID: cww688	
+CS Login: cwhaley
+Email: coltwhaley@yahoo.com
+
+Lecture 66
+1. Pretty good privacy
+2. He distrusted the government and believed everyone deserved privacy
+3. As of 2007, the government finds it "nearly impossible" to decrypt
+4. Pass of liability and don't have to worry about setting up
+
+Lecture 67
+1. Sender creates message M and hashes it. Signs hash with private key
+prepends the result. Receiver uses public key to recover the hash then compares
+their hash to the decrypted one.
+2. Sender creates message M and session key K. M encrypted with K. K encrypted
+with receiver's public key and prepended to M. Receiver used private key to
+get session key. Use that to decrypt the message
+3. Apply the authentication to original message, then the confidentiality to
+result.
+
+Lecutre 68
+1. Compression, email compatibility, segmentation
+2. strengthens the encryption since compression reduces redundancies
+3. Signature doesn't depend on the compression algorithm this way
+4. Maps the 8-bit octets to ascii characters. Otherwise email systems would
+choke on bitstrings they'd interpret as control commands.
+5. Messages often too long for a single email so they must be reconstructed
+after the whole message is sent
+
+Lecture 69
+1. Session, public, private, and passphrase-based
+2. used once and generated for each new message
+3. uses the previous session key and two n/2bit blocks generated based on
+user keystrokes, including timing. They are encrypted using an algorithm
+and combined to create the new key.
+4. Randomly generate odds of sufficient size. Then test for primality
+5. user-selected passphrase. ensures only the user knows his/her private key
+
+Lecture 70
+1. The least-significant 64bits are sned with the message(key id)
+2. timestamp, key id, public key, private key, user id
+3. timestamp, key id, public key, user id
+4. strip key id from session key, enter passphrase, use session key to decrypt
+5. determine trust of user/key
+6. Owner issues a signed key revocation certificate. recipients update public
+key rings
+
+Lecture 71
+1. consumer distrupts their ability to communicate with service,
+producer disrupts servers ability to communicate with client
+2. overwhelm server with requests then not respond
+3. too much resources, disallow connections to slower clients, hard to determine
+
+Lecture 72
+1. reads requests coming from similar ip's
+2. ids is after an attack, ips works to prevent them
+3. get more servers, filter packets, slow down processing, request extra 
+traffic from requestors
+
+Lecture 73
+1. false negative = genuine attack not detected
+   false positive = harmless behavior misclassified as attack
+   False positives restrict genuine traffic and can distrupt workflow, but
+   negatives can allow a nasty attack to occur undetected
+2. accurate = detects all attacks
+   precise = no false positives
+3. You can just flag everything as positive and its accurate, or flag nothing
+and its precise.
+4. probability a positive request is false.
+
+Lecture 74
+1. Infect random machines then DoS www1.whitehouse.gov
+2. static seed and memory residency.
+3. it just sat in memory, not on the disk so it would be lost on reboots
+4. It used a random seed
+
+Lecture 75
+1. same exploit, had string "CodeRedII" in source
+2. To ensure it's survival
+3. create zombies for attacks
+4. exploits that have been fixed are still problems because user base is
+ignorant
+5. People don't update their computers, ever. Especially in Asia
+
+Lecture 76
+1. Typical users don't understand anything
+2. requirements for functionality, assurance requirements, methodology to
+meet those requirements, measure the trustworthiness of system.
+3. More sensitive information requires more intensive clearances
+4. weakest, weak, strong, strongest
+
+Lecture 77
+1. a centralized secure system evaluation criteria
+2. adopted by 26 countries
+3. allows customizations based on locality of system
+4. PP = products that satisfy the CC
+   ST = document containing requirements of products by CC
+   
+Lecture 78
+1. identify trash containers
+2. determines all the possible vunerabilities and ways to combat them
+3. mapping from threats/assumptions to security objectives/requirements
+
+Lecture 79
+1. Product for managing user access privileges store in directory services
+2. ST is a specific system or class of systems submitted for eval
+
+Lecture 80
+1. determines the rigor of development and testing
+2. security companies trusted by the corresponding government
+3. the higher on the list, the more intense the proof needs to be which
+becomes harder to get an agreeable concensus
+4.  no, then they could just say they did it.
+5. it may be unclear from the code if it was done incorrectly and may
+implement something else

@@ -1,0 +1,143 @@
+Kevin Roesner
+kmr2373
+CS 361
+
+Week 1 Questions
+
+Lecture 1
+
+1. In my everyday life I would say that security consists primarily of physical safety (with laws, enforcement, social norms, etc helping maintain it) and protection of property (helped by a similar set of mechanisms including alarm systems, locks, etc.). Aspects of security related to computers are of course also incredibly relevant as much of my time and information is spent in connection with computers.
+2. These all involve my personal interests being guarded from outside harm.
+3. I once had a camera and a fairly expensive calculator stolen from my car. I also live in a cooperative with a bunch of people and several have had valuables stolen from their rooms (presumably by random guests at events) because they did not lock their doors.
+4. Very likely, at least to some extent. I feel like throughout my life, most virus scans have produced something, even if it was (or at least seemed) fairly innocuous.
+5. I have a couple of free anti-virus programs that work pretty well for me. Besides that, I try to keep my firewall active and generally be aware of what I'm interacting with while on the internet.
+6. Fairly effective, my computer remains functional and I haven't lost any assets/information as far as I am aware.
+7. I'm honestly not sure if I know enough to provide a meaningful answer to this question. At most I can say that I can imagine that it's fairly accurate. On the other hand, the FBI has its own agenda so who knows.
+8. It depends on what you have to lose, I suppose. Whether in a personal or a business sense.
+
+Lecture 2
+
+1. You are concerned with preventing things from happening, which is harder than making things happen. You also have to deal with an adversary who is trying to best you.
+2. I'm not sure about systematic. I'm sure it's possible to give a reasonable list of possibilities, but it would be difficult to make an exhaustive one.
+3. The defender has to either predict or react to the attacker who pretty much gets to move at his own speed and has the element of surprise.
+4. I would definitely agree, from my experience with computers, at least some vulnerabilities are exploited every now and then.
+5. Steps taken to ensure a more secure system might reduce performance or efficiency of memory usage, or similar aspects of systems that are also important.
+
+Lecture 3
+
+1. Risk is something along the lines of the probability of something bad happening that you're willing to accept because allowing that chance provides for other benefits elsewhere.
+2. Definitely, I'd say it's pretty fundamental to making a reliable product.
+3. A risk you accept would be using an executable file that somebody else made. A risk you avoid would be giving your credit card number to a shady-looking site. A risk you mitigate would be downloading and installing antivirus software. 
+4. It can be, depending on the context. For example, it could give an idea of areas that need the most work. But on the other hand, as the coin flip example shows, it can be misleading and should only be used in conjunction with other considerations.
+5. Annual loss expectancy could be one. 
+
+Lecture 4
+
+1. Slide 2 lists the actual goals that should guide implementations of computer security whereas slide 3 lists the mechanisms with which some of those goals can be achieved.
+2. They are all pretty important depending on what I'm doing. Confidentiality for things like emails, homework, passwords, etc. Integrity for making sure everything I have on my computer is what I expect it to be. And availability because I can't really do anything if I can't access resources or services that I need.
+3. It means to store similar and related data together, with information connected that indicates the relationship between the data.
+4. Someone might get promoted, demoted, or information could become declassified or no longer important.
+5. Without reliability, security wouldn't really mean much. Further, without the ability to access and change information that you need to, I'd imagine some integrity issues arise?
+6. Anything that involves downloading, or login, for access to sensitive information.
+
+Lecture 5
+
+1. For a military database, MLS or something would work I suppose.
+2. The policy is the actual implementation that makes the metapolicy function.
+3. Other students can't read a student's grades. A student can't write to his grade. A teacher can only write grades for his class.
+4. I imagine it could, but I don't know about a specific example.
+5. Students' SSN should be kept from anyone who doesn't need to know it in order to do something positive for the particular student.
+6. If you don't understand the metapolicy, then you don't really know what features/functionality to value over others and which to implement.
+
+Lecture 6
+
+1. The key to beating your enemy, I guess, is making sure they don't know your plans. Integrity could be important because otherwise people might follow bogus orders that an infiltrator wrote.
+2. Enemy spies would be the main threat.
+3. So that we can begin to understand implementations of security goals step by step instead of all at once.
+4. There is an increasing level which is a general clearance to access information at that level, and then need-to-know descriptors that further limit who can access information based on the role of the person/agent.
+5. All that matters for a security implementation is what to do with existing labels.
+6. High to low: 2 6 4 5 1 3
+7. High, Medium, Low; Accounting, General Staff, Combat Personnel
+8. Better safe than sorry.
+
+Lecture 7
+1. It could be their job title.
+3. Documents: Files. Humans: Processes
+4. Better safe than sorry, makes sure no extraneous information gets out to anybody.
+5. first: yes, they are subsets of each other. Second: no, crypto should have access to crypto. Third: yes, anyone can access unclassified.
+
+Lecture 8
+
+1. It gives us terminology to use to be precise when describing security relationships.
+4. They have to be the same.
+5. To read an object, a subject must have clearances that dominate the security restrictions on the object.
+6. There could still be other constraints that prevent the reading of the file besides just those clearances.
+
+Lecture 9
+
+1. If you only have Simple Security, then information passing to lower levels is restricted in reads, but since writes are not restricted, a subject with a high level clearance could write sensitive information to lower level objects which can then be read by lower level subjects, causing a leak of sensitive information.
+2. Because, as said above, they present an avenue for information leaks if sensitive informatino is written to objects of lower levels of security.
+3. Humans could just tell each other sensitive information in person, but programs/processes on a computer can only do so if an avenue (such as writing to lower level objects) is available.
+4. According to the *-property, a subject can only write to objects that are at the given subject's security level or above. Aka the subject must be dominated by the object.
+5. The subject and object must have identical security levels (and identical need-to-know labels)
+6. We add a special downgrader subject to the system and extend the -property with the proviso that an object’s level can be reduced in specific ways only if the object’s contents are reviewed by the downgrader subject including visual inspection by a trained human being.
+7. I think it is definitely a problem. Could you maybe make certain objects immutable? 
+
+Lecture 10
+
+1. I think, given weak tranquility, you could only lower a subject's level, otherwise you compromise security.
+2. I guess that strong tranquility adds unneccesary rigidity that adds little in terms of information security.
+3. If you lower the level of an object, then lower levels of subjects have access to presumably sensitive information.
+4. The information must have become less sensitive. (Declassified, no longer relevant, etc.)
+
+Lecture 11
+
+1. All objects could be given a low level and all subjects could be given a high level.
+2. Because there are typically a lot of subjects and objects, so an access control matrix could be very large and take a lot of memory space.
+
+Lecture 12
+
+1.
+      H{}---->H{A}
+       ^      ^   
+       |      |
+      L{}---->L{A}
+
+3. Because information can only move upwards.
+
+Lecture 13
+
+1. Since writes can only go up, and no one can read anything above them, it satisfies the metapolicy.
+2. As said earlier, again, you can only write up, and you can't read anything above you... So that's BLP.
+3. You create something at your level, which is like writing at your level which is allowed according to BLP. And you can't destroy anything below you just like you can't write to anything below you.
+4. That the lower level user gets a different response from the system depending on the existence (or not) of the object in question.
+5. So that you can perform all the steps in a loop and get more than 1 bit of information, and can use the same file name over and over.
+6. No
+7. It has to, if it did something different it would already know whether or not the queried file exists.
+8. That's the only way it can send different values. Otherwise SL would just get a repetitive stream of the same value.
+9. Whatever SL sees is information being passed from high to low, which violated BLP and the lattice model.
+
+Lecture 14
+
+1. Because it's not part of the system, and any information can be passed that way. It's just not relevant to designing a secure computer system.
+2. No, the read will always fail and give SL the same response.
+3. It resides in whether or not SL gets a resource not found or access denied error.
+4. It resides in how long its been since the lower level process was last scheduled.
+5. It resides in whichever cylinder is accessed.
+6. In the value of L as a result of the value of H.
+7. It just needs to terminate quickly.
+8. You need a way to check the power level.
+9. Anything that uses battery?
+
+Lecture 15
+
+1. You can pass sensitive information to someone/something that has malicious intent.
+2. You would have to know everything about the system and you would also likely reduce other useful aspects of a system (performance, memory, etc.).
+3. Fix it if it's obvious it's being used?
+
+Lecture 16
+
+1. If the file exists, you might get an error that you can't create the file.
+2. It means information in that row can be manipulated and read by different parties meaning that information could possibly be sent along that channel.
+3. No, because they relate to different aspects of the system, so there is no connection.
+4. Because you can get a sense of where to look for covert channels.

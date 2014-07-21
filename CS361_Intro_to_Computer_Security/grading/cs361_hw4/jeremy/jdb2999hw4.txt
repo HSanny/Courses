@@ -1,0 +1,161 @@
+Name: Jeremy Bouzigard
+EID: jdb2999
+CS Login: jeremy
+Email: jbouzigard@gmail.com
+
+CS361 Questions Week 4
+
+--------------------
+
+Lecture 53
+
+1. Because if a digital signature is not non-reusable, the signature can be attached and reused for any other message without S's approval or even knowledge.
+
+2. Because public key encryption is expensive to apply and while message may be arbitrarily long, the hash will be a fixed, finite, and short value and therefore cheaper to encrypt.
+
+3. R gains the assurance that the interchange is unforgeable because the inner encryption is done with S's private key which only S has, authentic because R can verify that it was sent from S by using S's public key, non-repudiation because the inner message is encrypted with S's private key, tamper-proof because it is encrypted with R's public key, and non-reuasable because the signature is not a separate piece of data, but intimately bound to the message.
+
+--------------------
+
+Lecture 54
+
+1. Certificate authorities are necessary to verify the accuracy of the binding of a public key to an identity.
+
+2. By signing the hash of the first message with its private key, X is acting as the certifying authority and in effect verifying the accuracy of the interior binding to any third-party who receives the certificate from Y. X is saying that you can trust that Y and Y's public key have this association.
+
+3. So that Z can recompute h({Y, Ky}) and compare it to the hash it received in the signed value, thereby giving high assurance the the values are accurate and not changed or corrupted.
+
+4. If Z has a public key for X but it is not trustworthy, then Z cannot trust the certificate that it receives from X and therefore gains no assurance about the binding between Y and Y's public key.
+
+--------------------
+
+Lecture 55
+
+1. At the root of the chain of trust must be some unimpeachable authority that will vouch for the given binding/chain of bindings. 
+
+2. The validity interval gives a range for how long a certificate is valid for. If a certificate is expired, there is no reason to trust it.
+
+3. If the recomputed hash value and the received value do not match, then the receiver has no assurance that the contents of the message were not altered or corrupted.
+
+--------------------
+
+Lecture 56
+
+1. The main cryptographic protocl previously discussed is the Diffie-Helman Key Exchange.
+
+2. If one step of the protocol is ignored, then any of the goals of sending a secure message, receiving a secure message, or protecting the confidentiality and/or integrity of a secure message may be compromised. Further, if the protocol is not followed exactly then it offers no assurances.
+
+3. In order to accomplish the task in slide 4, the ciphers must commute so that the original sender can "reach inside" past the receiver's encryption to undo their own.
+
+4. If the attacker store the three messages, they can just XOR them in combinations to extract any element of the messages. For M, XOR all three messages: [ (M XOR Ka) XOR Kb ] XOR [ ((M XOR Ka) XOR Kb) XOR Ka ] XOR [ M XOR Ka ]
+
+5. If the attacker store the three messages, they can just XOR them in combinations to extract any element of the messages. For Ka, XOR the last two messages: [ (M XOR Ka) XOR Kb ] XOR [ ((M XOR Ka) XOR Kb) XOR Ka ]
+
+6. If the attacker store the three messages, they can just XOR them in combinations to extract any element of the messages. For Kb, XOR the first two messages: [M XOR Ka] XOR [ (M XOR Ka) XOR Kb ]
+
+7. Because it is difficult to formalize secure protocols as even though that appear secure at first glance may be fundamentally flawed.
+
+--------------------
+
+Lecture 57
+
+1. Almost everything that happens on the Internet involves protocols -- sending an email, moving a file, everything is some kind of structured dialogue among two or more parties where the syntax, semantics, and synchronization are all necessary for successful completion of a task.
+
+2. Because the Internet is a very hostile, insecure environment but there are many activities on the Internet such as paying for a product, logging in, browsing a new website registering our private data, etc., where we want to achieve some type of security, including unicity, integrity, authenticity, confidentiality, and/or non-repudiation.
+
+3. There is a public key infrastructure in place and that each A and B has a reliable version of the other's public key.
+
+4. Each party wants to know that by the end the other party has the key and can use it; each party wants to know that they are communicating with who they believe they are.
+
+5. Yes, the goals (other than security) are accomplished.
+
+6. If an attacker C has the first two messages, then C can initiate a new run of the protocol with B using the previous message from step 1 as its value K. Then if that value K is plugged into the result that B sends back, C is able to extract the original K.
+
+--------------------
+
+Lecture 58
+
+1. Because this tells us the program could have been designed in a more parsimonious way. This would help remove complexity or potential vulnerabilities.
+
+2. Like above, this may be introducing complexity or vulnerabilities that do not need to exist to achieve the goals of the protocol.
+
+--------------------
+
+Lecture 59
+
+1. Because it is difficult to constrain the capabilities of an attacker or understanding what the attack might be because a clever attack is one the developers never thought of.
+
+2. The danger of a replay attack is that the attacker has records from an earlier run of the protocol and is able to insert them into a current run in such a way that the protocol's behavior is altered or compromised.
+
+3. Yes, such as in an interleaving attack where the attacker injects spurious messages into a protocol run with the intent to disrupt or subvert it.
+
+4. The attacker cannot interject an arbitrary message into the protocol flow because the attacker cannot encrypt a message with a key the attacker does not have.
+
+5. Because of the distributive nature of the system.
+
+--------------------
+
+Lecture 60
+
+1.  No, because the nonces are necessary to assure the freshness of a message.
+
+2. 
+Step 1: A is trying to identify himself to S and ask for a key to communicate with B. S is entitled to believe that the sender was A, A wants to communicate with B, and the message was fresh.
+Step 2: S is responding to A with a new key for use between A and B. A is entitled to believe that the message from S is fresh, that the message includes B's identity, the key, and and an encrypted message for B.
+Step 3: A sends to B the encrypted message originally from S. B is entitled to believe that A wants to communicate with B and that the included key originated from S.
+Step 4: B sends a new nonce encrypted with the new key to S to tell A that B has the key and wants to know if A also does. A is entitled to believe that B has the key and can use it.
+Step 5: A sends to B a response with the nonce adjusted go show that A has the key can can use it. B is entitled to believe that A has the key can can use it.
+
+--------------------
+
+Lecture 61
+
+1. Because the way that S knows the sender is actually A is because the message is encrypted with Kas. If an attacker knows Kas, they can send a message to S encrypted with this message to easily impersonate A.
+
+2. It enarlges the scope, but still a fair question because a key being broken is a practical concern in the use of these protocols.
+
+3. For the first, perhaps S should generate its own nonse in the encrypted message that is sent to B. For the second, perhaps the first message should be sent with a second layer of encryption.
+
+--------------------
+
+Lecture 62
+
+1. Otway-Rees guarantees to all parties involved that A, B, and S are who they say they are.
+
+2. Needham-Shroeder guarantees that A and B by the end have the new key, but Otway-Rees does not. On the other hand, Otway-Rees guarantees the identity of the message originator in a way that Needham-Shroeder does not.
+
+3. There must be an intermediate step between the encryption and decryption step, perhaps such as talking to a key server.
+
+--------------------
+
+Lecture 63
+
+1. Because protocols are crucial to the functioning of the Internet. It is important to get themn correct and make sure they meet their specification.
+
+2. Belief logic is a way to reason about what principals within the protocol should be able to infer from the messages they see. It is a formal system for reasoning about beliefs.
+
+3. Because the sender and receiver of any message, whether they are people or programs or processes, do not have a secure channel to directly communicate, the important thing to think about is belief -- what the sender/receiver believe to be true after receiving an encrypted message.
+
+--------------------
+
+Lecture 64
+
+1. Modal logic is a formal way to look at the deductive behavior of modals, qualifications on the truth of a statement. In this case, it is a modal logic of belief.
+
+2.  The idea is that if A and B share a key and a A receives a message encrypted with that key, then the message must have come from B. Intuitively, it makes sense that if no one else has the key, no one else could have sent the message.
+
+3. The intuitive idea is that if A if B said something that A knows is fresh (just said), then it makes sense for A to believe that B believes whatever it was B said. Why else would B say it?
+
+4. The intuitive idea is that if someone is an authority on a subject, it makes sense to believe the expert on the matter.
+
+5. Idealization is a way of formalizing the goals of a protocol. The process of idealization is necessary to think about what a given step in the protocol is attempting to accomplish. This is useful, for instance, in identifying parts of a message that do not contribute to the beliefs of the recipient and can therefore be omitted.
+
+--------------------
+
+Lecture 65
+
+1. Plaintext is omitted because it can be forged.
+
+2. Because the idea of BAN is to formalize the goal of every step. If the goal of a particular step somehow refers to something that will happen later in the protocol, then it makes sense that it will appear earlier.
+
+3. It forces you to write down the assumptions and how they are used to carry out the proof. If an assumption is surprising or dubious, then offers a good place to search for vulnerabilities.

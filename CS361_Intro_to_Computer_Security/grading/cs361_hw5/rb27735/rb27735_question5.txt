@@ -1,0 +1,294 @@
+Name: Ruben Baeza
+UTEID: rb27735
+CS login: rb27735
+email: ruben.baeza@utexas.edu
+
+
+CS361 Questions: Week 5
+Lecture 66
+1. What is PGP?
+	"PGP is a 'end-run' around government restrictions" - Lecture 66, slide 3
+
+2. What motivated Phil Zimmerman to develop it?
+	Distrust for the government and belief that everybody should have access to privacy.
+
+3. Does PGP provide effective security?
+	Yes
+
+4. If PGP is freeware, why would anyone bother to purchase sup
+port?
+	No longer freeware, but this is tailored more specifically towards businesses.
+
+Lecture 67
+1. Explain the PGP authentication protocol.
+	The sender creates a message and generates its hash. Then sender signes the hash 
+	with private key and adds it to the message. The receiver uses the public key of the
+	sender to make sure that it was sent by him/her and recover the hash code. The receiver
+	then generates a new hash for the message and sees that it matches the decrypted hash.
+
+2. Explain the PGP confidentiality protocol.
+	Sender generates a message M and random session key K.
+	M is encrypted using key K.
+	K is encrypted using the recipient's public key and added to message.
+	Receiver uses private key to recover session key.
+	the session key is used to decrypt the message.
+
+	This is like authentication, however a new key is used for each communication 
+	instance.
+
+
+3. How do you get both authentication and confidentiality?
+	Use authentication on original message then confidentiality on resulting message.
+
+
+Lecture 68
+
+
+1. Besides authentication and confidentiality, what other “
+services” does PGP provide?
+	compression, email compatibility and segmentation.
+
+2. Why is compression needed?
+	In order to make transferring large messages easy.
+
+3. Why sign a message and then compress, rather than the other
+way around?
+	So the hash doesn't depend on the compression algorithm.
+
+4. Explain radix-64 conversion and why it’s needed?
+	Needed in order to add more confusion and for error checking. It consists of
+	taking the 8-bit octets and separating into groups of three to generate four
+	ASCII characters.
+
+5. Why is PGP segmentation needed?
+	So that large messages can be split into smaller ones for ease of transfer.
+
+Lecture 69
+
+1. What are the four kinds of keys used by PGP?
+	Session, public, private and passphrase-based keys.
+
+2. What special properties are needed of session keys?
+	It is only used once and the size of the key is dependent on the ecryption algorithm
+	used. Previous session keys are used to generate new session key.
+	
+3. How are session keys generated?
+	n-bits from a previous key, and n/2-bit blocks (2) from user keystrokes. These are
+	encrypted and combined to give the new key.
+
+
+4. Assuming RSA is used for PGP asymmetric encryption, how ar
+e the keys generated?
+	find a large (>200 bits) prime number to use instead of previous session key.
+
+
+5. How are the private keys protected? Why is this necessary?
+	Private keys are stored encrypted with a user-supplied passphrase.
+	The keys are encrypted using CAST-128 with 128 bits of hash code as key.
+	the hash code is generated from the passphrase using SHA-1.
+
+CS361 Questions: Week 5
+2
+Lecture 70
+1. If a user has multiple private/public key pairs, how does h
+e know which was used when he receives an encrypted message?
+	generates an id likely to be unique for a given user (least significant 64 bits
+	of the key).
+
+2. What’s on a user’s private key ring?
+	their own public/private key pairs
+	timestamep when the key pairs were generated,
+	key ID, 64 least significant bits of public key
+	public key: the public protion of the key
+	private: the private protion, encrypted using a passphrase
+	user id, usually the user's email address may be different for different key pairs.
+
+3. What’s on a user’s public key ring?
+	public keys of others
+	timestamp: when the entry was generated
+	key id
+	public key
+	user id, identifier for the owner of this key, multiple ids may be associated with a single public key
+
+4. What are the steps in retrieving a private key from the key ring?
+	PGP retrieves receiver's encrypted private key from priate-key ring, using the key ID field in the session key component of the message as an index.
+	PBP prompts the user for the passphrase to recover the unencrpyted private key
+	PGP recovers the session key and decrypts the message
+
+5. What is the key legitimacy field for?
+	indicate how much PGP trusts that this is a valid public key for that user
+
+6. How is a key revoked?
+	owners issue a signed key revocation certificate
+
+Lecture 71
+1. Explain the difference between the consumer and producer
+problems. Which is more prevalent?
+	Consumer problem - attacker is in the middle of the client and service disrupting communication
+	Producer problem - attacker produces so many requests of the server that it is overwhelmed.
+
+2. Explain syn flooding.
+	an attacker changes the SYN packets' return addresses, thus the sever is trying to maintain the connections with a ghost client. Eventually all the servers connections are with this ghost client and no other requests get through.
+
+3. Why are the first three solutions to syn flooding not ideal?
+	1- can take up too many resources
+	2- might mess with legitimate connections that are slow
+	3- hard to determine
+
+Lecture 72
+1. Why does packet filtering work very well to prevent attacks?
+	because they prevent any connections that might resemble an attack
+
+2. What are the differences between intrusion detection and
+intrusion preven-
+tion systems?
+	intrusion detection works to detect intrusions as soon as they happen
+	while intrusion prevention works to prevent intrusions before they happen
+
+3. Explain the four different solutions mentioned to DDoS at
+tacks.
+	1 - if you have more servers than attackers can ever attack it would be impossible for DDoS attacks
+	2 - filter packets usingpattern recognition
+	3 - slows down everybodies connections that way too many resources arent all used on one client
+	4 - ask all clients to send in more information, that way legitimate connections have a higher chance of getting their data through.
+
+Lecture 73
+1. Explain false positive and false negatives. Which is wors
+e?
+	false positive - classify legitimate connection as an attack
+	false negeative - classify attack as legitimate connection
+
+	Depends on what the system is trying to accomplish, but generally a false negative is worse
+	since it is an attack that went undetected
+
+
+2. Explain what “accurate” and “precise” mean in the IDS cont
+ext.
+	accuracy is when a system can detect all attacks
+	precision is when a system never reports a legitimate connection as an attack
+
+
+3. Explain the statement: “It’s easy to build an IDS that is ei
+ther accurate or precise?
+	Because of the existence of false positives and negatives you can never get rid of both. A system that seeks out attackers will eventually mistake a legitimate connection as an attack.
+
+4. What is the base rate fallacy? Why is it relevant to an IDS?
+	Base rate fallacy says that with rare events in a population, you will have false positives.
+	Says that there will always be false positives, especially when attacks are less abundant than
+	legitimate connections.
+
+Lecture 74
+
+1. What did Code Red version 1 attempt to do?
+	launch a DoS attack on whitehouse.gov
+
+2. Why was Code Red version 1 ineffective?
+	it hadflaws in its design, specifically the static seed
+	it could be removed with a reboot
+
+3. What does it mean to say that a worm is “memory resident”? What are the
+implications.
+	it means that it is not saved on disk and remains only while the system is on.
+	It is removed during reboot. One can easily disinfect their system. Also, it is harder
+	to get a hold of virus.
+
+4. Why was Code Red version 2 much more effective than version 1?
+	used a random seed generator
+
+Lecture 75
+1. How was Code Red II related to Code Red (versions 1 and 2)?
+	targeted the same vulnerability
+
+2. Why do you suppose Code Red II incorporated its elaborate propogation
+scheme?
+	in order to makeit harder to remove and easier to infect new hosts
+
+3. What did Code Red II attempt to do?
+	create "zombies" for future attacks
+
+4. Comment on the implications of a large population of unpatched machines.
+	They could all be used as zombies and cause various DoS attacks everywhere.
+
+5. Comment on the report from Verizon cited on slide 6. What are the lessons
+of their study?
+	That everybody should update and patch their systems as updates roll out.
+
+Lecture 76
+
+1. Why is a certiﬁcation regime for secure products necessary and useful?
+	most people do not have the expertise required to accurately asses products
+
+2. Explain the components of an evaluation standard.
+	requirments that define security functionality - state what the security system should accomplish
+	set  of assurance requirements - needed for establishing the functional requirements or what the 		product itself should accomplish
+	methodology for determining that the functional requirements are met - how to test whether the  	product does what it says it does
+	measure of evaluatio result indicating the trustworthiness of the evaluated system - a scale by 
+		which people can compare trustworthiness ratings
+
+3. Why would crypto devices have a separate evaluation mechanism?
+	Because they require more extreme testing in order to try and make sure that no possible holes
+	exist
+
+4. Explain the four levels of certiﬁcation for crypto devices.
+	basic security - the system employs at least one algorithm that has already been aproved
+	improved physical security - the packaging makes it easy to determine whether the device may 
+		have been compromised
+	strong tamper-resistance - the device makes it difficult to tamper with
+	complete envelope of protection including immediate zeroing of keys upon tampering - failsafe to 
+		delete all information upon discovery of tampering
+
+Lecture 77
+1. What is the Common Criteria?
+	Made up of Common Criteria documents, Common Criteria Methodology, country specific evaluation scheme. It is a common secure systems evaluation criteria adopted by ~26 countries
+
+2. What’s “common” about it?
+	It is used by many countries,
+
+
+3. Why would there be any need for “National Schemes”?
+	because there is always some suspicion when trusting foreign agencies
+
+
+4. Explain the difference between a protection proﬁle and a security target.
+	protection profiles are what the security target should be able to cover security-wise
+
+
+Lecture 78
+1. Explain the overall goal of the protection proﬁle as exempliﬁed by the WBIS
+example.
+	the detection of invalid ID tags, invalid bin messages and fault tolerance
+
+2. What is the purpose of the various parts of the protection proﬁle (as exempliﬁed in the WBIS example)?
+	they help provide a system in which decisions are made on whether threats and assumptions are being addressed by the correct mechanisms - Slides for Lecture 78
+
+3. What is the purpose of the matrix on slide 7?
+	illustrate the mapping of threats and security objects
+
+Lecture 79
+
+
+1. Explain the overall goal of the security target evaluation as exempliﬁed by
+the Sun Identity Manager example.
+	what security profile is defined for the target and see how that product delivers that security profile and the extent to which it carries it out effectively
+
+2. How do you think that a security target evaluation differs from a protection
+proﬁle evaluation?
+	security target evaluation evaluates how the target concerns itself with security while protection profiles specify the security goals for the target.
+
+Lecture 80
+1. What are the EALs and what are they used for?
+	EALs are the tests carried out to determine the rigor with which a product was tested.
+
+2. Who performs the Common Criteria evaluations?
+	independent 3rd party organizations
+
+3. Speculate why the higher EALs are not necessarily mutually recognized by
+various countries.
+	there is always suspicion when dealing with other countries and trusting their evaluations
+
+4. Can vendors certify their own products? Why or why not?
+	No the tests are made by independent 3rd party organizations in order to keep integrity
+
+5. If you’re performing a formal evaluation, why is it probably bad to reverse
+engineer the model from the code?
+	Because the product should be made to conform to the goals, not creating the product then making up the goals and claiming it meets them.

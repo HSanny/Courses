@@ -1,0 +1,151 @@
+Nathan Park
+ncp299
+ncpark92
+nathan.c.park@gmail.com
+
+CS361 Questions: Week 4
+
+Lecture 53
+
+1. Digital signitures must be non-reusable so that they can correctly do their job of confirming authenticity. If they can be reused then anyone can copy the signature and pretend to be you.
+
+2. Messages can be arbitrarily long but the hash is always a fixed value.
+
+3. It gains all the assurances from slide 3 which are unforgeable, authentic, no repudiation, tamperproof, and not-reusable.
+
+
+Lecture 54
+
+1. Certification authorities allow for two entities who are mutally suspicious to establish trust.
+
+2. It lets all who see this certificate know that X himself signed this message and it is signed with his private key which only X can have.
+
+3. The hash is needed so that anyone reading the message can figure out if the message has been tampered with.
+
+4. If there is no trustworthy key, then there is no way to tell if it was really signed by X.
+
+
+Lecture 55
+
+1. The root of a chain of trust is the person with the highest authority which means they are basically the certification authority. 
+
+2. You do not want a certificate to be valid forever because the person of trust may lose their status as trustworthy in the future.
+
+3. If the hash and the received value do not match then it means the message has been tampered with.
+
+
+Lecture 56
+
+1. Diffie-Hellman was one of the protocols previously mentioned.
+
+2. If one step of the protocol is ignored then it is no longer a protocol. It will be impossible to tell if the other party is also doing the protocol.
+
+3. There is no way to remove the inner lock unless the cipher can commute.
+
+4. Because of the properties that XOR has, if an evesdropper has the three messages sent then he can XOR combinations of them in order to get the other variables.
+
+5. He can XOR the second message and the third message which would cancel out the majority of the message and leave Ka.
+
+6. he can XOR the first message and the second message which would leave Kb.
+
+7. The protocols must be secure which is often hard to do because you must consider the vulnerabilities and it must also be fairly simple so that you can reasonably follow the protocol.
+
+
+Lecture 57
+
+1. In the context of the Internet, protocols protect the user from malicious parties on the internet when trying to use programs and access webpages.
+
+2. Cryptographic protocols are the same thing as protocols except adding in the use of cryptographic mechanisms.
+
+3. There is an assumption that there is a public key system in place.
+
+4. The goal is for each party to have the key and be able to use it and for both parties to know that they are communicating with the other.
+
+5. The goals are seemingly satisfied because A has his message signed and B has his message signed which allow each other to know who sent the key.
+
+6. There is no guarantee that B receives the message or is even expecting the message.
+
+
+Lecture 58
+
+1. The more messages or steps there are the more vulnerabilities there could be.
+
+2. It is more efficient to leave only messages that need to be sent securely for the protocol.
+
+
+Lecture 59
+
+1. There are many ways in which an attack can occur and so it is hard to define exactly what an attack is.
+
+2. A replay attack is one where an attacker records a message and replays them at a later time which can be used to impersonate an identity.
+
+3. There could be an attack where the information is tampered with but the actual content is not changed.
+
+4. The attacker cannot make his own message with keys that he does not have.
+
+5. It means that the message sent must be of a form the recipient can identify and respond to.
+
+
+Lecture 60
+
+1. It would not work without nonces because the nonce allows the parties to know that the message was the first time it was sent so an outside party cannot send the message again.
+
+2. A is trying to say that he has a message to send to B
+	S believes that A is trying to send a message to B
+   S is trying to say here is what you can send B to let him know that its safe
+	A now has the key and can send B the key
+   A is sending B the message with his signature
+	B knows that S has received this message before so its safe
+   B is letting A know that he got the message
+	A knows B has gotten his message
+   A is letting B know that he knows that B got the message
+	B knows that A got his confirmation
+
+
+Lecture 61
+
+1. Message 3 is the unprotected step which means that B will not know that it is not A sending him the message.
+
+2. It is not fair because you are using the protocol under the assumption that it is a strong encryption.
+
+3. Add nonces to the third message to shore up that problem.
+
+
+Lecture 62
+
+1. It seems to guarantee that the messages are actually from A and B.
+
+2. Otway-Rees does not guarantee that A has received the message unlike Needham-Schroeder.
+
+3. You could add the third member S who which would add another key that the attacker has no access to.
+
+
+Lecture 63
+
+1. Verification allows you to find out if there are potential flaws in the protocol.
+
+2. A belief logic is a formal system for reasoning about beliefs. 
+
+3. You have to figure out some initial assumptions about the state of knowledge in order find the flaws.
+
+
+Lecture 64
+
+1. Modal logic is one that uses several modal operators in order to show belief.
+
+2. This is saying that since A believes that A and B share a key that if there is a message that is locked with a key that B probably sent that message.
+
+3. This is saying that if B says this new information that A believes that B believes this new information.
+
+4. This is basically stating that if you know an expert in a field and that expert believes something that you are going to believe the expert.
+
+5. Idealization attempts to turn the message sent into its intended semantics. It is needed in order to show what each party is seeing and believing at each step of the protocol.
+
+
+Lecture 65
+
+1. Plaintext is ommited because it can be forged.
+
+2. Because it is using logic on protocol which is a series of steps that both parties are trying to follow, there are things that are assumed.
+
+3. BAN shows what can be proved and what is just assumption.

@@ -1,0 +1,121 @@
+Name: Alex Fortin
+EID: AF22574
+CS Login: afortin
+Email: alexfortin@utexas.edu
+
+Lecture 34
+1. If you divide by entropy, that means you are dividing by the best possible encoding scheme. Since you cant get the perfect encoding, it is the greatest average rate
+2. By resending code over and over again, you can correct errors you recieved because of the noise. Basically you will piece the message eventually
+
+Lecture 35
+1. -(log1/10)
+2. Not all letters are equally likely, and not list of possibilities will fit all scenarios
+3. zero is all letters equally likely, first assumes each letter is independent of each other, second assumes some letters follow others more frequently, and third is 3 letters go together
+
+Lecture 36
+1. Its hard to know all probabilities for any given scenario, more than 1 perspective so entropies from person to person or machine to machine can change
+2. The more an observer knows, the less uncertainty they have which results in a lower entropy
+3. Entropy measures the amount of redundancy in the encoding
+
+Lecture 37
+1. You want to encrypt the message so people you dont want to get ahold of your treasure dont. Only people with the key, people you want to have access, can access the treasure
+2. You dont have to have a key, you just need a way to decrypt and encryt file, which can be done in many other ways
+3. It shouldnt have any effect on the contents, otherwise you would never be able to get the information
+4. Regularities about the key. Attackers can use it to help decrypt 
+
+Lecture 38
+1. P
+2. D(P)
+3.It is redundancy which can help you crack the key
+4. Frequencies of symbols, which goes back to redundancy
+
+Lecture 39
+1. It would take a very long time so not feasible
+2. That is how many combinations divided by 2 are possible
+3. Almost all cyphers use a combination of the 2 for encryption. In combination it is powerful
+4. Diffusion spreads regions of the plaintext to make it hard to decrypt, confusion is the making the file hard to extract
+5. Both are equally powerful. Confusion is better with subsitution, diffusion is better with transposition
+
+Lecture 40
+1. Monoalphabetic is where each symbol is uniformly mapped to tplaintest regardless of position. Polyalphabetic depends on position of plaintext
+2. However you specify the mapping, could be a table
+3. k! is the amount of different solutions there are based on k elements
+4. The key is shifting the letter by 2
+5. 25
+6. Probably not. You most likely wont have to try all the solutions before you find the correct one
+7. Start from the ciphertext, go vertical and horizontal on the table to get the letter and key
+
+Lecture 41
+1. You have 26 options for each letter, you can reuse letters, so 26^3 or 17576
+2. simple subsititution so since the last 2 letters match, you dont need to figure out the last letter
+3. No. There will always be some information that leaks whether from the software side, or user side
+
+Lecture 42
+1. Every possible plaintext could be the pre-image of the ciphertext so you cannot reduce the search space
+2. You have to know nothing about the key, otherwise you can reduce the search space and cannot be perfect anymore
+3. You have to send the key with the crypted text. The sender and receiver must know a piece of information
+
+Lecture 43
+1. It has time complexity linear to length of message. Hurts very long messages
+
+Lecture 43
+1. Symmetric
+2. Management is deciding which key to use, distribution is figuring out how to give the key to others
+3. No because the keys are different and you need the other key to decrypt
+4. Bothhave its advantages but I think public is because even if someone gets your key, the message you sent is still safe
+
+Lecture 45 
+1. Harder to decrypt(higher diffusion), more complicated. Immune to tampering (good integrity)
+2. You dont want to change the plaintext ever, so you never want it to be malleable
+3. They are malleable by design
+
+Lecture 46
+1. 1st step where you replace byte by byte
+2  The 2nd step where you shift the state left 0, 1, 2  bytes
+3. You have to multiply by the inverse array which takes longer
+4. You take a block size and it goes though a "round" which is 4 steps to decrypt the data
+5. The more rounds you have, the more your data is mangled and the harder it is to break
+
+Lecture 47
+1. Identical blocks have the same cypher text
+2. Randomize plaintext blocks before encrypting
+3. Observer can observe changes over time, if they can find the ciphertext blocks he can dervive relationships
+4. Doesnt use blocks of data, instead a seamless stream like a one-time pad
+
+Lecture 48
+1. The private keys themselves
+2. If isnt easy to compute and easy to invert, then the key will easily be broken
+3. Encryption depends on complex operations, not a simple bit-wise operation
+4. {P}k^-1
+5. Asymmetric are less efficient than symmetric
+
+Lecture 49
+1. You can use either keys since they are used in a symmetric fassion
+2. Easy to multiply two primes, hard to figure out with primes were used
+3. Yes, but it would take a very long time
+4. Only A has to key which to decrype the message
+5. Anyone might have A's public key
+6. Since nobody else but B has the private key
+7. Anyone has B's public key, so someone could capture the message and eavesdrop
+8. You have 2 sets of keys, one for authentication and one for confidentiality
+
+Lecture 50
+1. For speed and efficiency sake, otherwise it would be pointless to use a hash
+2. Strong if it is hard to find two messages such that m1=m2 in the has, weak otherwise
+3. Preimage is when its hard to find h=f(m). Second preimage is if we have an message and a has value, its hard to find another value that hashes to the same value
+4. You have to look at 1.25 * 2^64 arguments before you find a collision
+5. You have to look at 1.25 * 2^80 arguments before you find a collision
+6. It binds the bytes to the file, but doesnt hide them
+7. By binding bytes to a file together in a way that makes any alterations very apparent. You "seal" the file
+8. Create a 128 bit hash and use the RSA encryption which would guarentee confidentialtiy through rsa and integrety though the has
+
+Lecture 51
+1. Yes, you just need both public keys and since they are public you have them
+2. Yes, first you know it came from S and then its confidentially sent since only you can read the contents
+3. No, in the first scenario you have to know S's private key which R doesnt have
+4. You need to know the person sending it is who they say they are and the information cant be decrypted by anyone else. Share key andcommunication so the message is sent in confidence and securly
+
+Lecure 52
+1. You would know A's secret number as well as B's
+2. You couldnt compute the secret number ever
+3. You couldnt compute the secret number ever

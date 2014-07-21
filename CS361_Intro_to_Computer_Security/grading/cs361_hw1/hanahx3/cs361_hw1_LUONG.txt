@@ -1,0 +1,161 @@
+me: Hanah Luong
+	EID: hkl289
+	CS login: hanahx3
+	Email: hanah.luong@utexas.edu
+	
+
+
+	LECTURE 1
+	1. - personal security, communication security, network security, system security.
+	2. "security", they protect whatever they are preceded
+	3. Yes. 
+	4. Not as likely as a PC. I use a Macbook
+	5. authentification
+	6. virus protection programs, malware detection, adblockers... 
+	7. no. It is possible but, companies get hacked someone or another all the time.
+	8. - to protect confidentiality, availability, integrity
+		- cyberthreats are a exicentral threat to the US
+		- enhance our own protection
+		- improve overall cyber security
+
+	LECTURE 2
+	1. -many parts to compromise (hardware, software...)
+		- systems are built for use not security
+		- must ensure had things never happen
+		- knowning all bad senerios
+		- defeat all malicious adversaries and vulnerabilities
+	2. no, you have to be able to think of all possible senarios that can go wrong
+	3. the defender must find all openings to secure while the attacker only needs one.
+	4. yes, they are just emphaszing that if you can gt to your data there is a possibility others can as well.
+	5. you can either be able to get onto a sever conviently and quickly or it might be difficult and tedious because you have to use a specific netowrk and passwork login.
+
+	LECTORE 3
+	1. possibility that a particular threat will adversely impact an information system by exploiting a particular vulnerability.
+	2. Yes.
+	3. - ACCEPT: connecting to shared servers are prone to attack.
+		- AVOID: downloading from sketchy websites
+		- MITIGATE: back my files to an external
+		- TRANSFER: back my files to an external
+	4. You buy security and pay most attention to the vulnerabilities that get attacked most often.
+	5. technical economics psychological
+
+	LECTURE 4
+	1. aspects of security vs mechanisms used to protect the aspect
+	2. all of these are important. it just depends on the situation
+	3. you group and categorized databased on who should be able to see what.
+	4. overtime something might be useful for everyone to know. Or someone may get highly promoted and need to access these materials
+	5. threats to availability is denial of service, which makes some unavailable when we want it and unrelable to be there all the time or when we want it on demand
+	6. buying something on amazon, we dont want amazon ro rhink anyone can pretend to e you and buy things with your account. We also don't want to be giving our money to a site pretendings to be amazon. 
+
+	LECTURE 5
+	1. privacy for our calls. confidentiality in the info. 
+	2. the policies help achieve the metapolicy
+	3. - only be changed by the professor
+		- only viewed by the student
+		- will stay there aslong as it is necessary
+	4. yes. we want some information, but don't want it exposed.
+	5. confidentiality for the SSN at all times; prevent identity theft
+	6. if you don't know exactly what you're trying to accomplish its hard to know what you should do to accomplish it.
+
+	LECTURE 6
+	1. Military had the issue of multilevel security problems where information had various degrees of trustworthiness and sensitivity levels
+	2. very high level information may be leaked to lower levels.
+	3. there will be counter intuatives later
+	4. they contain hierarchical and a set of categories
+	5. we only care about the sensitivity of certain ones, probably a security officer does it all.
+	6. HIGH TO LOW
+		- normandy invasion 
+		- british broke german enigma
+		- jones raise
+		- smith raise
+		- baseball game
+		- chopped beef
+	7. top secret: high, confidential: medium, unclassified: low
+	8. if there is something top secret in the document we need to prioritize our confidentiality for that one piece.
+
+	LECTURE 7
+	1. what information that person is authorized to access 
+	2. documents: indicate sensitivity, type of info in the file
+		humans: are they allowed or not. " clearance level " they must match the file
+	3. computers: their sensitivity information humans: their trustworthiness
+	4. a person trying to do his/her job should have access to just enough info to do so
+	5. yes, it makes sense the persons clearance level is higher than the sensitivity when the access is yes.
+
+	LECTURE 8
+	1. so that we can more specifially group the different aspects of examples we use; computers programs, humasn can all be subjects
+	2. no one entity dominated another
+	3. !(A >= B) and !(B >= A); total order requires: totality, transitive, antisymmetric
+	4. they would have to be the same clearance level
+	5. it is a  neccessary condition, but not a sufficient condition, because there might be other security measures
+
+	LECTURE 9
+	1. this is only enough for read acess, but not write access
+	2. someone of higher read clearance can leak top secret information down.
+	3. there could be more malicious malware that moved our information down the hieracrchy
+	4. you cant write information down the hierarchy
+	5. high enough to read and not trying while below its leel so basically only to the direct corresponding level and topic
+	6. unclassified account
+	7. violation of integrity
+
+	LECTURE 10
+	1. you wouldn't want to change anything that violated the *-property
+	2. you would never want to change the security of something sensitive
+	3. there could still be info that is suppose to be confidential, like a write down
+	4. - simple security - *-property - tranquility
+
+	LECTURE 11
+	1. all objects low all subject high
+	2. because there could be thousands of components to match up
+
+	LECTURE 12
+	1.
+		H{A}
+		^ ^ 
+	   /   \
+	  /		\
+	H{}		L{A}
+	  ^     ^
+	   \   /
+		\ /
+		L{}
+
+	2. LUB; highest level and superset
+		GLB; lowest level smallest set between the 2
+	3. it is a the goal of the flow on information
+
+	LECTURE 13
+	1. BLP does not allow information to flow down
+	2. youcan only write up, info flows up and never down
+	3. you can only create and destory up because it keeps sensitive information high above, satisfies integrity
+	4. the operations for both ends must be in the same order
+	5. you need to start a new and newly created everytime. this is the important part, the creation.
+	6. they are the same files
+	7. you can't know the bahavior before hand
+	8. inorder to send different messages, modifier
+	9. BLP, info can't flow high to low
+
+	LECTURE 14
+	1. flow is between subjects of the system with respects to the metapolicy, high and low. two humans talking do not follow these policies. these people are just dumb if they release sensitive information just by talking. 
+	2. no, SH does not change from send 0 and send 1. Also does not follow BLP
+	3. in a error response "storage covert channel"
+	4. "covert timing channel"
+	5. send 1 bit information; aspects of timing and storage
+	6. "implicit channel"; control flow through program value of L influanced by H
+	7. you have to wait longer to get a longer termination; you need a noticable difference between a quick termination and a long termination to send a message
+	8. You must be able to gage/ measure power usage/ flow
+	9. any device that processes anything with heavy/light power usage
+
+	LECTURE 15
+	1. it is less likely to suspect it
+	2. if they are connected, it is typically possible
+	3. existance, bandwidth, noisy/noisless
+	4. getting a response back when you try to create a file up/ error message
+	5. sender can coordinate sequencing thier access and modify to shared resources and communicate
+
+	LECTURE 16
+	1. You can't directly get that information from the recieving end; you have to infer it.
+	2. there is a mechanism where someone can modify and someone can referencel which is exactly what is needed for a covert channel to exist
+	3. not neccessaryily, just tells us it potentially can be there, it depends system semantics and system implementation. There are different resources
+	4. to identify covert channels
+
+

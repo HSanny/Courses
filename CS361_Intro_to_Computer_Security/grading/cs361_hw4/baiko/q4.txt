@@ -1,0 +1,90 @@
+Name: Justin Baiko
+EID: jb39998
+CS Login: Baiko
+Email: baiko@utexas.edu
+
+
+53.
+1. Its important to be non reusable because someone shouldn't be able to use it over and over again for the same transaction.
+2. The hash message is typically signed because public key encryption is expensive and the value is a finite value.
+3. It assures that no one but R can take off that level of encryption.
+
+54.
+1. The importance of certificate authorities allows a user to get vouched that its a reliable company.
+2. X signs the hash of the first message with its private key because it binds a public key to an identity.
+3. Creates a unique identity.
+4. If it wasnt trustworthy you couldn't trust that they have an association between each other.
+
+55.
+1. At the root is an unpeachable authority.
+2. The validty interval indiciates how long it is valid for.
+3. Means that it is not a trustworthy certificate.
+
+56.
+1. Adding locks on the box to make sure.
+2. It can be intercepted and maybe not the best way to do it.
+3. It allows you to put a lock on the locked box.
+4. Who stores three messages can extract any M ka or Kb by XOR it.
+5. XOR kb
+6. XOR ka
+7. Because it can be hard to implement mechanisms.
+
+57.
+1. They protect e-mails, files everything.
+2. e-mails.
+3.That the goals match the protocoals.
+4. We have there public keys
+5. They are able to communicate. yes.
+6. We assume they are delivered.
+
+58,
+1. Allows them to see if the messge has changed.
+2. Because it knows the method of encryption.
+
+59.
+1. there are many answers. depends on the context.
+2. interjecting messages can mess up flow.
+3. yes, you could have the key.
+4. the protocol is robust and secure. the information can't be accessed.
+5. the party wont know anything about whats happening in its own view and any party won't know the protocol is occuring unless sent a message.
+
+60.
+1. No it makes sure it is not a message from a previous protocol.
+2. Sender saying:
+   Reciever infering:
+
+step 1. ss: a saying to s wake up i want to communicate with b
+step 2. ss: ka gets a key
+step 3. ss: sending a key from a to b.
+        rs: b is getting a key from s and a.
+step 4. ss: b generates a nonce
+        rs: gets a new encryption key to a
+step 5. ss: a sends b a response nb-1 encrypted with ab
+		rs: b gets encryption for a.
+
+61.
+1. A can be impersonanited by using his old key to another server.
+2. Yes if it is not the right key.
+3. Come up with new system implementations to solve the current problems.
+
+62.
+1. to communicate a session key K securely to B and recieve acknowedgement to a that b has the key.
+2. No not really.
+3. A has to recieve a fourth message with kab private key.
+
+63.
+1. Because it is really easy to get them wrong.
+2. Belief logic is reasing about principals within the protocal to infer messages they say. Allows abstract proofs.
+3. The beliefs allow a programmer to integrate into the program the protocal logic.
+
+64.
+1. modal logic is a belief of logic used in BAN
+2. if a believes kb and a sees then xb then it must be from b. formalizes a pattern of inference.
+3. if b once said it a believes a believes b said it.
+4. if a believes b has jurisdiction over x and abelieves b is x than a is x.
+5. looking at each step and figuring out what each step is saying in terms of beliefs.
+
+65.
+1. it is omitted to help idealize the model
+2. in order for it to work you have to generate beliefs that allow you to see the whole context of the protocoal that is is operating.
+3. because idealization removes assumptions.

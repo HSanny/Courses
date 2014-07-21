@@ -1,0 +1,48 @@
+Holden Smith
+EID: hrs534
+login: holden
+
+
+Lecture 1:
+
+1. The term security is incorporated into many other terms that affect my life such as personal security, national security and computer security. In all of these cases, security means the protection of assets against attack in relation to each subject.
+
+2. All of these terms have the same goal in common, that they are all trying to protect a certain asset from being harmed or influenced by attackers.
+
+3. I have been a victim of lax security when my computer was compromised by a virus after failing to install antivirus software.
+
+4. I would currently rate it at unlikely to be infected. This is because I have run multiple pieces of software which are designed to tell me whether or not I am infected. This does not guarantee anything, though.
+
+5. The security measures imployed on my laptop are password protection, physical security (it never leaves my possession), antivirus software, antimalware software, and the fact that I don't visit types of websites that are known for being more likely to harbor viruses.
+
+6. I think that these factors are relatively affective against generic, every-day attacks but a motivated attacker who singles me out could probably compromise my security relatively easily. This risk is mitigated by the fact that I don't store or access sensitive info on my laptop.
+
+7. Despite that fact that it is a very inflamatory statement, I do think that there is some truth to the FBI quote. Since so many aspects of our nation's industry, finanacial system and day-to-day operations rely completely on computers and their ability to function securely, I do think that the threat of other nations attacking with intent is very real. With this in mind I think that it alone would not end our country but it certainly would "challenge" that existence due to our reliance on these computer systems.
+
+8. It is important to learn about computer security to protect thses digital and computing assets that we as individuals and as a nation require to make our livelihoods. Without their security, our information and our ability to function as a technologically advanced people are at risk.
+
+
+Lecture 2:
+
+1. In addition to the given factors, security is difficult because of how easily people can learn how to to become an attacker. The resources available to hackers makes computer security difficult. 
+
+2. Depending onthe cmplexity of the program, there is almost certainly not a way to enumerate the bad things that could happen. From the countless hardware failure modes to the many ways that software can be exploited, there are too many ways that a program can be compromised to count.
+
+3. There is an assymetry between the attacker and the defender because the defender spends all of his time securing and attack-proofing the many different ways he thinks his system can be compromised. The attacker on the other hand only has to find a single unprotected way in.
+
+4. If they are talking in absolutes, then yes these quotes make sense. However, a goal of 100% security is often unrealistic therefore making these statements less truthful. There is alaways a tradeoff between security and usability, so I can only partially agree with the two statements.
+
+5. The statement means that simply using and accessing your system, an inherent security risk is involved. TO remove that risk, you must place your system in an unusable state so that not even you can accidentally compromise it. This means that to gain some usability, you must trade some security.
+
+
+Lecture 3:
+
+1. Risk s the possibility that a particular threat will adversely impact an information system by exploiting a particular vulnerability.
+
+2. Yes, I do agree that software security is about managing risk. Since ou can never be 100% secure, it is very important to manage the risks eft in your system and to mitigate losses from attacks on these risky areas.
+
+3. You accept risks that are less costly than their insurance, you avoid risks that are 
+
+4. ALE is a good tool to determine priority for security concerns. Typically, a higher ALE means that you should focus more of your efforts on that risk. However, some risks may be critical even though their ALE is ot very high (if it happens infrequently enough).
+
+5. 

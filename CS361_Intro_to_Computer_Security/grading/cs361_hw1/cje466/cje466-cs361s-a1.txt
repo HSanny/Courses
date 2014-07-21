@@ -1,0 +1,462 @@
+Cristhian Escobar
+UTeid: CJE466
+
+Assignment 1 Questions:
+
+
+S361 Questions: Week 1
+These questions relate to Module(s) 1. Type your answers and submit them via
+email to the TA by 5pm on Thursday, June 12.
+Lecture 1
+1. What uses of the term “security” are relevant to your everyday life?
+  -Anything locking my car at the parking lot to making purchases online 
+   through a secure website where information isn’t leaked.
+
+2. What do these have in common? 
+  -These two activities are meant to keep unwanted individuals out of my personal stuff
+
+3. Have you been a victim of lax security?
+  -No
+4. What is the likelihood that your laptop is infected? How did you decide?
+  - There is a possibility that my laptop is infected. The reason for this is that I like to 
+   get my hands on software that is still being develop therefore I run the risk of unknown vulnerabilities 
+   during the development face. 
+
+5. What security measures do you employ on your laptop?
+  -I don’t have an antivirus or anything of that sort but I try not to click on websites that look fishy. 
+  Plus I restore my computer Every 6 months.
+
+6. Do you think they are probably effective?
+	-Nothing guarantees me that what I am doing is effective, but that’s just the way I do it
+
+7. Consider the quote from the FBI official on slide 10. Do you think it overstates
+the case? Justify your answer.
+  -No, it just gives a different view of the situation and tells you if it is possible within the US 
+  it’s likely possible for outside hackers to access the same information.
+
+8. What is the importance in learning about computer security?
+ -I think is critical to be aware of the threads that we can encounter in today’s digital world. 
+
+
+Lecture 2
+1. Consider the five reasons given why security is hard. Can you think of other
+factors?
+ -Yes definitely there are other reasons why security is hard. Let’s think about the technology that’s out 
+ today in a month from now new technology comes out that enables the attack to software that used to be secure. 
+ We cannot defend from future technology.  
+
+2. Is there a systematic way to enumerate the “bad things” that might happen
+to a program? Why or why not?
+ -It depends right? Lets think about it from a developer perspective. We can do our best to securely handle 
+ information however if the person who is trying to do damage is an expert he can figure out a way to access that information.  
+
+3. Explain the asymmetry between the defender and attacker in security.
+ -By the principal of easiest penetration the hacker will use any means to subvert the security system while the 
+ defender will use any means to defend the information from being stolen.
+
+4. Examine the quotes from Morris and Chang. Do you agree? Why or why
+not?
+ -Yes, because by owning a computer or electronic device you are at risk of having your information stolen by any of the 
+ people out on the web. However if your information is located in any computer even if is not yours you are at risk.
+
+5. Explain the statement on slide 8 that a tradeoff is typically required.
+ -There is trade offs that we must made in a system to archive its goal. There must be a consensus on the over all 
+ goals of a system and a well established level of security. It’s typically required to know what’s more 
+ important to figure out what strategy to take to reach a goal.
+
+
+Lecture 3
+1. Define “risk”?
+-Is the possibility that a particular thread will adversely impact an information system by exploiting a particular vulnerability.
+
+2. Do you agree that software security is about managing risk?
+-Yes by definition and intuition security is very hard. Its mainly about managing risk and realizing regarding the citation 
+what’s more important to make the trade offs.
+
+CS361 Questions: Week 1 2
+
+3. Name and explain a risk you accept, one you avoid, one you mitigate, and
+one you transfer?
+Risk acceptance: risks are tolerated by the organization. e.g.
+        sometimes the cost of insurance is greater than the potential loss.
+Risk avoidance: not performing an activity that would incur risk.
+        e.g. disallow remote login.
+Risk mitigation: taking actions to reduce the losses due to a risk;
+        most technical countermeasures fall into this category.
+Risk transfer: shift the risk to someone else. e.g. most insurance
+       contracts, home security systems.
+
+4. Evaluate annualized loss expectancy as a risk management tool.
+- Annualized Loss Expectancy effectively computes the “expected value” of any security expenditure.
+
+5. List some factors relevant to rational risk assessment.
+-Assessing risk is important, but difficult and depends on a number of factors (technical, economic, psychological, etc.)
+
+
+Lecture 4
+1. Explain the key distinction between the lists on slides 2 and 3.
+ -Confidentiality, Integrity, and Accessibility, Authentication, Non-Repudiation are all aspects of security. 
+ Meanwhile in slide 3 we see cryptography, firewall, passwords etc. which are a mechanism for protecting one or more aspects of security.  
+
+2. Consider your use of computing in your personal life. Which is most important:
+confidentiality, integrity, availability? Justify your answer.
+ -Confidentiality because I won’t like it if unwanted people get access to my personal information and my intellectual property.
+
+3. What does it mean “to group and categorize data”?
+-To make a distinction on data and what group it belongs, is it Top Secret information or unclassified. 
+
+4. Why might authorizations change over time?
+-Information authorization changes over time because it becomes irrelevant as more people have access to it.
+
+5. Some of the availability questions seem to relate more to reliability than to
+security. How are the two related?
+ -Availability could potentially be the entire purpose of the object. We could be talking about an online store and availability
+ is vital. As well as security since its important to keep customer information safe. 
+
+6. In what contexts would authentication and non-repudiation be considered
+important?
+-When we are dealing with people, we want to make sure that if person A logs in to a website to make a purchase we want to 
+ ensure that it actually is him.
+
+Lecture 5
+1. Describe a possible metapolicy for a cell phone network? A military database?
+ -The metapolicy for a cell phone would be to deliver the messages to the right people and to make connections with the 
+ proper person when making a phone call. For a military it would be to keep the information regarding an invasion safe. 
+
+2. Why do you need a policy if you have a metapolicy?
+ -The policy are the actual rules that will help to accomplish the overall goal which is the metapolicy. 
+
+3. Give three possible rules within a policy concerning students’ academic
+records.
+  -Only allow authorize employees to access academic records. 
+  -Destroy any papers that contain student’s personal information.
+  -Only give access to students to view their academic record.
+
+4. Could stakeholders’ interest conflict in a policy? Give an example.
+  -When making a transaction people would obviously want to make a rule that will benefit them more without considering others. (When to buy stock)
+
+5. For the example given involving student SSNs, state the likely metapolicy.
+  -Metapolicy would be to keep SSNs confidential between the person who it belongs to and the party that requires it.
+
+6. Explain the statement: ”If you don’t understand the metapolicy, it becomes
+difficult to justify and evaluate the policy.”
+  -Its hard to make sense of rules whitout knowing the overall mission behind the rules.
+
+
+Lecture 6
+1. Why is military security mainly about confidentiality? Are there also aspects
+of integrity and availability?
+-The reason confidentiality is critical between two parties or in this case two military forces is because the 
+leak of information from one to another could entirely change the outcome. 
+
+CS361 Questions: Week 1 3
+
+2. Describe the major threat in our MLS thought experiment.
+-Given information at various sensitivity levels and individuals having various degrees of trustworthiness, 
+how do you control access to information within the system to protect confidentiality
+
+3. Why do you think the proviso is there?
+-To have some sense of what is appropriate 
+
+4. Explain the form of the labels we’re using.
+-Labels are used to keep information separated and only access by the right person.
+
+5. Why do you suppose we’re not concerned with how the labels get there?
+-Because someone needs to put them there in the first place.
+
+6. Rank the facts listed on slide 6 by sensitivity.
+   The Normandy invasion is scheduled for June 6.
+   The British have broken the German Enigma codes and so on
+   Col. Jones just got a raise.
+   Col. Smith didn’t get a raise.
+   The base softball team has a game tomorrow at 3pm.
+   The cafeteria is serving chopped beef on toast today.
+
+7. Invent labels for documents containing each of those facts.
+- Top Secret, Secret, Unclassified 
+
+8. Justify the rules for “mixed” documents.
+ -Things could because documnets from mul tiple disiplines or studies are classified both as the same sec level
+
+
+Lecture 7
+1. Document labels are stamped on the outside. How are “labels” affixed to
+humans?
+  -There is a level of trust associated with every person. To grant them access 
+   according to how much you trust them.
+
+2. Explain the difference in semantics of labels for documents and labels for
+humans.
+  -a hierarchical security level indicating the degree of
+   trustworthiness to which he or she has been vetted
+  -a set of “need-to-know categories” indicating domains of
+   interest in which he or she is authorized to operate
+
+3. In the context of computers what do you think are the analogues of documents?
+Of humans?
+  -Permision of files by users
+
+4. Explain why the Principle of Least Privilege makes sense.
+  -In a sense it is the same thing as levels of information. You don't want to have any user 
+  be able to modify files
+
+5. For each of the pairs of labels on slide 6, explain why the answers in the
+third column do or do not make sense.
+  Row 1: Yes. Confidential  < Secret and Crypto is the superset of Crypto
+  Row 2: No. Secret level clearance is not enough to access Top Secret info
+
+
+Lecture 8:
+1. Why do you think we introduced the vocabulary terms: objects, subjects,
+actions?
+  -To establish some common language when refering to security
+
+2. Prove that dominates is a partial order (reflexive, transitive, antisymmetric).'
+  -: (L1, S1) dominates (L2, S2) iﬀ
+   1. L1 ≥ L2 in the ordering on levels, and
+   2. S2 ⊆ S1
+
+3. Show that dominates is not a total order.
+  -The Simple Security Property Subject S with clearance
+   (LS , CS ) may be granted read access to object O with classiﬁcation
+   (LO, CO) only if (LS , CS ) ≥ (LO, CO).
+
+4. What would have to be true for two labels to dominate each other?
+  -To have the same Label and have the sets be equal of the objects 
+
+5. State informally what the the Simple Security property says.
+   -The Simple Security Property Subject S with clearance
+   (LS , CS ) may be granted read access to object O with classiﬁcation
+   (LO, CO) only if (LS , CS ) ≥ (LO, CO).
+
+6. Explain why it’s “only if” and not “if and only if.”
+  Is the case that if you meet the clearance you might not be able to access it because 
+  its not part of the superset. 
+
+CS361 Questions: Week 1 4
+
+
+Lecture 9
+1. Why isn’t Simple Security enough to ensure confidentiality?
+  -Because the Simple Security property doesn't protect against people leaking the
+  information. For example Been able to access Top Secret info and making that available 
+  to lower levels of security.
+
+2. Why do we need constraints on write access?
+  -To obtain information from the rihgt sources and to keep the integrity of the information.
+
+3. What is it about computers, as opposed to human beings, that makes that
+  particularly important?
+  -Subjects in the world of computing are often programs operating
+   on behalf of a trusted user (and with his/her clearance).
+
+4. State informally what the *-Property says.
+  -The *-Property: Subject S with clearance (LS , CS ) may
+  be granted write access to object O with classiﬁcation 
+  (LO, CO) only if (LS , CS ) ≤ (LO, CO).
+
+5. What must be true for a subject to have both read and write access to an
+object?
+  -Have the right clearance level and be able to access that stuff. So same level and information
+  on both subject and object must have the same set. 
+
+6. How could we deal with the problem that the General (top secret) can’t send
+orders to the private (Unclassified)?
+  -The level of security is valid meaning the General has Top Secret access but it might be the case
+  that the private is not within the same division of the general. Making it unlogical to orders to
+  someone from another unit/ department.
+
+7. Isn’t it a problem that a corporal can overwrite the war plan? Suggest how
+we might deal with that.
+  -We can give it read access only so that way if the categories are bot the same they can only read 
+  and not write.
+
+
+Lecture 10:
+1. Evaluate changing a subject’s level (up or down) in light of weak tranquility.
+  -The Weak Tranquility Property: Subjects and objects do not
+  change labels in a way that violates the “spirit” of the security
+  policy.
+
+2. Why not just use strong tranquility all the time?
+  -The Strong Tranquility Property: Subjects and objects do not
+  change labels during the lifetime of the system.
+
+3. Explain why lowering the level of an object may be dangerous.
+   -The ability to change labels arbitrarily can subvert security, so
+   we need a tranquility property to deal with that threat.
+
+4. Explain what conditions must hold for a downgrade (lowering object level)
+   to be secure.
+   -Simple Security, the *-Property, and Tranquility together form
+    the basis of the Bell and LaPadula (BLP) model of security.
+
+
+Lecture 11:
+1. Suppose you wanted to build a (library) system in which all subjects had
+  read access to all files, but write access to none of them. What levels could
+  you give to subjects and objects?
+  -Every document would be unclassified (object) and the subjects would have an empty set and objects
+   would have some type non empty set.
+
+2. Why wouldn’t you usually build an access controlmatrix for a BLP system?
+  -The BLP model of security would be a very slow in terms of responsiveness. (N by N) => O(n^2)
+   N objects by N subjects look up 
+
+
+Lecture 12
+CS361 Questions: Week 1 5
+1. Suppose you had hierarchical levels L, H with L < H, but only had one
+category A. Draw the lattice. (Use your keyboard and editor to draw it; it
+doesn’t have to be fancy.)
+  H-{A}
+   |
+  H-{}
+   |
+  L-{A}
+   |
+  L-{}
+
+2. Given any two labels in a BLP system, what is the algorithm for finding
+their LUB and GLB?
+  -any two elements have a least upper bound (supremum or join), and
+  any two elements have a greatest lower bound (inﬁmum or meet).
+
+3. Explain why upward flow in the lattice really is the metapolicy for BLP.
+  -So for any Bell and LaPadula system, we only want information
+  to ﬂow “upward” in the lattice ofsecurity levels. Equivalently, information
+  may ﬂow from L1 to L2 only if L2 ≥ L1.
+
+
+Lecture 13
+1. Explain how the BLP rules are supposed to enforce the metapolicy in the
+example on slide 1.
+  -Consider the simple lattice of labels in the diagram, where H > L. There are no
+   need-to-know categories in this system. Write Up and read down.
+
+2. Argue that the READ and WRITE operations given satisfy BLP.
+  Read if object O exists and LS ≥ LO, then return its
+    current value; otherwise, return a zero.
+
+  Write: if object exists O and LS ≤ LO, change its
+     value to V; otherwise, do nothing.
+
+3. Argue that the CREATE and DESTROY operations given satisfy BLP.
+   -Create :if no object with name O exists anywhere on the
+    system, create a new object O at level LS ; otherwise,
+    do nothing.
+   -Destroy if an object with name O exists and the
+    LS ≤ LO, destroy it; otherwise, do nothing
+
+4. What has to be true for the covert channel on slide 5 to work?
+  -In the ﬁrst case, SL sees a value of 0; in the second case, SL sees a
+   value of 1. Thus, SH can signal one bit of information to SL by
+   varying its behavior.
+
+5. Why is the DESTROY statement there?
+  -to ensure the objects are being eliminated if needed
+
+6. Are the contents of any files different in the two paths?
+   -Yes
+
+7. Why does SL do the same thing in both cases? Must it?
+   - To keep consistency
+
+8. Why does SH do different things? Must it?
+   -because of the bits of information that are being transfered.
+
+9. Justify the statement on slide 7.
+  "If SL ever sees varying results depending on varying actions by SH,
+   that could be used to send a bit of information from SH to SL, in
+   violation of the metapolicy. Such a mechanism is called a covert channel."
+      
+
+
+Lecture 14
+1. Explain why “two human users talking over coffee is not a covert channel.”
+
+2. Is the following a covert channel? Why or why not?
+Send 0 | Send 1
+------------------------------------------
+Write (SH, F0, 0) | Write (SH, F0, 1)
+Read (SL, F0) | Read (SL, F0)
+
+3. Where does the bit of information transmitted “reside” in Covert Channel #1?
+  -Attempted access by SL to a high level resource returns one of two
+  error messages: Resource not found or Access denied. By
+  modulating the status of the resource, SH can send a bit of
+  information on each access attempt by SL
+
+4. In Covert Channel #2?
+  -Process p could send a bit to process q by either using its total
+  allocation or reliquishing the processor immediately. Process q
+  reads the bit by consulting the system clock to see how much time
+  has elapsed since it was last scheduled.
+
+CS361 Questions: Week 1 6
+
+5. In Covert Channel #3?
+  -Process p either accesses cylinder 140 or 160. Process q requests
+  accesses on cylinders 139 and 161. Thus, q receives values from
+  139 and then 161, or from 161 and then 139, depending on p’s
+  most recent read.
+
+6. In Covert Channel #4?
+  An implicit channel is one that uses the control ﬂow of a program.
+  For example, consider the following program fragment:
+  h := h mod 2;
+  l := 0;
+  if h = 1 then l := 1 else skip;
+
+7. Why might a termination channel have low bandwidth?
+  -A useful distinction is between storage and timing channels,
+  though the breakdown is not always clear for speciﬁc channels
+
+8. What would have to be true to implement a power channel?
+  -A covert channel is any path for information between subjects,
+  utilizing system resources that were not designed to be used
+  for inter-subject communication.
+
+9. For what sort of devices might power channels arise?
+  -Communication devices such as computers
+
+
+Lecture 15
+1. Explain why covert channels, while appearing to have such a low bandwidth,
+can potentially be very serious threats.
+  -A covert channel is a path for the illegal ﬂow of
+  information between subjects within a system, utilizing system
+  resources that were not designed to be used for inter-subject
+  communication.
+
+2. Why would it be infeasible to eliminate every potential covert channel?
+  -Dealing with a covert channel may include: eliminating it,
+  restricting the bandwidth, or monitoring it.
+
+3. If detected, how could one respond appropriately to a covert channel?
+
+4. Describe a scenario in which a covert storage channel exists.
+
+5. Describe how this covert storage channel can be utilized by the sender and
+receiver.
+
+  1 Both sender and receiver must have access to some attribute of a shared object.
+  2 The sender must be able to modif the attribute.
+  3 The receiver must be able to reference (view) that attribute.
+  4 A mechanism for initiating both processes, and sequencing their accesses to the shared resource,
+    must exist.
+
+
+Lecture 16
+1. Why wouldn’t the “create” operation have an R in the SRMM for the “file
+existence” attribute?
+2. Why does an R and M in the same row of an SRMM table indicate a potential
+channel?
+3. If an R and M are in the same column of an SRMM table, does this also
+indicate a potential covert channel? Why or why not?
+4. Why would anyone want to go through the trouble to create an SRMM
+table?
+
+
+
+Note: from class slides and class.

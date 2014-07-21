@@ -1,0 +1,121 @@
+Name: Brian Jenkins
+EID: baj645
+CS Login: baj645
+Email: bjenkins92@gmail.com
+
+Lecture 34:
+1. Because the C/h is the maximum number of symbols per second based on the capacity and entropy.
+2. Because with any bandwidth, as long as you keep repeating your message eventually the receiver will get the message. The more you repeat the message, the more likely the receiver is to be able to eventually receive it.
+
+Lecture 35:
+1. h = -(log2(1/10)) = 3.322
+2. There are so many factors involved and require very complex models
+3. zero, first, second, and third order models are about how many characters per value. A first order model would uses a, b, and c as different values, where as a third-order would use things like ion, ent, ing as different values. The higher the order, the closer to the actual entropy.
+
+Lecture 36:
+1. Because that may require background knowledge that the receiver does not or should not know
+2. Because it is related to prior knowledge of the observer. For example, if the receiver already knows the answer, the entropy is 0. If he knows it is one of two equally likely choices, it is 1. The more the user knows, the smaller the degree of uncertainty, and therefore there is less information required to send
+3. Entropy can be used to measure redundancy. If the information content within a message is exactly equal to the length of that same message, then there is no redundancy.
+
+Lecture 37:
+1. That there are many questions you must ask when trying to decode, such as what is the underlying message, what in the text is relevant, what is the likely nature of the encryption, and have there been any prior transformations before blindly trying to decode something
+2. Because technically all you need is the encryption algorithm. This algorithm will convert the plain text to the cipher text and vice versa. The key is just optional additional security.
+3. It should not alter the information content at all, just hide the information content
+4. Redundancy can show irregularities such as the most common character being a replacement for 'e' (the most common English letter)
+
+Lecture 38:
+1. D(E(D(E(P)))) = P
+2. D(E(E(P,Ke),Ke),Kd) = E(P,Ke)
+3. You can use things like traffic analysis to try and find clues without having to even know anything about the content
+4. You can use things like the frequency of characters (like 'e' again) to try and look at possible character replacements by comparing it to the ciphertext's frequencies
+
+Lecture 39:
+1. Because there are technically only a certain amount of possibilities, so with enough time and tries, it could be broken. However, there are SO many possibilities that the time it would take would be far to long to ever be of any use
+2. Because most keys use a bitstring, so on average, the correct bitstring will be found after 2^(n-1) operations, which is halfway through a linear search of all possible bitstrings of n size
+3. Because they are simple to use and in combination are extremely powerful
+4. Confusion is taking a symbol in the plain text and replacing it with something else where as diffusion is either moving or spreading information around. Substitution creates confusion and transposition creates diffusion.
+5. Neither is better. A good encryption would use both confusion and diffusion so that patterns are much less recognizable
+
+Lecture 40:
+1. Monoalphabetic means that a character is always replaced with the same character, whereas in polyalphabetic, the character's position impacts its substitution
+2. Whatever the mapping specification is (usually something like a table)
+3. There are only a finite number of mappings based on the alphabet
+4. The key in the example is 2 (A shifts to C)
+5. 25 or 26 (depending on how you look at it) because of the amount of letters in the english language
+6. No, because there would not be that many tries before you find the right key
+7. You go to the column of the key and find the letter of the cyphertext. Then the letter of the row will be te letter of the plain text.
+
+Lecture 41:
+1. Because each character has 26 possibilities, and there are three characters, so 26*26*26 = 17576
+2. Because the second and third characters are the same and in a simple substitution all same chars will all end up the same regardless of position
+3. Yes, it would need a key that is random so that even having the ciphertext does not give you the plaintext
+
+Lecture 42:
+1. Because the same key is only used once. Therefore even with just the key or ciphertext, you still have to try every possible combination
+2. Because if you know ANY data about the key, then you can use those to eliminate possible plain texts
+3. Because the key is random and just as long as the plain text. So to get the key to the receiver you would have to send it securely (defeating the purpose of needing a key in the first place)
+
+Lecture 43:
+1. Because characters don't change, so character counts and frequencies will remain the same
+
+Lecture 44:
+1. The one-time pad is symmetric. The same random key is XORd to both encrypt and decrypt
+2. Key distribution is about getting the key securely to the receiver, whereas key management is about how to preserve multiple keys and ensure availability of said keys
+3. No, he would also need Ks-1 (S's private key) to decrypt it
+4. Neither is better. Symmetric has smaller keys but more keys and the key distribution problem, whereas asymmetric requires longer, but less keys.
+
+Lecture 45:
+1. Because a block cypher would be harder to crack as it does not retain character frequencies and has high diffusion. Plus any tampering is instantly noticeable
+2. Malleability is significant because it can tamper the plain text and therefore drastically alter the message
+3. Homomorphic encryption is significant because it, by design, means that the encryption scheme is malleable
+
+Lecture 46:
+1. The subBytes step does so by replacing each byte with another byte
+2. The shiftRows step does so by shifting each byte in the row by the number of the row
+3. Because you have to multiply by the inverse of the array and the numbers in the inverse cannot be optimized
+4. Each block has all for steps done for 10, 12, or 14 rounds
+5. Because the more rounds used, the more the data is changed from the original, and the harder it will be to find patterns that lead to the encryption being figured out
+
+Lecture 47:
+1. Blocks in the plain text are still in the cipher text
+2. Cipher Block Chaining, which XORs blocks and their preceding block to randomize blocks before the encryption
+3. Observed changes (the first block changed can be seen) and content leak (two identical ciphertext blocks can identify info about the plaintext blocks
+4. Key stream generation uses a pseudo random number generator is used as the algorithm, as opposed to block encryption which uses its own data in the algorithm
+
+Lecture 48:
+1. The secret key that is used to decrypt
+2. So that the key or plain text can not be uncovered from the cipher text
+3. Because you are able to give out the public key without requiring a secure channel as only you have the private key
+4. {{{P}k-1}k}k-1 = {P}k-1
+5. Asymmetric is easier to distribute keys but can take up to 10,000 times longer than symmetric
+
+Lecture 49:
+1. Yes, because the keys can be used in a symmetric fashion.
+2. Because large products of prime numbers are very hard to find the original numbers
+3. No, it is not breakable
+4. Because decrypting the message requires A's private key
+5. Because anyone could have A's public key
+6. Because no one else has that private key that B has
+7. Because anyone could have the public key which is now the key used for decryption
+8. You need two sets of keys, one for authenticity and one for confidentiality
+
+Lecture 50:
+1. So that the hash function can be as efficient as possible
+2. Weak collision means it is hard to find a hash value matching a message that is not originally identical. Strong collision resistance means it is difficult to find any two messages that hash to the same value
+3. Preimage resistance means it is hard to find a hash that matches the initial input. Second preimage resistance means it is hard to find two matching hashes when the inputs did not originally match
+4. A 128 bit hash would have on average 1.25*2^64 sets to be identical
+5. A 160 bit hash would need 1.25*1.5*10^24 sets to find an identical match
+6. Because the hash only secures confidentiality, not integrity
+7. Because hash functions are collision resistant
+8. It could hash the message, then send the encrypted message and the hash. The receiver could then decrypt the message, take out the hash, and then hash the decrypted message and compare it to the given hash.
+
+Lecture 51:
+1. No, because S does not have R's private key. If his private key is known by others than it is no longer confidential
+2. Yes, you could, but others would be able to see the cipher text. They would't be able to decode it easily without R's private key, but why even give them the chance?
+3. No, because if the last layer is Ks, then S's private key is required, so R would not be able to decrypt the message
+4. Confidentiality and authentication so that you can assure that you get the right message from the right sender
+
+Lecture 52:
+1. The eavesdropper would not have enough information to discover the value
+2. The eavesdropper could still not get the secret value unless it communicated with b
+3. If the eavesdropper finally had g,p,gamodp,a,and b then the eavesdropper could reproduce the secret number

@@ -1,0 +1,236 @@
+Andrew Nguyen
+an9395
+anguyen1
+anguyen11@utexas.edu
+
+Lecture 17
+1) No. In the example from the earlier slidesets, the BLP model allows for
+   some communication from a high level object to a low level object. This
+   would violate non-interference.  
+
+2) Neither can interfere with the other.
+
+3) No. By definition. Information can only flow in the ways defined by the
+   non-interference model.
+
+4) A - low, B - high
+
+Lecture 18
+1) Non-interference policies don't provide rules for how the system satisfies
+   it. It simply states how information is allowed to flow.
+
+2) l1, l2, l3, ..., lk
+
+3) In realistic systems, there are many low-level system attributes that need
+   to be accounted for. 
+
+Lecture 19
+1) Integrity relates to a source's reliability. In the context of news
+   headlines, the integrity of the news source will affect how much credence
+   you give to the news story. In a computing context, you need to ensure 
+   that your information is not changed in an invalid way. 
+
+2) They might trust the commercial software's quality more than that of the
+   free software.
+
+3) Separation of duty means that several different subjects are needed to
+   complete a task. Separation of function means that a single subject can't
+   perform more than one one those separate tasks.
+
+4) Auditing makes sure that if something bad happens, there is a way to know
+   how (i.e. which user) and possibly a way to roll back the changes. It acts
+   as a safety mechanism for the system.
+
+5) The need for separation between developers and users of software. Users
+   should not write their own programs. Developers shouldn't be able to test
+   their program on actual customer data. Also, the movement of applications
+   from the development side to the production side needs to be controlled
+   and autdited. 
+
+6) One scenario where integrity is more important than confidentiality is a
+   bank. The bank, while concerned with keeping customer info private, is 
+   more concerned with making sure that there are no incorrect/illegal 
+   transactions. 
+
+Lecture 20
+1) One example of information that is highly reliable with little sensitivity
+   is an airport schedule. An example of information that is not highly
+   reliable but with greater sensitivity might be a secret story that a
+   newspaper is working on. 
+
+2) In row 1, Expert is higher than Student, and {Physics} is a subset of
+   {Physics}. In row 2, Novice is lower than Expert so Label 1 does not
+   dominate Label 2. In row 3, Student is higher than Novice, and {} is a 
+   subset of {Art}. 
+
+3) High Integrity -> Low Integrity
+
+4) It means that confidentiality and integrity are unrelated, and that a
+   subject/object's confidentiality and integrity levels have nothing to do
+   with each other. 
+
+Lecture 21
+
+1) The Biba Integrity rules are basically the same as the Bell and LaPadula
+   rules, only in reverse.
+
+2) {A, B} is not dominated by {B, C}, and vice versa
+
+3) No.
+
+Lecture 22
+1) Subjects are allowed to read whatever they want but their integrity level
+   will suffer if they read low integrity information.
+
+2) No.
+
+3) It assumes that the subject has the common sense to filter out bad info
+
+4) Yes.
+
+Lecture 23
+1) Yes. They both have to deal with the development side.
+
+2) Because eventually the program that is being developed will need to switch
+   to the production side to be used.
+
+3) No. The integrity of the system controller is not dominated by the 
+   integrity of the development code/test data
+
+4) Weak tranquility
+
+Lecture 24
+1) To ensure that the integrity of the system is not compromised, and that
+   if it is compromised, the culprit/cause can be found.
+
+2) Bank account balances, usernames/passwords, etc.
+
+3) Comment board, forum, etc.
+
+4) Certification rules focus on ensuring an operation acts on and results in
+   a valid state. Enforcement rules focus on preventing invalid operations 
+   or users from affecting the system. 
+
+5) An example of a permission is the permission to reset a password when a
+   user forgets it.
+
+Lecture 25
+1) They could carry information from American Airlines to one of its 
+   competitors, United Airlines. 
+
+2) Yes
+
+3) GM, Microsoft, Bank of America, Wells Fargo, Citicorp
+
+4) The Chinese Wall policy is dynamic, it changes read/write access as
+   subjects access objects.
+
+Lecture 26
+1) It allows subjects to be grouped together in roles. The roles are then
+   assigned permissions rather than each individual subject getting their
+   own unique permissions.
+
+2) Authorized roles are all the roles that a subject can take one. Active
+   roles are the role that the subject is currently occupying.
+
+3) Role authorization means that the subject must be authorized to act in
+   that role. Transaction authorization means that a particular role must be
+   authorized to perform a particular action. 
+
+4) RBAC is more flexible. It is more useful for large organizations. It also
+   allows for changing roles as needed. 
+
+Lecture 27
+1) Too big. It would be mostly a sparse matrix.
+
+2) Storing permissions with objects (access control list) corresponds to a
+   column of the ACM. Storing permissions with subjects (capabilities)
+   corresponds to a row of the ACM. Computing permissions of the fly 
+   replaces having an ACM at all.
+
+Lecture 28
+1) How to interpret the bit it receives from the sender.
+
+2) So you know the speed and reliability with which you can transfer info.
+
+3) If they don't have an agreed upon encoding scheme then it doesn't matter
+   how many bits the sender can transmit. The receiver needs to know how to
+   interpret those bits.
+
+4) It might draw suspicion. It would also take more time.
+
+5) 0 bits. If the receiver knows an answer without a sender telling it, then
+   there is no need to send it an answer. 
+
+Lecture 29
+1) n bits, 4 bits, 7 bits
+
+2) If the receiver knows that there will be an attack, then the only info
+   contained is the time of the attack. If the receiver knows nothing, then
+   the amount of info sent is the whole message. 
+
+3) 4 bits. 4 bits is sufficient to represent 16 distinct messages. 2^4 = 16
+
+4) 8 bits
+
+5) That would require the message space to be a power of 2. 
+
+Lecture 30
+1) Discrete binary digit and continuous quantity of information
+
+2) 000, 010, 001, 011, 100, 110, 101, 111
+
+3) On average, 995 of the 1000 messages will be message 10 and take only one
+   bit. The other 5 messages will require 5 bits. Thus 995 + (5 * 5) bits.
+
+4) You can design your message system so that the more likely messages
+   require fewer bits to transmit.
+
+5) 10, 110, 1110, 11110
+
+6) That means that with a certain encoding, it will be impossible to improve
+   on the average bits needed to transmit a message.
+
+Lecture 31
+1) 2468
+
+2) 1, 10, 110, 1110, 11110, 111110
+
+3) So that there is no ambiguity in the message delivered.
+
+4) So that all of the information may be sent to the receiver without any of
+   it being lost in the process.
+
+5) Morse code requires breaks and thus does not satisfy streaming.
+
+Lecture 32
+1) log 8 = 3
+
+2) - (4/5 * log 4/5 + 1/5 * log 1/5) ~= .7219
+
+3) Knowing the entropy allows you to know when it is impossible to increase
+   the efficiency of an encoding.
+
+Lecture 33
+1) Every coin flip is an independent event. So the probability of a heads
+   followed by another heads is 3/4 * 3/4 = 9/16. Likewise, HT and TH are
+   1/4 * 3/4 = 3/16, and TT is 1/4 * 1/4 = 1/16. Splitting 32 flips into 16
+   pairs, you'd expect to get 9 HH pairs, 3 HT pairs, 3 TH pairs, and 1 TT
+   pair.
+
+2) (9 HH * 1 bit) + (3 HT * 2 bits) + (3 TH * 3 bits) + (1 TT * 3 bits) = 
+   27 bits
+
+3) 000, 001, 010, 011, 100, 101
+
+4) -(2 * 6/20 * log(6/20) + 2 * 3/20 * log(3/20) + 2 * 1/20 * log(1/20)) = 
+   2.2954
+
+5) 0, 10, 110, 1110, 11110, 111110
+
+6) Over 20 rolls of the die, the naive encoding requires 3 bits * 20 rolls =
+   60 bits. Over 20 rolls, my encoding requires on average 1 bit * 6 1s + 2
+   bits * 6 2s, 3 bits * 3 3s + 4 bits * 3 4s + 5 bits * 1 5 + 6 bits * 1 6
+   = 50 bits.
+
+

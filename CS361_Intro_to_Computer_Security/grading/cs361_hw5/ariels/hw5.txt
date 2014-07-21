@@ -1,0 +1,93 @@
+Ariel Sibille
+as53547
+ariels
+arielsibille@gmail.com
+Lecture 66
+1. PGP is freeware email encryption program that aims to provide heavy-duty security.
+2. Distrust of the government.
+3. Yes, it's very secure and difficult to crack. 
+4. Because companies don't like that freeware does not come with support.
+
+Lecture 67
+1. The sender creates a message, generates a hash of it, and signs the hash with a private key. The receiver uses the sender's public key to verify the signature and then compares the hash of the message with the original hash. If the message has been tampered with, the hash will be different, and the sender's private key confirms the message is from the sender.
+2. The sender encrypts the session key with the receiver's public key so that the receiver is the only party who can decode the session key and then the message.
+3. Apply the authentication step to the original message and the confidentiality step to that message.
+
+Lecture 68
+1. Compression, email compatibility, and segmentation.
+2. It saves bandwidth to ease message transmission. 
+3. Compression reduces redundancy in a message, which strengthens any encryption that takes place after it.
+4. It expands 3 bytes into 4 bytes so that you can send a message as ASCII; almost everything in the world can read ASCII.
+5. Some mailers have limits on the sizes of messages that they can send.
+
+Lecture 69
+1. Session keys, public keys, private keys, and passphrase-based keys.
+2. They can only be used once.
+3. Take the previous session key and generate a new key to encrypt that with after collecting entropy, which will give you the new key.
+4. You generate a very large number of the appropriate size and test it for primality, test it, and keep doing that until you eventually get a prime number.
+5. They're protected using a user-supplied passphrase, which is then hashed to give a bit string that is used to encrypt/decrypt the private key. This is necessary because the security of the system hinges on protecting the private keys.
+
+Lecture 70 
+1. Generate an ID for the pair out of the least significant 64 bits of the public key.
+2. Timestamp, key ID, public key, private key, and user ID.
+3. Timestamp, key ID, public key, and user ID.
+4. PGP uses the Key ID field to retrieve the receiver's encrypted private key from the private-key ring, gets the passphrase from the user to get the unencrypted private key.
+5. it is a measure of how strongly you believe that the key belongs to the user it says it does and reflects the authenticity of the binding between a user and a key.
+6. The owner issues a revocation certificate and advises everyone to no longer use that key.
+
+Lecture 71
+1. In the consumer problem, the attacker disrupts legitimate communication between the client and the service by inserting itself between them, whereas in the producer problem, the attacker overwhelms the server by making legitimate requests. The producer problem is more prevalent.
+2. The client sends the syn message to the server, the server fills in the information in its internal table and sends the syn/ack packet and waits on the acknowledgment from the client. The attacker, however, has given the server illegitimate return addresses for the syn/ack, which leaves many half-open connections to the server.
+3. Increasing the queue consumes more resources and can easily be countered if the attacker just sends more requests. Shortening the time-out period might deny service to slower clients. Filtering suspicious packets is difficult because it's difficult to know what packets are legitimate or not.
+
+Lecture 72
+1. There would be no illegitimate requests to the server.
+2. Intrusion detection aims to minimize damage after an attack has already begun; intrusion prevention aims to prevent attacks from ever happening.
+3. Over-provisioning the network would work by creating a system that is so powerful it cannot be overcome by any amount of traffic. Filtering attack packets would work by making sure only legitimate packets are processed. Slowing down processing works by disadvantages all packets but hopefully disadvantaging malicious packets more. The speak up solution asks for more packets in order to attempt to overload a botnet that might be attacking the server.
+
+Lecture 73
+1. A false positive incorrectly identifies a legitimate request as an attack; a false negative incorrectly identifies an attack as a legitimate request. False negatives are worse because it is more catastrophic to allow an attack than to deny a legitimate request.
+2. An accurate IDS gives no false negatives and a precise IDS never gives false positives.
+3. You either report everything is an attack for an accurate IDS or nothing is an attack for a precise IDS.
+4. The base rate fallacy is the assumption that there will be a base rate of attacks. When attacks are fairly rare within a system, it leads to a lot of false positives.
+
+Lecture 74
+1. It attempted a DoS attack on the whitehouse.gov page usnig infected machines chosen by an IP address generator.
+2. It had a static seed for the IP address generator which meant that not many computers ended up being infected, all you had to do was reboot your machine to get rid of the virus.
+3. It existed in dynamic memory and was flushed out when the computer was rebooted.
+4. It had a randomly generated seed to spread the code more widely, the IP addresses also ended up mapping to more than just individual computers.
+
+Lecture 75 
+1. The only connection is that the writer of CodeRedII used the string CodeRed in their program.
+2. If you use the same prefix then you're on the same subnet and it's more likely that the machines on the same subnet are going to be using similar software, meaning that they will be similarly easy to infect.
+3. Install and propagate itself in individual computers so that the computers could be used as a botnet.
+4. They're vulnerable to the same types of attacks over and over again. 
+5. It demonstrates that programmers can only go so far to protect users and that users have to be proactive in protecting themselves by keeping their software updated.
+
+Lecture 76
+1. Not every consumer can be an expert on the products they're using.
+2. A set of requirements defining security functionality, which defines how the security should work. A set of assurance requirements defines what's needed to establish the functional requirements. A methodology for determining that the functional requirements are met allows testing to see if the functional requirements are net. A quantified measure of the evaluation result gives a trustworthiness rating on an established scale.
+3. Devices have a separate evaluation mechanism because the government organizations have certain concerns they want to address specifically with devices.
+4. Level 1 is basica security with 1 approved function, level 2 improves on physical security, level 3 has increased tamper-resistance, and level 4 wipes everything in the event of tampering.  
+
+Lecture 77
+1. The Common Criteria is a set of general criteria for evaluating secure systems.
+2. It's common amongst all the countries that use it.
+3. To address specific needs or security desires for a country. 
+4. A protection profile is a general idea of what security should exist for a class, whereas a security target is something that clients specifically want evaluated. 
+
+Lecture 78
+1. The overall goal of the protection profile is to assess the assets and threats to a system to determine how to handle attacks.
+2. Assets define what should be protected, environmental assumptions detail what one can safely assume about the environment, threats detail possible threats to the system, and organizational security policies define policies in place to deal with threats.
+3. To map threats and assumptions to security objectives and requirements. 
+
+Lecture 79  
+1. The overall goal is to prevent unwanted actions relating to users. 
+2. Protection profiles are for a generalized class of products whereas security target evaluation is for specific products.
+
+Lecture 80
+1. EALs are evaluation assurance levels and provide assurance to a consumer that if a product is certified at a certain level then it has been tested as befits the level.
+2. Labs in whatever country; NIST in the US specifically.
+3. Different countries may have different testing standards for higher EAL levels within their National Scheme.
+4. No, because then you could just slap whatever rating you want people to think you have onto your product. 
+5. It may be bad for an evaluator to reverse engineer the model from the code because they could misinterpret some of the information. 

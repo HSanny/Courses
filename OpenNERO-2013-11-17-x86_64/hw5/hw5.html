@@ -1,0 +1,174 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"> 
+<html> 
+  <head> 
+    <title>Computer Vision - Object Recognition via Edge Detection and Naive Bayes Classifiers</title> 
+    <link rel=stylesheet 
+     href="http://www.cs.utexas.edu/users/nn/nn.css"
+     type="text/css">  
+  </head> 
+  <body> 
+  <h1>Computer Vision - Edge Detection and Naive Bayes Classifiers<br> 
+        (due 11:59pm Nov 19, 2013)</h1> 
+
+In this assignment you will create a Computer Vision (CV) system to classify different objects in OpenNERO. To create this system, you will build a training set of snapshots, design custom features, and implement a naive Bayes classifier. You will use the first-person NERO mod in OpenNERO to take a series of training, testing, and validation images containing objects to classify. Your resulting CV system will be able to walk around the NERO world and identify objects.<br />
+<!--
+<br/>
+Note that you may wish to split the work up into two different parts and have each partner implement one component. The first partner could create the datasets while the other partner implements the naive Bayes classifier, and you could collaborate to invent useful features.<br/>
+-->
+
+<br />
+<h3>1. Get a fresh version of OpenNero</h3>
+
+This should be easy by now, but if you need some reminding, the following steps should help get you up and running in OpenNERO (Note that for this assignment it is highly recommended/required that you use <strong>Linux</strong>):
+
+<ol>
+   <li>Login to <a href="http://www.cs.utexas.edu/facilities/public-labs">one of the public labs</a>. Download one of the <a href="http://code.google.com/p/opennero/downloads/list">prebuilt binaries for linux</a>.
+  <li>To install OpenNERO on your own machine (Linux), download one of the <a href="http://code.google.com/p/opennero/downloads/list">prebuilt binaries</a> OR</li>
+  <li><a href="http://code.google.com/p/opennero/wiki/BuildingOpenNero">Build OpenNERO</a> on your own Linux machine using the source code.</li>
+</ol>
+
+Next you need to <a href="hw5_vision.zip">download the modified NERO files for this assignment</a>. Replace your existing OpenNERO NERO files with the ones in the zip file.<br/><br/>
+
+You are free to try using your Mac or Windows machine for this assignment, however the modified NERO vision module has not been shown to run on Mac/Windows, and will likely not work on your non-Linux machine.  
+
+<h3>2. Install the Python Imagine Library</h3>
+
+We're going to be using the <a href="http://www.pythonware.com/products/pil/">Python Imaging Library</a> to help with loading, saving, and manipulating the images we take in OpenNERO. 
+
+<strong>If you're on a linux lab machine, this is already installed
+  for you.</strong> However, if you're developing on your personal
+machine, you may need to install the Python Imaging Library. To do so,
+download the latest version (1.1.7) for your OS
+  (<a href="http://www.pythonware.com/products/pil/">Linux,
+  windows</a>, <a href="http://pythonmac.org/packages/py25-fat/">MacOSX</a>).<br>
+
+<p>
+In Linux, install with:
+<pre>
+tar xzf Imaging-1.1.7.tar.gz
+cd Imaging-1.1.7
+python setup.py build
+python setup.py install
+</pre> 
+
+*<I>The Ubuntu provided binary in 12.04 has also been shown to work, however you need to make sure that you also have the <tt>python-imaging-tk</tt> package installed as well. </I><br/><br/>
+
+To test your installation of PIL, download a PNG image file such as <a href="hw5_stapler.png">this stapler</a>:</br>
+
+<pre>
+import Image
+im = Image.open("hw5_stapler.png")
+print im.format, im.size, im.mode
+# >> PNG (600, 468) RGBA
+bw = im.convert("L")
+bw.save("hw5_bw_stapler.png", "PNG")
+</pre>
+
+The resulting file should look like <a href="hw5_stapler_bw.png">this black and white version of the stapler</a>.</br>
+
+If you want to create a new, blank image with the same dimensions and color mode as the black and white photo but perhaps with some custom values based on calculations stored in an array (e.g., if you have an array of edge pixels and want to create an image with them):</br>
+
+<pre>
+im = Image.new(screen.mode, screen.size)
+im_pixels = im.load()
+# iterate over your array and set the image pixels with im_pixels[x,y] = ...
+im.save("image.png", "PNG")
+</pre>
+
+Keep in mind that in a black and white photo, the values for each pixel are in the range [0,255]. For more information about using PIL with the Image class, see the <a href="http://www.pythonware.com/library/pil/handbook/image.htm">online handbook</a>.
+<br />
+<br />
+
+<h3>3. Install <tt>numpy</tt> and <tt>scipy</tt></h3>
+
+Again, you can skip this step if you're on a linux lab machine. Otherwise, you'll need to <a href="http://www.scipy.org/Installing_SciPy">install numpy and scipy</a> if you're not already able to import them.<br/><br/> <strong>Note, installing scipy on Mac python is tricky and requires building of scipy from source. Therefore, it is recommended that you work on a UTCS linux machine. </strong>
+
+<h3>4. Create training, testing, and validation sets in OpenNERO</h3>
+
+Go through the <a href="http://code.google.com/p/opennero/wiki/EdgeDetection">OpenNERO Vision demonstration</a>, and make sure you can execute these steps. 
+
+Load the NERO mod in OpenNERO and click the <tt>First Person Agent</tt> button. This enables you to now move around in first person and take snapshots of the different characters and objects in the world. Each time you take a snapshot, it will be processed using a similar method to the edge detection algorithm is described in section 24.2.1 of your AIMA (third edition) textbook. The results window shows you each of the four steps of edge detection: original (upper left), black and white (upper right), smoothed with a Gaussian filter (lower left), and finally edge pixels detected (lower right). Each intermediate image is saved into the <tt>snapshots</tt> folder with a timestamped filename. Although each of the images is saved, you should <strong>only use the images saved in <tt>NERO/snapshots/edges</tt> in your classifier</strong>.<br/><br/>
+
+Take at least 40 training, 20 testing, and 20 validation pictures in this world, with a good mix of each of the objects. You want to be able to classify:<br/>
+
+<ul>
+<li>Steve, the robot agent from the maze world.</li>
+<li>Sydney, a human agent.
+<li>a tree.</li>
+<li>a green cube.</li>
+</ul>
+
+Make sure you have a few of each class of objects in each of your datasets. Also, since the agents are spawned randomly in the world, make sure you gather your samples from multiple runs of the environment; otherwise, your classifier may be learning characteristics about the specific instance of the environment (e.g., mountains and walls in the background) rather than identifying the objects.<br/><br/>
+
+<h3>5. Create Your Object Classifier</h3>
+You'll be using a naive Bayes classifier and a set of custom features to classify objects.<br/>
+
+<h4>5a. Implement a naive Bayes classifer</h4>
+As a reminder, a naive Bayes classifier works under the (naive) assumption that all feature probabilities are independent. If we are trying to determine the probability that a certain image should be classified as type C, given that it has a certain collection of features {f1, f2, ..., fn}, then we can write that as P(C | f1, f2, ..., fn). Since we are assuming each of our features is independent given C, we can simplify this to be P(C | f1, f2, ..., fn) = P(C | f1) * P(C | f2) * ... * P(C | fn). To create a classifier, you simply calculate the probability score for each possible value of C (i.e., C = Syndey, C = Steve, C = Tree, C = Cube) and choose the C with the highest score.<br/>
+<br/>
+
+In the <tt>NERO/classifier.py</tt> file, you'll notice a skeleton for your classifier:<br/>
+
+<pre>
+"""
+This is your object classifier. You should implement the train and
+classify methods for this assignment.
+"""
+class ObjectClassifier():
+    labels = ['Tree', 'Sydney', 'Steve', 'Cube']
+    
+    """
+    Everytime a snapshot is taken, this method is called and
+    the result is displayed on top of the four-image panel.
+    """
+    def classify(self, edge_pixels, orientations):
+        return random.choice(self.labels)
+    
+    """
+    This is your training method. Feel free to change the
+    definition to take a directory name or whatever else you
+    like. The load_image (below) function may be helpful in
+    reading in each image from your datasets.
+    """
+    def train(self):
+        pass
+</pre>
+
+Your classifier should implement the <tt>classify</tt> and <tt>train</tt> methods. Each time a snapshot is taken, your <tt>classify</tt> method will be invoked and the results will be displayed at the top of the four-image panel. You probably want to train your model <i>offline</i>, then you can simply load your trained model in your constructor.<br/>
+
+<h4>5b. Invent a set of features</h4>
+Each edge detected image is a black image with a white pixel for each edge. Along with information about whether each pixel is an edge, it's also useful to know the orientation of the edges. This information is derived by looking at the maximum gradient from the edge pixel to any of its neighbors. Thus, each call to <tt>classify</tt> also passes an array of orientation values for each pixel, with the following values:<br/>
+
+<center><img src="hw5_pixel_orientation.png"/></center><br/>
+
+For instance, if the maximum change in pixel intensity was from the target pixel to the pixel immediately to its right, the orientation of the target pixel would be 90 degrees. See section 24.2.1 of your textbook for more information on how this process works.<br/><br/>
+
+Your features should be based on the detected edges you receive from the edge detection algorithm. For example: <br/>
+
+<ul>
+<li>Number of edge pixels &gt; 100</li>
+<li>Percentage of pixels that are edge pixels &gt; 20%</li>
+<li>Number of edge pixels in the top half of the image that are oriented upward (315, 0, or 45) &gt; 50</li>
+</ul>
+
+These however are just ideas, feel free to experiment with other features.<br/><br/>
+
+Now you will use these features to train the naive bayes classifier created in the previous section. For each feature, calculate the probability of each class containing that feature. For example, if half of the Syndey examples have more than 100 edge pixels, you would calculate P(C = Sydney | Number of edge pixels &gt; 100) = 0.5. The result will be a probability matrix where each column is a different class and each row is a different feature; the individual cells correspond to the probability that an example is in that class given it has that feature.<br/><br/>
+
+Use the training set to calculate your probability matrix, use the validation set to gauge your accuracy and determine whether you need to add more features or if you're starting to overfit, and use the test set as a hold-out set that you classify <strong><U>only</U> at the very end of the experiment, once you've decided you're finished</strong>.  You may want to add additional methods to the <tt>ObjectClassifier</tt> class to help with loading the evaluation and test sets, running <tt>ObjectClassifier.classify</tt> on them, and calculating the accuracy.<br/><br/>
+
+Remember, the more features you create and the more dimensions each feature has, the more powerful your classifier can be. However, you'll also need more training samples and be in danger of overfitting. Start with a small number of simple binary features at first, and gradually expand until you are happy with your classification error.</li>
+<br/><br/>
+
+<h3>Turn In Your Results</h3>
+Create a report describing your training sample size, the features you selected, and your accuracy for the training, testing, and validation sets using your final classifier. Include the sets of images you used and a list of how each one was classified. Please at least include your image files in an archive file (e.g. .zip), the other files you may turn in as you like.  To submit your homework:<br/>
+
+<pre>
+turnin --submit houck cs343-hw5 [files you modified, image sets, and your report]
+</pre>
+
+Make sure to include the names and UT eids of all members of your team.
+<br/>
+<br/>
+</body> 
+</html> 

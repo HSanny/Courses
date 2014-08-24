@@ -1,7 +1,6 @@
 import random
 from OpenNero import *
-from common import *
-import Maze
+from common import * import Maze
 from Maze.constants import *
 
 from heapq import heappush, heappop
@@ -656,27 +655,35 @@ class MoveForwardAndStopAgent(AgentBrain):
     def end(self, time, reward):
         return True
 
-class IdaStarSearchAgent(GenericSearchAlgorithm):
+class IdaStarSearchAgent(SearchAgent):
     """
     IDA* algorithm
     """
     def __init__(self):
         # this line is crucial, otherwise the class is not recognized as an AgentBrainPtr by C++
         SearchAgent.__init__(self)
-        GenericSearchAlgorithm.__init__(self)
 
         self.visited = set([])
         self.adjlist = {}
         self.parents = {}
         self.backpointers = {}
-        self.subagent = DFSSearchAgent
+        self.cost = {}
+
+        self.cutoff = 0
 
     def initialize(self, init_info):
         """
         Initializes the agent upon reset
         """
         self.constraints = init_info.actions
-        print init_info
+
+        self.visited = set([])
+        self.adjlist = {}
+        self.parents = {}
+        self.backpointers = {}
+        self.cost = {}
+
+        self.cutoff += 1
 
     def start(self, time, observations):
         """
@@ -688,8 +695,6 @@ class IdaStarSearchAgent(GenericSearchAlgorithm):
         """
         Called every time the agent needs to take an action
         """
-        print observations
-        print reward
         # return action
         return self.ida_action(observations)
 
@@ -707,39 +712,38 @@ class IdaStarSearchAgent(GenericSearchAlgorithm):
         """
         return True
 
-    def ida_action(self, observations):
-        r = observations[0]
-        c = observations[1]
-        # if we have not been here before, build a list of other places we can go
-        if (r,c) not in self.visited:
-            tovisit = []
-            for m, (dr,dc) in enumerate(MAZE_MOVES):
-                r2, c2 = r+dr, c+dc
-                if not observations[2 + m]: # can we go that way?
-                    if (r2,c2) not in self.visited:
-                        tovisit.append( (r2,c2) )
-                        self.parents[ (r2,c2) ] = (r,c)
-            # remember the cells that are adjacent to this one
-            self.adjlist[(r, c)] = tovisit
-        # if we have been here before, check if we have other places to visit
-        adjlist = self.adjlist[(r,c)]
-        k = 0
-        while k < len(adjlist) and adjlist[k] in self.visited:
-            k += 1
-        # if we don't have other neighbors to visit, back up
-        if k == len(adjlist):
-            current = self.parents[(r,c)]
-        else: # otherwise visit the next place
-            current = adjlist[k]
-        self.visited.add((r,c)) # add this location to visited list
-        get_environment().mark_maze_blue(r, c) # mark it as blue on the maze
+    def enque(self, cell):
+        (r,c) = cell
+        heappush(self.queue, Cell(self.heuristic(r, c), r, c))
+
+    def deque(self):
+        cell = heappop(self.queue)
+        h, r, c = cell.h, cell.r, cell.c
+        return (r, c)
+
+    def get_action(self, r, c, observations):
+        """
+        we override the get_action method so that we can teleport from place to place
+        """
+        while not self.goal: # first, figure out where we are trying to go
+            (r2, c2) = self.deque()
+            get_environment().unmark_maze_agent(r2,c2)
+            get_environment().mark_maze_yellow(r2,c2)
+            if self.heuristic(r2, c2) <= self.cutoff:
+                self.goal = (r2, c2)
+        # then, check if we can get there
+        r2, c2 = self.goal
+        dr, dc = r2 - r, c2 - c
+        action = get_action_index((dr,dc)) # try to find the action (will return None if it's not there)
         v = self.constraints.get_instance() # make the action vector to return
-        dr, dc = current[0] - r, current[1] - c # the move we want to make
-        v[0] = get_action_index( (dr, dc) )
-        # remember how to get back
-        if (r+dr,c+dc) not in self.backpointers:
-            self.backpointers[(r+dr, c+dc)] = (r,c)
-        return v
+        # first, is the node reachable in one action?
+        if action is not None and observations[2 + action] == 0:
+            v[0] = action # if yes, do that action!
+        else:
+            # if not, we should teleport and return null action
+            get_environment().teleport(self, r2, c2)
+            v[0] = MAZE_NULL_MOVE
+        return v # return the action
 
     def reset(self):
         self.visited = set([])

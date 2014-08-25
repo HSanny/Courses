@@ -656,7 +656,7 @@ class MoveForwardAndStopAgent(AgentBrain):
     def end(self, time, reward):
         return True
 
-class IdaStarSearchAgent(SearchAgent):
+class IdaStarSearchAgent(GenericSearchAlgorithm):
     """
     IDA* algorithm
     """
@@ -665,20 +665,33 @@ class IdaStarSearchAgent(SearchAgent):
         SearchAgent.__init__(self)
         GenericSearchAlgorithm.__init__(self)
 
+        self.visited = set([])
+        self.adjlist = {}
+        self.parents = {}
+        self.backpointers = {}
+        self.subagent = DFSSearchAgent
+
     def initialize(self, init_info):
         """
         Initializes the agent upon reset
         """
+        self.constraints = init_info.actions
+        print init_info
 
     def start(self, time, observations):
         """
         Called on the first move
         """
+        return self.ida_action(observations)
     
     def act(self, time, observations, reward):
         """
         Called every time the agent needs to take an action
         """
+        print observations
+        print reward
+        # return action
+        return self.ida_action(observations)
 
     def end(self, time, reward):
         """
@@ -693,3 +706,42 @@ class IdaStarSearchAgent(SearchAgent):
         After one or more episodes, this agent can be disposed of
         """
         return True
+
+    def ida_action(self, observations):
+        r = observations[0]
+        c = observations[1]
+        # if we have not been here before, build a list of other places we can go
+        if (r,c) not in self.visited:
+            tovisit = []
+            for m, (dr,dc) in enumerate(MAZE_MOVES):
+                r2, c2 = r+dr, c+dc
+                if not observations[2 + m]: # can we go that way?
+                    if (r2,c2) not in self.visited:
+                        tovisit.append( (r2,c2) )
+                        self.parents[ (r2,c2) ] = (r,c)
+            # remember the cells that are adjacent to this one
+            self.adjlist[(r, c)] = tovisit
+        # if we have been here before, check if we have other places to visit
+        adjlist = self.adjlist[(r,c)]
+        k = 0
+        while k < len(adjlist) and adjlist[k] in self.visited:
+            k += 1
+        # if we don't have other neighbors to visit, back up
+        if k == len(adjlist):
+            current = self.parents[(r,c)]
+        else: # otherwise visit the next place
+            current = adjlist[k]
+        self.visited.add((r,c)) # add this location to visited list
+        get_environment().mark_maze_blue(r, c) # mark it as blue on the maze
+        v = self.constraints.get_instance() # make the action vector to return
+        dr, dc = current[0] - r, current[1] - c # the move we want to make
+        v[0] = get_action_index( (dr, dc) )
+        # remember how to get back
+        if (r+dr,c+dc) not in self.backpointers:
+            self.backpointers[(r+dr, c+dc)] = (r,c)
+        return v
+
+    def reset(self):
+        self.visited = set([])
+        self.parents = {}
+        self.backpointers = {}

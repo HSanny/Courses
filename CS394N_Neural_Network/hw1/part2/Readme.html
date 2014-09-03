@@ -1,0 +1,143 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Part 2 Readme</title>
+    <meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
+  </head>
+  <body>
+
+<h2>Part 2 Readme</h2>
+
+<p>
+In this part of the homework, you'll do the following:
+
+<ol>
+<li> Prepare your input files.
+<ol>
+<li>Create a  training example file (e.g. <tt>train.ex</tt>) by using the digit
+  program. Run
+  <blockquote>
+<tt>digit train.pat</tt></blockquote> 
+  Refer to digit.instructions for the usage of the program.  Note that your training examples should resemble handwritten numerals, they shouldn't all be perfectly neat.
+<li> Generate a vector file and a label file by using the Perl script <tt>convert-digits.pl</tt>.
+Run
+  <blockquote><tt>./convert-digits.pl train.pat train.vectors train.labels</tt></blockquote>
+</ol>
+<li> Prepare your simulation file (for the purposes of this explanation, we'll
+  assume it's called <tt>mysimu</tt>) using <a href="simu.demo"><tt>simu.demo</tt></a> as the 
+  starting point:
+  <ul>
+   <li>  Do <tt>cp simu.demo mysimu</tt>.
+   <li>In <tt>mysimu</tt>, remove everything below the snapshot definitions as in part1.
+   <li> Set the <tt>vectorfilename</tt> parameter to whatever file you 
+       created with the conversion script described above.
+   <li> Change the network sizes (the nx and ny parameters), the
+       learning rates and neighborhoods (see <a href="Readme.parameters">
+       Readme.parameters</a> for details) as necessary to get a good mapping.
+   <li> Change the tend parameter to however many epochs you want to train.
+       At first it is a good idea to run it only for a few hundred
+       epochs to get an idea how it is going to organize; after you are
+       confident that the parameters are correct, you can run several thousand
+       epochs in the background (see below).	
+   <li> Change the snapshot definition so that it will match tend
+       (so that the last snapshot will be saved).
+   <li> Set the <tt>disp_rate</tt> parameter to 1 if you want the map 
+       organization to be displayed every iteration, to 0 if you never 
+       want it displayed, or to some other integer n if you want it 
+       displayed every nth iteration.
+</ul>
+<li>  Edit <a href="sofm.tcl"><tt>sofm.tcl</tt></a> to change 
+   <tt>set simufile "simu.demo"</tt> to <tt>set simufile "mysimu"</tt>.  (Note that if you are using your own Ubuntu machine you need <tt>tk8.5</tt> installed to run this, and you might need to change the first line of <tt> sofm.tcl</tt> to <tt>#!/usr/bin/wish8.5</tt>).  
+
+<li> Exit and type <tt>./sofm.tcl</tt>  A <a href="images/sofm.gif">feature map window</a> will pop up.  Each unit 
+   is represented by a box, and a label inside the box indicates that an input 
+   vector with that label was mapped on that unit (i.e. it was the maximally 
+   responding unit when that vector was presented as input).  Each unit may 
+   have several labels.
+
+<li> Eventually, once you get the hang of the process, you may want to
+   run a long simulation in the background to save time (display at each
+   epoch takes a lot of time). Set <tt>disp_rate</tt> to 0 during training,
+   save snapshots at several iterations. After the training is done,
+   set <tt>disp_rate</tt> to 1 in the simufile, type <tt>sofm.tcl</tt> 
+   again, and the program displays the organization after each snapshot 
+   you saved.  Alternatively, if your machine is fast enough that running 
+   in the background is less important than just not having so much text 
+   output, you could just set <tt>disp_rate</tt> to some reasonably large 
+   value (e.g. 25) so that it only displays a few pictures over the course
+   of the training.
+
+<li> If the network does not look good, repeat steps 2-6 with different
+   parameters until you are happy with it. Note that currently the
+   largest netsize is 20x20; if you want to try larger nets, you have to
+   change MAXNX and MAXNY in <a href="sofm.h">sofm.h</a> and
+   recompile. 
+</ol>
+
+<p>
+Here are more details for those interested:
+<hr>
+<p>
+*** Forming a 2-d topological feature map of n-d input vector data ***
+
+<p>
+<h3>What is it?</h3>
+
+<p>
+This package contains the code and data for forming a 2-d (or 1-d)
+feature map of n-dimensional vector data.
+
+<h3>What does it do?</h3>
+
+<p>
+<ul>
+  <li> 2-D (or 1-d) network with variable number of units in each dimension
+  <li> Input vectors read from the file and cycled through
+  <li> Random initial input weights
+  <li> Response of a unit inversely proportional to the euclidian distance
+     between the input vector and the weight vector of the unit
+  <li> Global selection of maximally responding unit
+  <li> Weights changed toward the input within a neighborhood of this unit
+</ul>
+
+<p>
+The simulation consists of phases during which the neighborhood size and
+learning rate are linearly decreased. Snapshots of the simulation can be
+saved to a file and the simulation can be later continued by reading in
+the current state of the network from the save file. Snapshots and
+endpoints of phases are defined in epochs.
+
+<p>
+The display works through generic alphanumeric output. For each input
+vector, the current maximally responding unit is shown. Graphics can
+also be turned off and network can be developed as a background job,
+saving snapshots along the way. When the save file is later read in
+(with display on), the first input after the network has reached its
+saved state is displayed.
+
+
+<h3>What do I need to run it?</h3>
+
+<p>
+Files needed:
+<ul>
+  <li> <a href="simu.demo"><tt>simufile</tt></a>  simulation and network 
+       configuration parameters and snapshots of the simulation (appended)
+       see <a href="Readme.parameters">Readme.parameters</a> for explanation
+  <li> <a href="demo.labels"><tt>labelfile</tt></a> contains the character 
+       strings corresponding to vector names
+  <li> <a href="demo.vectors"><tt>vectorfile</tt></a> the input vectors.
+</ul>
+
+<p>
+The sample simufile contains 3 snapshots of a simulation where a sample 
+set of 99 handwritten digit representations were mapped to a 13x13 map.  
+To run it, type <tt>sofm.tcl</tt> (with "simufile" set to "simu.demo"), 
+and hit return after each snapshot is displayed.
+
+<hr>
+<p> Modified by Kim Houck, Fall 2014 </p>
+<p>Originally by Marshall Mayberry.</p>
+
+  </body>
+</html>

@@ -1,0 +1,61 @@
+! -------------------------------------------------------------
+! Resource file for xsofm. Author: Joseph Sirosh. Sept 19, 1993.
+! -------------------------------------------------------------
+
+*allowShellResize:                        False
+! Interesting thing to note: Even if I set the above resource False, the shell
+! can apparently be resized.
+!
+XFmrevised.title:                         NetSim Controls
+XFmrevised*foreground:                    black
+XFmrevised*background:                    SeaGreen3
+XFmrevised.geometry:                      350x400+0+0
+XFmrevised*keyboardFocusPolicy:           Pointer
+!
+! Menubar resources
+!
+XFmrevised*Menubar*fontList:              9x15bold
+XFmrevised*Menubar.height:                20
+XFmrevised*Menubar.spacing:               0
+XFmrevised*Menubar.XmPushButton.background:SeaGreen2
+XFmrevised*Menubar.XmPushButton.bottomShadowColor:SeaGreen3
+XFmrevised*Menubar.XmPushButton.topShadowColor:SeaGreen3
+XFmrevised*Menubar.XmPushButton.armColor:red
+!
+! Command widget
+!
+! The history area is where the error messages appear.
+XFmrevised*Command.historyVisibleItemCount: 1
+XFmrevised*Command.fontList:              fixed
+!
+! Main window configuration
+!
+XFmrevised*Main.commandWindowLocation:    XmCOMMAND_BELOW_WORKSPACE
+!
+! Form is the work area widget in the main window of the application
+!
+XFmrevised*Form1.background:              SeaGreen2
+XFmrevised*List.listSpacing:              1
+XFmrevised*List.listMarginHeight:         2
+XFmrevised*List.listMarginWidth:          2
+XFmrevised*List.visibleItemCount:         8
+XFmrevised*List.fontList:                 fixed
+!
+! Other top level windows.  
+!
+XFmrevised*INPUT.geometry:                302x302+375+0
+XFmrevised*INPUT.title:                   Input
+XFmrevised*INPUT*background:              Black
+XFmrevised*INPUT*foreground:              white
+XFmrevised*NETWORK.geometry:              302x302+375+335
+XFmrevised*NETWORK.title:                 Net
+XFmrevised*NETWORK*background:            Black
+!XFmrevised*NETWORK*foreground:            turquoise
+XFmrevised*NETWORK*foreground:            white
+XFmrevised*ACTIVITY1.geometry:            302x302+0+435
+XFmrevised*ACTIVITY1.title:               Map Layer Activity
+XFmrevised*ACTIVITY1*background:          Black
+XFmrevised*ACTIVITY1*foreground:          white
+
+
+

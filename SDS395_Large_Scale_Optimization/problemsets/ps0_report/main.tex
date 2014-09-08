@@ -59,88 +59,164 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{Matlab and Computational Assignment}
-\section{Sparse Recovery}
-\subsection{Algorithm 1: Least Square}
+\section{Algorithm 1: Least Square}
+The command to invoke standarded least-squared regression:
+\begin{verbatim}
+>> algo1()
+\end{verbatim}
+Note that {\it algo1.m} includes scripts for all three datasets.
 %{{{
-\subsubsection{Small-scale dataset: Succeed}
-\hspace{0.47cm}
-    Total CPU time (secs)  = $0.18$  
+\subsection{Small-scale dataset: Succeed}
+The brief summary of applying standarded least-squared regression on
+small-scale dataset is as follows:
+\begin{itemize}
+    \item  Total CPU time (secs)  = $0.18$  
 
-    CPU time per iteration = $0.02$
+    \item   CPU time per iteration = $0.02$
 
-    Regression Error: $+1.48902e^{-10}$
+    \item   Regression Error $||X \beta - y||$: 1.1698e-10
     
-    Testing Error: $23.058394$
+    \item Testing Error $||X_{test} \beta - y_{test}||$: $23.058394$ (pretty large)
+\end{itemize}
 
-\subsubsection{Medium-scale dataset: Succeed}
-\hspace{0.47cm}
-    Total CPU time (secs)  = $43.95$  
+\subsection{Medium-scale dataset: Succeed}
+The brief summary of applying standarded least-squared regression on
+medium-scale dataset is as follows:
+\begin{itemize}
+ \item   Total CPU time (secs)  = $43.95$  
 
-    CPU time per iteration = $5.49$ 
+ \item   CPU time per iteration = $5.49$ 
 
-    Regression Error: $+5.92177e^{-10}$
+ \item   Regression Error $||X \beta - y||$: 3.2594e-09
     
-    Testing Error: $19.862394$
-\subsubsection{Large-scale dataset: Failed}
+  \item  Testing Error $||X_{test} \beta - y_{test}||$: $19.862394$ (pretty large)
+\end{itemize}
+\subsection{Large-scale dataset: Failed}
     
-    The scale of this least-square task is too large. 
+    This standarded least-square regression task is too large-scaled to be computed. 
 %}}}
-\subsection{Algorithm 2: optimization with LASSO}
+
+\newpage
+\section{Algorithm 2: optimization with LASSO}
+The command to invoke least-squared regression with LASSO:
+\begin{verbatim}
+>> algo2()
+\end{verbatim}
+Note that {\it algo2.m} includes scripts for all three datasets.
 %{{{
-\subsubsection{Small-scale dataset: Succeed}
-\hspace{0.47cm}
-    Total CPU time (secs)  = $0.38$ 
+\subsection{Small-scale dataset: Succeed}
+The brief summary of applying least-squared regression with LASSO on
+small-scale dataset is as follows:
+\begin{itemize}
+ \item   Total CPU time (secs)  = $0.38$ 
 
-    CPU time per iteration = $0.02$  
+ \item   CPU time per iteration = $0.02$  
 
-    Regression Error: $+5.02333$
+ \item   Regression Error: 6.7886e-10
 
-    Testing Error: $0.144338$
+ \item   Testing Error: $0.144338$
 
-    Support(non-zeros entries of $\beta$): $43$
+ \item   Supports (non-zeros entries of $\beta$): $43$ ($500$ atoms in total)
+\end{itemize}
 
-\subsubsection{Medium-scale dataset: Succeed}
-\hspace{0.47cm}
-    Total CPU time (secs)  = $126.66$
+\subsection{Medium-scale dataset: Succeed}
+The brief summary of applying least-squared regression with LASSO on
+medium-scale dataset is as follows:
+\begin{itemize}
+ \item   Total CPU time (secs)  = $126.66$
 
-    CPU time per iteration = $4.87$  
+ \item   CPU time per iteration = $4.87$  
 
-    Regression Error: $+5.11426$
+ \item   Regression Error: 4.4292e-09
  
-    Testing Error: $0.078289$
+ \item   Testing Error: $0.078289$
 
-    Support (non-zeros entries of $\beta$): $342$
+ \item   Supports (non-zeros entries of $\beta$): $342$ ($5000$ atoms in total)
+\end{itemize}
 
-\subsubsection{Large-scale dataset: Failed}
+\subsection{Large-scale dataset: Failed}
     
-    The scale of this least-square task is too large. 
+    This least-square regression with LASSO task is too large-scaled to be computed. 
 %}}}
+\\[0.3cm]
 
+\noindent 
+{\bf Remarks}: Least-squared regression
+with LASSO does outperfrom standarded least-squared regression in its
+prediction accuracy. Besides, it has higher computational complexity since it
+requires more iterations for convergence and each iteration cost more time to
+complete.
+
+\newpage
 \section{Orthogonal Matching Pursuit}
+The command to invoke regression with OMP preprocessing:
+\begin{verbatim}
+>> regress_omp()
+\end{verbatim}
 
+\subsection{Small-scale Dataset: Succeed}
+The brief summary of applying regression with OMP feature selection on
+small-scale dataset is as follows:
+\begin{itemize}
+\item Indices of Features selected by OMP (with order): 402, 235, 86, 11, 108. 
+\item Elapsed time is 0.198106 seconds.
+\item Regression Error $||X \beta - y||$: 5.3785e-02
+\item Testing Error $||X_{test} \beta - y_{test}||$: 4.4208e-02
+\end{itemize}
 
-\chapter{Linear Algebra Review}
-\section{Vector Spaces}
+\subsection{Medium-scale Dataset: Succeed}
+The brief summary of applying regression with OMP feature selection on
+medium-scale dataset is as follows:
+\begin{itemize}
+\item Indices of Features selected by OMP (with order): 577, 2760, 561, 3614,
+    3958. 
+\item Elapsed time is 0.209093 seconds.
+\item Regression Error $||X \beta - y||$: 2.1955e-01
+\item Testing Error $||X_{test} \beta - y_{test}||$: 1.8219e-02
+\end{itemize}
 
-\section{Linear Operators}
+\subsection{Large-scale Dataset: Succeed}
+The brief summary of applying regression with OMP feature selection on
+large-scale dataset is as follows:
+\begin{itemize}
+\item Indices of Features selected by OMP (with order): 17099, 29426, 35373,
+    22452, 43354. 
+\item Elapsed time is 2.994790 seconds.
+\item Regression Error $||X \beta - y||$: 6.9964e-01
+\item Testing Error $||X_{test} \beta - y_{test}||$: 6.4437e-03
+\end{itemize}
 
-\section{Independence}
+Note that Elapsed time is defined as OMP preprocessing and regression for
+selected atoms on that dataset, but not included computation for regression
+error and testing error. 
+\\[0.3cm]
 
-\section{Linearly Independence}
+\noindent 
+{\bf Remarks}: Least-squared regression on OMP feature selection performs much
+better than standarded least-squared regression and least-squared regression
+with LASSO. Besides, it has lower computational complexity since it allows the
+large-scale dataset (third dataset) to be regressed.
 
-\section{Range and Nullspace of Matrices}
-
-\section{More Range and Nullspace}
-
-\section{Riesz Representation Theorem}
-
-\section{Derivatives}
-
-\section{Rank}
-
-
-
-\section{Surjectivity}
+%\chapter{Linear Algebra Review}
+%\section{Vector Spaces}
+%
+%\section{Linear Operators}
+%
+%\section{Independence}
+%
+%\section{Linearly Independence}
+%
+%\section{Range and Nullspace of Matrices}
+%
+%\section{More Range and Nullspace}
+%
+%\section{Riesz Representation Theorem}
+%
+%\section{Derivatives}
+%
+%\section{Rank}
+%
+%\section{Surjectivity}
 
 \newpage
 \appendix
@@ -150,270 +226,18 @@
 \subsection{Algorithm 1: Least Square}
 \lstinputlisting{../ps0_matlab/algo1.m}
 \newpage
-\subsection{Algorithm 2: optimization with LASSO}
+\subsection{Algorithm 2: Optimization with LASSO}
 \lstinputlisting{../ps0_matlab/algo2.m}
 \newpage
 
 \section{Orthogonal Matching Pursuit}
 
-\chapter{CVX Experiment Results: Sparse Recovery}
+\subsection{OMP Routine}
+\lstinputlisting{../ps0_matlab/omp.m}
 
-\section{Algorithm 1: Least Square}
-\subsection{Small-scale dataset}
-%{{{
-\begin{verbatim}
-    Calling SDPT3 4.0: 551 variables, 50 equality constraints
-------------------------------------------------------------
-
- num. of constraints = 50
- dim. of socp   var  = 51,   num. of socp blk  =  1
- dim. of free   var  = 500 *** convert ublk to lblk
-*******************************************************************
-   SDPT3: Infeasible path-following algorithms
-*******************************************************************
- version  predcorr  gam  expon  scale_data
-    NT      1      0.000   1        0    
-it pstep dstep pinfeas dinfeas  gap      prim-obj      dual-obj    cputime
--------------------------------------------------------------------
- 0|0.000|0.000|9.5e-01|1.7e+04|1.1e+09| 2.608637e+01  0.000000e+00| 0:0:00| chol  1  1 
- 1|1.000|0.989|1.4e-10|1.9e+02|2.4e+06| 1.929302e+01  3.828915e-04| 0:0:00| chol  1  1 
- 2|0.995|0.990|2.0e-10|2.1e+00|5.2e+03| 2.098412e-01  3.092593e-05| 0:0:00| chol  1  1 
- 3|0.991|1.000|1.8e-11|7.5e-02|3.5e+01| 2.098816e-03  3.804833e-05| 0:0:00| chol  1  1 
- 4|1.000|1.000|5.8e-11|7.5e-03|5.8e-01| 2.682428e-05  2.478894e-05| 0:0:00| chol  1  1 
- 5|1.000|1.000|2.3e-11|7.5e-04|9.8e-03| 4.595280e-07  1.514185e-05| 0:0:00| chol  1  1 
- 6|1.000|1.000|9.1e-12|7.4e-05|2.1e-04| 7.745935e-09  8.345387e-06| 0:0:00| chol  1  1 
- 7|1.000|0.907|5.7e-12|3.2e-06|1.9e-06| 2.420707e-08  2.968077e-06| 0:0:00| chol  1  1 
- 8|0.990|0.988|1.1e-11|3.5e-08|1.3e-08| 2.821459e-10  3.459447e-08| 0:0:00| chol  1  1 
- 9|0.473|0.945|6.0e-12|1.8e-09|2.3e-10| 1.489021e-10  1.919896e-09| 0:0:00|
-  stop: max(relative gap, infeasibilities) < 1.49e-08
--------------------------------------------------------------------
- number of iterations   =  9
- primal objective value =  1.48902080e-10
- dual   objective value =  1.91989619e-09
- gap := trace(XZ)       = 2.29e-10
- relative gap           = 2.29e-10
- actual relative gap    = -1.77e-09
- rel. primal infeas     = 6.03e-12
- rel. dual   infeas     = 1.78e-09
- norm(X), norm(y), norm(Z) = 7.8e-01, 1.1e-10, 1.0e+00
- norm(A), norm(b), norm(C) = 2.2e+02, 1.9e+01, 2.0e+00
- Total CPU time (secs)  = 0.18  
- CPU time per iteration = 0.02  
- termination code       =  0
- DIMACS: 1.6e-11  0.0e+00  1.8e-09  0.0e+00  -1.8e-09  2.3e-10
--------------------------------------------------------------------
-------------------------------------------------------------
-Status: Solved
-Optimal value (cvx_optval): +1.48902e-10
- 
-Testing Error: 23.058394
-\end{verbatim}
-%}}}
-
-\subsection{Medium-scale dataset}
-%{{{
-\begin{verbatim}
-    Calling SDPT3 4.0: 5501 variables, 500 equality constraints
-------------------------------------------------------------
-
- num. of constraints = 500
- dim. of socp   var  = 501,   num. of socp blk  =  1
- dim. of free   var  = 5000 *** convert ublk to lblk
-*******************************************************************
-   SDPT3: Infeasible path-following algorithms
-*******************************************************************
- version  predcorr  gam  expon  scale_data
-    NT      1      0.000   1        0    
-it pstep dstep pinfeas dinfeas  gap      prim-obj      dual-obj    cputime
--------------------------------------------------------------------
- 0|0.000|0.000|9.8e-01|5.2e+03|1.0e+08| 1.077392e+02  0.000000e+00| 0:0:05| chol  1  1 
- 1|1.000|0.989|2.0e-11|5.7e+01|2.3e+05| 9.823617e+01  6.299850e-05| 0:0:10| chol  1  1 
- 2|1.000|0.992|1.6e-11|6.1e-01|4.9e+02| 3.633210e+00  3.969663e-05| 0:0:15| chol  1  1 
- 3|0.989|1.000|7.9e-11|1.5e-02|2.3e+00| 3.834024e-02  2.056260e-05| 0:0:20| chol  1  1 
- 4|0.989|1.000|8.3e-11|1.5e-03|3.8e-02| 4.202595e-04  1.294517e-05| 0:0:25| chol  1  1 
- 5|0.989|1.000|3.4e-11|9.2e-05|4.4e-04| 4.617135e-06  7.465648e-06| 0:0:30| chol  1  1 
- 6|0.982|0.858|3.1e-11|3.5e-06|1.6e-06| 9.312820e-08  3.340703e-06| 0:0:34| chol  1  1 
- 7|0.988|0.988|1.2e-10|4.0e-08|4.5e-09| 1.122080e-09  4.025133e-08| 0:0:39| chol  1  1 
- 8|0.472|0.945|6.3e-11|2.2e-09|6.1e-10| 5.921772e-10  2.233900e-09| 0:0:44|
-  stop: max(relative gap, infeasibilities) < 1.49e-08
--------------------------------------------------------------------
- number of iterations   =  8
- primal objective value =  5.92177202e-10
- dual   objective value =  2.23390030e-09
- gap := trace(XZ)       = 6.08e-10
- relative gap           = 6.08e-10
- actual relative gap    = -1.64e-09
- rel. primal infeas     = 6.30e-11
- rel. dual   infeas     = 2.23e-09
- norm(X), norm(y), norm(Z) = 7.2e-01, 4.6e-11, 1.0e+00
- norm(A), norm(b), norm(C) = 2.2e+03, 5.2e+01, 2.0e+00
- Total CPU time (secs)  = 43.95  
- CPU time per iteration = 5.49  
- termination code       =  0
- DIMACS: 3.4e-10  0.0e+00  2.2e-09  0.0e+00  -1.6e-09  6.1e-10
--------------------------------------------------------------------
-------------------------------------------------------------
-Status: Solved
-Optimal value (cvx_optval): +5.92177e-10
-
-Testing Error: 19.862394
-\end{verbatim}
-%}}}
-
-\section{Algorithm 2: Optimization with LASSO}
-
-\subsection{Small-scale dataset}
-%{{{
-\begin{verbatim}
-Calling SDPT3 4.0: 1051 variables, 50 equality constraints
-------------------------------------------------------------
-
- num. of constraints = 50
- dim. of socp   var  = 1051,   num. of socp blk  = 501
-*******************************************************************
-   SDPT3: Infeasible path-following algorithms
-*******************************************************************
- version  predcorr  gam  expon  scale_data
-    NT      1      0.000   1        0    
-it pstep dstep pinfeas dinfeas  gap      prim-obj      dual-obj    cputime
--------------------------------------------------------------------
- 0|0.000|0.000|9.5e-01|2.3e+01|1.8e+04| 7.142482e+02  0.000000e+00| 0:0:00| chol  1  1 
- 1|1.000|1.000|2.7e-08|9.6e-02|7.2e+02| 6.546504e+02  9.246345e-01| 0:0:00| chol  1  1 
- 2|0.909|1.000|1.5e-07|9.6e-03|6.4e+01| 6.512372e+01  1.712575e+00| 0:0:00| chol  1  1 
- 3|0.934|0.434|4.6e-08|5.8e-03|1.8e+01| 2.184844e+01  3.858190e+00| 0:0:00| chol  1  1 
- 4|0.617|0.405|2.3e-08|3.5e-03|9.6e+00| 1.417260e+01  4.579879e+00| 0:0:00| chol  1  1 
- 5|0.536|0.728|1.1e-08|9.6e-04|5.0e+00| 9.606566e+00  4.625332e+00| 0:0:00| chol  1  1 
- 6|0.960|0.903|4.7e-10|9.4e-05|3.7e-01| 5.359583e+00  4.988527e+00| 0:0:00| chol  1  1 
- 7|0.845|0.966|2.0e-10|3.3e-06|9.5e-02| 5.109067e+00  5.014546e+00| 0:0:00| chol  1  1 
- 8|0.780|0.478|7.7e-09|1.7e-06|3.6e-02| 5.054972e+00  5.019026e+00| 0:0:00| chol  1  2 
- 9|0.813|0.679|3.0e-09|5.6e-07|1.3e-02| 5.034443e+00  5.021832e+00| 0:0:00| chol  2  2 
-10|0.736|0.767|8.0e-10|1.3e-07|5.2e-03| 5.027999e+00  5.022809e+00| 0:0:00| chol  2  2 
-11|0.749|0.738|2.0e-10|3.4e-08|2.0e-03| 5.025198e+00  5.023155e+00| 0:0:00| chol  2  2 
-12|0.584|0.623|8.4e-11|1.3e-08|1.0e-03| 5.024263e+00  5.023252e+00| 0:0:00| chol  2  2 
-13|0.806|0.752|1.9e-11|3.2e-09|3.0e-04| 5.023601e+00  5.023305e+00| 0:0:00| chol  2  2 
-14|1.000|0.805|3.3e-11|6.3e-10|4.9e-05| 5.023373e+00  5.023324e+00| 0:0:00| chol  2  2 
-15|0.743|0.923|1.4e-11|5.4e-11|1.4e-05| 5.023343e+00  5.023329e+00| 0:0:00| chol  2  2 
-16|0.811|0.924|6.5e-11|6.9e-12|4.3e-06| 5.023334e+00  5.023330e+00| 0:0:00| chol  3  3 
-17|0.627|0.727|1.6e-09|6.2e-12|2.3e-06| 5.023332e+00  5.023330e+00| 0:0:00| chol  2  2 
-18|0.601|1.000|6.6e-10|6.4e-12|1.2e-06| 5.023331e+00  5.023330e+00| 0:0:00| chol  2  2 
-19|0.605|1.000|2.7e-10|9.6e-12|6.7e-07| 5.023331e+00  5.023330e+00| 0:0:00| chol  2  2 
-20|0.588|1.000|1.2e-10|1.4e-11|3.7e-07| 5.023330e+00  5.023330e+00| 0:0:00| chol  2  2 
-21|0.590|1.000|5.6e-11|2.2e-11|2.0e-07| 5.023330e+00  5.023330e+00| 0:0:00| chol  2  2 
-22|0.594|1.000|3.1e-11|1.1e-11|1.1e-07| 5.023330e+00  5.023330e+00| 0:0:00|
-  stop: max(relative gap, infeasibilities) < 1.49e-08
--------------------------------------------------------------------
- number of iterations   = 22
- primal objective value =  5.02332996e+00
- dual   objective value =  5.02332985e+00
- gap := trace(XZ)       = 1.12e-07
- relative gap           = 1.01e-08
- actual relative gap    = 1.01e-08
- rel. primal infeas     = 3.09e-11
- rel. dual   infeas     = 1.12e-11
- norm(X), norm(y), norm(Z) = 3.2e+00, 5.8e-01, 2.5e+01
- norm(A), norm(b), norm(C) = 1.6e+02, 1.9e+01, 2.3e+01
- Total CPU time (secs)  = 0.36  
- CPU time per iteration = 0.02  
- termination code       =  0
- DIMACS: 8.2e-11  0.0e+00  1.3e-10  0.0e+00  1.0e-08  1.0e-08
--------------------------------------------------------------------
-------------------------------------------------------------
-Status: Solved
-Optimal value (cvx_optval): +5.02333
- 
-
-RegressError1 =
-
-   6.7886e-10
-
-
-TestingError1 =
-
-   1.4434e-01
-
-
-support1 =
-
-    43
-
-
-\end{verbatim}
-%}}}
-
-\subsection{Medium-scale dataset}
-%{{{
-\begin{verbatim}
-Calling SDPT3 4.0: 10501 variables, 500 equality constraints
-------------------------------------------------------------
-
- num. of constraints = 500
- dim. of socp   var  = 10501,   num. of socp blk  = 5001
-*******************************************************************
-   SDPT3: Infeasible path-following algorithms
-*******************************************************************
- version  predcorr  gam  expon  scale_data
-    NT      1      0.000   1        0    
-it pstep dstep pinfeas dinfeas  gap      prim-obj      dual-obj    cputime
--------------------------------------------------------------------
- 0|0.000|0.000|9.8e-01|7.2e+01|5.2e+05| 7.093451e+03  0.000000e+00| 0:0:02| chol  1  1 
- 1|1.000|0.996|1.0e-08|3.7e-01|9.5e+03| 6.888375e+03  7.852670e-01| 0:0:05| chol  1  1 
- 2|0.999|1.000|2.0e-08|9.9e-03|5.1e+02| 5.111069e+02  1.218548e+00| 0:0:10| chol  1  1 
- 3|0.908|0.410|5.7e-08|6.2e-03|1.5e+02| 1.538825e+02  4.537091e+00| 0:0:15| chol  1  1 
- 4|0.714|1.000|1.5e-08|9.9e-05|5.9e+01| 6.176855e+01  2.879723e+00| 0:0:20| chol  1  1 
- 5|0.986|0.908|2.2e-10|1.8e-05|1.1e+01| 1.607598e+01  4.876689e+00| 0:0:25| chol  1  1 
- 6|0.912|0.981|4.0e-11|1.3e-06|9.8e-01| 5.994558e+00  5.010259e+00| 0:0:29| chol  1  1 
- 7|0.987|0.525|6.2e-09|6.7e-07|2.5e-01| 5.312589e+00  5.059905e+00| 0:0:34| chol  1  1 
- 8|0.702|0.572|2.4e-09|2.9e-07|1.2e-01| 5.215894e+00  5.095218e+00| 0:0:39| chol  1  1 
- 9|0.738|0.553|2.0e-10|1.3e-07|5.1e-02| 5.156974e+00  5.105812e+00| 0:0:44| chol  1  2 
-10|0.694|0.597|6.3e-11|5.3e-08|2.2e-02| 5.133150e+00  5.110765e+00| 0:0:49| chol  1  1 
-11|0.644|0.670|4.8e-11|1.8e-08|1.1e-02| 5.123456e+00  5.112953e+00| 0:0:54| chol  2  2 
-12|0.687|0.655|2.0e-11|6.1e-09|4.7e-03| 5.118430e+00  5.113733e+00| 0:0:59| chol  2  2 
-13|0.704|0.670|2.3e-11|2.0e-09|2.0e-03| 5.116103e+00  5.114053e+00| 0:1:03| chol  2  2 
-14|0.663|0.725|3.1e-11|5.6e-10|1.0e-03| 5.115217e+00  5.114186e+00| 0:1:08| chol  2  2 
-15|0.779|0.678|9.0e-11|1.9e-10|3.8e-04| 5.114611e+00  5.114232e+00| 0:1:13| chol  2  2 
-16|0.868|0.752|2.2e-10|5.5e-11|1.1e-04| 5.114364e+00  5.114253e+00| 0:1:18| chol  2  2 
-17|0.795|0.810|4.3e-10|2.4e-11|3.7e-05| 5.114298e+00  5.114261e+00| 0:1:23| chol  2  3 
-18|0.607|0.787|3.5e-10|2.6e-11|2.0e-05| 5.114282e+00  5.114263e+00| 0:1:27| chol  2  3 
-19|0.595|1.000|1.8e-10|3.1e-11|1.0e-05| 5.114274e+00  5.114264e+00| 0:1:32| chol  3  3 
-20|0.597|1.000|2.0e-10|3.6e-11|5.7e-06| 5.114269e+00  5.114264e+00| 0:1:37| chol  3  3 
-21|0.601|1.000|1.9e-10|4.1e-11|3.1e-06| 5.114267e+00  5.114264e+00| 0:1:42| chol  3  3 
-22|0.605|1.000|1.5e-10|3.9e-11|1.7e-06| 5.114266e+00  5.114264e+00| 0:1:47| chol  2  3 
-23|0.607|1.000|1.2e-10|3.1e-11|9.0e-07| 5.114265e+00  5.114264e+00| 0:1:52| chol  3  3 
-24|0.610|1.000|1.1e-10|2.4e-11|4.8e-07| 5.114264e+00  5.114264e+00| 0:1:56| chol  3  3 
-25|0.612|1.000|9.7e-11|2.3e-11|2.6e-07| 5.114264e+00  5.114264e+00| 0:2:01| chol  2  3 
-26|0.613|1.000|8.6e-11|1.9e-11|1.4e-07| 5.114264e+00  5.114264e+00| 0:2:06|
-  stop: max(relative gap, infeasibilities) < 1.49e-08
--------------------------------------------------------------------
- number of iterations   = 26
- primal objective value =  5.11426403e+00
- dual   objective value =  5.11426389e+00
- gap := trace(XZ)       = 1.38e-07
- relative gap           = 1.23e-08
- actual relative gap    = 1.23e-08
- rel. primal infeas     = 8.56e-11
- rel. dual   infeas     = 1.95e-11
- norm(X), norm(y), norm(Z) = 3.2e+00, 6.2e-01, 8.1e+01
- norm(A), norm(b), norm(C) = 1.6e+03, 5.2e+01, 7.2e+01
- Total CPU time (secs)  = 126.15  
- CPU time per iteration = 4.85  
- termination code       =  0
- DIMACS: 4.6e-10  0.0e+00  7.0e-10  0.0e+00  1.2e-08  1.2e-08
--------------------------------------------------------------------
-------------------------------------------------------------
-Status: Solved
-Optimal value (cvx_optval): +5.11426
- 
-
-TestError2 =
-
-   7.8289e-02
-
-
-support2 =
-
-   342
-   \end{verbatim}
-%}}}
+\newpage
+\subsection{Regression Scripts}
+\lstinputlisting{../ps0_matlab/regress_omp.m}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% General Documentation ends

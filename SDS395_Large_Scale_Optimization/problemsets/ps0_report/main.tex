@@ -7,7 +7,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%  PACKAGES USED IN THIS TEX SOURCE FILE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\usepackage{geometry,amsthm,amsmath,graphicx,fancyheadings}
+\usepackage{geometry,amsthm,amsmath,graphicx,amssymb,fancyheadings}
 \usepackage[]{mcode}
 \usepackage[colorlinks,
             linkcolor=blue,
@@ -197,26 +197,98 @@ better than standarded least-squared regression and least-squared regression
 with LASSO. Besides, it has lower computational complexity since it allows the
 large-scale dataset (third dataset) to be regressed.
 
-%\chapter{Linear Algebra Review}
-%\section{Vector Spaces}
-%
-%\section{Linear Operators}
-%
-%\section{Independence}
-%
-%\section{Linearly Independence}
-%
-%\section{Range and Nullspace of Matrices}
-%
-%\section{More Range and Nullspace}
-%
-%\section{Riesz Representation Theorem}
-%
-%\section{Derivatives}
-%
-%\section{Rank}
-%
-%\section{Surjectivity}
+\chapter{Linear Algebra Review}
+\section{More Range and Nullspace}
+\subsection{Smallest and Largest rank of $C = AB$}
+
+{\bf Conditions}: 
+$A \in \mathbb{R}^{10 \times 10}$ with $rank(A) = 5$ and $B \in \mathbb{R}^{10 \times 10}$ with
+$rank(B) = 5$. 
+
+Sylvester's rank inequality: 
+$\forall A \in R^{m\times k}, B \in \mathbb{R}^{k\times n}$
+$$rank(A) + rank(B) - k \leq rank(AB)$$
+
+Smallest rank of $C = AB$ is $rank(A) + rank(B) - k = 5 + 5 - 10 = 0$.
+
+Largest rank of $C = AB$ is $min(rank(A), rank(B)) = min(5,5) = 5$.
+
+\subsection{Largest rank of $C = AB$}
+{\bf Conditions}: 
+$A \in \mathbb{R}^{10 \times 15}$ with $rank(A) = 7$ and $B \in \mathbb{R}^{15 \times 11}$ with
+$rank(B) = 8$. 
+
+Largest rank of $C = AB$ is $min(rank(A), rank(B)) = min(7,8) = 7$.
+
+\section{Riesz Representation Theorem}
+\newcommand{\w}{\mathbf{w}}
+\newcommand{\x}{\mathbf{x}}
+\newcommand{\e}[1]{\mathbf{e}_{#1}}
+\newcommand{\alp}[1]{\mathbf{\alpha}_{#1}}
+\newcommand{\linearcombo}{\alp{1} \e{1} + \alp{2} \e{2} + \dots + \alp{n} \e{n}}
+Linear map $f: \mathbb{R}^n \rightarrow \mathbb{R}$ has two critical properties due to its linearity: 
+\begin{align}
+    \text{additivity: }& f(x + y) = f(x) + f(y), \forall x, y \in dom(f)
+    \label{LM:additivity} \\
+    \text{homogeneity: }& f(\alpha x) = \alpha f(x), \forall \alpha \in
+    \mathbb{R}, x \in dom(f) \label{LM:homogeneity}
+\end{align}
+Let arbitrary vector $\w = (\alp{1}, \alp{2}, \dots, \alp{n}) \in \mathbb{R}^{n}$.
+Then we can denote $\w$ as linear combination of standard basis
+\begin{align}
+    \w = \linearcombo \label{RRT:linearCombo}
+\end{align}
+Now we start to show that $f(\w)$ can be represented as inner product of $\w$
+and another vector.
+\begin{align}
+    f(\w) &= f(\linearcombo) 
+    && \text{standard basis representation} \eqref{RRT:linearCombo} \\
+    &= f(\alp{1} \e{1}) + f(\alp{2} \e{2}) + \dots + f(\alp{n} \e{n}) 
+    && \text{additivity of linear map} \eqref{LM:additivity} \\
+    &= \alp{1} f(\e{1}) + \alp{2} f(\e{2}) + \dots + \alp{n} f(\e{n})
+    && \text{additivity of linear map} \eqref{LM:homogeneity} \\
+    &= \langle(f(\e{1}), f(\e{2}), \dots, f(\e{n})), (\alp{1}, \alp{2}, \dots, \alp{n}) \rangle 
+    && \text{definition of inner product} \\
+    &= \langle \x, \w \rangle 
+    && \x = (f(\e{1}), f(\e{2}), \dots, f(\e{n}))
+\end{align}
+Hence, we have successfully proved that 
+\begin{align}
+    \forall \text{ linear map } f:\mathbb{R}^n \rightarrow \mathbb{R}, \exists \x \in \mathbb{R}^n, f(\w) = \langle \x, \w \rangle
+\end{align}
+
+\newpage
+\section{Polynomial Vector Spaces}
+\subsection{$Tp=2p(t)-tp'(t)$: True}
+$T$ is represented by an upper bi-diagonal matrix with all diagonal entries
+being $a_0=2$ and sub-diagonal entries to be $a_1=-1$. Obviously, the matrix
+is full-rank and hence the range is the entire $(d+1)$-dimensional space.
+\subsection{$Tp=2p(t)-3tp'(t)$: True}
+$T$ is represented by an upper bi-diagonal matrix with all diagonal entries
+being $a_0=2$ and sub-diagonal entries to be $a_1=-3$.
+Obviously, the matrix is full-rank and hence the range is the entire
+$(d+1)$-dimensional space.
+\subsection{Characterization of Surjectivity: $a_0 \not = 0$}
+
+If $a_0 = 0$, the matrix representing $T$ is not full-rank anymore. The
+dimensionality of range is not $(d+1)$, which suggests that the vector $q$ with
+highest degree $d$ is not reachable by abitrary pair of $Tp$. This also
+indicates that if $a_0 = 0$,  the corresponding mapping $T$ is not surjective
+anymore: for every polynomial(vector) $q \in V$, there does not exist a
+polynomial(vector) $p \in V$ such that $Tp = q$. Mathematically, 
+\begin{align}
+    a_0 = 0 \implies \forall q \in V, \not \exists p \in V, s.t.\ Tp=q
+\end{align}
+
+
+\section{Rank}
+\subsection{Show that $rank(A) \leq min\{m, n\}$}
+
+\subsection{Sylvester's rank inequality}
+
+\subsection{Subadditivity}
+
+\subsection{Frobenius Rank Inequality}
 
 \newpage
 \appendix

@@ -275,16 +275,35 @@ dimensionality of range is not $(d+1)$, which suggests that the vector $q$ with
 highest degree $d$ is not reachable by abitrary pair of $Tp$. This also
 indicates that if $a_0 = 0$,  the corresponding mapping $T$ is not surjective
 anymore: for every polynomial(vector) $q \in V$, there does not exist a
-polynomial(vector) $p \in V$ such that $Tp = q$. Mathematically, 
+polynomial(vector) $p \in V$ such that $Tp = q$. In conclusion, we have
 \begin{align}
-    a_0 = 0 \implies \forall q \in V, \not \exists p \in V, s.t.\ Tp=q
+    a_0 \not = 0 \implies \forall q \in V, \exists p \in V, s.t.\ Tp=q
 \end{align}
 
-
+\newcommand{\rank}[1]{rank(#1)}
 \section{Rank}
-\subsection{Show that $rank(A) \leq min\{m, n\}$}
-
+\subsection{Show that $\rank{A} \leq min\{m, n\}$}
+\begin{proof}
+\rank{A} is defined as the number of columns that are linearly
+independent. Then, we have 
+\begin{align}  \label{RANK:1-col}
+    \rank{A} \leq \text{number of linearly independent columns} \leq n
+\end{align}
+Since the number of linearly independent columns equals to the
+number of linearly independent rows, 
+\begin{align} \label{RANK:1-row}
+    \rank{A} \leq \text{number of linearly independent rows} \leq m
+\end{align}
+From \eqref{RANK:1-col} and \eqref{RANK:1-row}, it is easy to derive the
+desired result:
+\begin{align} \label{RANK:1-result}
+    \rank{A} \leq  min\{m, n\}
+\end{align}
+\end{proof}
 \subsection{Sylvester's rank inequality}
+\begin{proof}
+    adf    
+\end{proof}
 
 \subsection{Subadditivity}
 

@@ -1,0 +1,84 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%  THIS TEX FILE IS TO GENERATE PDF FILE FOR 
+%%% 
+%%%  COPYRIGHT (C) JIMMY LIN, 2013, UT AUSTIN
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[11pt,a4paper]{report}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%  PACKAGES USED IN THIS TEX SOURCE FILE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{geometry,amsthm,amsmath,graphicx,amssymb,fancyheadings}
+\usepackage[]{mcode}
+\usepackage[colorlinks,
+            linkcolor=blue,
+            anchorcolor=red,
+            citecolor=green
+            ]{hyperref}
+% for my mac
+\IfFileExists{/Users/JimmyLin/.latex/UTA_CS/JS.sty}{ 
+    \usepackage{/Users/JimmyLin/.latex/UTA_CS/JS}
+    \usepackage{/Users/JimmyLin/.latex/UTA_CS/JSASGN}
+}{} 
+% for UT's linux machine
+\IfFileExists{/u/jimmylin/workspace/Configs/latex/UTA_CS/JS.sty}{
+    \usepackage{/u/jimmylin/.latex/UTA_CS/JS} 
+    \usepackage{/u/jimmylin/.latex/UTA_CS/JSASGN}
+}{} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% MACROS CONTAINING THE FILE INFORMATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\COURSE}{EE381V Large Scale Optimization}
+\renewcommand{\LECTURER}{Sujay Sanghavi}
+\renewcommand{\SECTION}{17350}
+\renewcommand{\TASK}{Problem Set 1}
+\renewcommand{\RELEASEDATE}{September 12, 2014}
+\renewcommand{\DUEDATE}{September 18, 2014}
+\renewcommand{\TIMECONSUME}{10 hours}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% DOCUMENTATION STARTS FROM HERE 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% TITLE PAGE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{titlepage}
+    \maketitle
+\end{titlepage}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% CONTENT PAGE: TABLEOFCONTENTS, LISTOFTABLES, LIST OF FIGURES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\contentsname}{Table of Contents}
+\begin{center} 
+    \tableofcontents 
+    %\listoftables 
+    %\listoffigures
+\end{center}
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% GENERAL DOCUMENTATION BEGINS 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Matlab and Computational Assignment}
+
+\newpage
+
+\appendix
+\chapter{Codes Printout}
+
+%\subsection{Algorithm 2: Optimization with LASSO}
+%$\lstinputlisting{../ps0_matlab/algo2.m}
+\newpage
+
+\section{Orthogonal Matching Pursuit}
+
+\subsection{OMP Routine}
+\lstinputlisting{../ps0_matlab/omp.m}
+
+\newpage
+\subsection{Regression Script}
+\lstinputlisting{../ps0_matlab/regress_omp.m}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% General Documentation ends
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}

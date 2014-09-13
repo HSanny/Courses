@@ -1,7 +1,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% objective function for optimization
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Input vector should be column vector
+% Usage: 
+%    y = func (x)
+% Parameter:
+%    x: input vector, must be column vector
 
 function y = func (x)
 assert (size(x, 1) == 2);

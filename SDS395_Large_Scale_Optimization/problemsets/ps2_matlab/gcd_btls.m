@@ -58,7 +58,7 @@ end
 %% uncomment following code for plotting individual gradient descent run
 % plot f(b^(n)) with regard to n
 plot (1:iter, all_costs)
-title (sprintf ('Steepest Descent with BTLS (alpha: %f, beta: %f)',alpha,discount));
+title (sprintf ('Greedy Steepest Descent with BTLS (alpha: %f, beta: %f)',alpha,discount));
 xlabel ('iteration: n');
 ylabel ('cost of function: f(b^n)');
 end

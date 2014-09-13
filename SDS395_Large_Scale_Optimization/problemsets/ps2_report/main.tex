@@ -1,0 +1,105 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%  THIS TEX FILE IS TO GENERATE PDF FILE FOR 
+%%% 
+%%%  COPYRIGHT (C) JIMMY LIN, 2013, UT AUSTIN
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[11pt,a4paper]{article}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%  PACKAGES USED IN THIS TEX SOURCE FILE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{geometry,amsthm,amsmath,graphicx,amssymb,fancyheadings}
+\usepackage[]{mcode}
+\usepackage[colorlinks,
+            linkcolor=blue,
+            anchorcolor=red,
+            citecolor=green
+            ]{hyperref}
+% for my mac
+\IfFileExists{/Users/JimmyLin/.latex/UTA_CS/JS.sty}{ 
+    \usepackage{/Users/JimmyLin/.latex/UTA_CS/JS}
+    \usepackage{/Users/JimmyLin/.latex/UTA_CS/JSASGN}
+}{} 
+% for UT's linux machine
+\IfFileExists{/u/jimmylin/workspace/Configs/latex/UTA_CS/JS.sty}{
+    \usepackage{/u/jimmylin/.latex/UTA_CS/JS} 
+    \usepackage{/u/jimmylin/.latex/UTA_CS/JSASGN}
+}{} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% MACROS CONTAINING THE FILE INFORMATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\COURSE}{EE381V Large Scale Optimization}
+\renewcommand{\LECTURER}{Sujay Sanghavi}
+\renewcommand{\SECTION}{17350}
+\renewcommand{\TASK}{Problem Set 2}
+\renewcommand{\RELEASEDATE}{September 12, 2014}
+\renewcommand{\DUEDATE}{September 18, 2014}
+\renewcommand{\TIMECONSUME}{10 hours}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% DOCUMENTATION STARTS FROM HERE 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% TITLE PAGE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{titlepage}
+    \maketitle
+\end{titlepage}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% CONTENT PAGE: TABLEOFCONTENTS, LISTOFTABLES, LIST OF FIGURES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\contentsname}{Table of Contents}
+\begin{center} 
+    \tableofcontents 
+    %\listoftables 
+    \listoffigures
+\end{center}
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% GENERAL DOCUMENTATION BEGINS 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Matlab and Computational Assignment}
+\subsection{Five flavors for Eq. (9.20) in B \& V}
+\subsubsection{Standard Gradient Descent with Backtracking}
+%\begin{figure}[h]
+%    \centering
+%    \includegraphics[width=6in,height=3in]{../ps1_matlab/3.png}
+%    \caption{Illustration for gradient descent on $X3$ staring with
+%        $b3$ by $\gamma = 0.005$ and $0.05$}
+%\end{figure}
+\subsubsection{Steepest Descent with $P_1$}
+
+\subsubsection{Steepest Descent with $P_2$}
+
+\subsubsection{Cyclic Coordinate Descent}
+
+\subsubsection{Greedy Coordinate Descent}
+
+\newpage
+\section{Written Problems}
+%\subsection{}
+
+
+\newpage
+\appendix
+\section{Codes Printout}
+
+\subsection{Standard Gradient Descent with Backtracking}
+%\lstinputlisting{../ps2_matlab/Gradient_Descent.m}
+\newpage
+
+\subsection{Steepest Descent}
+%\lstinputlisting{../ps2_matlab/}
+\newpage
+
+\subsection{Cyclic Coordinate Descent}
+%\lstinputlisting{../ps2_matlab/}
+\newpage
+
+\subsection{Greedy Coordinate Descent}
+%\lstinputlisting{../ps2_matlab/}
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% General Documentation ends
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}

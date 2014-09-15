@@ -58,9 +58,9 @@
 %%% GENERAL DOCUMENTATION BEGINS 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Matlab and Computational Assignment}
-\subsection{Five flavors for Eq. (9.20) in B \& V}
-\subsubsection{Standard Gradient Descent with Backtracking}
+\part{Matlab and Computational Assignment}
+\section{Five flavors for Eq. (9.20) in B \& V}
+\subsection{Standard Gradient Descent with Backtracking}
 {\bf Command} to be executed in matlab:
 \begin{verbatim}
   >> x_init = [1 1]'; alpha = 0.3; bta = 0.8;
@@ -93,13 +93,13 @@
 {\bf Plot}
 \begin{figure}[h]
     \centering
-    \includegraphics[width=5in,height=3in]{../ps2_matlab/1.png}
+    \includegraphics[width=4.6in,height=2.8in]{../ps2_matlab/1.png}
     \caption{Standard gradient descent with BTLS on
         Eq. 9.20 with $\alpha = 0.3$ and $\beta = 0.8$}
 \end{figure}
 
 \newpage
-\subsubsection{Steepest Descent with $P_1$}
+\subsection{Steepest Descent with $P_1$}
 {\bf Command} to be executed in matlab:
 \begin{verbatim}
   >> P1 = [8 0; 0 2];
@@ -134,7 +134,8 @@
         Eq. 9.20 with $P_1$, $\alpha = 0.3$ and $\beta = 0.8$}
 \end{figure}
 
-\newpage \subsubsection{Steepest Descent with $P_2$}
+\newpage 
+\subsection{Steepest Descent with $P_2$}
 {\bf Command} to be executed in matlab:
 \begin{verbatim}
   >> P2 = [2 0; 0 8];
@@ -178,7 +179,7 @@
 \end{figure}
 
 \newpage
-\subsubsection{Cyclic Coordinate Descent}
+\subsection{Cyclic Coordinate Descent}
 {\bf Command} to be executed in matlab:
 \begin{verbatim}
   >> x_init = [1 1]'; alpha = 0.3; bta = 0.8;
@@ -220,7 +221,7 @@
         Eq. 9.20 with $\alpha = 0.3$ and $\beta = 0.8$}
 \end{figure}
 \newpage
-\subsubsection{Greedy Coordinate Descent}
+\subsection{Greedy Coordinate Descent}
 {\bf Command} to be executed in matlab:
 \begin{verbatim}
   >> x_init = [1 1]'; alpha = 0.3; bta = 0.8;
@@ -261,7 +262,7 @@ Convergence reached!
 \end{figure}
 
 \newpage
-\subsubsection{Conclusions}
+\subsection{Conclusions}
 \begin{itemize}
     \item $(1, 1)$ is an decent initial point for all five
         flavors of optimization methods.
@@ -273,10 +274,24 @@ Convergence reached!
         computational cost in each iteration.
 \end{itemize}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Written Problems
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
-\section{Written Problems}
-%\subsection{}
+\part{Written Problems}
+\setcounter{section}{0}
+\renewcommand{\thesubsection}{(\alph{subsection})}
+\section{Othorognal Subspace}
+\newcommand{\Ut}{U^{\perp}}
+\newcommand{\ut}{u^{\perp}}
+\newcommand{\Wt}{W^{\perp}}
+\newcommand{\Xt}{X^{\perp}}
+\subsection{Show that if $U$ is a subspace, then so is $\Ut$}
 
+
+\newpage
+\setcounter{section}{6}
+\section{Form a Half-Space}
 
 \newpage
 \appendix

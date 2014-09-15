@@ -191,6 +191,7 @@ $$
 \newcommand{\zerovec}{\mathbf{0}} 
 \newcommand{\uvec}{\mathbf{u}}
 \newcommand{\vvec}{\mathbf{v}}
+\newcommand{\wvec}{\mathbf{w}}
 \newcommand{\xvec}{\mathbf{x}}
 \subsection{Show that if $U$ is a subspace, then so is $\Ut$}
 \begin{proof}
@@ -236,10 +237,10 @@ $$
     Assume that $(\Ut)^{\perp} \not= U$ and then show the contradiction. 
     By definition of $\Ut$, we have
     $ \Ut = 
-    \{\forall \vvec, \langle \vvec, \uvec \rangle = 0, \forall \uvec \in U\}$
+    \{\forall \vvec \in V, \langle \vvec, \uvec \rangle = 0, \forall \uvec \in U\}$
     and 
     $ (\Ut)^{\perp} = 
-    \{\forall \xvec, \langle \xvec, \vvec \rangle = 0, \forall \vvec \in \Ut\}$.
+    \{\forall \xvec \in V, \langle \xvec, \vvec \rangle = 0, \forall \vvec \in \Ut\}$.
     Since $(\Ut)^{\perp} \not= U$, then we can say that 
     $ \exists \xvec \not \in U, \langle \xvec, \vvec \rangle = 0, \forall
      \vvec \in \Ut $. 
@@ -251,7 +252,17 @@ $$
 \end{proof}
 
 \subsection{Show that if $U, W \subseteq V$ are subspaces of V, then $U
-    \subset W \Leftrightarrow \Ut \supseteq \Wt$}
+    \subseteq W \Leftrightarrow \Ut \supseteq \Wt$}
+\begin{proof}[Proof of $U \subseteq W \Rightarrow \Ut \supseteq \Wt$]
+    $\Ut = 
+    \{\forall \vvec \in V, \langle \vvec, \uvec \rangle = 0, \forall \uvec \in U\} $
+    and
+    $\Wt = 
+    \{\forall \vvec \in V, \langle \vvec, \wvec \rangle = 0, \forall \wvec \in W\} $
+\end{proof}
+\begin{proof}[Proof of $\Ut \supseteq \Wt \Rightarrow U \subseteq W $]
+
+\end{proof}
 
 \subsection{Show that $\Xt$ makes sense, $\Xt$ is a subspace and
     $(\Xt)^{\perp} \supseteq X$}

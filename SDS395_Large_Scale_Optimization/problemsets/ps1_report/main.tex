@@ -131,7 +131,8 @@ Command to get executed:
 \section{$\gamma = 1$ for the second matrix}
 Command to get executed: 
 \begin{verbatim}
-   >> [b2_opt, iters, all_costs] = gd (X2, b2, 1);
+   >> gamma = 1;
+   >> [b2_opt, iters, all_costs] = gd (X2, b2, gamma);
 \end{verbatim}
 {\bf Plotting}: figure for $\gamma = 1$
 \begin{figure}[h]
@@ -233,7 +234,7 @@ $$
     proved.
 \end{proof}
 \subsection{Show that $(\Ut)^{\perp} = U$}
-\begin{proof}[Proof by contradiction.]
+\begin{proof}[Proof. By contradiction.]
     Assume that $(\Ut)^{\perp} \not= U$ and then show the contradiction. 
     By definition of $\Ut$, we have
     $ \Ut = 
@@ -258,12 +259,32 @@ $$
     \{\forall \vvec \in V, \langle \vvec, \uvec \rangle = 0, \forall \uvec \in U\} $
     and
     $\Wt = 
-    \{\forall \vvec \in V, \langle \vvec, \wvec \rangle = 0, \forall \wvec \in W\} $
+    \{\forall \vvec \in V, \langle \vvec, \wvec \rangle = 0, \forall \wvec \in W\} 
+    = \{\forall \vvec \in V, \langle \vvec, \wvec \rangle = 0, \forall \wvec
+        \in W\ \text{and } \langle \vvec, \uvec \rangle = 0, \forall \uvec \in U\} 
+    $ (This is valid because $\forall U \subseteq W$ and then $\uvec \in W$).
+    Now since membership of $\Wt$ requires one more condition, then it is obvious that 
+    $\vvec \in \Wt \Rightarrow \vvec \in \Ut$, and $\vvec \in
+    \Ut \not \Rightarrow \vvec \in \Wt$ hold for arbitrary $\vvec$. Therefore,
+    we can conclude that $\Ut \supseteq \Wt$.
 \end{proof}
 \begin{proof}[Proof of $\Ut \supseteq \Wt \Rightarrow U \subseteq W $]
-
+    By definition, we have
+    $ \Ut = 
+    \{\vvec \in V | \langle \vvec, \uvec \rangle = 0, \forall \uvec \in U\}$ and
+    $\Wt = 
+    \{\vvec \in V | \langle \vvec, \wvec \rangle = 0, \forall \wvec \in W\}$.
+    Since $\Ut \supseteq \Wt$, then we have $\Ut \cap \Wt  = \Wt$. 
+    Then 
+    $
+    \Ut \cap \Wt = \{\vvec \in V | \langle \vvec, \uvec \rangle = 0, \forall \uvec \in U
+        \text{ and } \langle \vvec, \wvec \rangle = 0, \forall \wvec \in W\} 
+    = \{ \vvec \in V | \langle \vvec, \xvec \rangle = 0, \forall \xvec \in W
+        \cup U\} = \Wt$
+    Then we have $W \cup U = W$, which naturally derives $U \subseteq W$.
 \end{proof}
 
+\newpage
 \subsection{Show that $\Xt$ makes sense, $\Xt$ is a subspace and
     $(\Xt)^{\perp} \supseteq X$}
 

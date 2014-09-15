@@ -15,6 +15,7 @@ proc Stat {path labl width tvar} {
 
 # Simulation file
 set simufile "simu.demo"   
+#set simufile "mysimu"   
 set initial_snapshot 1
 set som .som
 set epoch -1

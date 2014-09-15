@@ -58,13 +58,13 @@
 %%% GENERAL DOCUMENTATION BEGINS 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Matlab and Computational Assignment}
-\subsection{Gradient Descent on three matrices}
+\part{Matlab and Computational Assignment}
+\section{Gradient Descent on three matrices}
 Command to get executed: 
 \begin{verbatim}
    >> gd_run_script()
 \end{verbatim}
-\subsubsection{$X1$, $b1$}
+\subsection{$X1$, $b1$}
 \begin{itemize}
     \item Range of $\gamma$ that leads to convergence: $(0,2)$
     \item Range of $\gamma$ that leads to divergence: $(2,+\infty)$
@@ -85,7 +85,7 @@ Command to get executed:
 \end{itemize}
 
 \newpage
-\subsubsection{$X2$, $b2$}
+\subsection{$X2$, $b2$}
 \begin{itemize}
     \item Range of $\gamma$ that leads to convergence: $(0,2)$
     \item Range of $\gamma$ that leads to divergence: $(2,+\infty)$
@@ -107,7 +107,7 @@ Command to get executed:
 \end{itemize}
 
 \newpage
-\subsubsection{$X3$, $b3$}
+\subsection{$X3$, $b3$}
 \begin{itemize}
     \item Range of $\gamma$ that leads to convergence: $(0,0.02)$
     \item Range of $\gamma$ that leads to divergence: $(0.02,+\infty)$
@@ -128,10 +128,10 @@ Command to get executed:
 \end{itemize}
 
 \newpage
-\subsection{$\gamma = 1$ for the second matrix}
+\section{$\gamma = 1$ for the second matrix}
 Command to get executed: 
 \begin{verbatim}
-   >> [b2_opt, iters, all_costs] = Gradient_Descent(X2, b2, 1);
+   >> [b2_opt, iters, all_costs] = gd (X2, b2, 1);
 \end{verbatim}
 {\bf Plotting}: figure for $\gamma = 1$
 \begin{figure}[h]
@@ -147,38 +147,143 @@ Through the smooth plotted curve, we guess that the gradient
 descent method got linear convergence when $\gamma=1$ on $X_2$. Hence, we trace
 convergence rate conv\_rate $ = f(x^{k}) / f(x^{k-1})$ as follows:
 \begin{verbatim}
-Iter: 2, Cost: 2.254428e-01, Conv_Rate: 1.020304
-Iter: 3, Cost: 2.209565e-01, Conv_Rate: 1.020304
-Iter: 4, Cost: 2.165594e-01, Conv_Rate: 1.020304
-Iter: 5, Cost: 2.122499e-01, Conv_Rate: 1.020304
-Iter: 6, Cost: 2.080261e-01, Conv_Rate: 1.020304
-Iter: 7, Cost: 2.038864e-01, Conv_Rate: 1.020304
+Iter: 2, Cost: 2.254428e-01, Conv_Rate: 0.980100
+Iter: 3, Cost: 2.209565e-01, Conv_Rate: 0.980100
+Iter: 4, Cost: 2.165594e-01, Conv_Rate: 0.980100
+Iter: 5, Cost: 2.122499e-01, Conv_Rate: 0.980100
+Iter: 6, Cost: 2.080261e-01, Conv_Rate: 0.980100
+Iter: 7, Cost: 2.038864e-01, Conv_Rate: 0.980100
 ...
 ...
-Iter: 384, Cost: 1.043098e-04, Conv_Rate: 1.020304
-Iter: 385, Cost: 1.022340e-04, Conv_Rate: 1.020304
-Iter: 386, Cost: 1.001996e-04, Conv_Rate: 1.020304
-Iter: 387, Cost: 9.820558e-05, Conv_Rate: 1.020304
+Iter: 381, Cost: 1.107934e-04, Conv_Rate: 0.980100
+Iter: 382, Cost: 1.085886e-04, Conv_Rate: 0.980100
+Iter: 383, Cost: 1.064277e-04, Conv_Rate: 0.980100
+Iter: 384, Cost: 1.043098e-04, Conv_Rate: 0.980100
+Iter: 385, Cost: 1.022340e-04, Conv_Rate: 0.980100
+Iter: 386, Cost: 1.001996e-04, Conv_Rate: 0.980100
+Iter: 387, Cost: 9.820558e-05, Conv_Rate: 0.980100
+Converged to zeros!
 \end{verbatim}
 In terms of above dumps and the fact that $f(x^{*}) = 0$, we can conclude that when $\gamma = 1$        
 $$
-f(x^{k+1}) - f(x^{*}) = 1.020304 \cdot \big( f(x^{k}) - f(x^{*}) \big)
+f(x^{k+1}) - f(x^{*}) = 0.9801 \cdot \big( f(x^{k}) - f(x^{*}) \big)
+$$
+which supports our previous guess that
+$$ 
+\text{Gradient Descent with }
+\gamma = 1
+\text{ on second matrix leads to {\bf linear convergence}. }
 $$
 
 \newpage
-\section{Written Problems}
-\subsection{Orthogonal Subspaces}
-\subsection{Boyd and Vandenberghe, Ex. 2.10}
-\subsection{Boyd and Vandenberghe, Ex. 2.21}
-\subsection{Form a Half-Space}
-\subsection{Exists $C$ s.t. $CA = B$}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Written Problems
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\part{Written Problems}
+\setcounter{section}{0}
+\renewcommand{\thesubsection}{(\alph{subsection})}
+\section{Othorognal Subspace}
+\newcommand{\Ut}{U^{\perp}}
+\newcommand{\ut}{u^{\perp}}
+\newcommand{\Wt}{W^{\perp}}
+\newcommand{\Xt}{X^{\perp}}
+\newcommand{\zerovec}{\mathbf{0}} 
+\newcommand{\uvec}{\mathbf{u}}
+\newcommand{\vvec}{\mathbf{v}}
+\newcommand{\xvec}{\mathbf{x}}
+\subsection{Show that if $U$ is a subspace, then so is $\Ut$}
+\begin{proof}
+    Since $U$ is a subspace, then we have $U$ satisfying all three properties
+    shown below:
+    \begin{itemize}
+       \item $\zerovec \in U$ 
+       \item $\forall \uvec_1, \uvec_2 \in U, \uvec_1 + \uvec_2 \in U$
+       \item $\forall \uvec \in U, \alpha \in \mathbb{R}, \alpha \uvec \in U$
+    \end{itemize}
+    Now we show that $\Ut$ is also a subspace by indicating $\Ut$
+    satisfies all three properties as above $U$ do.
+    \begin{itemize}
+        \item Since $\forall \uvec \in U, \langle \zerovec, \uvec \rangle = 0$
+            and $\zerovec \in V$ ($\zerovec \in U \subseteq V$), then it
+            turned out that $\zerovec \in \Ut$.
+        \item Let $\uvec$ be arbitrary vector s.t. $\uvec \in U$, and
+            $\xvec_1$, $\xvec_2$ to be distinct vector s.t. $\xvec_1 \in \Ut$
+            and $\xvec_2 \in \Ut$. By definition of $\Ut$, we have 
+            $\langle \xvec_1, \uvec \rangle = 0$ and 
+            $\langle \xvec_2, \uvec \rangle = 0$. 
+            Then it is obvious that 
+            $\langle \xvec_1 + \xvec_2, \uvec \rangle = 0$. 
+            That is $\xvec_1 +\xvec_2 \in \Ut$.
+            Therefore, $\forall \xvec_1, \xvec_2 \in \Ut, \xvec_1+\xvec_2 \in \Ut$ was proved.
+        \item Let $\xvec$ be arbitrary vector s.t. $\xvec \in \Ut$, 
+            $\uvec$ be arbitrary vector s.t. $\uvec \in U$ and
+            arbitrary $\alpha \in \mathbb{R}$. By definition of $\Ut$, we have 
+            $\langle \xvec_1, \uvec \rangle = 0$. 
+            Since inner product is linear operator, it is obvious that
+            $\langle \alpha \xvec_1, \uvec \rangle = 0$. 
+            That is $\alpha \xvec_1 \in \Ut$.
+            Therefore, $\forall \xvec \in \Ut, \alpha \in \mathbb{R}, \alpha
+            \xvec \in \Ut$ was proved.
+    \end{itemize}
+    Since $\Ut$ contains $\zerovec$, and is closed under addition and scalar
+    multiplication, it turned out that $\Ut$ is a subspace. 
+    Therefore, the statement that if $U$ is a subspace, then so is $\Ut$ was
+    proved.
+\end{proof}
+\subsection{Show that $(\Ut)^{\perp} = U$}
+\begin{proof}[Proof by contradiction.]
+    Assume that $(\Ut)^{\perp} \not= U$ and then show the contradiction. 
+    By definition of $\Ut$, we have
+    $ \Ut = 
+    \{\forall \vvec, \langle \vvec, \uvec \rangle = 0, \forall \uvec \in U\}$
+    and 
+    $ (\Ut)^{\perp} = 
+    \{\forall \xvec, \langle \xvec, \vvec \rangle = 0, \forall \vvec \in \Ut\}$.
+    Since $(\Ut)^{\perp} \not= U$, then we can say that 
+    $ \exists \xvec \not \in U, \langle \xvec, \vvec \rangle = 0, \forall
+     \vvec \in \Ut $. 
+     That is to say, 
+    $ \exists \xvec \in V\ but\ \not \in U, \langle \xvec, \vvec \rangle = 0, \forall
+     \vvec \ s.t. \langle \vvec, \uvec \rangle = 0, \forall \uvec \in U$. 
+     However, such $\xvec$ does not exist. Hence, we reject
+     initial assumption and conclude that $(\Ut)^{\perp} = U$.
+\end{proof}
+
+\subsection{Show that if $U, W \subseteq V$ are subspaces of V, then $U
+    \subset W \Leftrightarrow \Ut \supseteq \Wt$}
+
+\subsection{Show that $\Xt$ makes sense, $\Xt$ is a subspace and
+    $(\Xt)^{\perp} \supseteq X$}
+
+\subsection{Show that any $v \in V$ can be written uniquely as $v = u + \ut$} 
+
+\newpage
+\section{Boyd and Vandenberghe, Ex. 2.10}
+\newcommand{\Snp}{\ensuremath{\mathbb{S}_{+}^{n}}}
+\subsection{Show that if $A \in \Snp$ then the set C is
+    convex}
+
+\subsection{Show that $C_1$ is convex if there exists $\lambda \in
+    \mathbb{R}$ such that $(A + \lambda gg^T) \in \Snp$}
+
+\newpage
+\section{Boyd and Vandenberghe, Ex. 2.21}
+
+\newpage
+\setcounter{section}{6}
+\section{Form a Half-Space}
+
+\newpage
+\setcounter{section}{7}
+\section{Exists $C$ such that $CA = B$}
 
 \newpage
 \appendix
 \section{Codes Printout}
 
 \subsection{Gradient Descent Routine}
-\lstinputlisting{../ps1_matlab/Gradient_Descent.m}
+\lstinputlisting{../ps1_matlab/gd.m}
 \newpage
 
 \subsection{Running Script}

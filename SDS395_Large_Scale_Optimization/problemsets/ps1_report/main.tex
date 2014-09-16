@@ -205,7 +205,7 @@ $$
        \item $\forall \uvec \in U, \alpha \in \mathbb{R}, \alpha \uvec \in U$
     \end{itemize}
     Now we show that $\Ut$ is also a subspace by indicating $\Ut$
-    satisfies all three properties as above $U$ do.
+    satisfies all three properties as above $U$ does.
     \begin{itemize}
         \item Since $\forall \uvec \in U, \langle \zerovec, \uvec \rangle = 0$
             and $\zerovec \in V$ ($\zerovec \in U \subseteq V$), then it
@@ -286,13 +286,55 @@ $$
 \end{proof}
 
 \newpage
+\newcommand{\xtvec}{\mathbf{x}^{\perp}}
 \subsection{Show that $\Xt$ makes sense, $\Xt$ is a subspace and
     $(\Xt)^{\perp} \supseteq X$}
-\begin{proof}
-    $\Xt$ also makes sense. 
+\begin{proof}[Proof of $\Xt$ makes sense]
+    $\Xt$ also makes sense. This is because $\forall \vvec \in \Xt, \langle
+    \vvec, \rangle = 0$
+\end{proof}
+\begin{proof}[Proof of $\Xt$ is a subspace]
+    We prove $\Xt$ is a subspace by showing $\Xt$ satisfies three properties
+    as $\Ut$ above does. 
+    \begin{itemize}
+        \item Since $\forall \xvec \in X, \langle \zerovec, \xvec \rangle = 0$
+            and $\zerovec \in V$, then it turned out that $\zerovec \in \Xt$.
+        \item Let $\xvec$ be arbitrary vector s.t. $\xvec \in U$, and
+            $\xtvec_1$, $\xtvec_2$ to be distinct vector s.t. $\xtvec_1 \in \Xt$
+            and $\xtvec_2 \in \Xt$. By definition of $\Xt$, we have 
+            $\langle \xtvec_1, \xvec \rangle = 0$ and 
+            $\langle \xtvec_2, \xvec \rangle = 0$. 
+            Then it is obvious that 
+            $\langle \xtvec_1 + \xtvec_2, \xvec \rangle = 0$. 
+            That is $\xtvec_1 +\xtvec_2 \in \Xt$.
+            []Therefore, $\forall \xtvec_1, \xtvec_2 \in \Xt,
+            \xtvec_1+\xtvec_2 \in \Xt$ was proved. (That is, membership of
+            $\Xt$ is closed under vector addition).
+        \item Let $\xtvec$ be arbitrary vector s.t. $\xvec \in \Xt$, 
+            $\xvec$ be arbitrary vector s.t. $\xvec \in X$ and
+            arbitrary $\alpha \in \mathbb{R}$. By definition of $\Xt$, we have 
+            $\langle \xtvec, \xvec \rangle = 0$. 
+            Since inner product is linear operator, it is obvious that
+            $\langle \alpha \xtvec, \xvec \rangle = 0$. 
+            That is $\alpha \xtvec \in \Xt$.
+            Therefore, $\forall \xtvec \in \Xt, \alpha \in \mathbb{R}, \alpha
+            \xtvec \in \Xt$ was proved. (That is, membership of $\Xt$ is
+            closed under scalar multiplication.)
+    \end{itemize}
+    Since we have shown that $\Xt$ satisfies all three above properties, then
+    we conclude that $\Xt$ is a subspace.
 \end{proof}
 
+\begin{proof}[Proof of $(\Xt)^{\perp} \supseteq X$]
+    ..
+\end{proof}
 \subsection{Show that any $v \in V$ can be written uniquely as $v = u + \ut$} 
+The key to show every vector $v \in V$ can be uniquely represented as $v = u +
+\ut$ lies in the fact that $U \cup \Ut = V$. The following proof will
+emphasize to show this.
+\begin{proof}
+    ..
+\end{proof}
 
 \newpage
 \section{Boyd and Vandenberghe, Ex. 2.10}
@@ -505,21 +547,43 @@ $$
 \setcounter{section}{7}
 \section{Exists $C$ such that $CA = B$}
 \begin{proof}[Proof. By Contradiction.]
-    Assume that there does not exist such $C$ that $CA = B$. This means 
-    \begin{align} \label {CAstatement}
-        \forall C,\ \not \exists \xvec, CA\xvec = B\xvec
+    Assume that 
+    \begin{align}
+        \not \exists C,\ C A = B
     \end{align}
-    Let $\x{*} \in \mathbb{R}^{m}$ such that $A\x{*}=0$. Since we already have
+    Then let the $A_j$ denotes the $j$-th column vector of $A$ 
+    and the $B_j$ denotes the $j$-th column vector of $B$, 
+    \begin{align}
+        \not \exists C,\ \forall j,\ C A_j = B_j 
+    \end{align}
+    This naturally derives
+    \begin{align}
+        \not \exists C,\ A_j = C^{-1} B_j 
+    \end{align}
+    Let $x$ be the one that $Ax = 0$, that is $\sum_j A_j x_j = 0$.
+    \begin{align}
+        \hspace{0.5cm} \not \exists C,\  \sum_j C^{-1} B_j x_j = 0 \\
+        \Leftrightarrow 
+        \not \exists C,\   C^{-1} \sum_j B_j x_j = 0
+        \label{nosumJBJ}
+    \end{align}
+    Since we have
     \begin{align} 
-        A\x{} = 0 \Rightarrow  B\x{} = 0
+        Ax = 0 &\Rightarrow  Bx = 0 \\
     \end{align}
     Then we have 
     \begin{align} 
-        B\x{*} = 0
+     \hspace{0.5cm}   Bx = 0 \\
+     \Leftrightarrow \sum_j B_j x_j = 0 \label{sumB_j}
     \end{align}
-    Therefore, we find a $\x{*}$ such that $CA\x{*} = B\x{*} = 0,\ \forall C$,
-    which contradict the statement \eqref{CAstatement}. Hence, the initial
-    assumption should be rejected and then it is proved that 
+    In terms of \eqref{nosumJBJ} and \eqref{sumB_j}, we have
+    \begin{align}
+        \not \exists C,\  C^{-1} \cdot 0 = 0
+    \end{align}
+    which contradicts the common sense that any arbitrary invertible matrix
+    $C$ would satisfies $C^{-1} \cdot 0 = 0$.
+    Hence, the initial assumption should be rejected and then it is proved
+    that 
     \begin{align}
         \exists C \text{ such that } CA = B
     \end{align}

@@ -305,33 +305,28 @@ $$
     Let $\x{1}$, $\x{2}$ to be arbitrary vector such that $\x{1} \in C$, $\x{2}
     \in C$ and $\x{1} \not = \x{2}$.
     Then we show arbitrary linear combination $\x{*} = \xcombo,\ \lambda \in
-    [0, 1]$ also belongs to the set $C$. 
-
+    [0, 1]$ also belongs to the set $C$. \\
     According to the definition of set $C$, we have
     \begin{align}
         \quacombo{\x{1}} \leq 0 \\
         \quacombo{\x{2}} \leq 0
     \end{align}
-
     By positive semidefiniteness of $A$, we have
     \begin{align}
         \quadratic{\x{}} \geq 0,\ \forall \x{}
     \end{align}
-
     That is 
     \begin{align}
         \quadratic{\x{1}} \geq 0 \\ 
         \quadratic{\x{2}} \geq 0 \\ 
         \quadratic{(\x{2} - \x{1})} \geq 0 
     \end{align}
-
     Besides, 
     \begin{align}
         \lambda \geq 0 \\
         1 - \lambda  \geq 0 \\
         \lambda - 1 \leq 0
     \end{align}
-
     Then we investigate the property of $\quacombo{\x{*}}$.
     \begin{align}
         & \hspace{0.5cm} \quacombo{\x{*}}  \\
@@ -349,17 +344,14 @@ $$
         & = \lambda(\lambda - 1) (\quadratic{(\x{2} - \x{1})}) \\
         & \leq 0
     \end{align}
-
     Then, it is obvious that 
     \begin{align}
         \x{*} \in C
     \end{align}
-
     Since $\x{*}$ is arbitrary convex combination of $\x{1}$ and $\x{2}$, then
     \begin{align}
         \text{$C$ is convex set.}
     \end{align}
-
     Hence, it is proved that 
     \begin{align}
         A \in \Snp \Rightarrow \text{$C$ is convex.}
@@ -384,26 +376,21 @@ $$
         &=  \{\x{} \in \Rn: \quacombo{\x{}} \leq 0 \text{ and } \glinear{\x{}} + h = 0\}
         \label{defC_1}
     \end{align}
-
-    is convex. 
-
+    is convex.  \\
     Let $\x{1}$ and $\x{2}$ be arbitrary vector that $\x{1} \in C_1$, $\x{2} \in C_1$
     and $\x{1} \not = \x{2}$. Let $\x{*}$ to be the arbitrary convex
     combination of $\x{1}$ and $\x{2}$ as $\x{*} = \xcombo$, and next we show
-    that $\x{*} \in C_1$.
-
+    that $\x{*} \in C_1$. \\
     By the definition of $C_1$ (See. \eqref{defC_1}), we have
     \begin{align}
         \quacombo{\x{1}} \leq 0 \text{ and } \glinear{\x{1}} + h = 0 \\
         \quacombo{\x{2}} \leq 0 \text{ and } \glinear{\x{2}} + h = 0 
     \end{align}
-    
     Then we have
     \begin{align}
         \glinear{\x{2}} + h - (\glinear{\x{1}} + h)= 0 \\
         \glinear{(\x{2}-\x{1})} = 0
     \end{align}
-    
     Derivation for $\glinear{\x{*}} + h = 0$ is as follows:
     \begin{align}
         & \hspace{0.5cm} \glinear{\x{*}} + h \\
@@ -412,7 +399,6 @@ $$
         & = \lambda (\glinear{\x{1}} + h) + (1-\lambda)(\glinear{\x{2}} + h) \\
         & = 0
     \end{align}
-
     Derivation for $\quacombo{\x{*}} \leq 0$ is as follows:
     \begin{align}
         & \hspace{0.5cm} \quacombo{\x{*}}  \\
@@ -433,25 +419,20 @@ $$
         & \leq \lambda(1 - \lambda) \ggquadratic{(\x{2} - \x{1})}  \\
         & = 0
     \end{align}
-
     Then we have 
     \begin{align}
         \quacombo{\x{*}} \leq 0 \text{ and } \glinear{\x{*}} + h = 0 
     \end{align}
-    
     That is to say, for arbitrary convex combination $\x{*} \in C_1$. Then 
     \begin{align}
         C_1 \text{ is convex set. }
     \end{align}
-
     Hence, it is proved that 
     \begin{align}
         \exists \lambda \in \mathbb{R},\ (\Apgg) \in \Snp \Rightarrow C_1
         \text{ is convex. }
     \end{align}
-
 \end{proof}
-    
 
 \newpage
 \section{Boyd and Vandenberghe, Ex. 2.21}
@@ -490,7 +471,6 @@ $$
     \end{align}
 \end{proof}
 
-\newpage
 \setcounter{section}{6}
 \section{$\{x: ||x-v_1|| \leq ||x-v_2||\} = \{x: c^T x \leq d\}$}
 \begin{proof}
@@ -517,6 +497,7 @@ $$
     \end{align}
 \end{proof}
 
+\newpage
 \setcounter{section}{7}
 \section{Exists $C$ such that $CA = B$}
 \begin{proof}[Proof. By Contradiction.]

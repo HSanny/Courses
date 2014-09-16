@@ -31,9 +31,9 @@
 \renewcommand{\LECTURER}{Sujay Sanghavi}
 \renewcommand{\SECTION}{17350}
 \renewcommand{\TASK}{Problem Set 1}
-\renewcommand{\RELEASEDATE}{September 12, 2014}
-\renewcommand{\DUEDATE}{September 18, 2014}
-\renewcommand{\TIMECONSUME}{10 hours}
+\renewcommand{\RELEASEDATE}{September 15, 2014}
+\renewcommand{\DUEDATE}{September 23, 2014}
+\renewcommand{\TIMECONSUME}{13 hours}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% DOCUMENTATION STARTS FROM HERE 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -455,14 +455,90 @@ $$
 
 \newpage
 \section{Boyd and Vandenberghe, Ex. 2.21}
+\begin{proof}
+    Let $(a_1, b_1) \in S$, $(a_2, b_2) \in S$ and $(a_1, b_1) \not = (a_2, b_2)$, then
+    show that arbitrary convex combination $(a_{*}, b_{*}) = (\lambda a_1 +
+    (1-\lambda) a_2, \lambda b_1 + (1-\lambda) b_2) \in S$. \\
+    By definition of set $S$, we have
+    \begin{align}
+        a_1^T x \leq b_1\ \forall x \in C, \text{ and } a_1^T x \geq b_1\ \forall x \in D \\
+        a_2^T x \leq b_2\ \forall x \in C, \text{ and } a_2^T x \geq b_2\ \forall x \in D 
+    \end{align}
+    Then we turn to discuss $a_{*}^T x_c$ as follows: let $x_c$ be arbitrary
+    vector in set $C$, 
+    \begin{align}
+        a_{*}^T x_c &= (\lambda a_1 + (1-\lambda) a_2)^T x_c \\
+        &= \lambda a_1^T x_c + (1-\lambda) a_2^Tx_c \\
+        &\leq \lambda b_1 + (1-\lambda) b_2 \\
+        &= b_{*}
+    \end{align}
+    and now let $x_d$ be arbitrary vector in set $D$,
+    \begin{align}
+        a_{*}^T x_d &= (\lambda a_1 + (1-\lambda) a_2)^T x_d \\
+        &= \lambda a_1^T x_d + (1-\lambda) a_2^Tx_d \\
+        &\geq \lambda b_1 + (1-\lambda) b_2 \\
+        &= b_{*}
+    \end{align}
+    Now since we have $a_{*}^T x_c \leq b_{*}\ \forall x_c \in C$ and 
+    $a_{*}^T x_d \geq b_{*}\ \forall x_d \in D$, then we can conclude that 
+    \begin{align}
+        (a_{*}, b_{*}) \in S
+    \end{align}
+    Hence, it is proved that 
+    \begin{align}
+        S \text{ is convex.}
+    \end{align}
+\end{proof}
 
 \newpage
 \setcounter{section}{6}
-\section{Form a Half-Space}
+\section{$\{x: ||x-v_1|| \leq ||x-v_2||\} = \{x: c^T x \leq d\}$}
+\begin{proof}
+    \begin{align}
+      \hspace{0.5cm} || x - v_1 || &\leq || x - v_2|| \\
+    \Leftrightarrow  \hspace{0.35cm} || x - v_1 ||^2 &\leq || x - v_2||^2 \\
+    \Leftrightarrow  \hspace{0.35cm} (x-v_1)^T (x-v_1) &\leq (x - v_2)^T(x - v_2) \\
+    \Leftrightarrow  \hspace{0.35cm} 
+    x^Tx-x^Tv_1-v_1^Tx+v_1^Tv_1 &\leq x^Tx-x^Tv_2-v_2^Tx+v_2^Tv_2 \\
+    \Leftrightarrow  \hspace{0.35cm}
+    -v_1^Tx-v_1^Tx+v_1^Tv_1 &\leq -v_2^Tx-v_2^Tx+v_2^Tv_2 \\
+    \Leftrightarrow  \hspace{0.35cm}
+    2(v_2-v_1)^Tx &\leq v_2^Tv_2 - v_1^Tv_1
+    \end{align}
+    Let $c = 2(v_2-v_1)$ and 
+    $d = v_2^Tv_2 - v_1^Tv_1 = ||v_2||^2 - ||v_1||^2$, then
+    \begin{align}
+      c^Tx \leq d
+    \end{align}
+    where $c = 2(v_2-v_1)$ and $d = ||v_2||^2 - ||v_1||^2$. \\
+    Hence, we can conclude that 
+    \begin{align}
+        \{x: ||x-v_1|| \leq ||x-v_2||\} = \{x: c^T x \leq d\}
+    \end{align}
+\end{proof}
 
-\newpage
 \setcounter{section}{7}
 \section{Exists $C$ such that $CA = B$}
+\begin{proof}[Proof. By Contradiction.]
+    Assume that there does not exist such $C$ that $CA = B$. This means 
+    \begin{align} \label {CAstatement}
+        \forall C,\ \not \exists \xvec, CA\xvec = B\xvec
+    \end{align}
+    Let $\x{*} \in \mathbb{R}^{m}$ such that $A\x{*}=0$. Since we already have
+    \begin{align} 
+        A\x{} = 0 \Rightarrow  B\x{} = 0
+    \end{align}
+    Then we have 
+    \begin{align} 
+        B\x{*} = 0
+    \end{align}
+    Therefore, we find a $\x{*}$ such that $CA\x{*} = B\x{*} = 0,\ \forall C$,
+    which contradict the statement \eqref{CAstatement}. Hence, the initial
+    assumption should be rejected and then it is proved that 
+    \begin{align}
+        \exists C \text{ such that } CA = B
+    \end{align}
+\end{proof}
 
 \newpage
 \appendix

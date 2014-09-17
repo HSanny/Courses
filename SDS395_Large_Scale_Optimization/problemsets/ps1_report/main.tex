@@ -222,10 +222,10 @@ $$
         \item Let $\xvec$ be arbitrary vector s.t. $\xvec \in \Ut$, 
             $\uvec$ be arbitrary vector s.t. $\uvec \in U$ and
             arbitrary $\alpha \in \mathbb{R}$. By definition of $\Ut$, we have 
-            $\langle \xvec_1, \uvec \rangle = 0$. 
+            $\langle \xvec, \uvec \rangle = 0$. 
             Since inner product is linear operator, it is obvious that
-            $\langle \alpha \xvec_1, \uvec \rangle = 0$. 
-            That is $\alpha \xvec_1 \in \Ut$.
+            $\langle \alpha \xvec, \uvec \rangle = 0$. 
+            That is $\alpha \xvec \in \Ut$.
             Therefore, $\forall \xvec \in \Ut, \alpha \in \mathbb{R}, \alpha
             \xvec \in \Ut$ was proved.
     \end{itemize}
@@ -289,9 +289,11 @@ $$
 \newcommand{\xtvec}{\mathbf{x}^{\perp}}
 \subsection{Show that $\Xt$ makes sense, $\Xt$ is a subspace and
     $(\Xt)^{\perp} \supseteq X$}
-\begin{proof}[Proof of $\Xt$ makes sense]
-    $\Xt$ also makes sense. This is because $\forall \vvec \in \Xt, \langle
-    \vvec, \rangle = 0$
+\begin{proof}[Explanation of $\Xt$ makes sense]
+    $\Xt$ also makes sense. This is because we can view all vectors in set $X$
+    as bases of the minimal subspace that is superset of $X$. Therefore,
+    although the $\Xt$ is defined through the set $X$, it makes sense as
+    othogonal complement over the minimal subspace that contains $X$.
 \end{proof}
 \begin{proof}[Proof of $\Xt$ is a subspace]
     We prove $\Xt$ is a subspace by showing $\Xt$ satisfies three properties
@@ -306,8 +308,8 @@ $$
             $\langle \xtvec_2, \xvec \rangle = 0$. 
             Then it is obvious that 
             $\langle \xtvec_1 + \xtvec_2, \xvec \rangle = 0$. 
-            That is $\xtvec_1 +\xtvec_2 \in \Xt$.
-            []Therefore, $\forall \xtvec_1, \xtvec_2 \in \Xt,
+            That is, $\xtvec_1 +\xtvec_2 \in \Xt$.
+            Therefore, $\forall \xtvec_1, \xtvec_2 \in \Xt,
             \xtvec_1+\xtvec_2 \in \Xt$ was proved. (That is, membership of
             $\Xt$ is closed under vector addition).
         \item Let $\xtvec$ be arbitrary vector s.t. $\xvec \in \Xt$, 
@@ -326,14 +328,59 @@ $$
 \end{proof}
 
 \begin{proof}[Proof of $(\Xt)^{\perp} \supseteq X$]
-    ..
+    Through the definition of $\Xt$, it is easy to derive the property for set $X$
+    \begin{align}
+        \forall x \in X,\ \langle x, x^{\perp} \rangle = 0,\ \forall x^{\perp}
+        \in \Xt
+    \end{align}
+    And similarly, we can derive the property for subspace $(\Xt)^\perp$
+    \begin{align}
+        \forall x \in (\Xt)^\perp,\ \langle x, x^{\perp} \rangle = 0,\ \forall x^{\perp}
+        \in \Xt
+    \end{align}
+    It is obvious that, all elements in set $X$ and subspace $(\Xt)^\perp$ are
+    perpendicular to any vectors in $\Xt$. \\
+    Since $X$ is a set with finite element, and $(\Xt)^\perp$ is a subspace
+    with infinite elements, it is natural to derive that 
+    \begin{align}
+        (\Xt)^\perp \supseteq X
+    \end{align}
 \end{proof}
+
+\newpage
 \subsection{Show that any $v \in V$ can be written uniquely as $v = u + \ut$} 
-The key to show every vector $v \in V$ can be uniquely represented as $v = u +
-\ut$ lies in the fact that $U \cup \Ut = V$. The following proof will
-emphasize to show this.
 \begin{proof}
-    ..
+    Assume that the representation of arbitrary vector $v \in V$ is not
+    unique.
+    Let $u_1$, $u_2$ be distinct vector in space $U$ and
+    $u^{\perp}_1$,$u^{\perp}_2$ be distinct vector in space $\Ut$ such that $v =
+    u_1 + u^{\perp}_1$ and $v = u_2 + u^{\perp}_2$. 
+    Then 
+    \begin{align}
+        0 &= v - v = u_1 + u^{\perp}_1 - u_2 - u^{\perp}_2 
+    \end{align}
+    Then we have
+    \begin{align}
+        0 &= (u_1 + u^{\perp}_1 - u_2 - u^{\perp}_2)^T(u_1 + u^{\perp}_1 - u_2 - u^{\perp}_2) \\
+        0 &= u_1^T (u_1-u_2) - u_2^T (u_1-u_2) +
+        u^{\perp}_1(u^{\perp}_1-u^{\perp}_2) - u^{\perp}_2(u^{\perp}_1-u^{\perp}_2) \\
+        0 &= (u_1-u_2)^T(u_1-u_2) + (u^{\perp}_1-u^{\perp}_2)^T(u^{\perp}_1-u^{\perp}_2) \\
+        0 &= || u_1-u_2 ||_2^2 + || u^{\perp}_1-u^{\perp}_2||_2^2
+        \label{normsplus}
+    \end{align}
+    Since 
+    \begin{align}
+        || u_1-u_2 ||_2^2 \geq 0 \text{ and } ||u^{\perp}_1-u^{\perp}_2||_2^2 \geq 0 
+    \end{align}
+    In terms of \eqref{normsplus}, we have is that 
+    \begin{align}
+        || u_1-u_2 ||_2 = 0 \text { and } ||u^{\perp}_1-u^{\perp}_2||_2 = 0 
+    \end{align}
+    Hence, we have 
+    \begin{align}
+        u_1 = u_2 \text{ and } u^{\perp}_1 = u^{\perp}_2
+    \end{align}
+    which indicates uniqueness of representation of arbitrary vector $v \in V$.
 \end{proof}
 
 \newpage

@@ -14,7 +14,8 @@ proc Stat {path labl width tvar} {
 #********************** Net Components *******************************
 
 # Simulation file
-set simufile "simu.demo"   
+set simufile "part2_mysimu_test"   
+#set simufile "part2_mysimu_train"   
 #set simufile "mysimu"   
 set initial_snapshot 1
 set som .som

@@ -37,6 +37,7 @@
 \renewcommand{\thesection}{Exercise \arabic{section}.}
 \renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}
 \renewcommand{\contentsname}{Exercises}
+\newcommand{\Rn}{\mathbb{R}^n}
 \newtheorem{lemma}{Lemma}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% DOCUMENTATION STARTS FROM HERE 
@@ -74,78 +75,15 @@ Since $H$ is a reflector, we have
 \be
     H = I - 2 u u ^H 
 \ee
-where $u$ is unit vector ($||u||_2 = 1$).
+where $u$ is unit vector ($||u||_2^2 = 1$).
 \be
     H H &=& (I - 2 u u ^H) (I - 2 u u ^H) \no \\
     &=& I \cdot I - 2 u u^H - 2 u u^H + 4(uu^H) (uu^H) \no \\
-    &=& I - 4 u u ^H + 4 ||u||_2 u u ^H \no \\
+    &=& I - 4 u u ^H + 4 ||u||_2^2 u u ^H \no \\
     &=& I - 4 u u ^H + 4  u u ^H \no \\
     &=& I \label{2.1conclusion} 
 \ee
-\begin{lemma}
-    $ (uu^H) (uu^H) = ||u||_2 u u^H$
-\end{lemma}
-\begin{proof}
-\be
-    uu^H = 
-\ee
-\end{proof}
-\subsection{$H=H^H$}
-\be
-    H^H &=& (I - 2uu^H) ^H \no \\
-    &=& I^H - (2uu^H)^H \no\\
-    &=& I - 2(u^H)^H u^H  \no\\
-    &=& I - 2 u u^H \no\\
-    &=& H \label{2.2conclusion} 
-\ee
-\subsection{$HH^H=I$}
-In terms of \eqref{2.2conclusion}, multiply both sides with $H$ and then we
-have
-\be
-    H^H H &=& H H
-\ee
-Then by \eqref{2.1conclusion}, we have
-\be
-    H^H H &=& I
-\ee
-
-\newpage
-\setcounter{section}{3}
-\newcommand{\Rn}{\mathbb{R}^n}
-\section{Show that if $x \in \Rn,\ v=x \mp ||x||_2 e_0$ and
-    $\tau=v^Tv/2$, then $(I-\frac{1}{\tau}vv^T)=\pm||x||_2 e_0$}
-We start from the reflector $I-\frac{1}{\tau}vv^T$ on $x$,
-\be
-    && (I-\frac{1}{\tau}vv^T) x \no \\
-    &=& \bigg(I-\frac{2vv^T}{v^T v}\bigg) x \no \\
-    &=& \bigg(I-\frac{2(x \mp ||x||_2 e_0)(x \mp ||x||_2 e_0)^T}{(x \mp ||x||_2
-        e_0)^T (x \mp ||x||_2 e_0)}\bigg) x \no \\
-    &=& \bigg(I - 2 \frac{xx^T\mp ||x||_2(xe_0^T+e_0 x^T)+||x||_2^2 e_0 e_0^T}
-    {2||x||_2^2 \mp 2||x||_2 e_0^T x}\bigg) x \no \\
-    &=& \bigg(I -  \frac{xx^T\mp ||x||_2(xe_0^T+e_0 x^T)+||x||_2^2 e_0 e_0^T}
-    {||x||_2^2 \mp ||x||_2 e_0^T x}\bigg) x \no \\
-    &=& \frac{||x||_2^2 \mp ||x||_2 e_0^T x - xx^T\pm ||x||_2(xe_0^T+e_0
-        x^T) -||x||_2^2 e_0 e_0^T}
-    {||x||_2^2 \mp ||x||_2 e_0^T x} x \no \\
-    &=& \frac{||x||_2^2 x \mp ||x||_2 e_0^T x x - xx^T x \pm ||x||_2(xe_0^T+e_0
-        x^T)x -||x||_2^2 e_0 e_0^Tx}
-    {||x||_2^2 \mp ||x||_2 e_0^T x} \no \\
-    &=& \frac{(||x||_2^2 x - xx^T x) +
-        (\mp ||x||_2 e_0^T x x  \pm ||x||_2 xe_0^T x) 
-        \pm ||x||_2 e_0 x^T x -||x||_2^2 e_0 e_0^Tx}
-    {||x||_2^2 \mp ||x||_2 e_0^T x} \no \\
-    &=& \frac{ \pm ||x||_2 e_0 x^T x -||x||_2^2 e_0 e_0^Tx}
-    {||x||_2^2 \mp ||x||_2 e_0^T x} \no \\
-    &=& \frac{ \pm  e_0 x^T x -||x||_2 e_0 e_0^Tx}
-    {||x||_2 \mp e_0^T x} \no \\
-    &=& \frac{ \pm ||x||_2^2 e_0  -||x||_2 (e_0^Tx) e_0 }
-    {||x||_2 \mp e_0^T x} \no \\
-    &=& \frac{ \pm (||x||_2 - (e_0^Tx)) ||x||_2 e_0 }
-    {||x||_2 \mp e_0^T x} \no \\
-    &=& \pm ||x||_2 e_0 
-\ee
-Note that above derivation frequently makes use of the following lemma.
-\begin{lemma}
+\begin{lemma} \label{abclemma}
     For arbitrary vector $a\in\Rn$, $b\in \Rn$, $c\in \Rn$, $ab^T c= (b^T c) a$.
 \end{lemma}
 \begin{proof}
@@ -181,6 +119,67 @@ Note that above derivation frequently makes use of the following lemma.
        = (b^T c) a
     \ee
 \end{proof}
+\begin{lemma}
+    $ (uu^H) (uu^H) = ||u||_2^2 u u^H$
+\end{lemma}
+\begin{proof}
+\be
+    (uu^H) (uu^H) &=& (uu^H u) u^H \no \\
+    &=& ((u^H u) u) u^H  \no \\
+    &=& (||u||_2^2 u) u^H \no \\
+    &=& ||u||_2^2 u u^H
+\ee
+\end{proof}
+\subsection{$H=H^H$}
+\be
+    H^H &=& (I - 2uu^H) ^H \no \\
+    &=& I^H - (2uu^H)^H \no\\
+    &=& I - 2(u^H)^H u^H  \no\\
+    &=& I - 2 u u^H \no\\
+    &=& H \label{2.2conclusion} 
+\ee
+\subsection{$HH^H=I$}
+In terms of \eqref{2.2conclusion}, multiply both sides with $H$ and then reuse
+conclusion in \eqref{2.1conclusion}
+\be
+    H^H H &=& H H = I
+\ee
+
+\newpage
+\setcounter{section}{3}
+\section{Show that if $x \in \Rn,\ v=x \mp ||x||_2 e_0$ and
+    $\tau=v^Tv/2$, then $(I-\frac{1}{\tau}vv^T)=\pm||x||_2 e_0$}
+We start from the reflector $I-\frac{1}{\tau}vv^T$ on $x$,
+\be
+    && (I-\frac{1}{\tau}vv^T) x \no \\
+    &=& \bigg(I-\frac{2vv^T}{v^T v}\bigg) x \no \\
+    &=& \bigg(I-\frac{2(x \mp ||x||_2 e_0)(x \mp ||x||_2 e_0)^T}{(x \mp ||x||_2
+        e_0)^T (x \mp ||x||_2 e_0)}\bigg) x \no \\
+    &=& \bigg(I - 2 \frac{xx^T\mp ||x||_2(xe_0^T+e_0 x^T)+||x||_2^2 e_0 e_0^T}
+    {2||x||_2^2 \mp 2||x||_2 e_0^T x}\bigg) x \no \\
+    &=& \bigg(I -  \frac{xx^T\mp ||x||_2(xe_0^T+e_0 x^T)+||x||_2^2 e_0 e_0^T}
+    {||x||_2^2 \mp ||x||_2 e_0^T x}\bigg) x \no \\
+    &=& \frac{||x||_2^2 \mp ||x||_2 e_0^T x - xx^T\pm ||x||_2(xe_0^T+e_0
+        x^T) -||x||_2^2 e_0 e_0^T}
+    {||x||_2^2 \mp ||x||_2 e_0^T x} x \no \\
+    &=& \frac{||x||_2^2 x \mp ||x||_2 e_0^T x x - xx^T x \pm ||x||_2(xe_0^T+e_0
+        x^T)x -||x||_2^2 e_0 e_0^Tx}
+    {||x||_2^2 \mp ||x||_2 e_0^T x} \no \\
+    &=& \frac{(||x||_2^2 x - xx^T x) +
+        (\mp ||x||_2 e_0^T x x  \pm ||x||_2 xe_0^T x) 
+        \pm ||x||_2 e_0 x^T x -||x||_2^2 e_0 e_0^Tx}
+    {||x||_2^2 \mp ||x||_2 e_0^T x} \no \\
+    &=& \frac{ \pm ||x||_2 e_0 x^T x -||x||_2^2 e_0 e_0^Tx}
+    {||x||_2^2 \mp ||x||_2 e_0^T x} \no \\
+    &=& \frac{ \pm  e_0 x^T x -||x||_2 e_0 e_0^Tx}
+    {||x||_2 \mp e_0^T x} \no \\
+    &=& \frac{ \pm ||x||_2^2 e_0  -||x||_2 (e_0^Tx) e_0 }
+    {||x||_2 \mp e_0^T x} \no \\
+    &=& \frac{ \pm (||x||_2 - (e_0^Tx)) ||x||_2 e_0 }
+    {||x||_2 \mp e_0^T x} \no \\
+    &=& \pm ||x||_2 e_0 
+\ee
+Note that above derivation frequently makes use of the lemma \ref{abclemma}.
 
 \newpage
 \section{Complex}

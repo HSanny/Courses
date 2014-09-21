@@ -7,7 +7,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%  PACKAGES USED IN THIS TEX SOURCE FILE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\usepackage{geometry,amsthm,amsmath,graphicx,fancyheadings,amsfonts}
+\usepackage{geometry,amsthm,amsmath,graphicx,fancyheadings,amsfonts,tikz}
 \usepackage[colorlinks,
             linkcolor=blue,
             anchorcolor=red,
@@ -37,7 +37,7 @@
 \renewcommand{\thesection}{Exercise \arabic{section}.}
 \renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}
 \renewcommand{\contentsname}{Exercises}
-\newcommand{\Rn}{\mathbb{R}^n}
+
 \newtheorem{lemma}{Lemma}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% DOCUMENTATION STARTS FROM HERE 
@@ -58,12 +58,6 @@
 %    %\listoftables 
 %    %\listoffigures
 %\end{center}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Macros
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newcommand{\be}{\begin{eqnarray}}
-\newcommand{\ee}{\end{eqnarray}}
-\newcommand{\no}{\nonumber}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% GENERAL DOCUMENTATION BEGINS 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -148,7 +142,7 @@ conclusion in \eqref{2.1conclusion}
 \newpage
 \setcounter{section}{3}
 \section{Show that if $x \in \Rn,\ v=x \mp ||x||_2 e_0$ and
-    $\tau=v^Tv/2$, then $(I-\frac{1}{\tau}vv^T)=\pm||x||_2 e_0$}
+    $\tau=v^Tv/2$, then $(I-\frac{1}{\tau}vv^T)x=\pm||x||_2 e_0$}
 We start from the reflector $I-\frac{1}{\tau}vv^T$ on $x$,
 \be
     && (I-\frac{1}{\tau}vv^T) x \no \\
@@ -177,12 +171,77 @@ We start from the reflector $I-\frac{1}{\tau}vv^T$ on $x$,
     {||x||_2 \mp e_0^T x} \no \\
     &=& \frac{ \pm (||x||_2 - (e_0^Tx)) ||x||_2 e_0 }
     {||x||_2 \mp e_0^T x} \no \\
-    &=& \pm ||x||_2 e_0 
+    &=& \pm ||x||_2 e_0  \label{lastconclusion}
 \ee
 Note that above derivation frequently makes use of the lemma \ref{abclemma}.
 
 \newpage
 \section{Complex}
+It is easy to show that the conclusion in \eqref{lastconclusion} can extend to
+complex space. That is,
+\be
+(I-\frac{1}{\tau}vv^H)x=\opm||x||_2 e_0
+\ee
+where $x \in \Cn,\ v=x \omp ||x||_2 e_0$ and $\tau=v^Hv/2$. \\
+Let 
+\be
+v = \left( \begin{array}{c}
+    1 \\ \hline u_2
+\end{array} \right),\ 
+x = \left( \begin{array}{c}
+    \chi \\ \hline x_2
+\end{array} \right),\
+e = \left( \begin{array}{c}
+      1 \\ \hline
+      0
+  \end{array} \right)
+\ee
+Then have 
+\be
+\left( I - \frac{1}{\tau} 
+    \left( \begin{array}{c} 1 \\ \hline u_2 \end{array} \right)
+    \left( \begin{array}{c} 1 \\ \hline u_2 \end{array} \right)^H
+\right)
+\cdot \left( \begin{array}{c} \chi \\ \hline x_2 \end{array} \right)
+= \left( \begin{array}{c} \rho \\ \hline 0 \end{array} \right)
+\ee
+where $\tau = v^H v/2 = (1+u_2^H u_2)/2$ and $\rho = \omp ||x||_2$.
+\begin{lemma}
+    If $x \in \Cn,\ v=x \omp ||x||_2 e_0$ and $\tau=v^Hv/2$, then
+    $(I-\frac{1}{\tau}vv^H)x=\opm||x||_2 e_0$.
+\end{lemma}
+\begin{proof}
+We start from the reflector $I-\frac{1}{\tau}vv^H$ on $x$,
+\be
+    && (I-\frac{1}{\tau}vv^H) x \no \\
+    &=& \bigg(I-\frac{2vv^H}{v^H v}\bigg) x \no \\
+    &=& \bigg(I-\frac{2(x \omp ||x||_2 e_0)(x \omp ||x||_2 e_0)^H}{(x \omp ||x||_2
+        e_0)^H (x \omp ||x||_2 e_0)}\bigg) x \no \\
+    &=& \bigg(I - 2 \frac{xx^H\omp ||x||_2(xe_0^H+e_0 x^H)+||x||_2^2 e_0 e_0^H}
+    {2||x||_2^2 \omp 2||x||_2 e_0^H x}\bigg) x \no \\
+    &=& \bigg(I -  \frac{xx^H\omp ||x||_2(xe_0^H+e_0 x^H)+||x||_2^2 e_0 e_0^H}
+    {||x||_2^2 \omp ||x||_2 e_0^H x}\bigg) x \no \\
+    &=& \frac{||x||_2^2 \omp ||x||_2 e_0^H x - xx^H\opm ||x||_2(xe_0^H+e_0
+        x^H) -||x||_2^2 e_0 e_0^H}
+    {||x||_2^2 \omp ||x||_2 e_0^H x} x \no \\
+    &=& \frac{||x||_2^2 x \omp ||x||_2 e_0^H x x - xx^H x \opm ||x||_2(xe_0^H+e_0
+        x^H)x -||x||_2^2 e_0 e_0^Hx}
+    {||x||_2^2 \omp ||x||_2 e_0^H x} \no \\
+    &=& \frac{(||x||_2^2 x - xx^H x) +
+        (\omp ||x||_2 e_0^H x x  \opm ||x||_2 xe_0^H x) 
+        \opm ||x||_2 e_0 x^H x -||x||_2^2 e_0 e_0^Hx}
+    {||x||_2^2 \omp ||x||_2 e_0^H x} \no \\
+    &=& \frac{ \opm ||x||_2 e_0 x^H x -||x||_2^2 e_0 e_0^Hx}
+    {||x||_2^2 \omp ||x||_2 e_0^H x} \no \\
+    &=& \frac{ \opm  e_0 x^H x -||x||_2 e_0 e_0^Hx}
+    {||x||_2 \omp e_0^H x} \no \\
+    &=& \frac{ \opm ||x||_2^2 e_0  -||x||_2 (e_0^Hx) e_0 }
+    {||x||_2 \omp e_0^H x} \no \\
+    &=& \frac{ \opm (||x||_2 - (e_0^Hx)) ||x||_2 e_0 }
+    {||x||_2 \omp e_0^H x} \no \\
+    &=& \opm ||x||_2 e_0 
+\ee
+\end{proof}
 
 \newpage
 \section{Matrix Equivalence}
@@ -236,7 +295,7 @@ C_{FormQ}(m,n)  = 2mn^2-\frac{2}{3}n^3
 \ee
 For $m = n$, the cost can be simplified as 
 \be
-C_{FormQ} (A) = \frac{4}{3} n^3 = \mathbb{O} (n^3) \label{algo:cubic}
+C_{FormQ} (A) = \frac{4}{3} n^3 = \BigO{n^3} \label{algo:cubic}
 \ee
 However, if we accumulate $Q$ by using $n$ householder transformation with 
 \be
@@ -244,7 +303,7 @@ Q = (\hdots((IH_0) H_1) \hdots H_{n-1})
 \ee
 Then the cost we have is at least 
 \be
-C_{accumulation} (A) = n^3 \cdot (n-1) = \mathbb{O} (n^4) \label{algo:fourth}
+C_{accumulation} (A) = n^3 \cdot (n-1) = \BigO{n^4} \label{algo:fourth}
 \ee
 where $n^3$ comes from each one matrix multiplication, and $n-1$ comes from
 the total number of householder matrix $H_i$ ($i\in \mathbb{Z}, i \in

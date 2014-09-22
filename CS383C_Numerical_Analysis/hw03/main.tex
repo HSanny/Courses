@@ -31,7 +31,7 @@
 \renewcommand{\SECTION}{53180}
 \renewcommand{\TASK}{Homework 03}
 \renewcommand{\RELEASEDATE}{Sep. 18 2014}
-\renewcommand{\DUEDATE}{May. 23 2014}
+\renewcommand{\DUEDATE}{May. 25 2014}
 \renewcommand{\TIMECONSUME}{10 hours}
 
 \renewcommand{\thesection}{Exercise \arabic{section}.}
@@ -315,8 +315,7 @@ Then the cost we have is at least
 C_{accumulation} (A) = n^3 \cdot (n-1) = \BigO{n^4} \label{algo:fourth}
 \ee
 where $n^3$ comes from each one matrix multiplication, and $n-1$ comes from
-the total number of householder matrix $H_i$ ($i\in \mathbb{Z}, i \in
-[0,n-1]$). \\
+the total number of householder matrix $H_i$ ($i=0,1,2,...,n-1 $). \\
 Comparing formula \eqref{algo:cubic} and \eqref{algo:fourth}, it is obvious
 that the accumulation method is much more expensive than algorithm in Figure
 6. 

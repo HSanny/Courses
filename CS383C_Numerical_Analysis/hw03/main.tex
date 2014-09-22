@@ -78,39 +78,46 @@ where $u$ is unit vector ($||u||_2^2 = 1$).
     &=& I \label{2.1conclusion} 
 \ee
 \begin{lemma} \label{abclemma}
-    For arbitrary vector $a\in\Rn$, $b\in \Rn$, $c\in \Rn$, $ab^T c= (b^T c) a$.
+    For arbitrary vector $a\in\Cn$, $b\in \Cn$, $c\in \Cn$, $ab^H c= (b^H c) a$.
 \end{lemma}
 \begin{proof}
     \be
-       ab^T c &=& 
-       \begin{pmatrix}
-            a_0 b^T \\
-            a_1 b^T \\
+       ab^H c =
+              \begin{pmatrix}
+            a_0  \\
+            a_1  \\
             \vdots \\
-            a_{n-1} b^T 
+            a_{n-1}  
+       \end{pmatrix} b^H c
+       =
+       \begin{pmatrix}
+            a_0 b^H \\
+            a_1 b^H \\
+            \vdots \\
+            a_{n-1} b^H 
        \end{pmatrix} c
        = 
        \begin{pmatrix}
-            a_0 b^T c \\
-            a_1 b^T c \\
+            a_0 b^H c \\
+            a_1 b^H c \\
             \vdots \\
-            a_{n-1} b^T c 
+            a_{n-1} b^H c 
        \end{pmatrix} 
        = 
        \begin{pmatrix}
-           (b^T c) a_0  \\
-           (b^T c) a_1  \\
+           (b^H c) a_0  \\
+           (b^H c) a_1  \\
             \vdots \\
-           (b^T c) a_{n-1}  
+           (b^H c) a_{n-1}  
        \end{pmatrix} 
-       = (b^T c) 
+       &=& (b^H c) 
        \begin{pmatrix}
             a_0  \\
             a_1  \\
             \vdots \\
             a_{n-1}  
-       \end{pmatrix}
-       = (b^T c) a
+       \end{pmatrix} \\
+       &=& (b^H c) a
     \ee
 \end{proof}
 \begin{lemma}
@@ -173,7 +180,8 @@ We start from the reflector $I-\frac{1}{\tau}vv^T$ on $x$,
     {||x||_2 \mp e_0^T x} \no \\
     &=& \pm ||x||_2 e_0  \label{lastconclusion}
 \ee
-Note that above derivation frequently makes use of the lemma \ref{abclemma}.
+Note that above derivation frequently makes use of the above lemma
+\ref{abclemma} in real case.
 
 \newpage
 \section{Complex}
@@ -255,22 +263,25 @@ We start from right hand side
         \no \\
     &=& \left(
         I - \frac{1}{\tau_1} 
+        \left(
         \begin{array}{c|c} 
             0 & 0 \\\hline 
             0 & 
         \begin{pmatrix} 1 \\\hline u_2 \end{pmatrix}
         \begin{pmatrix} 1 \\\hline u_2 \end{pmatrix}^H
-        \end{array}
+        \end{array} \right)
     \right)
         \no \\
     &=& \left(
         I - 
+            \left(
         \begin{array} {c|c}
             0 & 0 \\ \hline 
             0 & \frac{1}{\tau_1}
         \begin{pmatrix} 1 \\\hline u_2 \end{pmatrix}
         \begin{pmatrix} 1 \\\hline u_2 \end{pmatrix}^H
     \end{array} 
+\right)
     \right)
         \no \\
     &=& \left(

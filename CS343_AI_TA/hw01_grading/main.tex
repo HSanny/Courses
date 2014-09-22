@@ -1,0 +1,67 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%  THIS TEX FILE IS TO GENERATE PDF FILE FOR 
+%%% 
+%%%  COPYRIGHT (C) JIMMY LIN, 2013, UT AUSTIN
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[11pt,a4paper]{article}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%  PACKAGES USED IN THIS TEX SOURCE FILE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{geometry,amsthm,amsmath,graphicx,fancyheadings}
+\usepackage[colorlinks,
+            linkcolor=blue,
+            anchorcolor=red,
+            citecolor=green
+            ]{hyperref}
+% for my mac
+\IfFileExists{/Users/JimmyLin/.latex/UTA_CS/JS.sty}{ 
+    \usepackage{/Users/JimmyLin/.latex/UTA_CS/JS}
+    \usepackage{/Users/JimmyLin/.latex/UTA_CS/JSASGN}
+}{} 
+% for UT's linux machine
+\IfFileExists{/u/jimmylin/workspace/Configs/latex/UTA_CS/JS.sty}{
+    \usepackage{/u/jimmylin/.latex/UTA_CS/JS} 
+    \usepackage{/u/jimmylin/.latex/UTA_CS/JSASGN}
+}{} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% MACROS CONTAINING THE FILE INFORMATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\COURSE}{CS343 Artificial Intelligence}
+\renewcommand{\LECTURER}{Prof. Risto Min}
+\renewcommand{\SECTION}{}
+\renewcommand{\TASK}{HW01 Grading}
+\renewcommand{\RELEASEDATE}{Sep. 16 2014}
+\renewcommand{\DUEDATE}{May. 20 2013}
+\renewcommand{\TIMECONSUME}{10 hours}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% DOCUMENTATION STARTS FROM HERE 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% TITLE PAGE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{titlepage}
+    \maketitle
+\end{titlepage}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% CONTENT PAGE: TABLEOFCONTENTS, LISTOFTABLES, LIST OF FIGURES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{center} 
+    \tableofcontents 
+    %\listoftables 
+    %\listoffigures
+\end{center}
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% GENERAL DOCUMENTATION BEGINS 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Grading Criteria}
+
+\newpage
+\section{FAQ}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% General Documentation ends
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}

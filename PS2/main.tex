@@ -1,0 +1,124 @@
+\documentclass{article}
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{tgschola} % or any other font package you like
+
+\newcommand{\soptitle}{Statement of Purpose}
+\newcommand{\yourname}{Jimmy Lin}
+\newcommand{\youremail}{jimmylin@utexas.edu}
+\newcommand{\yourweb}{https://cs.utexas.edu/~jimmylin}
+
+\usepackage[
+  colorlinks,
+  breaklinks,
+  pdftitle={\yourname - \soptitle},
+  pdfauthor={\yourname},
+  unicode
+]{hyperref}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{%
+  \footnotesize\sffamily
+  \yourname\quad
+  web: \textcolor{blue}{\url{\yourweb}}\quad
+  \textcolor{blue}{\url{\youremail}}}
+
+\newcommand{\statement}[1]{\par\medskip
+  \underline{\textcolor{blue}{\textbf{#1:}}}\space
+}
+\begin{document}
+
+\begin{center}\LARGE\soptitle\\
+\large of \yourname\ (CS Ph.D applicant for Fall--2015)
+\end{center}
+
+\hrule
+\vspace{1pt}
+\hrule height 1pt
+
+\bigskip
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Section 1 Describe your research interest
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+My research interest lies 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Section 2(a) Describe your Project A
+% Describe some research projects that you worked on. What was the problem you
+% were trying to solve? Why was it important? What approaches did you try? What
+% did you learn? It’s fine to say that you were unable to fully solve your
+% problem.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% introduction
+The most significant research project in my investigative study in the field
+of machine learning was \textit{Convex Optimization on Hard Clustering and
+    Hierarchical Dirichilet Process}.
+% how do you do your project
+The partner I coordinated with for this research project was Ian Yen, an Ph.D
+student supervised by Prof. Pradeep Ravikumar and Prof. Inderjit Dhillon.
+% Aim of this project
+This project, based on examplar-based model, aimed at developing efficient
+algorithm with optimality guarantee on hard clustering problem(DP model) and 
+(HDP model).
+% Brief description of achievements and development process
+Our approaches employed ADMM technique and obtain decent achievement on hard
+clustering problem in various datasets.
+After reaching desired consequence on clustering problem, we figured out that
+it could be a decent breakthrough if we apply this framework on the
+topic-model problem, whose essential goal was to cluster bag of words within
+collections of documents. 
+We designed objective function under our framework and corresponding computing
+routines with both optimality guarantee and significantly refined
+functionality.  The theory looked perfectly good but we failed to implement the
+computaion due to incompatibility between our algorithm and the
+objective component contributing to functionality augmentation.
+After trial on theoretical debugging, we had to, with slight frustration, give
+up the tempting functionality augmentation for topic model and derived an
+efficient algorithm that seeks optimality of HDP model with guarantee.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Section 2(b) Describe your Project B
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Job Analytics was the project through which I made the first touch to
+CS research with rigorous mathematics. The initial idea of
+matching jobs to people in an intelligent way came from Prof. Pradeep Ravikumar.
+This is 
+
+Realize that excellent mastery of mathematics does matter.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Section 2(c) Describe your Project C
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Another research project taken PHD program.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Section 3 Tell us why you feel you need a Ph.D..
+% Look back to section 2 and explain what in there appealed to you.
+% why is it consistent with your long-term goal
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Why do you need a Ph.D.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Section 4 Tell us why you want to come to CMU.
+% Whom might you like to work with? What papers have you looked at from CMU
+% that you enjoyed reading? Why is CMU the right place for you?
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% external 
+Before summer of 2014, my perception towards Carnegie Mellon University was
+the top in the area of computer science. 
+% experience of MLSS
+My personal feeling that Carnegie Mellon University was beta version of
+beloved Australian National University, a place giving high respects to the
+CMU.
+% mention of my supervisor Pradeep 
+My honor thesis supervisor Prof. Pradeep Ravikumar had his doctoral career in
+CMU. He treated us as an individual researcher and discussed details with us.
+% mention of Alex Smola
+
+\end{document}

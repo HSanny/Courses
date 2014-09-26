@@ -58,7 +58,12 @@ to the number of network connections.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Q6. How does your backprop network perform compared to SOM/LVQ? 
 
-A: 
+A: My backpropagation netwrok outperforms the network of SOM/LVQ. 
+In one of my run with 64-20-10 network, 40 epochs of training leads to 
+prediction on testing set with sse 0.294079. Obviously, such (sum of square) sse
+can be tranlated to a accuracy higher than 40%, which is the SOM/LVQ
+performance in the same recognition problem (on the same train.pat).
+
 
 Turn your report, the final saved network file, result files, and your
 training pattern files electronically.

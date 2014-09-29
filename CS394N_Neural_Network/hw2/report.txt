@@ -7,6 +7,7 @@ NAME: XIN LIN
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Q1. How hard is it to train the network to do the task?
+
 A: Even though neural network is an universal function approximator, the
 optimal solution for network weights has symmetry. The symmetry may confuse us
 which approximate position the optimal weights of network resides in.
@@ -20,16 +21,36 @@ between digits will be made.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Q2. What kind of architectures and parameter settings work the best, and why? 
-A: Typically, two-layer neural network does not provide very good performance.
-About 3-5 layers help significantly with the performance. In addition to that,
-the first hidden layer should have more units (2-3 times) than the input layer. 
-This is because the first layer plays the role of feature extractor and it is
-not suitable to compress the information in that layer. (such that the later
-layer can better base on the first hidden layer.)
+
+A: 
+For my self-designed dataset (50 patterns in total) in repeated experiments, 
+the architectures and parameters work the best are as follows: 
+
+1) Topology: 64 x 100 x 25 x 10
+2) Learning Rate: by default 
+3) SSE stopping place: 0.2
+
+The explanation: 
+1) Network topology. Two-layer neural network does not provide very good
+performance, that is, best predicting accuracy.  About 3-5 layers help
+significantly with the performance. In addition to that, the first hidden
+layer should have more units (2-3 times) than the input layer.  This is
+because the first layer plays the role of feature extractor and it is not
+suitable to compress the information in that layer. (such that the later layer
+can better base on the first hidden layer.)
+2) Learning rate. It does matter a lot for the speed of convergence but it
+does not increase the best performance one network topology could reach. 
+3) SSE at which the network stops training. This also matters a lot for the
+generalization to the testing data. The trained network will definitely work
+better on its recovering labels of training data if the network training
+proceeds. However, the network may overly fits the training data but fails to
+capture the characteristics of testing patterns that does not occur in
+the training patterns.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Q3. What kind of deviations from the training patterns causes the most trouble
 and why? 
+
 A: As previously mentioned, the limited resolution causes great deviation in
 training patterns. More specifically, the position of 1 (black dot) provides
 little information for what the digit is.  In addition to that, high-level
@@ -38,6 +59,7 @@ information.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Q4. Did you see evidence of overtraining? 
+
 A: Yes, in one experimentation, early stop (training with less iterations
 limit) improves the performance of network. That is to say, the extra
 epoch are playing an role of overtraining. Specifically, when I use the
@@ -49,11 +71,12 @@ problem, as well as regularization.
 Q5. Do you think straightforward backpropagation is the right
 approach to this task? If not, how could you improve it to make it more
 powerful and flexible? 
+
 A: To the best of my knowledge, backpropagation is the best approach to
 upgrade the weight of artificial neural network among all existing methods
 that computes gradients. It requires linear complexity to the number of
 network connections. Note that numerical difference needs quadratic complexity
-to the number of network connections.
+to the number of network connections. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Q6. How does your backprop network perform compared to SOM/LVQ? 
@@ -64,6 +87,6 @@ prediction on testing set with sse 0.294079. Obviously, such (sum of square) sse
 can be tranlated to a accuracy higher than 40%, which is the SOM/LVQ
 performance in the same recognition problem (on the same train.pat).
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Turn your report, the final saved network file, result files, and your
 training pattern files electronically.

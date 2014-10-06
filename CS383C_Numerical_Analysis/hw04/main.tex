@@ -1,0 +1,220 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%  THIS TEX FILE IS TO GENERATE PDF FILE FOR 
+%%% 
+%%%  COPYRIGHT (C) JIMMY LIN, 2013, UT AUSTIN
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[11pt,a4paper]{article}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%  PACKAGES USED IN THIS TEX SOURCE FILE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{geometry,amsthm,amsmath,graphicx,fancyheadings,amsfonts,tikz}
+\usepackage[colorlinks,
+            linkcolor=blue,
+            anchorcolor=red,
+            citecolor=green
+            ]{hyperref}
+% for my mac
+\IfFileExists{/Users/JimmyLin/.latex/UTA_CS/JS.sty}{ 
+    \usepackage{/Users/JimmyLin/.latex/UTA_CS/JS}
+    \usepackage{/Users/JimmyLin/.latex/UTA_CS/JSASGN}
+}{} 
+% for UT's linux machine
+\IfFileExists{/u/jimmylin/workspace/Configs/latex/UTA_CS/JS.sty}{
+    \usepackage{/u/jimmylin/.latex/UTA_CS/JS} 
+    \usepackage{/u/jimmylin/.latex/UTA_CS/JSASGN}
+}{} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% MACROS CONTAINING THE FILE INFORMATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\COURSE}{CS383C Numerical Analysis}
+\renewcommand{\LECTURER}{Robert A. Van De Geijn}
+\renewcommand{\SECTION}{53180}
+\renewcommand{\TASK}{Homework 04}
+\renewcommand{\RELEASEDATE}{Oct. 02 2014}
+\renewcommand{\DUEDATE}{Oct. 07 2014}
+\renewcommand{\TIMECONSUME}{5 hours}
+
+\renewcommand{\thesection}{Exercise \arabic{section}.}
+\renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}
+\renewcommand{\contentsname}{Exercises}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% DOCUMENTATION STARTS FROM HERE 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% TITLE PAGE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{titlepage}
+    \maketitle
+\end{titlepage}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% CONTENT PAGE: TABLEOFCONTENTS, LISTOFTABLES, LIST OF FIGURES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{center} 
+    \tableofcontents  
+%
+%    %\listoftables 
+%    %\listoffigures
+\end{center}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% GENERAL DOCUMENTATION BEGINS 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{}
+Show that, for {\it a consistent matrix norm}, $\kappa(A) \geq 1$.
+
+\begin{proof}
+\begin{align}
+    \kappa(A) = ||A|| \cdot ||A^{-1}|| \geq || A A^{-1}|| = ||I|| = 1
+\end{align}
+Note that the above $||\cdot||$ was for arbitrary induced matrix norm.
+\end{proof}
+
+\begin{lemma}
+    For arbitrary matrix $A$ and $B$, $|| AB || \leq || A || \cdot || B ||$.
+\end{lemma}
+\begin{proof}
+    \begin{align}
+        || A B || = \sup_{x \not =0} \frac{|| A B x ||}{|| x ||} 
+        &= \sup_{x \not =0} \frac{|| A (B x) ||}{|| x ||} \\ 
+        &\leq \sup_{x \not =0} \frac{|| A || \cdot || B x ||}{|| x ||} \\
+        &\leq \sup_{x \not =0} \frac{|| A || \cdot || B || \cdot || x || }{|| x ||} \\
+        &= || A || \cdot || B || 
+\end{align}
+Hence, it is concluded that $|| A B || \leq || A || \cdot || B ||$.
+\end{proof}
+
+\begin{lemma}
+    For abitrary norm $|| \cdot ||$ and identity matrix I,\ $|| I || = 1$.
+\end{lemma}
+\begin{proof}
+    \begin{align}
+        || I || = \sup_{x\not =0} \frac{|| I \cdot x ||}{|| x ||} 
+        = \sup_{x\not =0} \frac{|| x ||}{|| x ||} 
+        = 1
+    \end{align}
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{}
+If $A$ has lineraly independent columns, show that 
+$|| (A^H A)^{-1} A^H ||_2 = \frac{1}{\sigma_{n-1}}$, where $\sigma_{n-1}$
+equals {\it the smallest sigular value} of $A$. 
+
+\begin{proof}
+    Let $U$, $\Sigma$ and $V$ be singular value decomposition of $A$, such
+    that $A = U\Sigma V^H$.
+
+    \begin{align}
+         || (A^H A)^{-1} A^H ||_2 
+        &= || \big( (U\Sigma V^H)^H U\Sigma V^H \big)^{-1} (U\Sigma V^H)^H ||_2 \\
+        &= || \big( V \Sigma^H U^H U\Sigma V^H \big)^{-1} V \Sigma^H U^H ||_2 \\
+        &= || \big( V \Sigma^H \Sigma V^H \big)^{-1} V \Sigma^H U^H ||_2 \\
+        &= || V^{-H} \Sigma^{-1} \Sigma^{-H} V^{-1}  V \Sigma^H U^H ||_2 \\
+        &= || V^{-H} \Sigma^{-1} \Sigma^{-H} \Sigma^H U^H ||_2 \\
+        &= || V^{-H} \Sigma^{-1} U^H ||_2 \\
+        &= || V \Sigma^{-1} U^H ||_2 \\
+        &= || \Sigma^{-1}||_2 \\
+        &= \frac{1}{\sigma_{n-1}}
+    \end{align}
+\end{proof}
+
+\begin{lemma}
+    (Unitary Invariance) For arbitrary unitary matrix $U$, 
+    \begin{align}
+        || U A ||_2 = || A U ||_2 = || A ||_2 
+    \end{align}
+\end{lemma}
+
+\begin{lemma}
+    For arbitrary diagonal matrix $\Sigma$, 
+    \begin{align}
+        || \Sigma^{-1} ||_2 = \frac{1}{\sigma_{n-1}}
+    \end{align}
+    where, $\sigma_{n-1}$ is the least entry of $\Sigma$. 
+\end{lemma}
+Note that above two lemmas have been proven in exercises of previou notes.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{}
+Let $A$ have linearly independent columns. Show that $\kappa_2 (A^H A) =
+\kappa_2 (A)^2$ .
+\begin{proof}
+    We achieve the proof by employing SVD over $A$. Let unitary matrix $U$,
+    diagonal matrix $\Sigma$ and unitary matrix $V$ be singular value
+    decomposition of $A$, such that $A = U \Sigma V^H$. We start from the
+    definition of condition number $\kappa_2 (\cdot)$. 
+    \begin{align}
+        \kappa_2 (A^H A) &= || A^H A ||_2 \cdot || (A^H A)^{-1} ||_2 
+    \end{align}
+    Then we discuss the term $|| A^H A ||_2$ and $|| (A^H A)^{-1} ||_2$ respectively.
+    \begin{align}
+        || A^H A ||_2 
+        &=  || (U \Sigma V^H)^H U \Sigma V^H ||_2 \\
+        &=  || V \Sigma^H U^H U \Sigma V^H ||_2 \\
+        &=  || V \Sigma^H \Sigma V^H ||_2 \\
+        &=  || \Sigma^H \Sigma ||_2 \\
+        &=  \sigma^2_0 \\
+        &= || A ||_2^2
+    \end{align}
+    Note that $\sigma_0$ is the largest singular value of matrix $A$ and also
+    the largest entry of $\Sigma$.
+ \begin{align}
+     || (A^H A)^{-1} ||_2 
+     &=  || \big( (U \Sigma V^H)^H U \Sigma V^H \big)^{-1} ||_2 \\
+     &=  || \big( V \Sigma^H U^H U \Sigma V^H \big)^{-1} ||_2 \\
+     &=  || \big( V \Sigma^H \Sigma V^H \big)^{-1} ||_2 \\
+     &=  || V^{-H} \Sigma^{-1} \Sigma^{-H} V^{-1}  ||_2 \\
+     &=  || \Sigma^{-1} \Sigma^{-H} ||_2 \\
+     &=  || \Sigma^{-1} \Sigma^{-1} ||_2 \\
+     &=  \frac{1}{\sigma_{n-1}^2} \\
+     &= || A^{-1} ||_2^2
+    \end{align}   
+    Now we have 
+    \begin{align}
+        || A^H A ||_2 &= || A ||_2^2 \\
+     || (A^H A)^{-1} ||_2 &= || A^{-1} ||_2^2
+    \end{align}
+    Then
+    \begin{align}
+        \kappa_2 (A^H A) &= || A^H A ||_2 \cdot || (A^H A)^{-1} ||_2  \\
+        & = || A ||_2^2 \cdot || A^{-1} ||_2^2 \\
+        & = \big( || A ||_2 \cdot || A^{-1} ||_2 \big)^2 \\
+        & = \kappa_2(A)^2
+    \end{align}
+    Hence, it can be concluded that 
+    \begin{align}
+        \kappa_2 (A^H A) & = \kappa_2(A)^2
+    \end{align}
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{}
+
+Let $U \in \mathbb{C}^{n\times n}$ be unitary. Show that $\kappa_2(U) = 1$.
+\begin{proof}
+    \begin{align}
+        \kappa_2 (U) &= || U ||_2 || U^{-1} ||_2  \\
+        & = \sup_{x\not = 0} \frac{|| U x ||_2}{|| x ||_2} \cdot
+        \sup_{y\not = 0} \frac{|| U^{-1} y ||_2}{|| y ||_2} \\
+        & = \sup_{x\not = 0} \frac{|| x ||_2}{|| x ||_2} \cdot
+        \sup_{y\not = 0} \frac{|| y ||_2}{|| y ||_2} \\
+        & = 1 \cdot 1 \\
+        & = 1
+    \end{align}
+\end{proof}
+
+\begin{lemma}
+    For arbitrary unitary matrix $U$, its inverse $U^{-1}$ is still unitary. 
+\end{lemma}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% General Documentation ends
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}

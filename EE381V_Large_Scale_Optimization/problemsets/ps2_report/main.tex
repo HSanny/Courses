@@ -57,7 +57,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% GENERAL DOCUMENTATION BEGINS 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+\newtheorem{remark}{Remark}
 \part{Matlab and Computational Assignment}
 \section{Five flavors for Eq. (9.20) in B \& V}
 \subsection{Standard Gradient Descent with Backtracking}
@@ -281,18 +281,215 @@ Convergence reached!
 \part{Written Problems}
 \setcounter{section}{0}
 \renewcommand{\thesubsection}{(\alph{subsection})}
-\section{Othorognal Subspace}
-\newcommand{\Ut}{U^{\perp}}
-\newcommand{\ut}{u^{\perp}}
-\newcommand{\Wt}{W^{\perp}}
-\newcommand{\Xt}{X^{\perp}}
-\subsection{Show that if $U$ is a subspace, then so is $\Ut$}
+\section{Coordinate Descent}
+\subsection{Give an example}
+The example to illustrate failure of coordinate descent in converging to
+global minimum of function $f$ at point $x$ is
+\begin{align}
+    f(x,y) = || (x,y) ||_{\infty} = max (x, y)
+\end{align}
+at point $(x,y) = (-2, -2)$. \\
+And the contour is drawn as follows:
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=4in]{./coordinate_descent.png}
+    \caption{Contour of function $f(x,y) = || (x,y) ||_{\infty}$}
+\end{figure}
 
+\noindent
+Note that since $f(x,y) = || (x,y) ||_{\infty}$ is not differentiable, any
+coordinate descent that employs gradient of $f(x,y)$ is not available. But we
+can still apply non-gradient-based coordinate descent algorithm on this
+problem. 
 
+\begin{remark}
+    There is a bug for this question. Function can be chosen as $f(x) = x$, which
+    is convex but not strongly convex and the point $x$ can be arbitrary
+    point. Since $f(x) = x$ has its global minimum $-\infty$, then the
+    coordinate descent starting from arbitrary point $x \in \mathbb{R}$ can  
+    never get to the global minimum of $f$ forever. 
+\end{remark}
+
+\subsection{$f(x,y) = x^2 + y^2 + 3xy$}
+The coordinate descent with exact line search {\bf will not} always
+converge to a stationary point. The stationary point is $(x,y) = (0, 0)$.
+Consider the coordinate descent at $(10, -10)$: 
+\begin{align}
+    \frac{\partial f(x,y)}{\partial x} &= 2x + 3y = -10 
+    && f(x,y) \text{ will descend if } x \text{ increase} \\
+    \frac{\partial f(x,y)}{\partial y} &= 2y + 3x = 10
+    && f(x,y) \text{ will descend if } y \text{ decrease}
+\end{align}
+Obviously, the coordinate descent at $(10, -10)$ will go away from $(0,0)$.
+Therefore, $f(x,y)$ has no guarantee to converge to stationary point by
+coordinate descent with exact line search.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
-\setcounter{section}{6}
-\section{Form a Half-Space}
+\section{Condition Number}
+For arbitrary step size $t$, the strongly convex function $f(x) = \frac{1}{t}
+x^2$ starting from $x_0 = 1$ does not converge to optimal solution. 
 
+\begin{proof}
+    We begin with showing $f(x) = \frac{1}{t} x^2$ is strongly convex.
+    Obviously, $0 \leq f(x) \leq \frac{2}{t}$. 
+    Hence, function $f(x) = \frac{1}{t} x^2$ is strongly convex with $m = 0$
+    and $M = \frac{1}{t}$. (The hessian of $f(x)$ is bounded.)
+
+    Then we show that $f(x) = \frac{1}{t} x^2$ starting from $x_0 = 1$ does
+    not converge to optimal solution. The gradient of $f(x)$ at $x_0$ is given
+    by
+    \begin{align}
+        \nabla f(x_0)
+        = \nabla f(x)|_{x=1} 
+        = \frac{2}{t} x |_{x=1} 
+        = \frac{2}{t}
+    \end{align}
+
+    By gradient algorithm, the update direction at $x_0$ is given by
+    \begin{align}
+        \delta x_0 = - \nabla f(x_0) = \frac{2}{t}
+    \end{align}
+
+    Apply the update step
+    \begin{align}
+        x^{+} = x_0 - \Delta x_0 = 1 - t \cdot \frac{2}{t} = 1 - 2 = -1
+    \end{align}
+
+    It is obvious that 
+    \begin{align}
+        f(x^{+}) = f(-1) = \frac{1}{t}  = f(1) = f(x_0)
+    \end{align}
+
+    Continue the gradient algorithm repeatedly. And then we find that the function at
+    $k$-step always equals its initial value $f(x_0)$ and never reach its optimum.
+    \begin{align}
+        f(x_{k}) = f (x_0) \not = f(0) = 0
+    \end{align}
+
+    Hence, it is proved that 
+       {\it for any fixed step size $t$ , there exists a smooth
+            strongly convex function with bounded Hessian, such that a fixed
+            stepsize gradient algorithm starting from some point  $x_0$, does
+            not converge to the optimal solution.}
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Decreasing Stepsize}
+
+\begin{proof}
+    Let constant $m$ and $M$ be the lower and uppper bound on hessian of
+    $f(x)$. That is 
+    \begin{align}
+        mI \leq \nabla^2 f(x) \leq MI
+    \end{align}
+    The given conditions are 
+    \begin{align}
+        \lim_{k\rightarrow \infty} t_k  = 0 \\
+        \Sigma_{k=0}^{\infty} t_k = \infty
+    \end{align}
+    which tells us that $t_k$ will start from very large value and finally
+    decrease to 0 (sufficiently small step size). Then we have 
+    \begin{align}
+        \exists k,\ 0 < t_k < \frac{1}{M} \label{above}
+    \end{align}
+    By second-order approximation and lower bound of Hessian on step $k$, we have 
+    \begin{align}
+        f(x_{k+1}) &\leq f(x) - t_k || f(x_k) ||_2^2 + \frac{Mt_k^2}{2} ||
+        f(x_k) ||_2^2 \\
+        f(x_{k+1}) &\leq f(x) (\frac{Mt_k}{2} - 1) t_k || f(x_k) ||_2^2 
+    \end{align}
+    In terms of \eqref{above}, then we have 
+    \begin{align}
+        f(x_{k+1}) \leq f(x_k) - \frac{1}{2} t_k || \nabla f(x_k) ||_2^2
+    \end{align}
+    Subtracted both sides with $p^*$
+    \begin{align}
+        f(x_{k+1}) - p^* \leq f(x_k) - p^* - \frac{1}{2} t_k || \nabla f(x_k) ||_2^2
+    \end{align}
+    Combined with previously derived inequality 
+    \begin{align}
+        || \nabla f(x_k) ||_2^2  \geq 2m \big( f(x) - p^* \big)
+    \end{align}
+    Then we have 
+    \begin{align}
+        f(x_{k+1}) - p^* \leq (1- m t_k ) (f(x_k) - p^*)  
+    \end{align}
+    Since $ m > 0 $ and $t_k > 0$, then 
+    \begin{align}
+        f(x_{k+1}) - p^* \leq c (f(x_k) - p^*)  
+    \end{align}
+    where $c = (1- m t_k ) < 1$. And let us apply this formula recursively
+    and get
+    \begin{align}
+        f(x_{k+1}) - p^* \leq c^k (f(x_0) - p^*)  
+    \end{align}
+    which guarantee the convergence of $f(x)$ since $c < 1$.
+    Hence, it can be concluded that with the
+    infinity decreasing step size sequence, the gradient descent must converge to
+    the global optimal solution. 
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Convex Functions}
+\subsection{$f(x) = \sup_i f_i (x)$}
+Let $a$ and $b$ be two arbitrary distinct points such that $a \in dom f$ and $b \in dom f$. And
+let $\lambda \in [0, 1]$.
+\begin{align}
+    f(\lambda a + (1-\lambda) b) 
+    &= \sup_i f_i (\lambda a + (1-\lambda) b) \\
+    &\leq \sup_i \lambda f_i (a) + (1-\lambda) f_i (b) \\
+    &\leq \sup_i \lambda f_i (a) + \sup_i (1-\lambda) f_i (b) \\
+    &= \lambda \sup_i  f_i (a) + (1-\lambda) \sup_i f_i (b) \\
+    &= \lambda f(a) + (1-\lambda) f(b)
+\end{align}
+Since $ f(\lambda a + (1-\lambda) b) \leq \lambda f(a) + (1-\lambda) f(b)$
+hold for arbitrary distinct points $a$ and $b$, we
+can conclude that 
+\begin{align}
+    f_i(x) \text{ is convex } \forall i \Rightarrow f(x) = \sup_i f_i(x) \text{ is convex. }
+\end{align}
+
+\subsection{$\lambda_{max} (M)$}
+
+\subsection{Weighted shortest path from $a$ to $b$}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Convex Functions: Jensen's Inequality}
+\subsection{$epi(f)$ is also convex}
+
+\subsection{Finite version of Jensen's inequality}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Projection}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Computing Projections}
+\newcommand{\Rpn}{\mathbb{R}_+^n}
+\newcommand{\Spn}{S_+^n}
+\subsection{$\chi = \{x: L_i \leq x_i \leq U_i, i = 1, ..., n\}$}
+
+
+\subsection{$\chi = \Rpn$}
+\subsection{Euclidean ball: $\{x: || x ||_i \leq 1 \}$}
+\subsection{1-norm ball: $\{x: \Sigma_i | x_i | \leq 1 \}$}
+\subsection{Positive semidefinite cone: $\Spn = \{ M \in S^n: x^T M x \geq 0,
+        \forall x \in R^n \}$ }
+\subsection{Probability Simplex: $\chi = \{\Sigma_i x_i = 1, x_i \geq 0, i =
+        1, ..., n \}$}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Appendix
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
 \appendix
 \section{Codes Printout}

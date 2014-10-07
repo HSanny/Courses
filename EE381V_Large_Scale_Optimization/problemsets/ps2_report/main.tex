@@ -453,35 +453,242 @@ can conclude that
 \end{align}
 
 \subsection{$\lambda_{max} (M)$}
-
+Let $M_1$ and $M_2$ be arbitrarily distinct matrix of the same dimensionality.
+Let $v_0$, $v_1$, $v_2$ be eigen vector of $\alpha M_1 + (1-\alpha) M_2$,
+$M_1$ and $M_2$ respectively. 
+and let $\lambda_0$, $\lambda_1$, $\lambda_2$ be the largest eigen value of $\alpha M_1 +
+(1-\alpha) M_2$, $M_1$ and $M_2$ respectively. $\alpha \in [0, 1]$. 
+By eigenvalue decomposition, we have
+\begin{align}
+    v_1^T M_1 v_1 = \lambda_1     \\
+    v_2^T M_2 v_2 = \lambda_2     \\
+    v_0^T \big(\alpha M_1 + (1-\alpha) M_2 \big) v_0 = \lambda_0   
+\end{align}
+It is obvious that 
+\begin{align}
+    v_1^T M_1 v_1 = v_0^T M_1 v_0     \\
+    v_2^T M_2 v_2 = v_0^T M_2 v_0   
+\end{align}
+Otherwise, $\lambda_0$, $\lambda_2$, $\lambda_2$ cannot be the largest eigen
+value. \\
+Then we have
+\begin{align}
+    \alpha v_1^T M_1 v_1 \geq \alpha v_0^T M_1 v_0     \\
+    (1-\alpha) v_2^T M_2 v_2 \geq (1-\alpha) v_0^T M_2 v_0   
+\end{align}
+Add above two inequalities up, we have
+\begin{align}
+    \alpha v_1^T M_1 v_1 + (1-\alpha) v_2^T M_2 v_2 
+    \geq \alpha v_0^T M_1 v_0  + (1-\alpha) v_0^T M_2 v_0
+\end{align}
+That is 
+\begin{align}
+    \alpha \lambda_1 + (1-\alpha) \lambda_2 
+    \geq v_0^T(\alpha M_1 + (1-\alpha) M_2) v_0 = \lambda_0
+\end{align}
+Hence, we can conclude that function $\lambda_{max}$ is convex. \\
+\begin{remark}
+    The eigenvalue of largest magnitude is not convex.
+\end{remark}
+\newpage
 \subsection{Weighted shortest path from $a$ to $b$}
-
+For a fixed graph topology with distinct weights $w_1$ and $w_2$, we have
+\begin{align}
+    \lambda f(w_1) + (1-\lambda) f(w_2)
+    = f(\lambda w_1) + f((1-\lambda) w_2)
+\end{align}
+where $\lambda$ is abitrary real value between 0 and 1. The above step is valid
+because if we multiply every weight of edge with a constant ($\lambda$ in this
+case), then the path between two nodes with minimal weights stay invariant and
+hence minimal weights of that path becomes a constant ($\lambda$) multiple of
+its original value.
+\begin{align}
+    f(\lambda w_1) + f((1-\lambda) w_2)
+    \leq f(\lambda w_1 + (1-\lambda) w_2)  
+\end{align}
+    To simplify the explanation, we denote the cost of minimal-weight path
+    returned by $f(\lambda w_1 + (1-\lambda) w_2)$ under weight $w$ as
+    $PC(w)$). That is to say,  
+\begin{align}
+    f(\lambda w_1 + (1-\lambda) w_2) = PC(\lambda w_1) + PC((1-\lambda) w_2)
+\end{align}
+    The justification is as follows:
+\begin{itemize}
+    \item If $f(\lambda w_1)$ and $f((1-\lambda) w_2)$ return different
+        paths between two nodes,  then by definition we have
+        $f(\lambda w_1) \leq PC(\lambda w_1)$ and 
+        $f((1-\lambda) w_2) \leq PC((1-\lambda) w_2)$. Sum up these two
+        inequalities derives $f(\lambda w_1) + f((1-\lambda) w_2) < f(\lambda w_1 + (1-\lambda) w_2)$
+    \item If $f(\lambda w_1)$ and $f((1-\lambda) w_2)$ return the same path
+        between two nodes, it is obvious that the equality holds.
+\end{itemize}
+Hence, we have 
+\begin{align}
+    \lambda f(w_1) + (1-\lambda) f(w_2)
+    \leq f(\lambda w_1 + (1-\lambda) w_2)  
+\end{align}
+which indicates that $f$ is concave function of $w$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
 \section{Convex Functions: Jensen's Inequality}
-\subsection{$epi(f)$ is also convex}
+\subsection{$epi(f)$ is also convex if $f(x)$ is convex}
+Let $(a_1, b_1)$ and $(a_2, b_2)$ are two distinct pair that belongs to
+$epi(f)$. That is 
+\begin{align}
+    a_1 \not = a_2 , b_1 \not = b_2 \\
+    (a_1, b_1) \in epi(x) \label{pair1member} \\
+    (a_2, b_2) \in epi(x) \label{pair2member}
+\end{align}
+We want to prove for arbitrary $\lambda \in [0, 1]$, 
+\begin{align}
+    \lambda(a_1, b_1) + (1-\lambda)(a_2, b_2) \in epi(x)
+\end{align}
+holds. \\
+In terms of \eqref{pair1member} and \eqref{pair2member}, we have
+\begin{align}
+    b_1 \geq f(a_1) \\
+    b_2 \geq f(a_2) 
+\end{align}
+Multiply both sides with $\lambda$ and $(1-\lambda)$ respectively
+\begin{align}
+    \lambda b_1 &\geq \lambda f(a_1) \\
+    (1-\lambda) b_2 &\geq (1-\lambda) f(a_2) 
+\end{align}
+Then add up two terms above, we have
+\begin{align}
+    \lambda b_1 + (1-\lambda) b_2 \geq \lambda f(a_1) + (1-\lambda) f(a_2) 
+\end{align}
+Since $f(x)$ is convex, then we have
+\begin{align}
+    \lambda f(a_1) + (1-\lambda) f(a_2) \geq f (a_1 + (1-\lambda) a_2)
+\end{align}
+Then
+\begin{align}
+    \lambda b_1 + (1-\lambda) b_2 \geq \lambda f (a_1 + (1-\lambda) a_2)
+\end{align}
+That is to say,
+\begin{align}
+    (\lambda a_1 + (1-\lambda) a_2, \lambda b_1 + (1-\lambda) b_2) \in epi (f)
+\end{align}
+which can be written as 
+\begin{align}
+    \lambda(a_1, b_1) + (1-\lambda)(a_2, b_2) \in epi(f)
+\end{align}
+Hence, we can conclude that $epi(f)$ is a convex set.
 
+\newpage
 \subsection{Finite version of Jensen's inequality}
+\newcommand{\E}{\mathbb{E}}
+We prove this by induction on $m$.   \\
+Base Case: $m = 1$. It is obvious that $\E(f(x_1)) = f(E(x_1)) = f(x_1)$. \\
+Inductive Cases: assume that for $\sum_{i=1}^m p_i = 1$
+\begin{align}
+    \E[f(X_m)] &= \sum_{i=1}^m p_i f(x_i) \leq f(\sum_{i=1}^m p_i x_i) = f(\E(X_{m}))
+\end{align}
+holds and show that for $\sum_{i=1}^{m+1} p_i = 1$, 
+\begin{align}
+    \E[f(X_{m+1})] &= \sum_{i=1}^{m+1} p_i f(x_i) 
+    \leq f(\sum_{i=1}^{m+1} p_i x_i) = f(\E(X_{m+1}))
+\end{align}
+is true.
+\begin{proof}
+    \begin{align}
+        \E[f(X_{m+1})] &= \sum_{i=1}^{m} p_i f(x_i) + p_{m+1} f(x_i)  \\
+        &= \big(\sum_{i=1}^{m} p_i \big) \sum_{i=1}^{m}
+        \frac{p_i}{\sum_{i=1}^{m} p_i} f(x_i) + p_{m+1} f(x_{m+1})  \\
+        &\leq \big(\sum_{i=1}^{m} p_i \big) f(\sum_{i=1}^{m}
+        \frac{p_i}{\sum_{i=1}^{m} p_i} x_i) + p_{m+1} f(x_{m+1})  \\
+        &\leq f \big( (\sum_{i=1}^{m} p_i) \sum_{i=1}^{m}
+        \frac{p_i}{\sum_{i=1}^{m} p_i} x_i + p_{m+1} x_{m+1} \big) \\
+        &= f \big( \sum_{i=1}^{m} p_i x_i + p_{m+1} x_{m+1} \big) \\
+        &= f(\sum_{i=1}^{m+1} p_i x_i) \\
+        &= f(\E(X_{m+1}))
+    \end{align}
+    Hence, it is proved that $\E[f(X_{m+1})] \leq f(\E(X_{m+1}))$. And the
+    induction holds. 
+\end{proof}
+\noindent
+From the base case and inductive cases, it can be concluded by induction that 
+\begin{align}
+    \E[f(X)] &  \leq f(\E(X))
+\end{align}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
 \section{Projection}
-
-
-
+We start by manipulating the solution. \\
+By the definition of projection, we have 
+\begin{align}
+    x^{(k+1)} &= Proj_{\chi}(x^{(k)} - t_k \nabla f(x^{(k)})) \\
+    &= argmin_{x\in \chi} || x - (x^{(k)} - t_k \nabla f(x^{(k)}) ) ||_2 \\
+    &= argmin_{x\in \chi} || (x - x^{(k)}) + t_k \nabla f(x^{(k)}) ) ||_2^2 \\
+    &= argmin_{x\in \chi} \big( || x - x^{(k)} ||_2^2 
+       + 2 t_k (x - x^{(k)} ) \nabla f(x^{(k)}) 
+       + t_k^2 || \nabla f(x^{(k)}) ||_2^2  \big) \\
+    &= argmin_{x\in \chi} \big( || x - x^{(k)} ||_2^2 
+       + 2 t_k x \nabla f(x^{(k)}) - 2 t_k x^{(k)}\nabla f(x^{(k)})   
+       + t_k^2 || \nabla f(x^{(k)}) ||_2^2  \big)
+\end{align}
+Obviously, both $- 2 t_k x^{(k)}\nabla f(x^{(k)})$ and $t_k^2 || \nabla f(x^{(k)})
+||_2^2$ are constant term at step $k$. Then, we can remove them in the optimization
+objective.
+\begin{align}
+    x^{(k+1)} &= Proj_{\chi}(x^{(k)} - t_k \nabla f(x^{(k)})) \\
+    &= argmin_{x\in \chi} \big( || x - x^{(k)} ||_2^2 
+    + 2 t_k x \nabla f(x^{(k)})  \big) \\
+    &= argmin_{x\in \chi} \big(  
+     2 t_k \langle x, \nabla f(x^{(k)}) \rangle + || x - x^{(k)} ||_2^2 \big) \\
+    &= argmin_{x\in \chi} \big(  \langle x, \nabla f(x^{(k)}) \rangle
+    + \frac{1}{2t_k} || x - x^{(k)} ||_2^2 \big)
+\end{align}
+Note that the last step is valid because $t_k$ is constant at step $k$. \\
+Hence, we proved that 
+\begin{align}
+x^{(k+1)} &= argmin_{x\in \chi} \big(  \langle x, \nabla f(x^{(k)}) \rangle
+    + \frac{1}{2t_k} || x - x^{(k)} ||_2^2 \big) \\
+    \Longleftrightarrow\ x^{(k+1)} &= Proj_{\chi}(x^{(k)} - t_k \nabla f(x^{(k)})) 
+\end{align}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
 \section{Computing Projections}
 \newcommand{\Rpn}{\mathbb{R}_+^n}
 \newcommand{\Spn}{S_+^n}
 \subsection{$\chi = \{x: L_i \leq x_i \leq U_i, i = 1, ..., n\}$}
-
-
+\begin{align}
+    argmin_{L_i \leq x_i \leq U_i} || x_i - z_i ||_2^2
+\end{align}
+Solving this objective, we get 
+\begin{align}
+x_i^{*} = max( min(z_i, U_i), L_i),\ \forall i
+\end{align}
 \subsection{$\chi = \Rpn$}
-\subsection{Euclidean ball: $\{x: || x ||_i \leq 1 \}$}
+The solution is 
+\begin{align}
+x_i^{*} = max(z_i, L_i),\ \forall i
+\end{align}
+Note that we can simply view $\Rpn$ as rectangle with $L = 0$ and $U =
+\infty$.
+\subsection{Euclidean ball: $\{x: || x ||_2 \leq 1 \}$}
+As to the Euclidean ball: $\{x: || x ||_2 \leq 1 \}$, we have projection task
+as follows:
+\begin{align}
+    argmin_{|| x ||_2^2 \leq 1 } || x_i - z_i ||_2^2
+\end{align}
+Solving this by using lagrangian
+\begin{align}
+    L(x, \lambda) = || x - z ||_2 + \lambda (|| x ||_2^2 - 1)
+\end{align}
+And we get the stationary point by setting gradient to zero,
+\begin{align}
+    x = \frac{z}{1+\lambda}
+\end{align}
+Now we need to discuss the value of $x$ and $z$. If $|| z || \leq 1$, then
+$\lambda = 0$. But if $|| z || > 1$, then $|| x ||_2 = \frac{z}{||z||_2}$.
+
 \subsection{1-norm ball: $\{x: \Sigma_i | x_i | \leq 1 \}$}
+
 \subsection{Positive semidefinite cone: $\Spn = \{ M \in S^n: x^T M x \geq 0,
         \forall x \in R^n \}$ }
 \subsection{Probability Simplex: $\chi = \{\Sigma_i x_i = 1, x_i \geq 0, i =

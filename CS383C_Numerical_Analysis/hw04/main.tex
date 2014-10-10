@@ -8,6 +8,7 @@
 %%%  PACKAGES USED IN THIS TEX SOURCE FILE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{geometry,amsthm,amsmath,graphicx,fancyheadings,amsfonts,tikz}
+\usepackage{../mcode}
 \usepackage[colorlinks,
             linkcolor=blue,
             anchorcolor=red,
@@ -31,7 +32,7 @@
 \renewcommand{\SECTION}{53180}
 \renewcommand{\TASK}{Homework 04}
 \renewcommand{\RELEASEDATE}{Oct. 02 2014}
-\renewcommand{\DUEDATE}{Oct. 09 2014}
+\renewcommand{\DUEDATE}{Oct. 10 2014}
 \renewcommand{\TIMECONSUME}{10 hours}
 
 \renewcommand{\thesection}{Exercise \arabic{section}.}
@@ -39,6 +40,7 @@
 \renewcommand{\contentsname}{Exercises}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% DOCUMENTATION STARTS FROM HERE 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -63,10 +65,116 @@
 \part{Exercises on Solving LLS Problems}
 \setcounter{section}{1}
 \section{}
+We can prove the existence of $LQ$ factorization for $A_{m\times n} (m < n)$ by induction on $m$.
+\begin{itemize}
+    \item Base Case: $m = 1$
+        \begin{align}
+            A = (a_0^H) = l_{00} q_0^H =
+            \left( \begin{array}{c|c}
+                    l_{00} & 0
+                \end{array} \right)
+            \left( \begin{array}{c}
+                    q_0^H \\
+                    \hline
+                    0
+                \end{array} \right)
+        \end{align}
+        Let $L_L = l_{00}$ and $Q_T = q_0^H$, we have 
+        \begin{align}
+            A = 
+            \left( \begin{array}{c|c}
+                   L_L & 0
+                \end{array} \right)
+            \left( \begin{array}{c}
+                    Q_T \\
+                    \hline
+                    0
+                \end{array} \right)
+            = L_L Q_T
+        \end{align}
+        holds for $m = 1$.
+    \item Inductive Case: assume that existence of $LQ$ factorization holds
+        for $m-1$, then we show that it also holds for $m$. \\
+        That is, we partition 
+        \begin{align}
+            A = \left( \begin{array}{c}
+                   A_0 \\ \hline a_1^H
+                \end{array} \right)
+        \end{align} 
+        Assume that $A_0 = L_{00} Q_0$ holds, then we show that 
+        $\exists L_L, Q_T,\ s.t.\ A = L_L Q_T$ holds. \\
+        Let 
+            \begin{align}
+                L_L = 
+                \left( \begin{array}{c|c}
+                L_{00} & 0 \\ \hline
+                l_{10}^H & \rho_{11}
+                \end{array} \right),\ 
+            Q_T =
+            \left( \begin{array}{c}
+                    Q_0 \\ \hline q_1^H
+                \end{array} \right)
+            \end{align}
+        where $l_{10}^H = a_1^H Q_0^H$  and $\rho_{11} = || a_1^H - l_{10}^H Q_0
+        ||_2$. Then we have 
+        \begin{align}
+            L_L Q_T = 
+            \left( \begin{array}{c|c}
+                L_{00} & 0 \\ \hline
+                l_{10}^H & \rho_{11}
+                \end{array} \right)
+            \left( \begin{array}{c}
+                   Q_0 \\ \hline q_1^H
+                \end{array} \right)
+            =
+            \left( \begin{array}{c}
+                    L_{00} Q_0 \\ \hline
+                    l_{10}^H Q_0 + \rho_{11} q_1^H
+                \end{array} \right)
+            =
+            \left( \begin{array}{c}
+                    L_{00} Q_0 \\ \hline a_1^H
+                \end{array} \right)
+            =
+            \left( \begin{array}{c}
+                    A_0 \\ \hline a_1^H
+                \end{array} \right)
+            = A
+        \end{align}
+    \item By principle of induction, $A = L_L Q_T$ holds for arbitrary $m$.
+\end{itemize}
 
 \section{}
+\begin{align}
+     \min_z || Az - y ||_2
+    =\ & \min_z || LQz - y ||_2 \\
+    =\ & \min_{\{z=Q^H w\}} || LQQ^Hw - y ||_2 \\
+    =\ & \min_{\{z=Q^H w\}} || Lw - y ||_2 \\
+    =\ & \min_{\{z=Q^H w\}} || 
+    \left( \begin{array}{c|c} L_L & 0 \end{array} \right)
+    \left( \begin{array}{c} w_T \\ \hline w_B \end{array} \right)
+    - y ||_2 \\
+    =\ & \min_{\{z=Q^H w\}} || L_L w_T - y ||_2
+\end{align}
+which derives solution for $w_T = L_L^{-1} y$. And then the general solution
+is 
+\begin{align}
+    z = Q^H w = 
+    \left( \begin{array}{c|c} Q_T^H & Q_B^H \end{array} \right)
+    \left( \begin{array}{c} w_T \\ \hline w_B \end{array} \right)
+    = Q_T^H w_T + Q_B^H w_B
+    = Q_T^H L_L^{-1} y + Q_B^H w_B
+\end{align}
+where $w_B$ can be arbitrary vector in $\mathbb{C}^{n-r}$.
 
+\newpage
 \section{}
+\lstinputlisting{../FLAME@lab/LQ_CGS_unb.m}
+
+\newpage
+\section{}
+\lstinputlisting{../FLAME@lab/HLQ_unb.m}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

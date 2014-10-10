@@ -314,9 +314,31 @@ Let $A$ have linearly independent columns. Show that $\kappa_2 (A^H A) =
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
 \section{}
+\subsection{}
+(Only-If) If $Ax = y$, multiply both side with $A^H$ and then we have $A^H A x
+= A^H y$. \\
+(If) If $A^H A x = A^H y$, then multiply both side with $(A^{H})^{-1}$
+(inverse exists because $A$ is full-rank) and we have $(A^{H})^{-1} A^H Ax =
+(A^{H})^{-1} A^H y$. Since $(A^{H})^{-1} A^H = I$, it comes out $Ax = y$.
+
+\subsection{}
+For normal equation method, the solution of LLS can be derived by
+\begin{align}
+    x = (A^H A)^{-1} A^H y
+\end{align}
+Let $B = (A^H A)^{-1} A^H$, then the condition number of normal equation
+program is
+\begin{align}
+    \kappa(B^{-1}) &= || ((A^H A)^{-1} A^H)^{-1}|| \cdot || (A^H A)^{-1} A^H
+    || \\
+    &= \sigma_0 \cdot \frac{1}{\sigma_{n-1}} \\
+    &= \frac{\sigma_0}{\sigma_{n-1}} \\
+    &= \kappa(A)
+\end{align}
+By this, we can conclude that the condition number of normal equation program
+is not necessarily square of $\kappa(A)$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newpage
 \section{}
 
 Let $U \in \mathbb{C}^{n\times n}$ be unitary. Show that $\kappa_2(U) = 1$.
@@ -335,6 +357,21 @@ Let $U \in \mathbb{C}^{n\times n}$ be unitary. Show that $\kappa_2(U) = 1$.
 \begin{lemma}
     For arbitrary unitary matrix $U$, its inverse $U^{-1}$ is still unitary. 
 \end{lemma}
+\begin{proof}
+    \begin{align}
+        U U^H = I
+    \end{align}
+    We multiply both side on the left with $U^{-1}$ and $U^{-H}$, it comes
+    \begin{align}
+        U^{-H} U^{-1} U U^H = U^{-H} U^{-1}
+    \end{align}
+    That is 
+    \begin{align}
+        (U^{-1})^H U^{-1} = I
+    \end{align}
+    Since $U$ is unitary, then $U$ is square matrix and so as $U^{-1}$.
+    Then it is concluded that $U^{-1}$ is unitary.
+\end{proof}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% General Documentation ends
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

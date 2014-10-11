@@ -366,9 +366,24 @@ Show that $\overset{\checkmark}{\kappa} = x^T (y+\delta y)$, where $|\delta y| \
 \newpage
 \setcounter{section}{24}
 \section{}
+\newcommand{\ycheck}{\overset{\checkmark}{y}}
+\begin{proof}
+    We partition matrix $A \in \mathbb{R}^{m\times n}$ and have
+    \begin{align}
+        A = \left(\begin{array}{c}a_0^T \\ a_1^T \\\vdots\\a_{m-1}^T \end{array}\right)
+    \end{align}
+    Then in terms of algorithm in Fig. 4 and R1-B, 
+    \begin{align}
+        \ycheck 
+        = \left(\begin{array}{c}\psi_0 \\ \psi_1 \\\vdots\\\psi_{m-1} \end{array}\right) 
+        = \left(\begin{array}{c}a_0^T(x+\delta x) \\ a_1^T(x+\delta x) \\\vdots\\a_{m-1}^T(x+\delta x) \end{array}\right) 
+        = \left(\begin{array}{c}a_0^T \\ a_1^T \\\vdots\\a_{m-1}^T \end{array}\right) (x+\delta x)
+        = A (x+\delta x)
+    \end{align}
+    where $|\delta x| \leq \gamma_n |x|$ ($\delta x$ is small).
+\end{proof}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newpage
 \setcounter{section}{26}
 \section{}
 

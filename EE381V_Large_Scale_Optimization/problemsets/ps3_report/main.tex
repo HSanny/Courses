@@ -1,0 +1,175 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%  THIS TEX FILE IS TO GENERATE PDF FILE FOR 
+%%% 
+%%%  COPYRIGHT (C) JIMMY LIN, 2013, UT AUSTIN
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[11pt,a4paper]{article}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%  PACKAGES USED IN THIS TEX SOURCE FILE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{geometry,amsthm,amsmath,graphicx,amssymb,fancyheadings}
+\usepackage[]{mcode}
+\usepackage[colorlinks,
+            linkcolor=blue,
+            anchorcolor=red,
+            citecolor=green
+            ]{hyperref}
+% for my mac
+\IfFileExists{/Users/JimmyLin/.latex/UTA_CS/JS.sty}{ 
+    \usepackage{/Users/JimmyLin/.latex/UTA_CS/JS}
+    \usepackage{/Users/JimmyLin/.latex/UTA_CS/JSASGN}
+}{} 
+% for UT's linux machine
+\IfFileExists{/u/jimmylin/workspace/Configs/latex/UTA_CS/JS.sty}{
+    \usepackage{/u/jimmylin/.latex/UTA_CS/JS} 
+    \usepackage{/u/jimmylin/.latex/UTA_CS/JSASGN}
+}{} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% MACROS CONTAINING THE FILE INFORMATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\COURSE}{EE381V Large Scale Optimization}
+\renewcommand{\LECTURER}{Sujay Sanghavi}
+\renewcommand{\SECTION}{17350}
+\renewcommand{\TASK}{Problem Set 3}
+\renewcommand{\RELEASEDATE}{October 08, 2014}
+\renewcommand{\DUEDATE}{October 16, 2014}
+\renewcommand{\TIMECONSUME}{5 hours}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% DOCUMENTATION STARTS FROM HERE 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% TITLE PAGE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{titlepage}
+    \maketitle
+\end{titlepage}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% CONTENT PAGE: TABLEOFCONTENTS, LISTOFTABLES, LIST OF FIGURES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\contentsname}{Table of Contents}
+\begin{center} 
+    \tableofcontents 
+    %\listoftables 
+    \listoffigures
+\end{center}
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% GENERAL DOCUMENTATION BEGINS 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newtheorem{remark}{Remark}
+\part{Written Problems}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Written Problems
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setcounter{section}{0}
+\renewcommand{\thesubsection}{(\alph{subsection})}
+\section{Gradient descent with diminising step size}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Gradient descent and non-convexity}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Jacobi Method}
+Prove that, for a convex continuously differentiable $f$, and a step size
+$\alpha = 1/n$ where $n$ is the number of coordinates, the next iterates of
+the Jacobi method produces a lower function value than $x$, provided $x$ does
+not already minimize the function.
+
+\begin{proof}
+    Let $x^*_i = (x_1, ..., x_{i-1}, \bar{x}_i, x_{i+1}, ..., x_n)$. Then we
+    attempt to represent $x^{+}$ as convex combination of $n$ points
+    ($x^*_i,\ i = 1,...,n$).
+    \begin{align}
+        x^{+} &= x + \alpha (\bar{x} - x) \\
+        &= x + \frac{1}{n} (\bar{x} - x) \\
+        &= (1 - \frac{1}{n})x +  \frac{1}{n}\bar{x} \\
+        &= (\frac{n-1}{n})x +  \frac{1}{n}\bar{x} \\
+        &= \left( \frac{n-1}{n}x_1 + \frac{1}{n} \bar{x}_1 ,
+                \frac{n-1}{n}x_2 + \frac{1}{n} \bar{x}_2 ,
+                    ... ,
+                \frac{n-1}{n}x_n + \frac{1}{n} \bar{x}_n \right) \\
+            &= \sum_{i=1}^{n} \frac{1}{n} x_i^* 
+    \end{align}
+    which presents us the convex combination. Then
+    \begin{align}
+        f(x^+) &\leq f(\sum_{i=1}^n \frac{1}{n} x_i^*)  \\
+        &\leq \sum_{i=1}^n \frac{1}{n} f (x_i^*) && f \text{ is convex } \\
+        &\leq \sum_{i=1}^n \frac{1}{n} f (x) && \forall i, f(x_i^*) \leq f(x) \\
+        &= f(x)
+    \end{align}
+    where equality holds when $\forall i,\ x_i = \bar{x}_i$ ($x^+ = x$), that is, point
+    $x$ does already minimize the function. And in other cases, the next
+    iterate of the Jacobi method produces a lower function value than $x$.
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Step size in Newton}
+\subsection{Values of $t$ obtain global convergence}
+
+\subsection{Reason that convergence is not quadratic}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Composite functions}
+\subsection{Run gradient descent on $f$ and $g$}
+Show that the entire sequence of iterates will then be the same. 
+\begin{proof}
+    The gradient descent direction for $f(x)$ and $g(x)$ are respectively
+    \begin{align}
+        \Delta x_{f(x)} &= \nabla_x f(x) \\
+        \Delta x_{g(x)} &= \nabla_x g(x) 
+        = \nabla_x \phi(f(x)) = \nabla_{f(x)} \phi(f(x)) \nabla_x f(x)
+    \end{align}
+    Apply direction to update rule, we have
+    \begin{align}
+        x^{+}_{(f)} &= x + t^*_{(f)} \nabla_x f(x) \\
+        x^{+}_{(g)} &= x + t^*_{(g)} \nabla_{f(x)} \phi(f(x)) \nabla_x f(x)
+    \end{align}
+    where the optimal step size for $f(x)$ is 
+    \begin{align}
+        t^*_{(f)} &= \argmin_t f(x+t\nabla_x f(x))
+    \end{align}
+    and the optimal step size for $g(x)$ is 
+    \begin{align}
+        t^*_{(g)} &= \argmin_t g(x+t\nabla_{f(x)} \phi(f(x)) \nabla_x f(x)) \\
+        &= \argmin_t \phi\big(f(x+t\nabla_{f(x)} \phi(f(x)) \nabla_x f(x))\big) \\
+        &= \argmin_t f(x+t \nabla_{f(x)} \phi(f(x)) \nabla_x f(x))
+        && \phi(\cdot) \text{ is increasing function} \label{phiexist}
+    \end{align}
+    Now we observe that both step size $t^*_{(f)}$ and $t^*_{(g)}$ can be seen
+    as exact line search of $f(\cdot)$ on point $x$ towards direction
+    $\nabla_x f(x)$. (Note that $\phi(f(x))$ is a scalar.) But two step size
+    has different scale due to the existence of $\phi(f(x))$ on
+    \eqref{phiexist}. Hence, we have 
+    \begin{align}
+        t^*_{(f)} = t^*_{(g)} \nabla_{f(x)}\phi(f(x))
+    \end{align}
+    Thus, 
+    \begin{align}
+        x^{+}_{(f)} &= x + t^*_{(f)} \nabla_x f(x) \\
+        &= x +  t^*_{(g)} \nabla_{f(x)}\phi(f(x)) \nabla_x f(x) \\
+        &= x^{+}_{(g)}
+    \end{align}
+    which indicates that one iteration of gradient descent method on
+    $f(\cdot)$ and $g(\cdot)$ starting with the same point $x$ (arbitrarily)
+    will go to the same point $(x^{+}_{(f)} = x^{+}_{(g)})$. Recursively
+    applying this derivation, it is proved that the entire sequence of
+    iterates will then be the same. 
+\end{proof}
+
+\subsection{Run Newton method on $f$ and $g$: }
+Show that 
+\begin{proof}
+
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% General Documentation ends
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}

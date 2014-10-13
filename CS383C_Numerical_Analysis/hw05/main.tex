@@ -316,7 +316,7 @@ Show that $\left(\begin{array}{c|c} I+\Sigma^{(k)}&0\\\hline0&(1+\epsilon_1)\end
 \begin{proof}
     For arbitrary $k > 0$,
 \begin{align}
-    & \left(\begin{array}{c|c} I+\Sigma^{(k)}&0\\\hline0&(1+\epsilon_1)\end{array}\right) (1+\epsilon_2) \\
+     \left(\begin{array}{c|c} I+\Sigma^{(k)}&0\\\hline0&(1+\epsilon_1)\end{array}\right) (1+\epsilon_2)
     =\ & \left(\begin{array}{c|c}(I+\Sigma^{(k)}) (1+\epsilon_2)&0\\\hline0&(1+\epsilon_1)(1+\epsilon_2) \end{array}\right) \\
     =\ & \left(\begin{array}{c|c}
             I + \epsilon_2 I+ \Sigma^{(k)}+ \epsilon_2 \Sigma^{(k)} & 0\\\hline
@@ -329,9 +329,15 @@ Show that $\left(\begin{array}{c|c} I+\Sigma^{(k)}&0\\\hline0&(1+\epsilon_1)\end
             0 &  \epsilon_1+\epsilon_2+\epsilon_1\epsilon_2
         \end{array}\right) }_{\Sigma^{(k+1)}}
         \end{align}
-        which tells us that 
-    $\left(\begin{array}{c|c} I+\Sigma^{(k)}&0\\\hline0&(1+\epsilon_1)\end{array}\right) (1+\epsilon_2)=I+\Sigma^{(k+1)}$
-    holds for $k>0$.
+        Note that the the definition of $\Sigma^{(k+1)}$ are valid because if
+        $\Sigma^{(k)}$ is diagonal, then so as $\Sigma^{(k+1)}$. 
+        Hence,  
+        \begin{align}
+    \left(\begin{array}{c|c}
+            I+\Sigma^{(k)}&0\\\hline0&(1+\epsilon_1)\end{array}\right)
+    (1+\epsilon_2)=I+\Sigma^{(k+1)} \text{ holds for $k>0$. }
+    \end{align}
+    
 \end{proof}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -376,17 +382,29 @@ Show that $\overset{\checkmark}{\kappa} = x^T (y+\delta y)$, where $|\delta y| \
     \begin{align}
         \ycheck 
         = \left(\begin{array}{c}\psi_0 \\ \psi_1 \\\vdots\\\psi_{m-1} \end{array}\right) 
-        = \left(\begin{array}{c}a_0^T(x+\delta x) \\ a_1^T(x+\delta x) \\\vdots\\a_{m-1}^T(x+\delta x) \end{array}\right) 
-        = \left(\begin{array}{c}a_0^T \\ a_1^T \\\vdots\\a_{m-1}^T \end{array}\right) (x+\delta x)
-        = A (x+\delta x)
+        = \left(\begin{array}{c}a_0^T(x+\delta x_0) \\ a_1^T(x+\delta x_1)
+                \\\vdots\\a_{m-1}^T(x+\delta x_{m-1}) \end{array}\right) 
+        = A x + \left(\begin{array}{c}a_0^T \delta x_0 \\ a_1^T\delta x_1
+                \\\vdots\\a_{m-1}^T\delta x_{m-1} \end{array}\right)
     \end{align}
-    where $|\delta x| \leq \gamma_n |x|$ ($\delta x$ is small).
+    where $\forall i,\ |\delta x_i| \leq \gamma_n |x|$. However, 
+       $\left(\begin{array}{c}a_0^T \delta x_0 \\ a_1^T\delta x_1
+                \\\vdots\\a_{m-1}^T\delta x_{m-1} \end{array}\right)$
+        cannot be consolidated into $A \delta x$, then 
+    \begin{align}
+        \text{We \textbf{cannot} prove that } \ycheck = A (x+\delta x) 
+        \text{ where } \delta x \text{ is small. } 
+    \end{align}
 \end{proof}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \setcounter{section}{26}
 \section{}
-
+By suffering similar problem as the exercise 25 does, we have
+    \begin{align}
+        \text{We cannot prove that } C = (A + \Delta A) (B + \Delta B) 
+        \text{ where } \Delta A \text{ and } \Delta A \text{ is small. } 
+    \end{align}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% General Documentation ends

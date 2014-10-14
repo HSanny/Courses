@@ -165,66 +165,15 @@ $.
 \newpage
 \setcounter{section}{11}
 \section{}
-\begin{verbatim}
->> A = [1 0 0 0 1; -1 1 0 0 1; -1 -1 1 0 1; -1 -1 -1 1 1; -1 -1 -1 -1 1];
->> A
+\subsection{Variant 1: Overwrite $A$ and $L$}
+\lstinputlisting{../FLAME@lab/LU_pp_unb_var1.m}
 
-A =
-
-     1     0     0     0     1
-    -1     1     0     0     1
-    -1    -1     1     0     1
-    -1    -1    -1     1     1
-    -1    -1    -1    -1     1
-
->> [U, L, p] = LU_partial_pivot_unb(A, rand(size(A)), rand(5,1))
-
-U =
-
-     1     0     0     0     1
-     0     1     0     0     2
-     0     0     1     0     4
-     0     0     0     1     8
-     0     0     0     0    16
-
-
-L =
-
-     1     0     0     0     0
-    -1     1     0     0     0
-    -1    -1     1     0     0
-    -1    -1    -1     1     0
-    -1    -1    -1    -1     1
-
-p =
-
-     1
-     1
-     1
-     1
-     1
-
->> L * U
-
-ans =
-
-     1     0     0     0     1
-    -1     1     0     0     1
-    -1    -1     1     0     1
-    -1    -1    -1     1     1
-    -1    -1    -1    -1     1
-\end{verbatim}
+\subsection{Variant 2: Overwrite $A$}
+\lstinputlisting{../FLAME@lab/LU_pp_unb_var2.m}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
 \setcounter{section}{12}
-\section{}
-\lstinputlisting{../FLAME@lab/LU_partial_pivot_unb.m}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newpage
-\setcounter{section}{13}
 \section{}
 {\bf Derivation}
 Partition 
@@ -252,7 +201,7 @@ Then the update is given by
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
-\setcounter{section}{14}
+\setcounter{section}{13}
 \section{}
 {\bf Derivation}.
 Partition $U=\left(\begin{array}{c|c} U_{11}& u_{12} \\\hline 0 & v_{22} \end{array}\right)$,

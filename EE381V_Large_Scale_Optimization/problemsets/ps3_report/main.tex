@@ -65,12 +65,87 @@
 \setcounter{section}{0}
 \renewcommand{\thesubsection}{(\alph{subsection})}
 \section{Gradient descent with diminising step size}
-
+\begin{proof}
+    Start from analyzing gradient descent with step size $t$.
+    \begin{align}
+        f(x^+) &= f(x + t \Delta x) \\
+        &= f(x - t\nabla f(x)) \\
+        &= f(x) - t|| \nabla f(x) ||_2^2 + \frac{\nabla^2 f(x)}{2} t^2 || \nabla f(x) ||_2^2 \\
+        &\leq f(x) - t || \nabla f(x) ||_2^2 + \frac{L}{2} t^2 || \nabla f(x) ||_2^2 
+    \end{align}
+    The last step is natural derivation of $L$-Lipschitz gradient of
+    $f(\cdot)$. \\
+    Set gradient of RHS to zero and get the minimum of RHS when $t = \frac{1}{L}$, then we have
+    \begin{align}
+        f(x^+) &\leq f(x) - \frac{1}{2L} || \nabla f(x) ||_2^2  \label{leq}
+    \end{align}
+    which can be rewritten as
+    \begin{align}
+        f(x^{(k+1)}) - f(x^{(k)}) &\leq - \frac{1}{2L} || \nabla f(x^{(k)}) ||_2^2  \label{leq}
+    \end{align}
+    Then we recursively apply \eqref{leq} for infinity many step with summation,
+    \begin{align}
+        f(x^{(+\infty)}) &\leq f(x^{(0)}) - \sum_{k=0}^{+\infty} \frac{1}{2L} || \nabla f(x^{(k)}) ||_2^2 
+    \end{align}
+    Since $f(\cdot)$ has finite minimum $f_{min}$, and then
+    \begin{align}
+        f_{min} \leq f(x^{(+\infty)}) &\leq f(x^{(0)}) - \sum_{k=0}^{+\infty} \frac{1}{2L} || \nabla f(x^{(k)}) ||_2^2  
+    \end{align}
+    That is 
+    \begin{align}
+      \sum_{k=0}^{+\infty} \frac{1}{2L} || \nabla f(x^{(k)}) ||_2^2    &\leq f(x^{(0)}) - f_{min} 
+    \end{align}
+    Since $\forall k,\ t^{(k)} < \frac{2}{L}$, then
+    \begin{align}
+        \sum_{k=0}^{+\infty} \frac{1}{4} t^{(k)} || \nabla f(x^{(k)}) ||_2^2 <
+      \sum_{k=0}^{+\infty} \frac{1}{2L} || \nabla f(x^{(k)}) ||_2^2 
+      \leq f(x^{(0)}) - f_{min} 
+    \end{align}
+    Then in terms of the given fact, we have 
+    \begin{align}
+       \frac{1}{4} || \nabla f(x^{(k)}) ||_2^2 \rightarrow 0 \text{ a.k.a } 
+        \nabla f(x^{(k)}) \rightarrow 0
+    \end{align}
+    which indicates gradient descent eventually converges to a stationary point.
+\end{proof}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
 \section{Gradient descent and non-convexity}
-
+Apply eigenvalue decomposition for $f(x) = x^T Q x$, then we have $g(y) =
+f(x)$, where $g(y) = y^T \Lambda y$ and $\Lambda = diag(\lambda_0, ...,\lambda_n)$
+are diagonal matrix with eigen values. Then we just need to analyze the
+convergence on $g(y)$ since $g(y)$ is just a coordinate change of $f(x)$. \\
+Start from gradient descent update for $g(y)$,
+\begin{align}
+    \nabla g(y) &= \Lambda y \\
+    y^{(k+1)} &= y^{(k)} - \eta \Lambda y^{(k)}
+\end{align}
+Let us look at update on each dimension individually, 
+\begin{align}
+    y^{(k+1)}_i &= y^{(k)}_i - \eta \lambda_i y_i^{(k)} \\
+    &= \underbrace{(1 - \eta \lambda_i)}_{c_i} y_i^{(k)}
+\end{align}
+Let $c_i = (1 - \eta \lambda_i)$, it is obvious that for non-optimal $y_i$, 
+\begin{align}
+    \text{when } \lambda_i = 0&,\ c_i = 1,\ g(y) \text{ does neither converge and diverge. } \\
+    \text{when } \lambda_i > 0&,\ c_i < 1,\ g(y) \text{ diverge if $|c_i| < 1$, and converge 
+    if $c_i < -1$. } \\
+   \text{when } \lambda_i < 0&,\ c_i > 1,\ g(y) \text{ always diverge whatever
+       step size $\eta$ is. }
+\end{align}
+Hence, the characterization of those initial points, for which gradient with
+any step size will diverge, is those points that are already optimal on
+dimension $i$ ($x_i$ is already optimal) for eigen value on dimension $i$ is
+negative ($\lambda_i < 0$). 
+Briefly, initial points $x$ where $x_i$ is optimal for all $i,\ \lambda_i <
+0$. \\
+For other initial points, they will diverge with inappropriate choice of step size.
+Starting from these initial points can still converge to the global optima
+with arbitrary step size if and only if for one initial point $x$, all $x_i$
+satisfy: 
+(a) already optimal if $\lambda_i \leq 0$. 
+(b) $-1 < 1-\eta \lambda_i < 1$ if $\lambda_i > 0$
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
@@ -111,8 +186,47 @@ not already minimize the function.
 \newpage
 \section{Step size in Newton}
 \subsection{Values of $t$ obtain global convergence}
+For update with Newton step $\Delta x = \nabla^2 f(x)^{-1} \nabla f(x)$ 
+\begin{align}
+    f(x^+) &= f(x + t\Delta x) \\
+    &= f(x) + \nabla f(x)^T \cdot (t \Delta x) + (t\Delta x)^T \nabla^2f(x) (t\Delta x) \\
+    &= f(x)-t\nabla f(x)^T \nabla^2 f(x)^{-1} \nabla f(x) + t^2 \nabla f(x)^T
+    \nabla^2 f(x)^{-1} \nabla f(x) \\
+    & = f(x) + (t^2 - t) \lambda^2(x) \\
+    & = f(x) + t (t - 1) \lambda^2(x)
+\end{align}
+where $\lambda^2(x) = \nabla f(x)^T \nabla^2 f(x)^{-1}\nabla f(x) $. Then in order to
+obtain global convergence to $x^* = 0$,
+\begin{align}
+    f(x^+) - f(x) = t (t - 1) \lambda^2(x) < 0
+\end{align}
+Since $f(x) = || x ||^3$ is strongly convex (obvious) with unique minima, then
+\begin{align}
+    \lambda^2(x) = \nabla f(x)^T \nabla^2 f(x)^{-1} \nabla f(x) 
+    \geq \frac{1}{M} || \nabla f(x)||_2^2 \geq 0
+\end{align}
+Then since the fixed step size $t > 0$,
+\begin{align}
+    t - 1 < 0 
+\end{align}
+That is 
+\begin{align}
+    0 < t < 1 
+\end{align}
+Hence, for $ 0 < t < 1 $, we can obtain global convergence to the minimum of
+$f(x) = || x ||^3$.
 
 \subsection{Reason that convergence is not quadratic}
+The convergence is not quadratic because for $ 0 < t < 1 (t \not = 1)$, the
+analysis on textbook for rate of convergence does not hold any more.
+Specifically, 
+\begin{align}
+    || \nabla f(x+) ||_2 
+    &= || \int_{0}^{t} (\nabla^2f(x+\eta\Delta x) - \nabla^2f(x)) \Delta x d\eta ||_2 \\
+    &\leq \frac{Lt}{2} || \Delta x ||_2^2 \\
+    &\leq \frac{Lt}{2m^2} || \nabla f(x) ||_2^2 
+\end{align}
+which is not consistent with the formula of quadratic convergence. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
@@ -163,10 +277,32 @@ Show that the entire sequence of iterates will then be the same.
     iterates will then be the same. 
 \end{proof}
 
-\subsection{Run Newton method on $f$ and $g$: }
-Show that 
+\newpage
+\subsection{Run Newton method on $f$ and $g$}
+Not true for Newton Method.
 \begin{proof}
-
+    The Newton step for $f(x)$ and $g(x)$ are respectively
+    \begin{align}
+        \Delta x_{f(x)} &= \nabla_x^2 f(x)^{-1}\nabla_x f(x) \\
+        \Delta x_{g(x)} &= \nabla_x^2 g(x)^{-1} \nabla_x g(x)  \\
+        &= \bigg(\nabla_{f(x)} \phi (f(x)) \nabla^2_x f(x) + 
+        \nabla^2_{f(x)} \phi (f(x))I \bigg)^{-1}
+        \nabla_{f(x)} \phi (f(x)) \nabla_x f(x) 
+    \end{align}
+    where $\nabla_{f(x)} \phi (f(x))$ is a scalar. 
+    According to matrix inversion lemma, 
+    \begin{align}
+        \Delta x_{g(x)} 
+        &= \nabla_{f(x)} \phi (f(x)) 
+        \underbrace{\bigg( I - \nabla_x^2 f(x)^{-1} \nabla^2_{f(x)} \phi (f(x)) \big(
+        I - \nabla_x^2 f(x)^{-1} \nabla^2_{f(x)} \phi (f(x)) \big)
+        \bigg)}_{S}
+        (\nabla_x^2 f(x))^{-1}\nabla_x f(x) 
+    \end{align}
+    which indicates that $\Delta x_{f(x)}$ and $\Delta x_{g(x)}$ have
+    different direction since $S$ is non-trivial. Hence, the exact line search on these two function
+    from the same initial point will cause different result. And thus, the
+    entire sequence of iterates will not be the same.
 \end{proof}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

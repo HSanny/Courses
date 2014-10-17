@@ -542,10 +542,10 @@ iteration of algorithm).
                        y_{2(p)} + \Delta y_{2(p)} \end{array} \right)
             \end{align}
             where $|\Delta U_{(p)} | \leq \gamma_n |U_{(p)}|$,
-            $\delta v_{11(p)} \leq \bu|v_{11(p)}|$, 
-            $\delta u^T_{12(p)} \leq \gamma_{p+1} |u^T_{12(p)}| $
+            $\delta v_{11(p)} \leq \bu|v_{11(p)}| \leq \gamma_n |v_{11(p)}|$, 
+            $\delta u^T_{12(p)} \leq \gamma_{p+1} |u^T_{12(p)}| \leq \gamma_{n} |u^T_{12(p)}|$
             \\ and $\delta \psi_{1(p)} \leq \bu |\psi_{1(p)}|$ ,
-            $|\delta y_{2(p)}| \leq \bu |y_{2(p)}|$.
+            $|\delta y_{2(p)}| \leq \bu |y_{2(p)}|$. (Note that $0 \leq p \leq n-1$)
             \\ which is equivalent to
             \begin{align}
                 \Bigg(

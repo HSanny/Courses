@@ -158,16 +158,28 @@ Now we turn to prove each of them individually.
     Therefore, we proved that if $A \not = 0$, then $|| A || > 0$.
 \end{proof}
 \begin{proof}
+    According to the class notes, $||\cdot||_2$ is a norm (since it is one of
+    $p$-induced-norm) and then for arbitrary scalar $\beta$ and arbitrary matrix $B$,
+    \begin{align}
+        || \alpha B ||_2 = | \beta | \cdot || B ||_2  \label{betaa}
+    \end{align}
+    Now we consider $|| \alpha A||$
     \begin{align}
         || \alpha A ||  
         &= || D (\alpha A) ||_2 \\
         &= ||\alpha  D A ||_2 \\
-        &= |\alpha| \cdot || D A ||_2 && ||\cdot||_2 \text{ is a norm. } \\
+        &= |\alpha| \cdot || D A ||_2 && \text{natural consequence of \eqref{betaa}} \\
         &= |\alpha| \cdot || A ||
     \end{align}
     Thus, we proved that $|| \alpha A || = |\alpha| \cdot || A ||$.
 \end{proof}
 \begin{proof}
+    According to the class notes, $||\cdot||_2$ is a norm (since it is one of
+    $p$-induced-norm) and then for arbitrary matrix $C$ and arbitrary matrix $D$,
+    \begin{align}
+        || C + D ||_2 \leq || C ||_2 + || D ||_2  \label{betaa}
+    \end{align}
+    Now we consider $|| A + B||$ for arbitrary matrix $A$ and $B$,
     \begin{align}     
         || A + B || &= || D (A + B) ||_2  \\
         &= \max_{x\not=0} \frac{||DAx+DBx||_2}{||x||_2} \\
@@ -211,7 +223,10 @@ Since all three property have been proved, it can be concluded that
     \end{array} \right)
     = I
 \end{align}
-Hence, it is concluded that (assume all inversion exists)
+Multiply both side on the left with $\left( \begin{array}{c|c} 
+        L_{00} & 0 \\ \hline
+        l_{10}^T & \lambda_{11}
+    \end{array} \right)^{-1}$ and then we have (assume all inversion exists)
 \begin{align}
 \left( \begin{array}{c|c} 
         L_{00} & 0 \\ \hline
@@ -226,7 +241,7 @@ Hence, it is concluded that (assume all inversion exists)
 \subsection{Show that $H_1 H_0 = ..$}
 According to given formula for $H_i$, we have
 \begin{align}
-    H_0 = I - \frac{1}{\tau_0} u_0 u_0^T \\
+    H_0 = I - \frac{1}{\tau_0} u_0 u_0^T \text{ and }
     H_1 = I - \frac{1}{\tau_1} u_1 u_1^T
 \end{align}
 Now we manipulate $H_1 H_0$,
@@ -248,6 +263,7 @@ Now we manipulate $H_1 H_0$,
           \end{array} \right)^{-1}
      (u_0 | u_1)^T
 \end{align}
+where $\tau_0 = \frac{u_0^T u_0}{2}$ and $\tau_1 = \frac{u_1^T u_1}{2}$.
 Hence, it is concluded that (assume all inversion exists)
 \begin{align}
     H_1 H_0 &= I - (u_0 | u_1) 
@@ -258,7 +274,7 @@ Hence, it is concluded that (assume all inversion exists)
      (u_0 | u_1)^T
 \end{align}
 
-\subsection{Show that $(1-\frac{1}{\tau_1 u_1 u_1^T}) .. = I - ...$}
+\subsection{Show that $(I - \frac{1}{\tau_1} u_1 u_1^T) (I - U_0 L_{00}^T U_0^T) = I - ... $}
 \begin{align}
     (I - \frac{1}{\tau_1} u_1 u_1^T) (I - U_0 L_{00}^T U_0^T) 
    &= I - \frac{1}{\tau_1} u_1 u_1^T - U_0 L_{00}^T U_0^T
@@ -276,6 +292,7 @@ Hence, it is concluded that (assume all inversion exists)
            \end{array} \right)^{-1}
    (U_0 | u_1)^{T} 
 \end{align}
+where $\tau_1 = \frac{u_1^T u_1}{2}$.
 Thus, it is concluded that (assume all inversion exists)
 \begin{align}
     (I - \frac{1}{\tau_1} u_1 u_1^T) (I - U_0 L_{00}^T U_0^T) 
@@ -305,30 +322,39 @@ and $k > 1$.
     Note that this case is particular because it derives matrix which is
     indeed scalar. 
 \item Base Case: $k = 2$, this can be proved by using result of (b). 
-    \item Inductive Case: assume that (I.H.)
+\item Inductive Case: assume that for $p\geq 2$, (I.H.)
         \begin{align}
-            H_{k-1} \cdots H_1 H_0 = I - U_{(k-1)} L^{-1}_{(k-1)} U^H_{(k-1)}
+            H_{p-1} \cdots H_1 H_0 = I - U_{(p-1)} L^{-1}_{(p-1)} U^H_{(p-1)}
         \end{align} 
-        show that 
+        show that there exist one lower triangular matrix $L_{(p)}$ and one
+         matrix $U_{(p)}$, such that
         \begin{align}
-            H_k H_{k-1} \cdots H_1 H_0 = I - U_{(k)}L^{-1}_{(k)} U^H_{(k)}
+            H_p H_{p-1} \cdots H_1 H_0 = I - U_{(p)}L^{-1}_{(p)} U^H_{(p)}
         \end{align} 
-        holds for lower triangular matrix $L_{(k)}$.
+        holds.
         \begin{proof}
             With application of the result of (c), we have
             \begin{align}
-                H_k (H_{k-1} H_{k-2} \cdots H_{1} H_{0}) 
-                &= (1 - \frac{1}{\tau_k} u_k u_k^T) (I - U_{(k-1)} L^{-1}_{(k-1)} U^H_{(k-1)}) \\
-                &= I - \underbrace{ (U_{(k-1)} | u_k) }_{ U_{(k)} }
+                H_p (H_{p-1} H_{p-2} \cdots H_{1} H_{0}) 
+                &= (1 - \frac{1}{\tau_p} u_p u_p^T) (I - U_{(p-1)} L^{-1}_{(p-1)} U^H_{(p-1)}) \\
+                &= I - \underbrace{ (U_{(p-1)} | u_p) }_{ U_{(p)} }
                 \underbrace{
                 \left( \begin{array}{c|c} 
-                        L_{(k-1)} & 0 \\ \hline
-                        u_k^T U_{(k-1)} & \tau_k
+                        L_{(p-1)} & 0 \\ \hline
+                        u_p^T U_{(p-1)} & \tau_p
                     \end{array} \right)^{-1}
-            }_{ L_{(k)}^{-1} }
-                \underbrace{ (U_{(k-1)} | u_k)^{T} }_{ U_{(k)}^T } \\
-                &= I - U_{(k)} L_{(k)}^{-1} U_{(k)}^T
+            }_{ L_{(p)}^{-1} }
+                \underbrace{ (U_{(p-1)} | u_p)^{T} }_{ U_{(p)}^T } \\
+                &= I - U_{(p)} L_{(p)}^{-1} U_{(p)}^T
             \end{align}
+            where 
+            $U_{(p)} =  (U_{(p-1)} | u_p)$,
+            $L_{(p)} = \left( \begin{array}{c|c} 
+                    L_{(p-1)} & 0 \\ \hline
+                    u_p^T U_{(p-1)} & \tau_p
+                \end{array} \right)$ 
+            and
+            $\tau_p = \frac{u_p^T u_p}{2}$.
         \end{proof}
     \item By the principle of mathematical induction, it can be concluded that 
         \begin{align}
@@ -368,7 +394,8 @@ and $k > 1$.
     \left( \begin{array}{c|c} \Sigma_{TL} & 0 \\ \hline 0 & 0 \end{array} \right)
     (V_L | V_R)^T \Bigg)^{-1} \\
     &= \big( V_L \Sigma_{TL} \Sigma_{TL} V_L^{T} \big)^{-1}  \\
-    &= V_L^{-T} \Sigma_{TL}^{-1} \Sigma_{TL}^{-1} V_L^{-1}  
+    &= V_L^{-T} \Sigma_{TL}^{-1} \Sigma_{TL}^{-1} V_L^{-1}  \\
+    &= V_L^{-T} \Sigma_{TL}^{-1} \Sigma_{TL}^{-1} (V_L^{-T})^{T}
 \end{align}
 
     \item $(A^TA)^{-1} A^T = U_r \Sigma_r V_r^T$, where 
@@ -386,17 +413,17 @@ and $k > 1$.
     A (A^TA)^{-1}  
     &= U_L \Sigma_{TL} V_L^T V_L^{-T} \Sigma_{TL}^{-1} \Sigma_{TL}^{-1} V_L^{-1}   \\
     &= U_L \Sigma_{TL} \Sigma_{TL}^{-1} \Sigma_{TL}^{-1} V_L^{-1}   \\
-    &= U_L \Sigma_{TL}^{-1} V_L^{-1} 
+    &= U_L \Sigma_{TL}^{-1} V_L^{-1} \\
+    &= U_L \Sigma_{TL}^{-1} (V_L^{-T})^{T}
 \end{align}
 
     \item $A(A^TA)^{-1} A^T = U_r \Sigma_r V_r^T$, where 
-        $U_r = I^{m\times r}$, $\Sigma_r = I^{r\times r}$ and $V_r = I^{n\times r}$.
+        $U_r = U_L$, $\Sigma_r = I^{r\times r}$ and $V_r = U_L$.
 \begin{align}
     A (A^TA)^{-1} A^T
     &= (U_L \Sigma_{TL}^{-1} V_L^{-1}) V_L \Sigma_{TL}^T U_L^T \\
     &= U_L \Sigma_{TL}^{-1} \Sigma_{TL}^T U_L^T \\
-    &= U_L  U_L^T \\
-    &= I 
+    &= U_L I U_L^T
 \end{align}
 \end{itemize}
 
@@ -443,7 +470,7 @@ Hence, we proved that
 Start from dot product. We directly use the corollary in notes. 
 \begin{align}
     d \overset{\Delta}{=} [u_{12}^T \check{x_2}] = (u_{12}^T + \delta u_{12}^T) \check{x_2}
-    \text{ , where } \delta u_{12}^T \leq \gamma_k |u_{12}^T| \leq \gamma_{k+1} |u_{12}^T|
+    \text{ , where } |\delta u_{12}^T| \leq \gamma_k |u_{12}^T| \leq \gamma_{k+1} |u_{12}^T|
 \end{align}
 Then we consider the subtraction step with Standard Computational Model (SCM).
 \begin{align}
@@ -458,7 +485,7 @@ $|\delta \psi_1| = |(\psi_1 - d) \epsilon_-| \leq | \psi_1  \epsilon_-|
     =  |\epsilon_-| | \psi_1 | \leq \bu |\psi_1| $.
 Then we consider the division step with Alternative Computational Model (ACM).
 \begin{align}
-    &\cchi_1 = [\frac{s}{v_{11}}]  = \frac{s}{v_{11}} (1+\epsilon_/)_{-1} 
+    &\cchi_1 = [\frac{s}{v_{11}}]  = \frac{s}{v_{11}} (1+\epsilon_/)^{-1} 
     =  \frac{s}{v_{11}(1+\epsilon_/)}
 \end{align}
 which can be rewritten as  
@@ -542,8 +569,8 @@ iteration of algorithm).
                        y_{2(p)} + \Delta y_{2(p)} \end{array} \right)
             \end{align}
             where $|\Delta U_{(p)} | \leq \gamma_n |U_{(p)}|$,
-            $\delta v_{11(p)} \leq \bu|v_{11(p)}| \leq \gamma_n |v_{11(p)}|$, 
-            $\delta u^T_{12(p)} \leq \gamma_{p+1} |u^T_{12(p)}| \leq \gamma_{n} |u^T_{12(p)}|$
+            $|\delta v_{11(p)}| \leq \bu|v_{11(p)}| \leq \gamma_n |v_{11(p)}|$, 
+            $|\delta u^T_{12(p)}| \leq \gamma_{p+1} |u^T_{12(p)}| \leq \gamma_{n} |u^T_{12(p)}|$
             \\ and $\delta \psi_{1(p)} \leq \bu |\psi_{1(p)}|$ ,
             $|\delta y_{2(p)}| \leq \bu |y_{2(p)}|$. (Note that $0 \leq p \leq n-1$)
             \\ which is equivalent to

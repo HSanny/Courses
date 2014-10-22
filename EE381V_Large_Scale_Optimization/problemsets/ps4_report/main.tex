@@ -60,27 +60,30 @@
 
 \part{Matlab and Computational Assignment}
 \section{Conjugate Gradient Algorithm}
-%\subsubsection{}
+\subsection{$M_1$}
 {\bf Command} to be executed in matlab:
 \begin{verbatim}
-  >> x_init = [1 1]'; alpha = 0.3; bta = 0.8;
-  >> [x, iter, all_costs] = gd_btls(x_init, @func, @func_grad, alpha, bta);
+    >> load ConjugateGradient.mat
+    >> CGS(M1, b1, x)
 \end{verbatim}
-{\bf Dump}
-\begin{verbatim}
-  Iter: 1, Cost: 5.292007e+00, Conv_Rate: 0.106142, gamma: 0.800000
-  Iter: 44, Cost: 2.559267e+00, Conv_Rate: 1.000000, gamma: 0.000000
-  Convergence reached!
-\end{verbatim}
-{\bf Minima}
-\begin{verbatim}
-    x = [-0.3379, -0.0031], obj = 2.559267 
-   \end{verbatim}
 {\bf Plot}
 \begin{figure}[h]
     \centering
-   % \includegraphics[width=5in,height=3in]{../ps2_matlab/1.png}
-    \caption{Conjugate Gradient Algorithm}
+    \includegraphics[width=4in,height=2.5in]{../ps4_matlab/M1.png}
+    \caption{Conjugate Gradient Solver for $M_1$}
+\end{figure}
+
+\subsection{$M_2$}
+{\bf Command} to be executed in matlab:
+\begin{verbatim}
+    >> load ConjugateGradient.mat
+    >> CGS(M2, b2, x)
+\end{verbatim}
+{\bf Plot}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=4in,height=2.5in]{../ps4_matlab/M2.png}
+    \caption{Conjugate Gradient Solver for $M_2$}
 \end{figure}
 
 \newpage

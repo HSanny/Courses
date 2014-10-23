@@ -6,7 +6,7 @@ function Newton(m)
     EPSILON = 10e-10; % how close solution do we need
     x_opt = zeros(5, 1); % initial point
     t = 1; % step size fixed at 1
-    x_0 = [100 80 10 150 60]';
+    x_0 = [100 -80 10 150 60]';
 
     listK = [];
     listlogMdiff = [];
@@ -20,16 +20,16 @@ function Newton(m)
         fprintf ('iteration: %d, log(||x - x*||_M) = %f \n', k, logMdiff)
         listK = [listK k];
         listlogMdiff = [listlogMdiff logMdiff];
+        if k > 20, 
+            break
+        end
         
         grad = grad_func(x, m);
         hess = hess_func(x, m);
-        x = x + t * inv(hess) * grad;
+        x = x - t * inv(hess) * grad;
         
         x'
         k = k + 1;
-        if k == 100,
-            break
-        end
     end
     plot (listK, listlogMdiff)
     title('Conjugate Gradient Solver for Ax = b')

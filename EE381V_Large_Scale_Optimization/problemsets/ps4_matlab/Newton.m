@@ -2,11 +2,10 @@
 %% 2. Newton Method
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function Newton(m)
-    EPSILON = 10e-10; % how close solution do we need
+function Newton(m, marker)
     x_opt = zeros(5, 1); % initial point
     t = 1; % step size fixed at 1
-    x_0 = [100 -80 10 150 60]';
+    x_0 = [0.5 0.5 0.5 0.5 0.5]';
 
     listK = [];
     listlogMdiff = [];
@@ -15,26 +14,27 @@ function Newton(m)
     x = x_0;
     while 1,
         diff = x - x_opt;
-        logMdiff = log(diff' * diff);
+        logMdiff = log(norm(diff,2)^2);
 
-        fprintf ('iteration: %d, log(||x - x*||_M) = %f \n', k, logMdiff)
+        fprintf ('iteration: %d, log(||x - x*||_2^2) = %f \n', k, logMdiff)
         listK = [listK k];
         listlogMdiff = [listlogMdiff logMdiff];
-        if k > 20, 
-            break
-        end
-        
+
         grad = grad_func(x, m);
         hess = hess_func(x, m);
         x = x - t * inv(hess) * grad;
         
-        x'
         k = k + 1;
+        %if grad' * hess * grad <= eps, 
+        if logMdiff < -40,
+            break
+        end
     end
-    plot (listK, listlogMdiff)
-    title('Conjugate Gradient Solver for Ax = b')
-    xlabel('iterations: k')
-    ylabel('log of M-norm: log(||x - x*||_M)')
+    plot (listK, listlogMdiff, marker)
+    title('Newton Method for f_m', 'fontsize', 18)
+    xlabel('iterations: k', 'fontsize', 18)
+    ylabel('log of M-norm: log(||x - x*||_M)', 'fontsize', 18)
+    set(gca, 'fontsize', 18)
 end
 
 function val = func(x, m)
@@ -49,5 +49,5 @@ end
 function val = hess_func(x, m)
     len = size(x,1);
     normx = norm(x, 2);
-    val = (1.5 / normx) * x * x' + ( 1.5* normx + m) * eye(len, len);
+    val = (3 / normx) * x * x' + ( 3* normx + m) * eye(len, len);
 end

@@ -16,6 +16,7 @@ function Rosenbrock ()
                                                  x_0, x_opt, alpha, beta);
 
     plot (listK_GD, listError_GD, 'k-', listK_NM, listError_NM, 'k--')
+    set(gca, 'fontsize', 18)
     legend ('Gradient Descent', 'Newton Method')
     title('Gradient Descent and Newton Method for Rosenbrock function')
     xlabel('iterations: k')

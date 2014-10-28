@@ -12,6 +12,18 @@ interpretation add A* search with iterative deepening technique. For this
 homework, the first interpretation tells us the depth-first search agent can
 be reused to implement IDA* search agent.
 
+Q. What is iterative deepening technique? How should we implement it? 
+A: Iterative deepening is a effective technique that saves memory for
+certain  search algorithm. It is particular usefull when the search space is
+very large. Some people said the cutoff should be increased once the agent reached the
+cell with f value beyond the cutoff. Indeed this is a wrong statement. 
+The true thing is that the cutoff should be increased when
+    i) there is no more cells whose f value are within the cutoff to explore
+    ii) still not reach the goal cell 
+The following link is what I found to be explaining the iterative deepening
+technique well. Hope this may help. 
+         http://web.stanford.edu/~msirota/soco/inter.html
+
 Q: Do we need to modify the existing heuristic function?
 A: No. The current heuristic function euclidean_heuristic() computes the
 absolute value of horizontal distance plus absolute value of vertical distance
@@ -22,6 +34,10 @@ function. Some people changed the implementation of euclidean_heuristic() in
 previous year. They compute root of sum of squared horizontal and vertical
 distance as heuristics, which significantly compromises IDA* search efficiency
 and then got credits off.
+
+Q: What is the appropriate value of the first guess/bound for IDA*?
+A: The cutoff value for IDA* search can be initialized to be heuristic of
+birth position. 
 
 Q: Why my openNero always goes to bluescreen? 
 A: Under the openNero platform, one common reason that causes bluescreen is
@@ -45,3 +61,6 @@ For (2), in highly complicated mazes, agent should return to birthplace to
 illustrate the incrementation of cutoff f value.
 Note that cell marking in the visualization will have no impact on the grade
 of your agents.
+Also note that since openNero itself is growing up, please remember to use
+specified version through your homework and keep up with news about the
+openNero updates.

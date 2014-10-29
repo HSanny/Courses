@@ -7,6 +7,17 @@
 robotic control. What is the source (root) of such improvement? Is it because
 the features automatically trained by the network significantly improves? 
 
+
+
+
+
+
+
+
+
+
+
+
 2. As we know, deep learning model requires higher computational complexity
 than common neural network. What techniques are currently employed to make the
 update for deep learning real time computable? Is there any better technique

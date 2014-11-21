@@ -59,37 +59,48 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% GENERAL DOCUMENTATION BEGINS 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+\newcommand{\optb}{ \begin{equation} \begin{aligned} }
+\newcommand{\opte}{ \end{aligned} \end{equation} }
 \part{Matlab and Computational Assignment}
 \section{MaxCut}
-\subsection{Petersen Graph}
+\subsection{Formulation}
+The original maxcut problem is 
+\optb
+&\text{maximize} && \frac{1}{2} \sum_{i<j} (1-u_i u_j)w_{ij} \\
+&\text{subject to} && u_i \in \{-1, 1\}, \forall i
+\opte
+The relaxed SDP problem can be written as
+\optb
+&\text{minimize} && Trace(X^T W) \\
+&\text{subject to} && X_{ii} = 1, \forall i \\
+ &               && X \succeq 0
+\opte
+where $X_{ij} = u_i u_j$.
+\subsection{Graphs}
 \begin{figure}[h]
     \centering
-    \includegraphics[width=2in]{./figure/Petersen1_tiny.png} \\
-    \caption{Petersen Graph}
+    \hspace{-1cm}\subfloat{
+                \includegraphics[width=50mm]{./figure/Petersen1_tiny.png}
+        }
+        \subfloat{
+                \includegraphics[width=50mm]{./figure/planar1.png}
+        }
+        \subfloat{
+                \includegraphics[width=50mm]{./figure/planar2.png}
+        }
+        \caption{Three graphs for experimentation. (1) Peterson Graph (2)
+            Simple Planar Graph I (3) Simple Planar Graph II}
 \end{figure}
-
-\subsection{Planar Graph I}
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=2in]{./figure/planar1.png} \\
-    \caption{Planar Graph I}
-\end{figure}
-
-\subsection{Planar Graph II}
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=2in]{./figure/planar2.png} \\
-    \caption{Planar Graph II}
-\end{figure}
+Though solved $X$, we can recover the cut that separate the whole set of
+vertex.
+\subsection{Implementation}
+\lstinputlisting{../ps7_matlab/maxcut.m}
 
 \newpage
 \part{Written Assignment}
 \setcounter{section}{0}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newcommand{\optb}{ \begin{equation} \begin{aligned} }
-\newcommand{\opte}{ \end{aligned} \end{equation} }
 \newtheorem{theorem}{Theorem}
 \section{Network Congestion Control}
 \subsection{Problem Formulation}
@@ -165,18 +176,245 @@ $SYSTEM(U, H, A, f)$.
     quadruple gives $x$ that solves $SYSTEM(U, H, A, f)$.
 \end{proof}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newpage
 \section{Problem 7.12}
+It is obvious that the problem is separable by each pair of individual row of
+$P$ and column of $S$.  
+\optb
+& \text{maximize}_{s} && \min_{i} p_i^T s_i \\
+& \text{subject to} && \textbf{1}^T s_i = 1, s_i \geq 0, \forall i
+\opte
+where $p_i^T$ and $s_i$ denote the $i$th row of $P$ and column of $S$.
+Since it is known that 
+\optb
+    s_i = e_k
+\opte
+where $k$ is the index of maxima among all probabilty values.
+Hence, we can do a maximum likelihood estimation. 
+\begin{equation}
+        S_{ji} = 
+    \begin{cases}
+        1, &\mbox{if }j=arg\max_k P_{ik} \\
+        0, &\mbox{otherwise} \\
+    \end{cases}
+\end{equation}
+which means that the overall problem can be separate as a set of problems. In
+each individual problem, we choose parameters $s_i$ such that $P_{ik}$ is
+optimized.
 
-\newpage
 \section{Problem 7.13}
+The dual problem can be written as follows
+\optb
+& \text{maximize} && \sum_{j:\alpha_j \in S} p_j = \textbf{prob}(X \in S)\\
+& \text{subject to} && \sum_{j=1}^{m} p_j = 1 \\
+& && \sum_{j=1}^m f_i (\alpha_i) p_j = b_i, \forall i \\
+& && p_j \geq 0, \forall j
+\opte
+Obviously, this dual problem has its optima as right upper bound on
+\textbf{prob}$(X\in S)$ and there exists a distribution that achieves the
+bound, in that the dual problem satisfies all conditions for strong duality.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Problem 8.8}
+\subsection{Find a point in the intersection}
+\textbf{LP Formulation}.
+\optb
+& \text{find} && x \\
+& \text{subject to} && Ax \leq b \\
+& && Fx \leq g
+\opte
+\textbf{Strong Alternative}. 
+\optb
+& \text{find} && \lambda, \mu \\
+& \text{subject to} && \lambda, \mu \geq 0 \\
+& && b^T \lambda + g^T \mu < 0, \\
+& && A^T \lambda + F^T \mu = 0
+\opte
+\textbf{Geometric intepretation}. \\
+If the intersection is a empty set, then we can find  a hyperplane separating
+$P_1$ and $P_2$ from the strong alternative problem. Otherwise, what we find
+from the alternative problem is a hyperplane that minimizes the "maximum
+margin" to two polyhedra.
+
+\subsection{Determine whether $P_1 \subset P_2$}
+\textbf{LP Formulation}. \\
+\textbf{Strong Alternative}. \\
+\textbf{Geometric intepretation}. \\
+
+\section{Problem 8.8 Repeat}
+\subsection{Find a point in the intersection}
+\textbf{LP Formulation}.
+\optb
+& \text{find} && x, \lambda, \mu \\
+& \text{subject to} 
+&& x = \sum_{i=1}^K \lambda_i v_i, \sum_{i=1}^K \lambda_i = 1, \lambda_i \geq 0 \\
+& && x = \sum_{j=1}^L \mu_j w_j, \sum_{j=1}^{L} \mu_j = 1, \mu_j \geq 0
+\opte
+\textbf{Strong Alternative}. 
+\optb
+& \text{find} && a, b \\
+& \text{subject to} && a^T v_i \leq b, \forall i \\
+& && a^T w_j > b, \forall j
+\opte
+\textbf{Geometric intepretation}. \\
+The strong dual alternative problem finds a hyperplan that separate two sets
+of points, $\{v_1, ..., v_K\}$ and $\{w_1, ..., w_L\}$. That is, the
+hyperplane separates $P_1$ and $P_2$.
+
+\subsection{Determine whether $P_1 \subset P_2$}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Problem 8.9}
+The Closest Euclidean distance matrix problem can be formulated as 
+\newcommand{\hatd}{\hat{d}}
+\optb
+& \text{minimize} && \sum_{i,j} (\sqrt{D_{ij}} - \hatd_{ij})^2  \\
+& \text{subject to} && D_{ii} = 0, \forall i = 1, ..., n \\
+& && D_{ij} \geq 0, \forall i,j = 1, ..., n \\
+& && 0 \succeq  (I - \frac{1}{n} \textbf{11}^T) D (I - \frac{1}{n} \textbf{11}^T) 
+\opte
+Since the $D$ is symmetric, then the above optimization is a SDP problem.  \\
+The vector $x_1, ..., x_n$ can be recovered from eigenvalue decomposition of
+the corresponding Gram matrix (dependent on solved $D^*$). 
+\begin{align}
+    G &= -\frac{1}{2} (I - \frac{1}{n} \textbf{11}^T) D^* (I - \frac{1}{n} \textbf{11}^T) \\
+    &= X^T \Lambda X 
+\end{align}
+Once an eigenvalue is zero, the corresponding dimension can be removed and thus
+$k$ is reduced by one and smaller than $n$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Problem 8.25}
+\newcommand{\ta}{\tilde{a}}
+\newcommand{\tb}{\tilde{b}}
+\subsection{$t^*$ and separability}
+\begin{lemma}
+Show that if $t^* > 0$, then two sets of points are separable.
+\end{lemma}
+\begin{proof}
+If $t^* > 0$, then 
+\begin{align}
+    a^{*T} x_i \geq b^* + t^* > b^*, i = 1, ..., N \\
+    a^{*T} y_i \geq b^* - t^* < b^*, i = 1, ..., M \\
+\end{align}
+where the $(a^*, b^*)$ pair is the optimal solution of (8.23) that
+corresponds to $t^*$.
+Hence, it is obvious that $f(x) = a^{*T}x - b^*$ can separate two given set of
+points.
+\end{proof}
+\begin{lemma}
+Show that if two sets of points are separable, then $t^* > 0$.
+\end{lemma}
+\begin{proof}
+    Let the linear function $f(x) = a^T x - b$ be the linear separator, such
+    that 
+    \begin{align}
+        a^T x_i > b, i = 1, ..., N \\
+        a^T y_i < b, i = 1, ..., M
+    \end{align}
+    Then we have arbitrary margin $t$ satisfying
+    \begin{align}
+        t = \min\{ \inf_i(a^T x_i - b), \inf_i (b-a^T y_i) \} > 0
+    \end{align}
+    Hence, the optimal margin $t^*$ is guaranteed to be positive. That is, $t^*
+    > 0$.
+\end{proof}
+\begin{lemma}
+    The constraint $||a^*||_2 \leq 1$ is tight, that is, $||a^*||_2 = 1$.
+\end{lemma}
+\begin{proof}
+    We prove the tighness by contradiction. Assume that $||a^*||_2 < 1$. 
+    Let $(a^*,b^*,t^*)$ be a optimal solution of (8.23). Then
+    \begin{align}
+        a^{*T} x_i - b^* \geq t^*, i = 1, ..., N \\
+        a^{*T} y_i - b \leq t^*, i = 1, ..., M
+    \end{align}
+    Then multiplies both side with $\frac{1}{||a^*||_2}$,
+    \begin{align}
+        \frac{a^{*T}}{||a^*||_2} x_i - \frac{b^*}{||a^*||_2} \geq \frac{t^*}{||a^*||_2}, i = 1, ..., N \\
+        \frac{a^{*T}}{||a^*||_2} y_i - \frac{b^*}{||a^*||_2} \leq \frac{t^*}{||a^*||_2}, i = 1, ..., M
+    \end{align}
+    which indicates that $(\frac{a^{*T}}{||a^*||_2}, \frac{b^*}{||a^*||_2},
+    \frac{t^*}{||a^*||_2})$ are also a optimal solution. 
+    However, it yields contradiction to the pre-defined optimality
+    $(a^*,b^*,t^*)$ since $ 0 < ||a^*||_2 < 1$. Thus, we conclude that
+    $||a^*||_2 = 1$.
+\end{proof}
+
+\subsection{QP equivalence}
+Due to the tightness of $||a||_2\leq1$, then we can rewrite the problem (8.23)
+as follows
+\optb
+& \text{maximize} && \frac{||a||_2}{||\ta||_2} \\
+& \text{subject to} && \ta^T x_i - \tb \geq 1, i = 1, ..., N\\
+& && \ta^T y_i - \tb \leq -1, i = 1, ..., M\\
+& && || a ||_2 = 1
+\opte
+Since $||a||_2$ is fixed, (the constraint $|| a ||_2 = 1$), then the above
+problem can be further re-written as 
+\optb
+& \text{minimize} && ||\ta||_2 \\
+& \text{subject to} && \ta^T x_i - \tb \geq 1, i = 1, ..., N\\
+& && \ta^T y_i - \tb \leq -1, i = 1, ..., M\\
+%& && || a ||_2 = 1
+\opte
+which is a QP problem.
 
 \newpage
-\appendix
-\section{Codes Printout}
+\section{Problem 8.24}
+The original problem is as follows 
+\optb
+& \text{minimize} && \rho \\
+& \text{subject to} && (a+u)^T x_i \geq b, \forall u \in \{ u: || u ||_2 \leq
+    \rho \}, \forall i = 1, ..., N\\
+& && (a+u)^T y_j \leq b, \forall u \in \{ u: || u ||_2 \leq \rho \}, \forall i = 1, ..., M\\
+& && || a ||_2 \leq 1
+\opte
+The constraints can be written as optimization problem for $u$
+\begin{equation}
+    a^T x_i + \left( 
+        \begin{array}{c}
+            \min_u u^T x_i \\
+            s.t. ||u||_2 \leq \rho 
+        \end{array}\right) \geq b, \forall i = 1, ..., N 
+\end{equation}
+\begin{equation}
+    a^T y_i + \left( 
+        \begin{array}{c}
+        \min_u u^T y_i \\
+        s.t. ||u||_2 \leq \rho
+    \end{array} \right) \leq b, \forall  i = 1, ..., M
+\end{equation}
+Solving the optimization problems gives
+\begin{align}
+    u_{1}^* = -\frac{\rho x_i}{||x_i||_2} \\
+    u_{2}^* = \frac{\rho y_i}{||y_i||_2} 
+\end{align}
+Hence, the resulted linear program that find $a$ and $b$ to maximize the weight error
+margin is as follows
+\optb
+& \text{minimize} && \rho \\
+& \text{subject to} && a^T x_i + \rho ||x_i||_2 \geq b, \forall i = 1, ..., N\\
+& && a^T y_i + \rho || y_i ||_2 \leq b, \forall i = 1, ..., M \\
+& && || a ||_2 \leq 1
+\opte
 
-\subsection{SDP-relaxation for MaxCut}
-%\lstinputlisting{../ps7_matlab/}
+\section{Problem 8.25}
+Let $\phi$ be a separating ellipsoid, described by $A \succ 0$, $b$ and $c$,
+such that 
+\begin{align}
+    x_i^T A x_i + b^T x_i + c < 0, \forall i = 1, ..., N \\
+    y_i^T A y_i + b^T y_i + c > 0, \forall i = 1, ..., M
+\end{align}
+The condition number minimization problem can be solved by minimizing the
+maximum maximum eigenvalue with regard to a lower-bound on the minimum
+eigenvalues. Then the optimization problem can be written as a SDP problem
+\optb
+& \text{minimize} && \beta \\
+& \text{subject to} && x_i^T A x_i + b^T x_i + c < 0, \forall i = 1, ..., N \\
+& && y_i^T A y_i + b^T y_i + c > 0, \forall i = 1, ..., M \\
+& && I \succeq A \succeq \beta I
+\opte
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% General Documentation ends

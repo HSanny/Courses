@@ -1,0 +1,184 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%  THIS TEX FILE IS TO GENERATE PDF FILE FOR 
+%%% 
+%%%  COPYRIGHT (C) JIMMY LIN, 2013, UT AUSTIN
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[11pt,a4paper]{article}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%  PACKAGES USED IN THIS TEX SOURCE FILE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{geometry,amsthm,amsmath,graphicx,amssymb,fancyheadings}
+\usepackage{epstopdf}
+\usepackage[caption=false]{subfig}
+\usepackage[]{mcode}
+\usepackage[colorlinks,
+            linkcolor=blue,
+            anchorcolor=red,
+            citecolor=green
+            ]{hyperref}
+% for my mac
+\IfFileExists{/Users/JimmyLin/.latex/UTA_CS/JS.sty}{ 
+    \usepackage{/Users/JimmyLin/.latex/UTA_CS/JS}
+    \usepackage{/Users/JimmyLin/.latex/UTA_CS/JSASGN}
+}{} 
+% for UT's linux machine
+\IfFileExists{/u/jimmylin/workspace/Configs/latex/UTA_CS/JS.sty}{
+    \usepackage{/u/jimmylin/.latex/UTA_CS/JS} 
+    \usepackage{/u/jimmylin/.latex/UTA_CS/JSASGN}
+}{} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% MACROS CONTAINING THE FILE INFORMATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\COURSE}{EE381V Large Scale Optimization}
+\renewcommand{\LECTURER}{Sujay Sanghavi}
+\renewcommand{\SECTION}{17350}
+\renewcommand{\TASK}{Problem Set 7}
+\renewcommand{\RELEASEDATE}{Nov 13, 2014}
+\renewcommand{\DUEDATE}{Nov 20, 2014}
+\renewcommand{\TIMECONSUME}{15 hours}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% DOCUMENTATION STARTS FROM HERE 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% TITLE PAGE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{titlepage}
+    \maketitle
+\end{titlepage}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% CONTENT PAGE: TABLEOFCONTENTS, LISTOFTABLES, LIST OF FIGURES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\contentsname}{Table of Contents}
+\begin{center} 
+    \tableofcontents 
+    %\listoftables 
+    \listoffigures
+\end{center}
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% GENERAL DOCUMENTATION BEGINS 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\part{Matlab and Computational Assignment}
+\section{MaxCut}
+\subsection{Petersen Graph}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=2in]{./figure/Petersen1_tiny.png} \\
+    \caption{Petersen Graph}
+\end{figure}
+
+\subsection{Planar Graph I}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=2in]{./figure/planar1.png} \\
+    \caption{Planar Graph I}
+\end{figure}
+
+\subsection{Planar Graph II}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=2in]{./figure/planar2.png} \\
+    \caption{Planar Graph II}
+\end{figure}
+
+\newpage
+\part{Written Assignment}
+\setcounter{section}{0}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\optb}{ \begin{equation} \begin{aligned} }
+\newcommand{\opte}{ \end{aligned} \end{equation} }
+\newtheorem{theorem}{Theorem}
+\section{Network Congestion Control}
+\subsection{Problem Formulation}
+The overall system problem -- to maximize utility minus cost -- can be
+formulated as a convex optimization problem: 
+\optb
+& \text{maximize} && \sum_{s \in S} U_s(x_s) - \sum_{j \in J} C_j(f_j) \\
+& \text{subject to} && H y = x, A y \leq f \\
+& \text{over} && x, y \geq 0 
+\opte
+
+\subsection{Problem Decoupling}
+Lagrangian: 
+\begin{align}
+    L(x,y;\lambda, \mu) 
+    &= \sum_{s \in S} U_s(x_s) - \sum_{j \in J} C_j(f_j) 
+    - \lambda^T (x - H y) + \mu^T (f - A y - z) \\
+    &= \sum_{s \in S} \big( U_s(x_s) -\lambda_s x_s \big) 
+    - \sum_{r \in R} y_r \big( \lambda_{s(r)} - \sum_{j \in r} \mu_j \big)
+    + \sum_{j \in J} \mu_j (f_j - z_j) -\sum_{j \in J} C_j(f_j)
+\end{align}
+where $\lambda$ and $\mu$ are lagrange multipliers. \\
+According to optimality conditions 
+\begin{align}
+    \frac{\partial L}{\partial x_s} &= U_s'(x_s) - \lambda_s \\
+    \frac{\partial L}{\partial y_r} &= \lambda_{s(r)} - \sum_{j \in r} \mu_j \\
+    \frac{\partial L}{\partial z_j} &= - \mu_j 
+\end{align}
+\begin{align}
+    \label{optimal:init}
+    \lambda \geq U_s'(x_s), Hy=x, (\lambda - U'(x))^x = 0 \\
+    \mu \geq 0, Ax \leq C, \mu^T(C - Ax) = 0 \\
+    \lambda^T H \leq \mu^T A, y \geq 0, (\mu^T A - \lambda^T H)y=0
+    \label{optimal:end}
+\end{align}
+$USER_s(U_s;\lambda_s)$
+\optb
+& \text{maximize} && \sum_{s \in S} U_s(x_s) - \lambda_s x_s \\
+& \text{subject to} && x_s \geq 0
+\opte
+$NETWORK(H, F; \lambda)$
+\optb
+\label{lagrangian1}
+& \text{maximize} && \sum_{s \in S} \lambda_s x_s - \sum_{j \in J} C_j(f_j) \\
+& \text{subject to} && H y = x, A y \leq f\\
+& \text{over} && x, y \geq 0 
+\opte
+\begin{theorem}
+There exists a price vector $\lambda = (\lambda_s, s \in S)$ such that the vector
+$x = (x_s, s \in S)$, formed from the unique solution $x_s$ to $USER_s(U_s; \lambda_s)$
+for each $s \in S$, solves $NETWORK(H, A, C; \lambda)$. The vector $x$ then also solves
+$SYSTEM(U, H, A, f)$.
+\end{theorem}
+\begin{proof}
+    First note that $USER_s(U_s;\lambda_s)$ has unique solution for each $s$.
+    Then we observe that the lagrangian form for $NETWORK(H, F; \lambda)$ is 
+    \begin{align}
+    L(x, y; \lambda, \mu) 
+    &= \sum_{s \in S} U_s(x_s) - \sum_{j \in J} C_j(f_j) 
+    - p^T (x - H y) + q^T (f - A y - z) \\
+    &= \sum_{s \in S} \big( U_s(x_s) -p_s x_s \big) 
+    - \sum_{r \in R} y_r \big( p_{s(r)} - \sum_{j \in r} q_j \big)
+    + \sum_{j \in J} q_j (f_j - z_j) -\sum_{j \in J} C_j(f_j)
+    \end{align}
+    Hence, any quadruple $(\lambda,\mu, x,y)$, which satisfies optimality of
+    \ref{optimal:init}-\ref{optimal:end} (solution of $SYSTEM$) identifies $p=\lambda$ and
+    $q=\mu$, which establish that $(x,y)$ solves $NETWORK(H, F; \lambda)$. \\
+    Conversely, for any solution $x$ to $NETWORK(H, F; \lambda)$, then exists
+    a $p$ and $q$, where $x_s \geq 0$ then $p_s=\lambda_s$ and if $x_s=0$,
+    then $p_s \geq \lambda_s$. Thus if $x_s$ solves $USER_s(U_s;\lambda_s)$,
+    then it also solves $USER_s(U_s;p_s)$. Based on $p$ and $q$, we can then
+    construct a quadruple that satisfies optimality of \ref{optimal:init}-\ref{optimal:end}. This
+    quadruple gives $x$ that solves $SYSTEM(U, H, A, f)$.
+\end{proof}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Problem 7.12}
+
+\newpage
+\section{Problem 7.13}
+
+\newpage
+\appendix
+\section{Codes Printout}
+
+\subsection{SDP-relaxation for MaxCut}
+%\lstinputlisting{../ps7_matlab/}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% General Documentation ends
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}

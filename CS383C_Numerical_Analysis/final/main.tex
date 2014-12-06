@@ -62,7 +62,83 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
 \part{Cholesky Factorization}
+\section{SPD}
+\renewcommand{\AA}{\left( \begin{array}{cc}
+            A_{00} & a_{10}  \\
+            a_{10}^T & \alpha_{11} 
+        \end{array} \right) }
+\newcommand{\AAT}{\left( \begin{array}{cc}
+            A_{00}^T & a_{10}  \\
+            a_{10}^T & \alpha_{11}
+        \end{array} \right) }
+\newcommand{\xx}{\left( \begin{array}{c}
+            x_{0}  \\ \chi_{1} 
+        \end{array} \right)}
+\subsection{Show $A_{00}$ is SPD}
+\begin{proof}
+    Since $A$ is SPD, then
+    \begin{align}
+        A^T = A \label{sym} \\
+        \forall x,\ x^T A x \geq 0 \label{pd}
+    \end{align}
+    From \eqref{sym}, we have
+    \begin{align}
+        A^T = \AA^T = \AAT = A
+    \end{align}
+    Then 
+    \begin{align} \label{symx0}
+        A_{00}^T = A_{00} \tag{symmetry of A}
+    \end{align}
+    Also, we denote arbitrary $x = \left( \begin{array}{c}
+            x_{0}  \\ \chi_{1} 
+        \end{array} \right)$ and then from \eqref{pd}, we have
+    \begin{align}
+        x^T A x = \xx^T \AA \xx =  x_0^T A_{00} x_0 + 2\chi_1 a_{10}^T
+        x_0 + \chi_1^2 \alpha_{11}  > 0,\ \forall x_0, \chi_1
+    \end{align}
+    Let $\chi_1 = 0$, then we have
+    \begin{align} \label{pdx0}
+        x_0^T A_{00} x_0  > 0,\ \forall x_0 \tag{positive definiteness}
+    \end{align}
+    In terms of \eqref{symx0} and \eqref{pdx0}, then it is proved that
+    $A_{00}$ is SPD.
+\end{proof}
+\subsection{$l_{10}^T = a_{10}^T L_{00}^{-T}$ is well defined}
+Since $L_{00}$ is non-singular, then it is easy to derive that $L_{00}^T$ is also non-singluar.
+Then $L_{00}^{-T}$ exists. Hence,
+\begin{align}
+    l_{10}^T = a_{10}^T L_{00}^{-T}
+\end{align}
+is well-defined. 
+
+\subsection{$\alpha_{11} - l_{10}^T l_{10} > 0$}
+
+
+
+\subsection{Show equality}
+\newcommand{\LL}{\left( \begin{array}{cc}
+            L_{00} & l_{10}  \\
+            l_{10}^T & \lambda_{11} 
+        \end{array} \right) }
+\begin{align}
+   L\cdot L^T =  \LL \LL^T = \left( \begin{array}{cc}
+            L_{00} L_{00}^T & L_{00} l_{10}  \\
+            l_{10}^T L_{00}^T & l_{10}^T l_{10} + \lambda_{11}^2
+        \end{array} \right) 
+\end{align} 
+Obviously, $L \cdot L^T = A$ if only if 
+\begin{align}
+    A_{00} &= L_{00} L_{00}^T \\
+    a_{10} &= L_{00} l_{10} \\
+    \alpha_{11} &= L_{10}^T l_{10} + \lambda_{11} ^2
+\end{align}
 \section{}
+\subsection{Another proof of Cholesky Factorization Theorem}
+
+\subsection{Bordered Cholesky Algorithm}
+
+
+\section{Cost of Bordered Algorithm}
 
 \newpage
 \part{Method of Relatively Robust Representations}

@@ -221,10 +221,38 @@ In terms of above analysis, the approximate cost is $\BigO{n}$. \vspace{0.5cm}
 \newpage
 \section{$UDU^T$ Factorization for indefinite matrices}
 \lstinputlisting{../FLAME@lab/UDU_unb.m}
+\newcommand{\UA}{\left( \begin{array}{cc}
+            A_{00} & a_{01}  \\
+            a_{01}^T & \alpha_{11} 
+        \end{array} \right)}
+\newcommand{\UU}{\left( \begin{array}{cc}
+            U_{00} & u_{01}  \\
+            0 & 1 
+        \end{array} \right)}
+\newcommand{\DD}{\left(\begin{array}{cc}
+            D_{00} & 0  \\
+            0 & \delta_{1}
+        \end{array} \right)}
+Let $A = \UA$, $U = \UU$ and $D = \DD$.
+\begin{align}
+    \UA &= \UU \DD \UU^T \\
+    &= \left(\begin{array}{cc}
+            U_{00} D_{00} & \delta_{1} u_{01}  \\
+            0 & \delta_{1}
+        \end{array} \right) \UU^T \\
+    &= \left(\begin{array}{cc}
+            U_{00} D_{00} U_{00}^T + \delta_{1} u_{01} u_{01}^T & \delta_{1} u_{01}  \\
+            \delta_1 u_{01}^T & \delta_{1}
+        \end{array} \right)  
+\end{align}
+Which yields the update rule in the above algorithm.
 
 \newpage
 \section{$UDU^T$ Factorization for tridiagonal matrices}
 \lstinputlisting{../FLAME@lab/UDU_TRI_unb.m}
+Note that we derive the algorithm by simply setting $l01$ and $a01$ to be a
+vector with single non-zero elements and then using the scalar for the update
+rule.
 
 \newpage
 \section{Twisted Factorization: $\phi_1$}

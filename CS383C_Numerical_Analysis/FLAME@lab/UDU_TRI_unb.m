@@ -5,9 +5,9 @@ function [ A_out ] = UDU_TRI_unb( A )
     %------------------------------------------------------------%
     
     alpha33 = alpha33 % = delta11 (no-op)
-    l23 = alpha23 / alpha33; % scalar
-    alpha22 = alpha22 - l23 * alpha23;
-    alpha23 = l23;
+    u23 = alpha23 / alpha33; % scalar
+    alpha22 = alpha22 - u23 * alpha23;
+    alpha23 = u23;
 
     %------------------------------------------------------------%
 

@@ -1,0 +1,43 @@
+
+1. Agents keep disappearing and respawing during training?  Is this a bug or
+how its supposed to work? How do I make sure they don't keep disappearing?
+
+A: This is what robots are supposed to work in the training stage. 
+The position reset indicates a new episode of neuroevolution starts. 
+
+
+
+2. What is the goal of the tournament?  Are our robots supposed to get to the
+flag or kill all of the other team or something else?
+
+A: In the tournament, your robots are supposed to trigger more damages than
+your opponents' team. 
+
+
+
+3. Will the environment for the the tournament be the default sandbox map we
+start with, or is there going to be a set map/random maps each time?
+
+A: The same sandbox map as what we did in the assignment.
+
+
+
+4. How exactly are we supposed to pick and choose the individuals we want for
+our team?
+
+A: You copy the entire genome I believe, that worked for me anyway. As in from
+the genomestart # ... genomeend # for all the individuals you want.
+
+
+
+5. I ran into the bug mentioned at the bottom of the assignment description.
+However, the instructions provided did not fix the issue. Logging out and
+logging back in didn't help either.
+I think it happened when I clicked the "new neuroevolution team" button when
+the simulation was already running. OpenNERO crashed, and then when I tried to
+reopen the training, it started giving me the error.
+
+A: It sounds like a OpenNERO process is still running. Logging out and back in
+doesn't seem to help but you should be able to find and kill the offending
+process via the task manager or the "PS" command.
+

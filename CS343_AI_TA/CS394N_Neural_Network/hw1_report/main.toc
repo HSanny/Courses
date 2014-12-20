@@ -1,5 +1,0 @@
-\contentsline {section}{\numberline {1}Part 1a Peano Approximation}{2}{section.1}
-\contentsline {section}{\numberline {2}Part 1b Distribution}{2}{section.2}
-\contentsline {section}{\numberline {3}Part 2 Dimensionality Reduction}{2}{section.3}
-\contentsline {section}{\numberline {4}Part 3a Classification}{2}{section.4}
-\contentsline {section}{\numberline {5}Part 3b LVQ}{2}{section.5}

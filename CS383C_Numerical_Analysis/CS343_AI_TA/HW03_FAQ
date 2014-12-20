@@ -1,0 +1,70 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Frequently Asked Questions (FAQ) for HW03 Reinforcement Learning of CS343
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Q: From the description, it appears like the observations should go from
+an 8x8 grid in the coarse grained version, to a 64x64 grid in the fine grained
+version. However, when we print out (observations[0], observations[1]), we get
+values like (130.0, 157.5), which doesn't seem to make sense. Are we looking
+at the wrong thing?
+A:
+In the fine-grained maze, the observation contains (x, y) coordinates of
+the agent, not (row, col).  The (x, y) coordinates are measured in some
+physical units, like 130 inches.  Here are some comments from
+Maze/environment.py:
+ 
+    obs[0] is the x position
+    obs[1] is the y position
+    obs[2:5] are "free space" sensors in +r, -r, +c, -c directions, with 0.0
+    meaning "wall is very near" and 1.0 meaning "free as far as the sensor can
+    see"
+
+Note that the method xy2rc() shows how the conversion can be done.
+
+
+Q: What are supposed to do for tiling approximator? 
+A: 
+For tiling approximator: 
+    (1) mapping from 64x64 x-y coordinate to 8x8 r-c coordinate is the first step. For this, get_environment().maze.xy2rc() can be useful. 
+    (2) establish Q table of smaller size, update() and predict() should be modified. Not doing this properly means a "failed" implementation. Remember to save memory as much as possible.
+    (c) for best performance, modify get_possible_actions() and/or get_max_action() to approach the performance made by tabular RL agent in coarse world.  
+
+
+Q: We're a little confused with the value approximation formula. Distance and
+weight are self-explanatory, but what are Value(A), Value(B), and Value(C) in
+the Value(Y, Left) equation?
+A: 
+The caption for the figure in question it points out the following fact: Note, since OpenNERO environment is deterministic, Value(Y, Left) = Value(X). 
+ 
+As such you can implement the nearest neighbour approximator by storing only
+state values.  The values of the state-action pairs for the current locations
+are reconstructed using the weighted values for the neighboring tiles of the
+locations that the agent can move to from the current location.  The action is
+then selected based on the weighted values of the resulting states.  This
+means that less information needs to be stored (1 value per tile instead of up
+to 4).  However you need to make sure that you keep track of which moves will
+result in running into a wall, since, unlike regular Q-learning, this method
+requires you to know where your agent will end up after taking a given action.
+While in some applications your might not have access to this information, in
+the maze environment you do, and therefore this simplification works fine.
+
+
+Q: We have implemented Nearest Neighbor. But it gets stuck in dead end. We
+have no idea of how to avoid this. The problem seems rooted in the algorithm
+itself. How to verify our implementation of Nearest Neighor Approximator?
+A:
+It is possible that the 3-nearest-neighbor approximator will cause dead end
+when you reduce the offset number, given the blocking wall on very complicated
+mazes. (In that cases, increase the number of nearest neighbours from 3 to 5
+might solve the problem. )
+
+
+Q: Some questions for approximator updating formula of nearest neighbor
+1. How do we obtain Reward(Y, Left)? Is there any function for this?
+2. For alpha and gamma, these are just obtained by using self.alpha and self.gamma right?
+3. For value(W), value(Y), value(Z), do we have to go through all the steps we used to obtain Val(Y, Left), that is, find distances, find weights of the 3 nearest tiles, then find the value by summing up the products of those distances and weights?
+A: 
+    1) The reward is passed in to the act function on the next iteration (after the action is taken)
+    2) Yes
+    3) Yes
+

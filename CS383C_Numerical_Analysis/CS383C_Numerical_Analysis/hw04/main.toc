@@ -1,0 +1,13 @@
+\contentsline {part}{I\hspace {1em}Exercises on Solving LLS Problems}{2}{part.1}
+\contentsline {section}{\numberline {Exercise 2.}}{2}{section.2}
+\contentsline {section}{\numberline {Exercise 3.}}{2}{section.3}
+\contentsline {section}{\numberline {Exercise 4.}}{3}{section.4}
+\contentsline {section}{\numberline {Exercise 5.}}{4}{section.5}
+\contentsline {part}{II\hspace {1em}Exercises on Conditioning}{5}{part.2}
+\contentsline {section}{\numberline {Exercise 1.}}{5}{section.1}
+\contentsline {section}{\numberline {Exercise 2.}}{6}{section.2}
+\contentsline {section}{\numberline {Exercise 3.}}{7}{section.3}
+\contentsline {section}{\numberline {Exercise 4.}}{8}{section.4}
+\contentsline {subsection}{\numberline {4.1}}{8}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}}{8}{subsection.4.2}
+\contentsline {section}{\numberline {Exercise 5.}}{8}{section.5}

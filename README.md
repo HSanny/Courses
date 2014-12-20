@@ -8,7 +8,7 @@ The University of Texas at Austin:
 
 Australian National University:
     
-    UID: 5223173
+    UID: u5223173
 
 Beijing Institute of Technology:
 
@@ -25,6 +25,9 @@ Taken at UT Austin:
     CS343H_Artificial_Intelligence
     CS363D_Statistical_Learning_And_Data_Mining
     CS371D_Distributed_System
+    CS383C_Numerical_Analysis
+    EE381V_Large_Scale_Optimization
+    CS394N_Neural_Network
 
 Taken at ANU:
 
@@ -32,6 +35,14 @@ Taken at ANU:
     COMP2300_Computer_System
     COMP3600_Theory_Of_Computation
     COMP4670_Machine_learning
+
+
+Teaching Assistance
+-------------
+
+    CS343_Artificial_Intelligence Fall 2014
+
+
 
 List of Operations
 -------------

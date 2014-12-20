@@ -1,0 +1,18 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% [Nov 12] Combining Learning and Evolution
+%% questions by XIN LIN (xl5224)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+1. In the required reading, how the sample efficiency is measured? 
+More abstractly, What is sacrificed for the less number of samples for
+automatically evolving the fitness representation? 
+
+
+
+
+
+
+
+
+2. What is the most challenging topics about combining reinforcement learning
+and neuro-evolutions? 

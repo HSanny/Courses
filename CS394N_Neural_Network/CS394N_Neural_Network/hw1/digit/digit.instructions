@@ -1,0 +1,196 @@
+Instruction on using the digit program to generate digit image patterns
+=======================================================================
+[
+originally by Yeong-Ho Yu, Nov 1990;
+Update by Risto 9/10/1991; 7/13/93; 11/1/94; 4/13/95; 5/23/96;
+Update by James A. Bednar 4/3/98; 4/27/98 ; 5/10/98
+Update by Bobby Bryant, 20-Sep-1998
+Update by Marshall R. Mayberry, 28 Jan 2001
+Update by Marshall R. Mayberry, 30 Sep 2002
+Update by Yeh Hong-ming, September 17, 2003.
+Update by First Mate Leif Johnson, 19 Sep 2011 (arr !).
+]
+
+In this homework, you'll have to provide your own training patterns for
+digit images.  Since each digit is an 8x8 matrix (64 input bits), and
+each output is a 10 bit pattern (one bit for each digit 0--9), it is not
+easy to handcode many training patterns.
+
+Yeong-Ho Yu has written a program called "digit" which is an X-window
+based program for preparing such pattern files. The executables are
+in /u/www/users/risto/cs394n/private/digit ; there is a precompiled
+version that runs on Ubuntu machines named simply "digit".
+
+===
+To simplify invoking the program, do the following:
+
+First, create a working directory for yourself (under your home
+directory) and cd to that directory. Then type:
+
+   ln -s /u/www/users/risto/cs394n/private/digit/digit .
+
+===
+The program expects X windows to be running (in some of the labs you may
+have to start X yourself).  Also, make sure that your DISPLAY environment
+variable is correctly set (if you are using secure shell, you shouldn't
+have to worry about this).  If it isn't, give the following command:
+
+   setenv DISPLAY <your machine name>:0.0
+
+E.g. if you are sitting down at dunce.cs.utexas.edu:
+
+   setenv DISPLAY dunce:0.0
+
+===
+If using one of the pubultra hosts, you may need to define an additional
+environment variable first, as follows:
+
+   setenv LD_LIBRARY_PATH /lusr/X11/lib
+
+===
+The program can be executed by the following command to generate
+SNNS-compatible training files (by default):
+
+   digit <output-filename>.pat
+
+For example, "digit train1.pat".
+
+If you will be using Lens, use the extension ".ex" to specify the Lens
+format:
+
+  digit <output-filename>.ex
+
+If you will be using MatLab, use a ".m" extension to specify the Matlab
+format:
+
+  digit <output-filename>.m
+
+Also see further usage notes at the end of this document.
+
+=======================================================================
+
+
+The layout of the program looks like this:
+
+
+    output-filename    ---    ---------------
+    Pattern: n        |   |  |   |   |   |   | Display Windows
+                       ---    ---------------
+
+    -----------------------    ---   ---   --- 
+   |  |  |  |  |  |  |  |  |  | P | | N | | K |
+    -----------------------    ---   ---   --- 
+   |  |  |  |  |  |  |  |  |   ---   ---   ---                  
+    -----------------------   | B | | E | | G |
+   |  |  |  |  |  |  |  |  |   ---   ---   --- 
+    -----------------------    ---   ---   --- 
+   |  |  |  |  |  |  |  |  |  | 7 | | 8 | | 9 |                 
+    -----------------------    ---   ---   --- 
+   |  |  |  |  |  |  |  |  |   ---   ---   ---  
+    -----------------------   | 4 | | 5 | | 6 |
+   |  |  |  |  |  |  |  |  |   ---   ---   --- 
+    -----------------------    ---   ---   --- 
+   |  |  |  |  |  |  |  |  |  | 1 | | 2 | | 3 |
+    -----------------------    ---   ---   --- 
+   |  |  |  |  |  |  |  |  |   ---   ---  ---- 
+    -----------------------   | 0 | | Q | | S |
+         8 x 8 Matrix	       ---   ---  ---- 
+                                     ---
+				    |   | Digit
+				     ---
+
+The 8x8 matrix is mouse-sensitive and when you click the left button on
+a square, the square is filled.  Also, while you are pressing the left
+button, you can move around the pointer and all those squares that are
+touched by the pointer will be filled. The right button does the same
+except it unfills (erases) the squares.
+
+There are five (1 + 4) display windows on the top right portion.  The
+leftmost one shows the reduced image of the 8 x 8 matrix. The other four
+display four previous images.  The numbers above them indicate which
+patterns are being displayed.  Each display window can be frozen: i.e.,
+the image on the window will not be changed, even if you go to another
+pattern.  The freezing/unfreezing is done by clicking the mouse on each
+window.  Each frozen window will be shown in the reverse video.
+  
+The numbered buttons are to save the completed images.  For instance,
+when you finish drawing an image of "1" on the matrix, click any mouse
+button while the pointer is on the square labeled with "1".  Then, the
+8x8 matrix as well as the desired output pattern (i.e. "0 1 0 0 0 0 0 0
+0 0" in this example) will be saved to the output file. The "Digit"
+square indicates the digit, in this case,"1". The pattern number starts
+from 0 and is increased after the completion of each image. Currently,
+you can only define up to 100 images. In practice, you'll need about 40.
+
+You can browse through the existing patterns and change any one of them.
+The square in the bottom right corner identifies each digit image.
+The eight letter buttons, which all respond to the mouse click,
+implement the browsing, saving and exiting functions:
+
+  "P" --- go to the previous pattern, if any.
+  "N" --- go to the next pattern/create a new pattern.
+  "K" --- kill the current pattern and delete it.
+  "B" --- go to the first pattern.
+  "E" --- go to the end of the patterns and get ready for a new pattern.
+  "G" --- go to a given pattern.  First, you type (on the keyboard) the
+          id of a pattern that you want to modify. Then, clicking "G" will
+          get you that pattern.
+  "Q" --- quitting the program WITHOUT saving the changes.
+  "S" --- save the changes and exit the program.
+
+The output file is a pattern file for an backprop network with 64
+inputs and 10 outputs; you can read it into any ASCII editor to see
+what it looks like.
+
+
+=======================================================================
+Command-line usage of digit
+
+
+If you wish to edit an existing file without changing it, you can have
+all output saved into a new file using:
+
+  digit input-filename.pat output-filename.pat
+
+instead of just a single filename.
+
+
+If no DISPLAY environment variable is set, digit just converts between
+various different formats and/or dumps file contents to the screen.
+Examples:
+
+   1>  env DISPLAY= digit input-filename.pat output-filename.m
+   2>  env DISPLAY= digit input-filename.m   output-filename.ppm
+   3>  env DISPLAY= digit input-filename.ppm output-filename.txt
+   4>  env DISPLAY= digit input-filename.pat 
+
+Line 1 converts SNNS format to MatLab format.
+Line 2 converts it to an image format suitable for display or
+processing with XV (plus labels in a separate file
+output-filename.label).
+Line 3 converts it to an ASCII format suitable for examples cited in reports.
+Line 4 does the same as line 3 except that the output goes directly to
+stdout, e.g.:
+
+        > env DISPLAY= digit train1.pat 
+	Can't open X display; running in format translation mode only.
+	---------------------------------------------------------------
+	Contents of file train1.pat on Sun May 10 12:15:52 1998
+	 
+	 
+	Digit 0, Pattern 1
+	..####..
+	.#....#.
+	.#....#.
+	.#....#.
+	.#....#.
+	.#....#.
+	.#....#.
+	..####..
+	 
+	...
+
+If desired, see the digit.cpp code for other file input and output
+formats available; not all are supported in both directions.
+
+=======================================================================

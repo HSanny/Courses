@@ -1,0 +1,15 @@
+\contentsline {part}{I\hspace {1em}Matlab and Computational Assignment}{2}{part.1}
+\contentsline {section}{\numberline {1}Conjugate Gradient Algorithm}{2}{section.1}
+\contentsline {subsection}{\numberline {1.1}$M_1$}{2}{subsection.1.1}
+\contentsline {subsection}{\numberline {1.2}$M_2$}{2}{subsection.1.2}
+\contentsline {section}{\numberline {2}Newton’s Method}{3}{section.2}
+\contentsline {section}{\numberline {3}Central Path}{4}{section.3}
+\contentsline {section}{\numberline {4}Larger Linear Program}{5}{section.4}
+\contentsline {section}{\numberline {5}Gradient, Conjugate Gradient, Newton and BFGS}{6}{section.5}
+\contentsline {part}{II\hspace {1em}Written Problems}{7}{part.2}
+\contentsline {section}{\numberline {A}Codes Printout}{8}{appendix.A}
+\contentsline {subsection}{\numberline {A.1}Conjugate Gradient Algorithm}{8}{subsection.A.1}
+\contentsline {subsection}{\numberline {A.2}Newton’s Method}{9}{subsection.A.2}
+\contentsline {subsection}{\numberline {A.3}Central Path}{10}{subsection.A.3}
+\contentsline {subsection}{\numberline {A.4}Larger Linear Program}{11}{subsection.A.4}
+\contentsline {subsection}{\numberline {A.5}Gradient and Newton}{12}{subsection.A.5}

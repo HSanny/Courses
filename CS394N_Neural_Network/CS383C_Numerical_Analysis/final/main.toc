@@ -1,0 +1,17 @@
+\contentsline {part}{I\hspace {1em}Cholesky Factorization}{2}{part.1}
+\contentsline {section}{\numberline {1}SPD}{2}{section.1}
+\contentsline {subsection}{\numberline {1.1}Show $A_{00}$ is SPD}{2}{subsection.1.1}
+\contentsline {subsection}{\numberline {1.2}$l_{10}^T = a_{10}^T L_{00}^{-T}$ is well defined}{2}{subsection.1.2}
+\contentsline {subsection}{\numberline {1.3}$\alpha _{11} - l_{10}^T l_{10} > 0$}{2}{subsection.1.3}
+\contentsline {subsection}{\numberline {1.4}Show equality}{3}{subsection.1.4}
+\contentsline {section}{\numberline {2}}{3}{section.2}
+\contentsline {subsection}{\numberline {2.1}Another proof of Cholesky Factorization Theorem}{3}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}Bordered Cholesky Algorithm}{4}{subsection.2.2}
+\contentsline {section}{\numberline {3}Cost of Bordered Algorithm}{4}{section.3}
+\contentsline {part}{II\hspace {1em}Method of Relatively Robust Representations}{5}{part.2}
+\contentsline {section}{\numberline {1}$LDL^T$ Factorization for indefinite matrices}{5}{section.1}
+\contentsline {section}{\numberline {2}$LDL^T$ Factorization for tridiagonal matrices}{6}{section.2}
+\contentsline {section}{\numberline {3}$UDU^T$ Factorization for indefinite matrices}{7}{section.3}
+\contentsline {section}{\numberline {4}$UDU^T$ Factorization for tridiagonal matrices}{8}{section.4}
+\contentsline {section}{\numberline {5}Twisted Factorization: $\phi _1$}{9}{section.5}
+\contentsline {section}{\numberline {6}Twisted Factorization: Eigenvector}{11}{section.6}

@@ -1,0 +1,8 @@
+demo.vectors		;;; vectorfilename
+13 13 			;;; nx, ny
+1 1 			;;; disp_rate, seed
+150 3 4 0.1		;;; tend, nphase, nc_[-1], alpha_[-1]
+10 1 0.05		;;; t_[phase], nc_[phase],alpha_[phase]
+80 0 0.025		;;; t_[phase], nc_[phase],alpha_[phase]
+150 0 0.0		;;; t_[phase], nc_[phase],alpha_[phase]
+10 80 150 999999999 	;;; snapshots (epoch):-1=initial, 9x9=last

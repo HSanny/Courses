@@ -1,222 +1,26 @@
-Sun Sep 28 15:30:52 2014: taMisc::SetLogFile -- Log file opened for writing.
-Sun Sep 28 15:30:54 2014: Network: Network_0 auto building
-Sun Sep 28 15:30:59 2014: *** LOG: SaveUndo of action: Call Method: LoadAnyData_gui on: TrainingInputData at path: .data.gp[0][0] saving at: .
-Sun Sep 28 15:30:59 2014: *** LOG: Undo: New source added!
-Sun Sep 28 15:30:59 2014: *** LOG: last_diff_n:  0  pct:  0
-Sun Sep 28 15:31:08 2014: ***WARNING: Import data for data table: TrainingInputData column: Name is String but first row of laded data is a numeric format -- import may be bad.
-Sun Sep 28 15:34:46 2014: *** LOG: SaveUndo of action: DataTableEdit on: group_name at path: .data.gp[1][0].data[4] saving at: .data.gp[1][0].data[4]
-Sun Sep 28 15:34:54 2014: *** LOG: SaveUndo of action: Call Method: SaveData_Gui on: TrialOutputData at path: .data.gp[1][0] saving at: .
-Sun Sep 28 15:34:54 2014: *** LOG: last_diff_n:  432  pct:  0.0190863
-Sun Sep 28 15:35:37 2014: *** DEBUG: Saved auto save file: /v/filer4b/v38q001/jimmylin/workspace/ProgressedCourses/CS394N_Neural_Network/hw2/emergent/HW2_Backprop_autosave.proj
-Sun Sep 28 15:52:59 2014: *** DEBUG: Saved auto save file: /v/filer4b/v38q001/jimmylin/workspace/ProgressedCourses/CS394N_Neural_Network/hw2/emergent/HW2_Backprop_autosave.proj
-Sun Sep 28 15:53:09 2014: *** LOG: SaveUndo of action: Call Method: Init on: BpTrain at path: .programs.gp[0][1] saving at: .
-Sun Sep 28 15:53:09 2014: *** LOG: last_diff_n:  384  pct:  0.0169656
-Sun Sep 28 15:53:11 2014: *** LOG: SaveUndo of action: Call Method: Run_Gui on: BpTrain at path: .programs.gp[0][1] saving at: .
-Sun Sep 28 15:53:11 2014: *** LOG: last_diff_n:  404  pct:  0.0178493
-Sun Sep 28 15:54:27 2014: *** LOG: SaveUndo of action: Call Method: SaveToWeights on: Network_0 at path: .networks[0] saving at: .
-Sun Sep 28 15:54:27 2014: *** LOG: last_diff_n:  773  pct:  0.0341522
-Sun Sep 28 15:54:38 2014: *** LOG: SaveUndo of action: Call Method: SaveToWeights on: Network_0 at path: .networks[0] saving at: .
-Sun Sep 28 15:54:38 2014: *** LOG: last_diff_n:  773  pct:  0.0341522
-Sun Sep 28 15:54:40 2014: *** LOG: SaveUndo of action: Call Method: SaveWeights on: Network_0 at path: .networks[0] saving at: .
-Sun Sep 28 15:54:40 2014: *** LOG: last_diff_n:  773  pct:  0.0341522
-Sun Sep 28 15:55:16 2014: *** LOG: SaveUndo of action: Call Method: Init on: BpEpochTest at path: .programs.gp[1][0] saving at: .
-Sun Sep 28 15:55:17 2014: *** LOG: last_diff_n:  418  pct:  0.0184678
-Sun Sep 28 15:55:18 2014: *** LOG: SaveUndo of action: Call Method: Run_Gui on: BpEpochTest at path: .programs.gp[1][0] saving at: .
-Sun Sep 28 15:55:18 2014: *** LOG: last_diff_n:  394  pct:  0.0174074
-Sun Sep 28 15:56:08 2014: *** LOG: SaveUndo of action: Call Method: SaveData_Gui on: TrialOutputData at path: .data.gp[1][0] saving at: .
-Sun Sep 28 15:56:08 2014: *** LOG: last_diff_n:  466  pct:  0.0205885
-Sun Sep 28 15:57:58 2014: *** LOG: SaveUndo of action: Call Method: Step_Gui on: BpTrain at path: .programs.gp[0][1] saving at: .
-Sun Sep 28 15:57:58 2014: *** LOG: last_diff_n:  418  pct:  0.0184678
-Sun Sep 28 15:58:06 2014: *** LOG: SaveUndo of action: Call Method: Step_Gui on: BpTrain at path: .programs.gp[0][1] saving at: .
-Sun Sep 28 15:58:06 2014: *** LOG: last_diff_n:  440  pct:  0.0194398
-Sun Sep 28 15:58:11 2014: *** LOG: SaveUndo of action: Call Method: Step_Gui on: BpTrain at path: .programs.gp[0][1] saving at: .
-Sun Sep 28 15:58:11 2014: *** LOG: last_diff_n:  458  pct:  0.020235
-Sun Sep 28 15:58:17 2014: *** LOG: SaveUndo of action: Call Method: Step_Gui on: BpTrain at path: .programs.gp[0][1] saving at: .
-Sun Sep 28 15:58:17 2014: *** LOG: last_diff_n:  476  pct:  0.0210303
-Sun Sep 28 15:58:23 2014: *** LOG: SaveUndo of action: Call Method: Step_Gui on: BpTrain at path: .programs.gp[0][1] saving at: .
-Sun Sep 28 15:58:23 2014: *** LOG: last_diff_n:  494  pct:  0.0218256
-Sun Sep 28 15:58:28 2014: *** LOG: SaveUndo of action: Call Method: Step_Gui on: BpTrain at path: .programs.gp[0][1] saving at: .
-Sun Sep 28 15:58:28 2014: *** LOG: last_diff_n:  512  pct:  0.0226208
-Sun Sep 28 15:58:34 2014: *** LOG: SaveUndo of action: Call Method: Step_Gui on: BpTrain at path: .programs.gp[0][1] saving at: .
-Sun Sep 28 15:58:34 2014: *** LOG: last_diff_n:  530  pct:  0.0234161
-Sun Sep 28 15:58:39 2014: *** LOG: SaveUndo of action: Call Method: Step_Gui on: BpTrain at path: .programs.gp[0][1] saving at: .
-Sun Sep 28 15:58:39 2014: *** LOG: last_diff_n:  548  pct:  0.0242114
-Sun Sep 28 15:58:54 2014: *** LOG: SaveUndo of action: Call Method: SaveWeights on: Network_0 at path: .networks[0] saving at: .
-Sun Sep 28 15:58:54 2014: *** LOG: last_diff_n:  921  pct:  0.040691
-Sun Sep 28 15:59:14 2014: *** LOG: SaveUndo of action: Call Method: Init on: BpEpochTest at path: .programs.gp[1][0] saving at: .
-Sun Sep 28 15:59:14 2014: *** LOG: last_diff_n:  566  pct:  0.0250066
-Sun Sep 28 15:59:16 2014: *** LOG: SaveUndo of action: Call Method: Run_Gui on: BpEpochTest at path: .programs.gp[1][0] saving at: .
-Sun Sep 28 15:59:16 2014: *** LOG: last_diff_n:  397  pct:  0.01754
-Sun Sep 28 15:59:38 2014: *** LOG: SaveUndo of action: Call Method: SaveData_Gui on: TrialOutputData at path: .data.gp[1][0] saving at: .
-Sun Sep 28 15:59:38 2014: *** LOG: last_diff_n:  469  pct:  0.020721
-Sun Sep 28 15:59:58 2014: *** LOG: SaveUndo of action: Call Method: NewLayer on: Network_0 at path: .networks[0] saving at: .
-Sun Sep 28 15:59:58 2014: *** LOG: last_diff_n:  776  pct:  0.0342847
-Sun Sep 28 16:00:02 2014: *** LOG: SaveUndo of action: Call Method: NewLayer on: Network_0 at path: .networks[0] saving at: .
-Sun Sep 28 16:00:02 2014: *** LOG: last_diff_n:  836  pct:  0.0369356
-Sun Sep 28 16:00:06 2014: *** LOG: SaveUndo of action: Undo on: HW2_Backprop at path: . saving at: .
-Sun Sep 28 16:00:06 2014: Undoing action: Call Method: NewLayer on: Network_0 at path: .networks[0]
-Sun Sep 28 16:00:06 2014: *** LOG: last_diff_n:  445  pct:  0.0196607
-Sun Sep 28 16:00:11 2014: *** LOG: SaveUndo of action: Call Method: Build on: Network_0 at path: .networks[0] saving at: .
-Sun Sep 28 16:00:11 2014: *** LOG: last_diff_n:  836  pct:  0.0369356
-Sun Sep 28 16:00:23 2014: *** LOG: SaveUndo of action: Undo on: HW2_Backprop at path: . saving at: .
-Sun Sep 28 16:00:23 2014: Undoing action: Call Method: Build on: Network_0 at path: .networks[0]
-Sun Sep 28 16:00:23 2014: *** LOG: last_diff_n:  438  pct:  0.0193514
-Sun Sep 28 16:00:23 2014: load reset size: 1
-Sun Sep 28 16:00:26 2014: Undoing action: Call Method: NewLayer on: Network_0 at path: .networks[0]
-Sun Sep 28 16:00:34 2014: *** LOG: SaveUndo of action: Call Method: NewLayer on: Network_0 at path: .networks[0] saving at: .
-Sun Sep 28 16:00:35 2014: *** LOG: last_diff_n:  776  pct:  0.0342847
-Sun Sep 28 16:00:41 2014: *** LOG: SaveUndo of action: Undo on: HW2_Backprop at path: . saving at: .
-Sun Sep 28 16:00:41 2014: Undoing action: Call Method: NewLayer on: Network_0 at path: .networks[0]
-Sun Sep 28 16:00:41 2014: *** LOG: last_diff_n:  438  pct:  0.0193514
-Sun Sep 28 16:01:56 2014: *** DEBUG: Saved auto save file: /v/filer4b/v38q001/jimmylin/workspace/ProgressedCourses/CS394N_Neural_Network/hw2/emergent/HW2_Backprop_autosave.proj
-Sun Sep 28 16:02:50 2014: *** LOG: SaveUndo of action: Edit on: Hidden at path: .networks[0].layers[1] saving at: .networks[0].layers[1]
-Sun Sep 28 16:02:54 2014: *** LOG: SaveUndo of action: Call Method: Init on: BpTrain at path: .programs.gp[0][1] saving at: .
-Sun Sep 28 16:02:54 2014: *** LOG: last_diff_n:  421  pct:  0.0186003
-Sun Sep 28 16:02:54 2014: ***CHECK ERROR: Config Error in: BpLayer Hidden
-path: .projects["HW2_Backprop"].networks["Network_0"].layers["Hidden"]
- number of units != target -- is: 20 should be: 50
-Sun Sep 28 16:02:54 2014: ***CHECK ERROR: Network: Network_0 Needs the 'Build' command to be run
-Sun Sep 28 16:02:54 2014: ***CHECK ERROR: Config Error in: BpLayer Hidden
-path: .projects["HW2_Backprop"].networks["Network_0"].layers["Hidden"]
- number of units != target -- is: 20 should be: 50
-Sun Sep 28 16:02:59 2014: ***CHECK ERROR: Config Error in: BpLayer Hidden
-path: .projects["HW2_Backprop"].networks["Network_0"].layers["Hidden"]
- number of units != target -- is: 20 should be: 50
-Sun Sep 28 16:02:59 2014: ***CHECK ERROR: Network: Network_0 Needs the 'Build' command to be run
-Sun Sep 28 16:02:59 2014: ***CHECK ERROR: Config Error in: BpLayer Hidden
-path: .projects["HW2_Backprop"].networks["Network_0"].layers["Hidden"]
- number of units != target -- is: 20 should be: 50
-Sun Sep 28 16:03:22 2014: *** LOG: SaveUndo of action: Edit on: Hidden at path: .networks[0].layers[1] saving at: .networks[0].layers[1]
-Sun Sep 28 16:03:28 2014: *** LOG: SaveUndo of action: Edit on: Hidden at path: .networks[0].layers[1] saving at: .networks[0].layers[1]
-Sun Sep 28 16:03:44 2014: *** LOG: SaveUndo of action: Call Method: Build on: Network_0 at path: .networks[0] saving at: .
-Sun Sep 28 16:03:44 2014: *** LOG: last_diff_n:  763  pct:  0.0337103
-Sun Sep 28 16:03:49 2014: *** LOG: SaveUndo of action: Call Method: Init on: BpTrain at path: .programs.gp[0][1] saving at: .
-Sun Sep 28 16:03:49 2014: *** LOG: last_diff_n:  416  pct:  0.0183794
-Sun Sep 28 16:03:51 2014: *** LOG: SaveUndo of action: Call Method: Init on: BpTrain at path: .programs.gp[0][1] saving at: .
-Sun Sep 28 16:03:51 2014: *** LOG: last_diff_n:  416  pct:  0.0183794
-Sun Sep 28 16:03:56 2014: *** LOG: SaveUndo of action: Call Method: Step_Gui on: BpTrain at path: .programs.gp[0][1] saving at: .
-Sun Sep 28 16:03:56 2014: *** LOG: last_diff_n:  416  pct:  0.0183794
-Sun Sep 28 16:03:57 2014: *** DEBUG: Saved auto save file: /v/filer4b/v38q001/jimmylin/workspace/ProgressedCourses/CS394N_Neural_Network/hw2/emergent/HW2_Backprop_autosave.proj
-Sun Sep 28 16:04:26 2014: *** LOG: SaveUndo of action: Call Method: Step_Gui on: BpTrain at path: .programs.gp[0][1] saving at: .
-Sun Sep 28 16:04:26 2014: *** LOG: last_diff_n:  408  pct:  0.018026
-Sun Sep 28 16:04:28 2014: *** LOG: SaveUndo of action: Call Method: Step_Gui on: BpTrain at path: .programs.gp[0][1] saving at: .
-Sun Sep 28 16:04:28 2014: *** LOG: last_diff_n:  410  pct:  0.0181143
-Sun Sep 28 16:04:29 2014: *** LOG: SaveUndo of action: Call Method: Step_Gui on: BpTrain at path: .programs.gp[0][1] saving at: .
-Sun Sep 28 16:04:29 2014: *** LOG: last_diff_n:  410  pct:  0.0181143
-Sun Sep 28 16:04:32 2014: *** LOG: SaveUndo of action: Call Method: Step_Gui on: BpTrain at path: .programs.gp[0][1] saving at: .
-Sun Sep 28 16:04:32 2014: *** LOG: last_diff_n:  410  pct:  0.0181143
-Sun Sep 28 16:05:16 2014: *** LOG: SaveUndo of action: Call Method: Step_Gui on: BpTrain at path: .programs.gp[0][1] saving at: .
-Sun Sep 28 16:05:16 2014: *** LOG: last_diff_n:  410  pct:  0.0181143
-Sun Sep 28 16:05:31 2014: *** LOG: SaveUndo of action: Call Method: Step_Gui on: BpTrain at path: .programs.gp[0][1] saving at: .
-Sun Sep 28 16:05:31 2014: *** LOG: last_diff_n:  407  pct:  0.0179818
-Sun Sep 28 16:05:33 2014: *** LOG: SaveUndo of action: Call Method: Step_Gui on: BpTrain at path: .programs.gp[0][1] saving at: .
-Sun Sep 28 16:05:33 2014: *** LOG: last_diff_n:  409  pct:  0.0180702
-Sun Sep 28 16:05:35 2014: *** LOG: SaveUndo of action: Call Method: Step_Gui on: BpTrain at path: .programs.gp[0][1] saving at: .
-Sun Sep 28 16:05:35 2014: *** LOG: last_diff_n:  409  pct:  0.0180702
-Sun Sep 28 16:05:37 2014: *** LOG: SaveUndo of action: Call Method: Step_Gui on: BpTrain at path: .programs.gp[0][1] saving at: .
-Sun Sep 28 16:05:37 2014: *** LOG: last_diff_n:  409  pct:  0.0180702
-Sun Sep 28 16:05:38 2014: *** LOG: SaveUndo of action: Call Method: Step_Gui on: BpTrain at path: .programs.gp[0][1] saving at: .
-Sun Sep 28 16:05:38 2014: *** LOG: last_diff_n:  409  pct:  0.0180702
-Sun Sep 28 16:05:41 2014: *** LOG: SaveUndo of action: Call Method: Step_Gui on: BpTrain at path: .programs.gp[0][1] saving at: .
-Sun Sep 28 16:05:41 2014: *** LOG: last_diff_n:  409  pct:  0.0180702
-Sun Sep 28 16:05:54 2014: *** LOG: SaveUndo of action: Call Method: SaveWeights on: Network_0 at path: .networks[0] saving at: .
-Sun Sep 28 16:05:54 2014: *** LOG: last_diff_n:  763  pct:  0.0337103
-Sun Sep 28 16:06:15 2014: *** LOG: SaveUndo of action: Call Method: Init on: BpEpochTest at path: .programs.gp[1][0] saving at: .
-Sun Sep 28 16:06:15 2014: *** LOG: last_diff_n:  408  pct:  0.018026
-Sun Sep 28 16:06:16 2014: *** LOG: SaveUndo of action: Call Method: Run_Gui on: BpEpochTest at path: .programs.gp[1][0] saving at: .
-Sun Sep 28 16:06:16 2014: *** LOG: last_diff_n:  408  pct:  0.018026
-Sun Sep 28 16:07:14 2014: *** LOG: SaveUndo of action: Edit on: Hidden at path: .networks[0].layers[1] saving at: .networks[0].layers[1]
-Sun Sep 28 16:07:20 2014: *** LOG: SaveUndo of action: Call Method: NewLayer on: Network_0 at path: .networks[0] saving at: .
-Sun Sep 28 16:07:20 2014: *** LOG: last_diff_n:  787  pct:  0.0347707
-Sun Sep 28 16:07:40 2014: *** LOG: SaveUndo of action: Edit on: BpLayer_4 at path: .networks[0].layers[3] saving at: .networks[0].layers[3]
-Sun Sep 28 16:08:07 2014: *** LOG: SaveUndo of action: Delete on: Hidden_2 at path: .networks[0].layers[3] saving at: .
-Sun Sep 28 16:08:07 2014: *** LOG: last_diff_n:  841  pct:  0.0371565
-Sun Sep 28 16:08:10 2014: *** LOG: SaveUndo of action: Duplicate on: Hidden at path: .networks[0].layers[1] saving at: .
-Sun Sep 28 16:08:10 2014: *** LOG: last_diff_n:  789  pct:  0.0348591
-Sun Sep 28 16:08:10 2014: *** DEBUG: Saved auto save file: /v/filer4b/v38q001/jimmylin/workspace/ProgressedCourses/CS394N_Neural_Network/hw2/emergent/HW2_Backprop_autosave.proj
-Sun Sep 28 16:08:21 2014: *** LOG: SaveUndo of action: Edit on: Hidden_copy at path: .networks[0].layers[2] saving at: .networks[0].layers[2]
-Sun Sep 28 16:08:23 2014: *** LOG: SaveUndo of action: Call Method: Build on: Network_0 at path: .networks[0] saving at: .
-Sun Sep 28 16:08:23 2014: *** LOG: last_diff_n:  861  pct:  0.0380401
-Sun Sep 28 16:09:19 2014: *** LOG: SaveUndo of action: Call Method: SetLayerSpec on: Hidden_2 at path: .networks[0].layers[2] saving at: .
-Sun Sep 28 16:09:19 2014: ***WARNING: FindMemberPathStatic: member: spec not found in object type: BpLayer
-Sun Sep 28 16:09:19 2014: *** LOG: last_diff_n:  862  pct:  0.0380843
-Sun Sep 28 16:09:25 2014: css Error: Null pointer for conversion to: LayerSpec from: LayerSpec     
-emergent 
-
-Sun Sep 28 16:09:26 2014: *** LOG: SaveUndo of action: Call Method: SetLayerSpec on: Hidden_2 at path: .networks[0].layers[2] saving at: .
-Sun Sep 28 16:09:26 2014: ***WARNING: FindMemberPathStatic: member: spec not found in object type: BpLayer
-Sun Sep 28 16:09:26 2014: *** LOG: last_diff_n:  862  pct:  0.0380843
-Sun Sep 28 16:09:28 2014: css Error: Null pointer for conversion to: LayerSpec from: LayerSpec     
-emergent 
-
-Sun Sep 28 16:09:30 2014: *** LOG: SaveUndo of action: Call Method: SetUnitSpec on: Hidden_2 at path: .networks[0].layers[2] saving at: .
-Sun Sep 28 16:09:30 2014: *** LOG: last_diff_n:  862  pct:  0.0380843
-Sun Sep 28 16:09:34 2014: *** LOG: SaveUndo of action: Call Method: SetUnitType on: Hidden_2 at path: .networks[0].layers[2] saving at: .
-Sun Sep 28 16:09:34 2014: *** LOG: last_diff_n:  862  pct:  0.0380843
-Sun Sep 28 16:10:06 2014: *** LOG: SaveUndo of action: Delete on: Hidden_2 at path: .networks[0].layers[2] saving at: .
-Sun Sep 28 16:10:06 2014: *** LOG: last_diff_n:  862  pct:  0.0380843
-Sun Sep 28 16:10:06 2014: *** DEBUG: obj: BpLayer Hidden_2::AddSigClient() (path: .projects["HW2_Backprop"].networks["Network_0"].layers["Hidden_2"])
- Attempt to add a SigLinkClient to a destructing object
-Sun Sep 28 16:10:06 2014: *** LOG: SaveUndo of action: Edit on: Hidden_2 at path: .networks[0].layers[?] saving at: .networks[0].layers[?]
-Sun Sep 28 16:10:09 2014: *** LOG: SaveUndo of action: Duplicate on: Output at path: .networks[0].layers[2] saving at: .
-Sun Sep 28 16:10:09 2014: *** LOG: last_diff_n:  787  pct:  0.0347707
-Sun Sep 28 16:10:12 2014: *** DEBUG: Saved auto save file: /v/filer4b/v38q001/jimmylin/workspace/ProgressedCourses/CS394N_Neural_Network/hw2/emergent/HW2_Backprop_autosave.proj
-Sun Sep 28 16:10:16 2014: *** LOG: SaveUndo of action: Edit on: Output at path: .networks[0].layers[2] saving at: .networks[0].layers[2]
-Sun Sep 28 16:10:39 2014: *** LOG: SaveUndo of action: Delete on: Output_copy at path: .networks[0].layers[3] saving at: .
-Sun Sep 28 16:10:39 2014: *** LOG: last_diff_n:  861  pct:  0.0380401
-Sun Sep 28 16:10:47 2014: *** LOG: SaveUndo of action: Duplicate on: Hidden at path: .networks[0].layers[1] saving at: .
-Sun Sep 28 16:10:47 2014: *** LOG: last_diff_n:  787  pct:  0.0347707
-Sun Sep 28 16:10:58 2014: *** LOG: SaveUndo of action: Edit on: Hidden_copy at path: .networks[0].layers[2] saving at: .networks[0].layers[2]
-Sun Sep 28 16:11:01 2014: *** LOG: SaveUndo of action: Edit on: Hidden_2 at path: .networks[0].layers[2] saving at: .networks[0].layers[2]
-Sun Sep 28 16:11:08 2014: *** LOG: SaveUndo of action: Call Method: ConnectFrom on:  at path: .networks[0].layers[2].projections saving at: .
-Sun Sep 28 16:11:08 2014: *** LOG: last_diff_n:  861  pct:  0.0380401
-Sun Sep 28 16:11:21 2014: *** LOG: SaveUndo of action: Call Method: Build on: Network_0 at path: .networks[0] saving at: .
-Sun Sep 28 16:11:21 2014: *** LOG: last_diff_n:  881  pct:  0.0389237
-Sun Sep 28 16:11:40 2014: *** LOG: SaveUndo of action: Delete on: Fm_Input at path: .networks[0].layers[2].projections[0] saving at: .
-Sun Sep 28 16:11:40 2014: *** LOG: last_diff_n:  883  pct:  0.0390121
-Sun Sep 28 16:11:46 2014: *** LOG: SaveUndo of action: Call Method: Build on: Network_0 at path: .networks[0] saving at: .
-Sun Sep 28 16:11:46 2014: *** LOG: last_diff_n:  862  pct:  0.0380843
-Sun Sep 28 16:11:55 2014: *** LOG: SaveUndo of action: Delete on: Fm_Hidden at path: .networks[0].layers[3].projections[0] saving at: .
-Sun Sep 28 16:11:55 2014: *** LOG: last_diff_n:  862  pct:  0.0380843
-Sun Sep 28 16:11:57 2014: *** LOG: SaveUndo of action: Call Method: ConnectFrom on: projections at path: .networks[0].layers[3].projections saving at: .
-Sun Sep 28 16:11:57 2014: *** LOG: last_diff_n:  841  pct:  0.0371565
-Sun Sep 28 16:12:01 2014: *** LOG: SaveUndo of action: Call Method: ConnectFrom on: projections at path: .networks[0].layers[3].projections saving at: .
-Sun Sep 28 16:12:01 2014: *** LOG: last_diff_n:  861  pct:  0.0380401
-Sun Sep 28 16:12:03 2014: ***WARNING: taList_impl::MakeElNameUnique names of items on the list must be unique -- renaming: .projects["HW2_Backprop"].networks["Network_0"].layers["Output"].projections["Fm_Hidden_2"] to: Fm_Hidden_2_1
-Sun Sep 28 16:12:13 2014: *** DEBUG: Saved auto save file: /v/filer4b/v38q001/jimmylin/workspace/ProgressedCourses/CS394N_Neural_Network/hw2/emergent/HW2_Backprop_autosave.proj
-Sun Sep 28 16:12:42 2014: *** LOG: SaveUndo of action: Edit on: Hidden_2 at path: .networks[0].layers[2] saving at: .networks[0].layers[2]
-Sun Sep 28 16:12:50 2014: *** LOG: SaveUndo of action: Call Method: Build on: Network_0 at path: .networks[0] saving at: .
-Sun Sep 28 16:12:50 2014: *** LOG: last_diff_n:  881  pct:  0.0389237
-Sun Sep 28 16:12:59 2014: *** LOG: SaveUndo of action: Call Method: Init on: BpTrain at path: .programs.gp[0][1] saving at: .
-Sun Sep 28 16:12:59 2014: *** LOG: last_diff_n:  445  pct:  0.0196607
-Sun Sep 28 16:13:02 2014: *** LOG: SaveUndo of action: Call Method: Run_Gui on: BpTrain at path: .programs.gp[0][1] saving at: .
-Sun Sep 28 16:13:02 2014: *** LOG: last_diff_n:  459  pct:  0.0202792
-Sun Sep 28 16:13:20 2014: *** LOG: SaveUndo of action: Call Method: Step_Gui on: BpTrain at path: .programs.gp[0][1] saving at: .
-Sun Sep 28 16:13:20 2014: *** LOG: last_diff_n:  472  pct:  0.0208536
-Sun Sep 28 16:13:41 2014: *** LOG: SaveUndo of action: Call Method: Init on: BpEpochTest at path: .programs.gp[1][0] saving at: .
-Sun Sep 28 16:13:41 2014: *** LOG: last_diff_n:  474  pct:  0.0209419
-Sun Sep 28 16:13:47 2014: *** LOG: SaveUndo of action: Call Method: Run_Gui on: BpEpochTest at path: .programs.gp[1][0] saving at: .
-Sun Sep 28 16:13:47 2014: *** LOG: last_diff_n:  450  pct:  0.0198816
-Sun Sep 28 16:15:36 2014: *** DEBUG: Saved auto save file: /v/filer4b/v38q001/jimmylin/workspace/ProgressedCourses/CS394N_Neural_Network/hw2/emergent/HW2_Backprop_autosave.proj
-Sun Sep 28 16:15:39 2014: *** LOG: SaveUndo of action: Delete 2 items on: x64x20x10_51epoch at path: .networks[0].weights[1] saving at: .
-Sun Sep 28 16:15:40 2014: *** LOG: last_diff_n:  912  pct:  0.0402934
-Sun Sep 28 16:15:43 2014: *** LOG: SaveUndo of action: Call Method: New_gui on: weights at path: .networks[0].weights saving at: .
-Sun Sep 28 16:15:43 2014: *** LOG: last_diff_n:  900  pct:  0.0397632
-Sun Sep 28 16:16:07 2014: *** LOG: SaveUndo of action: Edit on: x64x100x25x10 at path: .networks[0].weights[0] saving at: .networks[0].weights[0]
-Sun Sep 28 16:16:11 2014: *** LOG: SaveUndo of action: Call Method: WeightsFmNet on: x64x100x25x10net_2epoch at path: .networks[0].weights[0] saving at: .
-Sun Sep 28 16:16:11 2014: *** LOG: last_diff_n:  907  pct:  0.0400725
-Sun Sep 28 16:16:15 2014: *** LOG: SaveUndo of action: Call Method: SaveWeights on: x64x100x25x10net_2epoch at path: .networks[0].weights[0] saving at: .
-Sun Sep 28 16:16:15 2014: *** LOG: last_diff_n:  907  pct:  0.0400725
-Sun Sep 28 16:16:45 2014: *** LOG: SaveUndo of action: Call Method: New_gui on: weights at path: .networks[0].weights saving at: .
-Sun Sep 28 16:16:45 2014: *** LOG: last_diff_n:  907  pct:  0.0400725
-Sun Sep 28 16:16:58 2014: *** LOG: SaveUndo of action: Call Method: LoadWeights on: x64x20x10net_13epoch at path: .networks[0].weights[1] saving at: .
-Sun Sep 28 16:16:58 2014: *** LOG: last_diff_n:  912  pct:  0.0402934
-Sun Sep 28 16:17:11 2014: *** LOG: SaveUndo of action: Call Method: New_gui on: weights at path: .networks[0].weights saving at: .
-Sun Sep 28 16:17:12 2014: *** LOG: last_diff_n:  912  pct:  0.0402934
-Sun Sep 28 16:17:23 2014: *** LOG: SaveUndo of action: Call Method: LoadWeights on: x64x20x10net_29epoch at path: .networks[0].weights[2] saving at: .
-Sun Sep 28 16:17:24 2014: *** LOG: last_diff_n:  923  pct:  0.0407794
-Sun Sep 28 16:17:45 2014: *** LOG: SaveUndo of action: Call Method: SaveData_Gui on: TrialOutputData at path: .data.gp[1][0] saving at: .
-Sun Sep 28 16:17:45 2014: *** LOG: last_diff_n:  525  pct:  0.0231952
-Sun Sep 28 16:43:57 2014: css Warning: Null pointer for conversion to: LayerSpec from: LayerSpec     
-emergent 
-
+Tue Sep 30 23:28:23 2014: taMisc::SetLogFile -- Log file opened for writing.
+Tue Sep 30 23:28:25 2014: Network: Network_0 auto building
+Tue Sep 30 23:28:48 2014: *** LOG: SaveUndo of action: Edit on: Output at path: .networks[0].layers[3] saving at: .networks[0].layers[3]
+Tue Sep 30 23:29:00 2014: *** LOG: SaveUndo of action: Call Method: Init_Weights on: Network_0 at path: .networks[0] saving at: .
+Tue Sep 30 23:29:00 2014: *** LOG: Undo: New source added!
+Tue Sep 30 23:29:00 2014: *** LOG: last_diff_n:  0  pct:  0
+Tue Sep 30 23:29:17 2014: *** LOG: SaveUndo of action: Call Method: Init on: BpTrain at path: .programs.gp[0][1] saving at: .
+Tue Sep 30 23:29:17 2014: *** LOG: last_diff_n:  446  pct:  0.0194964
+Tue Sep 30 23:29:19 2014: *** LOG: SaveUndo of action: Call Method: Run_Gui on: BpTrain at path: .programs.gp[0][1] saving at: .
+Tue Sep 30 23:29:19 2014: *** LOG: last_diff_n:  511  pct:  0.0223378
+Tue Sep 30 23:30:11 2014: *** LOG: SaveUndo of action: Call Method: Init on: BpEpochTest at path: .programs.gp[1][0] saving at: .
+Tue Sep 30 23:30:11 2014: *** LOG: last_diff_n:  483  pct:  0.0211138
+Tue Sep 30 23:30:12 2014: *** LOG: SaveUndo of action: Call Method: Run_Gui on: BpEpochTest at path: .programs.gp[1][0] saving at: .
+Tue Sep 30 23:30:12 2014: *** LOG: last_diff_n:  507  pct:  0.022163
+Tue Sep 30 23:30:21 2014: *** LOG: SaveUndo of action: Call Method: Run_Gui on: BpEpochTest at path: .programs.gp[1][0] saving at: .
+Tue Sep 30 23:30:21 2014: *** LOG: last_diff_n:  483  pct:  0.0211138
+Tue Sep 30 23:31:11 2014: *** DEBUG: Saved auto save file: /v/filer4b/v38q001/jimmylin/workspace/ProgressedCourses/CS394N_Neural_Network/hw2/emergent/HW2_Backprop_autosave.proj
+Tue Sep 30 23:31:35 2014: *** LOG: SaveUndo of action: Call Method: SaveData_Gui on: TrialOutputData at path: .data.gp[1][0] saving at: .
+Tue Sep 30 23:31:36 2014: *** LOG: last_diff_n:  553  pct:  0.0241738
+Tue Sep 30 23:31:57 2014: *** LOG: SaveUndo of action: Edit on: x64x100x25x10net_2epoch at path: .networks[0].weights[0] saving at: .networks[0].weights[0]
+Tue Sep 30 23:32:06 2014: *** LOG: SaveUndo of action: Call Method: SaveToWeights on: Network_0 at path: .networks[0] saving at: .
+Tue Sep 30 23:32:06 2014: *** LOG: last_diff_n:  61  pct:  0.00266655
+Tue Sep 30 23:32:54 2014: *** LOG: SaveUndo of action: Call Method: SaveWeights on: Network_0 at path: .networks[0] saving at: .
+Tue Sep 30 23:32:54 2014: *** LOG: last_diff_n:  63  pct:  0.00275398
+Tue Sep 30 23:33:27 2014: *** LOG: SaveUndo of action: Call Method: SaveData_Gui on: TrialOutputData at path: .data.gp[1][0] saving at: .
+Tue Sep 30 23:33:27 2014: *** LOG: last_diff_n:  553  pct:  0.0241738

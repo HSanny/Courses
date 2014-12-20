@@ -30,6 +30,7 @@ the architectures and parameters work the best are as follows:
 2) Learning Rate: by default 
 3) SSE stopping place: 0.2
 
+
 The explanation: 
 1) Network topology. Two-layer neural network does not provide very good
 performance, that is, best predicting accuracy.  About 3-5 layers help
@@ -86,6 +87,9 @@ In one of my run with 64-20-10 network, 40 epochs of training leads to
 prediction on testing set with sse 0.294079. Obviously, such (sum of square) sse
 can be tranlated to a accuracy higher than 40%, which is the SOM/LVQ
 performance in the same recognition problem (on the same train.pat).
+
+Note that my newly updated 64-100-25-10 network has better performance than
+64-20-10 network. (sse about 0.01 on testing set)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Turn your report, the final saved network file, result files, and your

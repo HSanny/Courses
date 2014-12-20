@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Part 3a Readme</title>
+    <meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
+  </head>
+  <body>
+
+<h2>Part 3a Readme</h2>
+
+<p>
+This part of the homework does not require any training, just running
+the program in this directory with your data to check how well the
+feature map you trained is performing in the classification task.
+
+<ol>
+<li> Copy your simulation file (e.g., <tt>mysimu</tt>) from part 2. If you saved
+  multiple snapshots, edit the copy so that it only contains the last snapshot
+  (See <a href="../part2/Readme.parameters">
+part2/Readme.parameters</a> for details on the structure of the snapshot). 
+The file <a href="simu.demo"><tt>simu.demo</tt></a> is an example of what 
+it should look like.
+
+<li> Copy your training vector and label files (e.g. <tt>train.vectors</tt>
+  and <tt>train.labels</tt>) from part 2. 
+<li>Edit <tt>sofm.tcl</tt> so that it will read <tt>mysimu</tt> (or whatever
+  your simulation file) instead of <tt>simu.demo</tt>. 
+<li> Type <tt>./sofm.tcl</tt>.  A <a href="images/sofm.gif">feature map window</a>
+  will pop up, as in Part 2.
+  Click on the STEP button once.
+    <ul>
+    <li> the centermost label in each box identifies the closest training 
+    vector for that unit (i.e. the label of that vector in the training 
+    vectorfile that is closest in Euclidean distance to the weight vector 
+    of the unit).
+    <li> the rest of the labels indicate where the testvectors were mapped.
+    <li> classification performance is shown on the bottom left of the window 
+  </ul>
+<p>
+If a testvector label is not the same as the label of the unit (i.e. the
+centermost label in the box), that means the network classified it
+incorrectly.
+</ol>
+
+<hr>
+<p>Originally by Marshall Mayberry.</p>
+  </body>
+</html>

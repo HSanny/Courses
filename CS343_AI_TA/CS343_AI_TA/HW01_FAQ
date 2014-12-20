@@ -1,0 +1,67 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Frequently Asked Questions (FAQ) for HW01 Search of CS343
+%% made by Jimmy Lin <jimmylin@cs.utexas.edu>
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Q: What is IDA* search? Relationship between IDA* and A* search?
+A: There are two interpretations for IDA* search. The first one is Iterative
+Deepening Depth-Limited Search on f value. (f value of one cell is the equal
+composition of path cost to that cell and one particular heuristic function to
+that cell.) From this perspective, IDA* and A* use different searching
+technique but the same criterion for their respective decisions. Another
+interpretation add A* search with iterative deepening technique. For this
+homework, the first interpretation tells us the depth-first search agent can
+be reused to implement IDA* search agent.
+
+Q. What is iterative deepening technique? How should we implement it? 
+A: Iterative deepening is a effective technique that saves memory for
+certain  search algorithm. It is particular usefull when the search space is
+very large. Some people said the cutoff should be increased once the agent reached the
+cell with f value beyond the cutoff. Indeed this is a wrong statement. 
+The true thing is that the cutoff should be increased when
+    i) there is no more cells whose f value are within the cutoff to explore
+    ii) still not reach the goal cell 
+The following link is what I found to be explaining the iterative deepening
+technique well. Hope this may help. 
+         http://web.stanford.edu/~msirota/soco/inter.html
+
+Q: Do we need to modify the existing heuristic function?
+A: No. The current heuristic function euclidean_heuristic() computes the
+absolute value of horizontal distance plus absolute value of vertical distance
+to the goal cell. This heuristic function turned out to be very good heuristic
+provider. 
+Hence, DO NOT modify the euclidean_heuristic() or use any other heuristic
+function. Some people changed the implementation of euclidean_heuristic() in
+previous year. They compute root of sum of squared horizontal and vertical
+distance as heuristics, which significantly compromises IDA* search efficiency
+and then got credits off.
+
+Q: What is the appropriate value of the first guess/bound for IDA*?
+A: The cutoff value for IDA* search can be initialized to be heuristic of
+birth position. 
+
+Q: Why my openNero always goes to bluescreen? 
+A: Under the openNero platform, one common reason that causes bluescreen is
+the mistaken calls to class function (like call class method without "self."). Make
+sure you are perfectly fine with python programming. If you are 100% sure that
+there is no simple issue on your codes, report the bluescreen scenario to
+openNero developer. Note that it is possible that openNero has a bug leading
+to the bluescreen.
+
+Q: How will the agent be graded? 
+A: The agent submitted will be graded on simple mazes, slightly complicated
+mazes and highly complicated mazes by hand. The complexity of mazes is defined
+by the minimal f value by which one agent can reach the goal. Say, one maze is
+regarded as very simple maze if the agent could reach the goal cell with f
+value = 16, which means there are no return back along the way to the goal
+cell. The grading will mostly be based on (1) whether the agent reached the goal
+with redundant exploration that IDA* agent should not have and (2) iterative
+deepening technique. For (1), in very simple maze, a correct agent with
+the provided function is supposed to reach the goal in a straightforward way.
+For (2), in highly complicated mazes, agent should return to birthplace to
+illustrate the incrementation of cutoff f value.
+Note that cell marking in the visualization will have no impact on the grade
+of your agents.
+Also note that since openNero itself is growing up, please remember to use
+specified version through your homework and keep up with news about the
+openNero updates.

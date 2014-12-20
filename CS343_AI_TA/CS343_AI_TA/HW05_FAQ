@@ -1,0 +1,75 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Frequently Asked Questions (FAQ) for HW05 Vision of CS343
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Q: From the assignment page:  
+    "If we are trying to determine the probability that a certain image should
+    be classified as type C, given that it has a certain collection of
+    features {f1, f2, ..., fn}, then we can write that as P(C | f1, f2, ..., fn)"
+What does the | mean in this case?
+A: 
+P(C|f1,f2,...,fn) means the probability of Class C (Tree, Sydney, Steve or Cube)
+given the observed features.
+
+Q: "Take at least 40 training, 20 testing, and 20 validation pictures in this
+world, with a good mix of each of the objects." 
+Does this just mean take 80 different pictures and use 40 specifically for
+training, 20 specifically for testing, and 20 specifically for validation? Or
+does it mean to take specific types of pictures. 
+A: 
+Yes, you need 80 different pictures.  Make sure that each set contains a
+good distribution of the 4 different objects (the robot(Steve), the
+human(Sydney), the tree and the green cube), from different instances of the
+environment.
+
+
+Q: How should we classify a scene if multiple objects are visible (i.e. both Steve and the tree are visible)?
+A: 
+If you do not want to deal with multiple objects in a scene the best thing
+to do is just make sure that all of your images contain only one object, or
+possibly only tiny segments of a second object (i.e. the tree).  I know that
+this can be hard, but it is doable.
+ 
+That said, there is an opportunity to receive extra credit on this assignment
+but correctly handling and identifying multiple objects in a scene.  Assuming
+that your implementation works reasonably well (i.e. at least better than
+random guessing) this we'll give points for it. Make sure that you include all
+of the image files that you used to train and test, and describe what you did
+in your report.
+
+
+Q: The assignment mentions the following:
+ 
+    Your features should be based on the detected edges you receive from the edge
+    detection algorithm. For example: 
+        - Number of edge pixels > 100
+        - Percentage of pixels that are edge pixels > 20%
+        - Number of edge pixels in the top half of the image that are oriented
+        upward (315, 0, or 45) > 50
+ 
+How do you derive that from the load_images array? The array seems way too
+large to get any useful information out of.
+A: 
+The array is large.  You will have to check each element of each
+array to count number of edge pixels, etc. It may take a lot of time to
+extract the features. That's why we are recommended to train "offline."
+
+
+Q: Can we collaborate on possible features?
+A: You may discuss about useful features but do not share the implementation. 
+
+
+Q: Do we have to include the training datas in our submission? Or do we just
+have to include how to collect these training datas in the readme file?  
+A: You should include the training data and briefly mention how you collect
+these training datas. (e.g. number of samples of each class)
+
+
+Q: For
+    P(C|f1,f2,...,fn) = α ∗ P(C) ∗ ∏_i P(fi|C)
+Would the alpha or P(C) even matter? Wouldn't P(C) equal .25 for all of
+the pictures, and since those are constant, wouldn't the ratios still stay
+the same?
+A: α does not matter. P(C) does matter. 
+Note that α is constant for all instances of C.
+So it is enough to see which one P(C|fi...) is the largest without considering α.

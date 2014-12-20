@@ -1,0 +1,86 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Frequently Asked Questions (FAQ) for HW02 Planning of CS343
+%% made by Jimmy Lin <jimmylin@cs.utexas.edu>
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Q: How this homework will be graded? Will we lose credits for non-optimal
+solution?
+A: Submission will be graded with full credits if the agent successfully solve
+both 2-disk problem and 3-disk problem, regardless of the optimality. Extra
+credit can be assigned to those agents that can solve 4-disk or 5-disk problem. 
+
+*Note: agents that generate non-optimal path to final goal also got full
+credits here, since the instruction does not require optimality. Thus, this
+homework should be easy to most people. So the suggestion is to require
+optimality for this homework in the next host of this class. 
+
+
+Q: What's the relationship between search and planning?
+A (by modifying student's answer): 
+If you're forming a search tree then each node represents a different state
+that you can get to from your current state. Here, the agent does not have
+the global knowledge of where the goal is. 
+ 
+If you're planning, each state is represented by a group of conditions, and
+you're trying to minimize the difference between a goal state and the initial
+state you started with so you're trying to find a sequence of actions which
+will lead to the conditions true in the goal state. You can also solve a
+planning problem by searching. In the planning, the agent does have global
+knowledge of the goal's position, but the agent should be able to find the
+most effective and efficient path through a particular mechanism of planning.
+
+
+Q: How should we get start for this homework?
+A: 
+linear_solver () in mystrip.py file is what so-called STRIPS solver in the
+instruction page. 
+The linear_solver() employed linear_solver_helper() routine to address the
+problem. 
+The current linear_solver_helper() can only help linear_solver() to complete
+2-disk problem but fail to help it achieve 3-disk problem. 
+The hints are to: 
+    a) modify the linear_solver_helper() to directly solve 3-disk problem. 
+    or 
+    b) modify the way linear_solver() invoke linear_solver_help() to solve the
+    3-disk problem. This way is sweet but may not solve 2-disk problem. 
+
+
+Q: What are the parameters for the move command in the text window? 
+A: 
+Let Move(A,B,C) be the command you want to interpret. 
+A disk right on the top of B is what agent wants to move to the top of C.
+That is
+ 
+          A                   A
+        -------   =====>    ------
+          B                   C
+
+Move(A,B,C) will be evaluated to False if A is not initially right on the top of B. 
+
+
+Q: How can we test the implementation for more than 3 disks.
+A (given by Alex Killian): 
+
+towers4_strips.txt:
+ 
+ Initial state: On(Disk1, Disk2), On(Disk2, Disk3), On(Disk3, Disk4),
+ On(Disk4, Pole1), Clear(Disk1), Clear(Pole2), Clear(Pole3), Smaller(Disk1,
+ Disk2), Smaller(Disk1, Disk3), Smaller(Disk1, Disk4), Smaller(Disk1,Pole1),
+ Smaller(Disk1,Pole2), Smaller(Disk1, Pole3), Smaller(Disk2, Disk4),
+ Smaller(Disk2, Disk3), Smaller(Disk2, Pole1), Smaller(Disk2, Pole2),
+ Smaller(Disk2, Pole3), Smaller(Disk3, Disk4), Smaller(Disk3, Pole1),
+ Smaller(Disk3, Pole2), Smaller(Disk3, Pole3), (Disk4, Pole1), Smaller(Disk4,
+ Pole2), Smaller(Disk4, Pole3)
+ Goal state: On(Disk1, Disk2), On(Disk2, Disk3), On(Disk3, Disk4), On(Disk4,
+ Pole3)
+
+ Actions:
+    Move(Disk, Source, Dest)
+ Preconditions: 
+    Clear(Disk),
+    On(Disk, Source), Clear(Dest),
+    Smaller(Disk, Dest)
+    Postconditions:
+    On(Disk, Dest),
+    !On(Disk, Source),
+    !Clear(Dest), Clear(Source)

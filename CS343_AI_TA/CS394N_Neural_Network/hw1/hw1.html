@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
+    <title>CS94N Neural Networks:  SOMs and LVQ</title>
+  </head>
+  <body>
+  <h1>Self-Organizing Maps and Learning Vector Quantization</h1>
+  <p><em>      </em>
+  </p>
+  <p>An <a href="faq.html">FAQ</a> for this homework is now available. If you
+    have questions and can&rsquo;t find an answer in it, please send an e-mail
+     to <a href="mailto:houck@cs.utexas.edu?subject=CS 394N HW1">the
+    TA</a> and cc Prof. Miikkulainen at risto@cs.utexas.edu.</p>
+  <hr>
+  <p>In this homework you will explore the capabilities and properties of
+  self-organizing maps (SOM) and learning vector quantization (LVQ).  On a CS
+    Linux machine, copy the entire contents of <tt>/u/www/users/risto/cs394n/private/hw1</tt> to
+  your own directory and proceed.  
+  <p>
+<a href="part1a/Readme.html"><b>Part 1a: Peano approximation</b></a> Form a 
+1-dimensional mapping of a uniform distribution on the 2-D unit square. 
+To get a feel of the process and the parameters value, start with small 
+maps (half a dozen units) and gradually work your way to larger maps 
+(order of 10<sup>2</sup> units). How close to a Peano curve can you get? 
+Are you convinced that it will actually get there if you keep adding units?
+
+<p>
+<a href="part1b/Readme.html"><b>Part 1b: Distribution</b></a>  Form a 
+2-dimensional map of a nonuniform distribution on the 2-dimensional unit 
+square, depicted below.  The x-component is normally distributed with 
+mean = 0.5. The y-component is a combination of two normal distributions, 
+with means at 0.25 and 0.75.  Again, start by experimenting with small maps, 
+and after you have gained insight into the process, make the final mapping 
+with a large network (10 by 10 to 10 by 20 units).   How well can the map 
+approximate a nonuniform distribution? How many units would you need to
+have to get a good approximation?
+<p>
+
+<div align="CENTER">
+  <p><img width="310" height="288" align="BOTTOM" border="0"
+ src="distr.gif"></p>
+  <div align="left">
+    <p><strong>Digit Recognition</strong> In the following parts
+      you will explore the capability of SOM and LVQ on the task of digit recognition.
+      You will have to design 8 by 8 bitmap representations for each digit of
+      0 to 9, and concatenate the representations into 64-unit input vectors.
+      Design 4-10 example patterns for each digit. Try to come up with a training
+      set that would be likely to give good generalization to digits written
+      in different styles, and also to noisy digits. You can use the X-window
+      based pattern editor 
+        <a href="digit/digit.cpp"><tt>digit.cpp</tt></a> to create your training
+      patterns. The source code, precompiled executables for various platforms
+        (.pc for x86 Linux) and instructions on how to use it are in <a href="digit/"><tt>digit</tt></a>.
+        The program can store the digits in several different formats; in this
+        homework you will be using the SNNS format (.pat files). </p>
+    <p><strong>Test Patterns</strong> The test pattern
+      file <a href="digit-test.pat"><tt>digit-test.pat</tt></a> contains several
+      examples of inaccurate, noisy, distorted, and otherwise corrupted input
+      patterns. The objective is to find out how well the network generalizes
+      into real world data, such as the patterns from the <a href="nist.pat">NIST
+      dataset</a>.
+      Be sure you do not use any of the test patterns during training! Typically
+      during testing, the output of the network is no longer a clear-cut classification
+      as was the case for the training vectors. The output unit activities stand
+      for the likelihoods of each classification. </p>
+  </div>
+</div>
+
+<p>
+<a href="part2/Readme.html"><b>Part 2: Dimensionality reduction</b></a>  
+Form a 2-d map of the 64-dimensional bitmap vectors that you designed.  In order
+to properly separate the vectors on the map, you will need about four times more
+units than you have vectors. Can you see a topological order on the map? What
+relations are preserved and what are lost? Is it easy to draw the lines that
+separate the classes? In case you have more examples of certain types of input
+patterns, do you see a magnifying effect? When you are done with training/testing,
+try add more training examples.  Do you get better performance? 
+<p>
+<a href="part3a/Readme.html"><b>Part 3a: Classification</b></a>  Label the 
+units of the self-organizing map. Now use the test patterns from  
+digit-test.pat as input:  how many of them are classified correctly?
+<p>
+<a href="part3b/Readme.html"><b>Part 3b: LVQ</b></a> Continue training the 
+self-organizing map it with your labeled vectors using the LVQ method.  
+How does the map change?  Test the classification again with the test 
+input set. How does the performance compare to the self-organizing map of Part
+3a?
+(If not, why?)
+<p>
+<b>Tools:</b> The 
+<a href="http://www.cs.utexas.edu/users/risto/cs394n/private/hw1/">
+<tt>SOM/LVQ directory</tt></a> has subdirectories for each part of the 
+assignment. They contain the appropriate self-organizing map and LVQ 
+programs and example data files.  Copy these to your own working
+directory.  Each directory also has a <tt>Readme</tt> file that explains 
+how to get started.  There is also a 
+<a href="http://www.cs.utexas.edu/users/risto/cs394n/private/hw1/hw1.tar.gz">
+tar file</a> that contains everything, but you will have to make the 
+appropriate changes if you run the program locally (for example, set 
+XENVIRONMENT to your local copy of <tt>part1a/XFmrevised</tt> if you 
+want to modify the resource file).  However, this really shouldn't be 
+difficult.
+
+<p>
+<b>Report:</b> Write a one or two page report on the experiments you did,
+and what you learned from them. Does the feature map architecture
+deliver what the theory promises (magnification, Peano-approximation,
+visualization, classification)? Does the LVQ improve classification
+capabilities significantly?  Under what
+conditions and tasks? Turn in the simulation files (including the final
+snapshot only) with your report. Also include the final labeled maps
+in parts 2 and 3.
+<p><strong>Turning In:</strong> turn in via Canvas
+<hr>
+<p>Originally by Marshall Mayberry.</p>
+
+  </body>
+</html>

@@ -1,0 +1,40 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Frequently Asked Questions (FAQ) for HW04 NLP of CS343
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+1. What is the meaning of "Move"?
+A: Move contains a combo of two actions: pick up and put down. 
+
+
+
+2.  Do we need to support a boundless number of "and" statements, or just one?
+
+A: Yes, your agents are supposed to parse the "and" compound statement as many
+as possible. 
+
+
+
+3. This is somewhat of a minor implementation detail, but what should our
+parser actually output (to the agent as commands, not to the user) in the case
+that the input command is malformed? Nothing?
+
+A: The expected output is the agents' recognition and then execution of actions. 
+For the logging, nothing is expected. 
+But the recommended implementation is to output the sequence of recognized rules
+
+
+
+4. Should "it" be recognized on different non-compound statements? As in, I
+take it it should work with this example: 
+
+    move disk1 from pole1 to pole2 and move it from pole2 to pole3
+
+But should it work with multiple commands: 
+
+    move disk1 from pole1 to pole2 
+    move it from pole2 to pole3 
+
+A: Good question. I think you do not have to implement "it" for multiple
+commands. But you need to deal with it within one command for simplicity.
+

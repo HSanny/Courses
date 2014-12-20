@@ -1,0 +1,118 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+<body> 
+<h1> Homework 1 FAQ </h1>
+<h2>Parts 1a and 1b </h2>
+<p><strong>Q.</strong> What are we supposed to get for Part 1a? <br>
+  <strong> A.</strong> You are supposed to tune the parameters to generate a
+  nice Peano&rsquo;s curve, that is, a smooth curve that covers the square as
+  much as possible without intersecting itself. </p>
+<p><strong>Q.</strong> What are we supposed to get for Part 1b? <br>
+  <strong> A.</strong> You are supposed to tune the parameters to generate a
+  nice rectangular mesh whose density reflects the underlying probability distribution. </p>
+<p><strong>Q.</strong> For Part 1b, instead of a nice rectangular, planar mapping,
+    sometimes I end up with something that looks like an hourglass. What&rsquo;s
+  going on?<br>
+  <strong> A.</strong> This is an example of local minima at work; from certain
+      initial states, the network finds the best solution it can, even though
+      it is not a good global solution. If you think about it a little while,
+      you should be able to imagine how it happens. Changing just about any of
+      the parameters (e.g. the random seed value) and restarting will usually
+      fix the problem. If it happens repeatedly for a given network configuration
+      there may be a parameter that is not set in the proper range. </p>
+<h2>Parts 3a and 3b</h2>
+<p><strong>Q.</strong> For Parts 3a and 3b, what do the digits in the squares
+  mean? <br>
+  <strong>A.</strong> This is described in <a href="part3a/Readme.html">Part
+3a Readme</a>, Item 3. Each square represents a unit in the
+map. If a square has a digit, say 3, at its center, it means that the
+corresponding map unit has become the winner for some (or all) training examples
+that are the handwritings of 3. In short, the unit recognizes 3. During testing,
+if the unit is a winner for anything other than what it was trained to recognize&mdash;say
+5, that means it fails the test, and the incorrectly recognized digit 5
+appears in the square at a position other than the center.</p>
+<p><strong>Q.</strong> For Parts 3a and 3b, does the colors of the digits in
+    the map mean anything? <br>
+  <strong> A.</strong> Not really. The coloring is primarily for your visual
+convenience. </p>
+<p><strong>Q.</strong> There are a lot of empty squares. Why? <br>
+  <strong>A.</strong> An empty square represents a map unit that, for every input
+pattern, it not the maximally responding unit (winner). </p>
+<h2>General Usage of <tt>sofm</tt> and <tt>xsofm</tt></h2>
+<p><strong>Q.</strong> Why does my <tt>xsofm</tt> program come up with just a
+  command window, and crash when I try to run something? <br> 
+  <strong>A.</strong> Possibly because you did not set the environment variable
+  for the resource file. Make sure you use the full pathname to <tt>XFmrevised</tt>,
+  like this:</p> 
+<blockquote><tt>setenv XENVIRONMENT /u/www/users/risto/cs394n/private/hw1/part1a/XFmrevised</tt></blockquote> 
+<p>Of course, you could also copy <tt>XFmrevised</tt> to your directory, and
+  just say </p> 
+<blockquote><tt>setenv XENVIRONMENT ./XFmrevised</tt></blockquote> 
+<p><strong>Q.</strong> Does it make a difference which machine I am using?<br> 
+  <strong> A.</strong> You can run sofm anywhere, but you need an X-display to
+  see the graphics with <tt>xsofm</tt>. They show up best on color monitors.
+  Make sure you do the usual <tt>xhost+</tt> on the local machine, and <tt>setenv
+  DISPLAY</tt> on the machine you are running it on, if you are not on a <tt>.cs.utexas.edu</tt> machine.</p> 
+<p><strong>Q.</strong> Does it make a difference which version of <tt>sofm</tt> or <tt>xsofm</tt> I
+  use for each part?<br> 
+  <strong>A.</strong> Yes! The subdirectory for each part has a <em>different</em> program
+  with the same name, e.g. <tt>part1a/xsofm</tt> and <tt>part1b/xsofm</tt>. There
+  are important differences between each of these files, even though they are
+  very similar. For instance, the one in Part 1a has special code to generate
+  a uniform input distribution, while that in Part 1b has special code to generate
+  a non-uniform input distribution. Be sure to use the ones provided in the appropriate
+  directory for each part. </p> 
+<p><strong>Q.</strong> Why does <tt>xsofm</tt> say &ldquo;color xxx not allocated?&rdquo; What
+  can be done to fix it?<br> 
+  <strong>A.</strong> This happens because other applications on your screen
+  have already allocated some of the colors that <tt>xsofm</tt> is trying to
+  use. When too many colors are not allocated, the display of activation patterns
+  won&rsquo;t appear well. The input display and the network weights display
+will still work fine. You can either</p>
+<ul> 
+  <li>ignore this problem, and just look at the input display and network displays;</li> 
+  <li> kill off some of your applications and rerun <tt>xsofm</tt>;</li> 
+  <li> migrate to a machine with more colors (if you insist on seeing fancy stuff);
+    or</li> 
+  <li> go and reduce the colors <tt>xsofm</tt> is trying to allocate. To reduce
+    allocated colors, you have to go into the <tt>create_colormap</tt> routine
+    in <tt>xdisplay.c</tt>, reduce the value of <tt>color_range</tt>, and recompile
+    the program. </li> 
+</ul> 
+
+<p><strong>Q.</strong> Why do the <tt>xsofm</tt> windows appear different sizes on different
+  displays?<br>
+  <strong> A.</strong> The resolution of the different monitors are different.
+  The size of the windows is set in the application resource file&mdash;it is set
+  for a minimum 1024x768 screen. To run on other machines, and see all of the
+  windows properly, you can either (1) change these sizes in <tt>XFmrevised</tt> or (2)
+  just resize the windows after the program has come up. Note that the activity
+  window will sometimes have black artifacts if it is not an integer multiple
+  of the network size. </p> 
+<p><strong>Q.</strong> Once the simulation is running, how do I control it?<br>
+  <strong>A.</strong> <tt>sofm</tt> is not an interactive
+  program, only <tt>xsofm</tt> is. When you are displaying previously stored snapshots,
+  it will wait for a buttonpress before displaying the next snapshot (similarly
+  with <tt>sofm</tt>, when you are displaying multiple snapshots, hit a return to see
+  the next one). All simulation parameters are specified in the simufile. The
+  file <tt>README.parameters</tt> explains how they work. The reason for making these
+  programs batch-oriented rather than interactive is that most of the big simulations
+  take hours, or days (sometimes months!), so you really want to run them in
+  the background and only periodically check how they are doing. </p>
+<p><strong>Q.</strong> I decided to try one really monstrous superlarge network,
+  but the program coredumped!<br>
+  <strong> A.</strong> Some of the parameters have hardcoded limits, as defined
+  in <tt>sofmdefs.h</tt>. For example, there is a max network size, max number
+  of snapshots, max number of input vectors. You can change these limits and
+recompile. </p>
+<h2>Miscellaneous</h2>
+<p><strong>Q.</strong> I've read this FAQ and my question
+  was not listed in here!<br>
+  <strong> A</strong>. Send your question to <a href="mailto:cs394n@utlists.utexas.edu">the class mailing list</a>.
+  If describing a suspected software problem, be sure to
+  include all relevant information, such as what machines you were using (both
+  local <em>and</em> remote), and a sample transcript showing the unexpected behavior.</p>
+</body>
+</html>

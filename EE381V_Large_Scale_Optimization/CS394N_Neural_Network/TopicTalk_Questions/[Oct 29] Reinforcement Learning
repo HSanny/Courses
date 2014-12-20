@@ -1,0 +1,32 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Question for Oct 29 FUNCTION APPROXIMATION IN REINFORCEMENT LEARNING
+%% By Jimmy Lin (XIN LIN, EID: xl5224) <jimmylin@utexas.edu>
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+1. It is said that deep learning model can improve the result of
+robotic control. What is the source (root) of such improvement? Is it because
+the features automatically trained by the network significantly improves? 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2. As we know, deep learning model requires higher computational complexity
+than common neural network. What techniques are currently employed to make the
+update for deep learning real time computable? Is there any better technique
+to do so? 
+

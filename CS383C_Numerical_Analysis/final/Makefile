@@ -1,3 +1,6 @@
+# Report for COMP2550 MAKEFILE
+# Jimmy Lin <u5223173@anu.edu.au> 
+
 #######################################################################
 # DO NOT EDIT THIS MAKEFILE UNLESS YOU KNOW WHAT YOU ARE DOING. 
 #######################################################################	
@@ -10,7 +13,7 @@ all:
 
 push:
 	git add main.tex main.pdf Makefile
-	git commit -m "more on personal statement"
+	git commit -m "homework update"
 	git push
 
 clean:

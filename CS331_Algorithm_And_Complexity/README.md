@@ -16,7 +16,7 @@ Projects and Performance
 > 
 > Assignment 5: 92/100 94 80 [14 50 73 85 88 92 94 100 100]
 > 
-> Assignment 6: 
+> Assignment 6: 100/100
 
 
 Tests and Performance

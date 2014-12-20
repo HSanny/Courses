@@ -37,7 +37,7 @@ Exams
 -----------
 >  Midterm: 76.5/100
 >  
->  Final: TBD/100
+>  Final: --/100
 
 Class Review 
 -----------

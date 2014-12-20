@@ -1,0 +1,454 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%  THIS TEX FILE IS TO GENERATE PDF FILE FOR 
+%%% 
+%%%  COPYRIGHT (C) JIMMY LIN, 2013, UT AUSTIN
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[11pt,a4paper]{report}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%  PACKAGES USED IN THIS TEX SOURCE FILE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{geometry,amsthm,amsmath,graphicx,amssymb,fancyheadings}
+\usepackage[]{mcode}
+\usepackage[colorlinks,
+            linkcolor=blue,
+            anchorcolor=red,
+            citecolor=green
+            ]{hyperref}
+% for my mac
+\IfFileExists{/Users/JimmyLin/.latex/UTA_CS/JS.sty}{ 
+    \usepackage{/Users/JimmyLin/.latex/UTA_CS/JS}
+    \usepackage{/Users/JimmyLin/.latex/UTA_CS/JSASGN}
+}{} 
+% for UT's linux machine
+\IfFileExists{/u/jimmylin/workspace/Configs/latex/UTA_CS/JS.sty}{
+    \usepackage{/u/jimmylin/.latex/UTA_CS/JS} 
+    \usepackage{/u/jimmylin/.latex/UTA_CS/JSASGN}
+}{} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% MACROS CONTAINING THE FILE INFORMATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\COURSE}{EE381V Large Scale Optimization}
+\renewcommand{\LECTURER}{Sujay Sanghavi}
+\renewcommand{\SECTION}{17350}
+\renewcommand{\TASK}{Problem Set 0}
+\renewcommand{\RELEASEDATE}{September 5, 2014}
+\renewcommand{\DUEDATE}{September 11, 2014}
+\renewcommand{\TIMECONSUME}{10 hours}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% DOCUMENTATION STARTS FROM HERE 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% TITLE PAGE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{titlepage}
+    \maketitle
+\end{titlepage}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% CONTENT PAGE: TABLEOFCONTENTS, LISTOFTABLES, LIST OF FIGURES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\contentsname}{Table of Contents}
+\begin{center} 
+    \tableofcontents 
+    %\listoftables 
+    %\listoffigures
+\end{center}
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% GENERAL DOCUMENTATION BEGINS 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Matlab and Computational Assignment}
+\section{Algorithm 1: Least Square}
+The command to invoke standarded least-squared regression:
+\begin{verbatim}
+>> algo1()
+\end{verbatim}
+Note that {\it algo1.m} includes scripts for all three datasets.
+%{{{
+\subsection{Small-scale dataset: Succeed}
+The brief summary of applying standarded least-squared regression on
+small-scale dataset is as follows:
+\begin{itemize}
+    \item  Total CPU time (secs)  = $0.18$  
+
+    \item   CPU time per iteration = $0.02$
+
+    \item   Regression Error $||X \beta - y||$: 1.1698e-10
+    
+    \item Testing Error $||X_{test} \beta - y_{test}||$: $23.058394$ (pretty large)
+\end{itemize}
+
+\subsection{Medium-scale dataset: Succeed}
+The brief summary of applying standarded least-squared regression on
+medium-scale dataset is as follows:
+\begin{itemize}
+ \item   Total CPU time (secs)  = $43.95$  
+
+ \item   CPU time per iteration = $5.49$ 
+
+ \item   Regression Error $||X \beta - y||$: 3.2594e-09
+    
+  \item  Testing Error $||X_{test} \beta - y_{test}||$: $19.862394$ (pretty large)
+\end{itemize}
+\subsection{Large-scale dataset: Failed}
+    
+    This standarded least-square regression task is too large-scaled to be computed. 
+%}}}
+
+\newpage
+\section{Algorithm 2: optimization with LASSO}
+The command to invoke least-squared regression with LASSO:
+\begin{verbatim}
+>> algo2()
+\end{verbatim}
+Note that {\it algo2.m} includes scripts for all three datasets.
+%{{{
+\subsection{Small-scale dataset: Succeed}
+The brief summary of applying least-squared regression with LASSO on
+small-scale dataset is as follows:
+\begin{itemize}
+ \item   Total CPU time (secs)  = $0.38$ 
+
+ \item   CPU time per iteration = $0.02$  
+
+ \item   Regression Error: 6.7886e-10
+
+ \item   Testing Error: $0.144338$
+
+ \item   Supports (non-zeros entries of $\beta$): $43$ ($500$ atoms in total)
+\end{itemize}
+
+\subsection{Medium-scale dataset: Succeed}
+The brief summary of applying least-squared regression with LASSO on
+medium-scale dataset is as follows:
+\begin{itemize}
+ \item   Total CPU time (secs)  = $126.66$
+
+ \item   CPU time per iteration = $4.87$  
+
+ \item   Regression Error: 4.4292e-09
+ 
+ \item   Testing Error: $0.078289$
+
+ \item   Supports (non-zeros entries of $\beta$): $342$ ($5000$ atoms in total)
+\end{itemize}
+
+\subsection{Large-scale dataset: Failed}
+    
+    This least-square regression with LASSO task is too large-scaled to be computed. 
+%}}}
+\\[0.3cm]
+
+\noindent 
+{\bf Remarks}: Least-squared regression
+with LASSO does outperfrom standarded least-squared regression in its
+prediction accuracy. Besides, it has higher computational complexity since it
+requires more iterations for convergence and each iteration cost more time to
+complete.
+
+\newpage
+\section{Orthogonal Matching Pursuit}
+The command to invoke regression with OMP preprocessing:
+\begin{verbatim}
+>> regress_omp()
+\end{verbatim}
+
+\subsection{Small-scale Dataset: Succeed}
+The brief summary of applying regression with OMP feature selection on
+small-scale dataset is as follows:
+\begin{itemize}
+\item Indices of Features selected by OMP (with order): 402, 235, 86, 11, 108. 
+\item Elapsed time is 0.198106 seconds.
+\item Regression Error $||X \beta - y||$: 5.3785e-02
+\item Testing Error $||X_{test} \beta - y_{test}||$: 4.4208e-02
+\end{itemize}
+
+\subsection{Medium-scale Dataset: Succeed}
+The brief summary of applying regression with OMP feature selection on
+medium-scale dataset is as follows:
+\begin{itemize}
+\item Indices of Features selected by OMP (with order): 577, 2760, 561, 3614,
+    3958. 
+\item Elapsed time is 0.209093 seconds.
+\item Regression Error $||X \beta - y||$: 2.1955e-01
+\item Testing Error $||X_{test} \beta - y_{test}||$: 1.8219e-02
+\end{itemize}
+
+\subsection{Large-scale Dataset: Succeed}
+The brief summary of applying regression with OMP feature selection on
+large-scale dataset is as follows:
+\begin{itemize}
+\item Indices of Features selected by OMP (with order): 17099, 29426, 35373,
+    22452, 43354. 
+\item Elapsed time is 2.994790 seconds.
+\item Regression Error $||X \beta - y||$: 6.9964e-01
+\item Testing Error $||X_{test} \beta - y_{test}||$: 6.4437e-03
+\end{itemize}
+
+Note that Elapsed time is defined as OMP preprocessing and regression for
+selected atoms on that dataset, but not included computation for regression
+error and testing error. 
+\\[0.3cm]
+
+\noindent 
+{\bf Remarks}: Least-squared regression on OMP feature selection performs much
+better than standarded least-squared regression and least-squared regression
+with LASSO. Besides, it has lower computational complexity since it allows the
+large-scale dataset (third dataset) to be regressed.
+
+\chapter{Linear Algebra Review}
+\section{More Range and Nullspace}
+\subsection{Smallest and Largest rank of $C = AB$}
+
+{\bf Conditions}: 
+$A \in \mathbb{R}^{10 \times 10}$ with $rank(A) = 5$ and $B \in \mathbb{R}^{10 \times 10}$ with
+$rank(B) = 5$. 
+
+Sylvester's rank inequality: 
+$\forall A \in R^{m\times k}, B \in \mathbb{R}^{k\times n}$
+$$rank(A) + rank(B) - k \leq rank(AB)$$
+
+Smallest rank of $C = AB$ is $rank(A) + rank(B) - k = 5 + 5 - 10 = 0$.
+
+Largest rank of $C = AB$ is $min(rank(A), rank(B)) = min(5,5) = 5$.
+
+\subsection{Largest rank of $C = AB$}
+{\bf Conditions}: 
+$A \in \mathbb{R}^{10 \times 15}$ with $rank(A) = 7$ and $B \in \mathbb{R}^{15 \times 11}$ with
+$rank(B) = 8$. 
+
+Largest rank of $C = AB$ is $min(rank(A), rank(B)) = min(7,8) = 7$.
+
+\section{Riesz Representation Theorem}
+\newcommand{\w}{\mathbf{w}}
+\newcommand{\x}{\mathbf{x}}
+\newcommand{\e}[1]{\mathbf{e}_{#1}}
+\newcommand{\alp}[1]{\mathbf{\alpha}_{#1}}
+\newcommand{\linearcombo}{\alp{1} \e{1} + \alp{2} \e{2} + \dots + \alp{n} \e{n}}
+Linear map $f: \mathbb{R}^n \rightarrow \mathbb{R}$ has two critical properties due to its linearity: 
+\begin{align}
+    \text{additivity: }& f(x + y) = f(x) + f(y), \forall x, y \in dom(f)
+    \label{LM:additivity} \\
+    \text{homogeneity: }& f(\alpha x) = \alpha f(x), \forall \alpha \in
+    \mathbb{R}, x \in dom(f) \label{LM:homogeneity}
+\end{align}
+Let arbitrary vector $\w = (\alp{1}, \alp{2}, \dots, \alp{n}) \in \mathbb{R}^{n}$.
+Then we can denote $\w$ as linear combination of standard basis
+\begin{align}
+    \w = \linearcombo \label{RRT:linearCombo}
+\end{align}
+Now we start to show that $f(\w)$ can be represented as inner product of $\w$
+and another vector.
+\begin{align}
+    f(\w) &= f(\linearcombo) 
+    && \text{standard basis representation} \eqref{RRT:linearCombo} \\
+    &= f(\alp{1} \e{1}) + f(\alp{2} \e{2}) + \dots + f(\alp{n} \e{n}) 
+    && \text{additivity of linear map} \eqref{LM:additivity} \\
+    &= \alp{1} f(\e{1}) + \alp{2} f(\e{2}) + \dots + \alp{n} f(\e{n})
+    && \text{additivity of linear map} \eqref{LM:homogeneity} \\
+    &= \langle(f(\e{1}), f(\e{2}), \dots, f(\e{n})), (\alp{1}, \alp{2}, \dots, \alp{n}) \rangle 
+    && \text{definition of inner product} \\
+    &= \langle \x, \w \rangle 
+    && \x = (f(\e{1}), f(\e{2}), \dots, f(\e{n}))
+\end{align}
+Hence, we have successfully proved that 
+\begin{align}
+    \forall \text{ linear map } f:\mathbb{R}^n \rightarrow \mathbb{R}, \exists \x \in \mathbb{R}^n, f(\w) = \langle \x, \w \rangle
+\end{align}
+
+\newpage
+\section{Polynomial Vector Spaces}
+\subsection{$Tp=2p(t)-tp'(t)$: False}
+$T$ is represented by an diagonal matrix with all diagonal entries 
+$b_i = 2 - i$. Obviously, for $i = 2, b_i = 0$. That is to say, the second row
+of $T$ is zeros. Hence, $T$ is not full-rank and then $T$ is not surjective.
+There must exist a $q$ that cannot be reached by $Tp$. For example: $t^2$.
+\subsection{$Tp=2p(t)-3tp'(t)$: True}
+$T$ is represented by an diagonal matrix with all diagonal entries 
+$b_i = 2 - 3*i$. Obviously, for $\not \exists i \in \mathbb{Z}, b_i = 0$.
+That is to say, the matrix $T$ is full rank and then $T$ is surjective: for
+every polynomial $q \in V$, there exists a polynomial $p \in V$, with $Tp = q$.
+\subsection{Characterization of Surjectivity: $a_0 \not = 0$}
+To make sure that the corresponding mapping $T$ to be surjective: for every
+polynomial(vector) $q \in V$, there does exist a polynomial(vector) $p \in V$
+such that $Tp = q$, we need to gurantee the $T$ corresponds to full-rank
+matrix. In general, matrix $T$ is still a diagonal matrix with its diagonal
+entries $b_i (i \in [0, d])$ to be 
+\begin{align}
+    b_i &= a_0 + a_1 \cdot i + a_2 \cdot i (i-1) + \dots + a_d \cdot i
+    (i-1)...(i-d) \\
+    &= \sum_{j=0}^d \mathbb{I} (i \geq j) \cdot a_{j} \frac{i!}{(i-j)!}
+\end{align}
+Since $T$ is diagonal matrix, we need to make sure every diagonal entries is
+non-zero, that is 
+\begin{align}
+    b_i \not = 0
+\end{align}
+In conclusion, we have \begin{align}
+    \forall i, \sum_{j=0}^d \mathbb{I} (i \geq j) \cdot a_{j} \frac{i!}{(i-j)!} \not = 0 
+    \implies \forall q \in V, \exists p \in V, s.t.\ Tp=q
+\end{align}
+
+\newpage
+\newcommand{\rank}[1]{rank(#1)}
+\section{Rank}
+\subsection{Show that $\rank{A} \leq min\{m, n\}$}
+\begin{proof}
+\rank{A} is defined as the number of columns that are linearly
+independent. Then, we have 
+\begin{align}  \label{RANK:1-col}
+    \rank{A} \leq \text{number of linearly independent columns} \leq n
+\end{align}
+Since the number of linearly independent columns equals to the
+number of linearly independent rows, 
+\begin{align} \label{RANK:1-row}
+    \rank{A} \leq \text{number of linearly independent rows} \leq m
+\end{align}
+From \eqref{RANK:1-col} and \eqref{RANK:1-row}, it is easy to derive the
+desired result:
+\begin{align} \label{RANK:1-result}
+    \rank{A} \leq  min\{m, n\}
+\end{align}
+\end{proof}
+\subsection{Sylvester's rank inequality}
+\begin{proof} [Proof of $\rank{AB} \leq min\{\rank{A},\rank{B}\}$]
+    Let $AB\x \in Col(AB), \x \in \mathbb{R}^k$, then $AB\x = A(B\x) \in
+    Col(A)$. Since $B\x$ may not fill up the whole $Col(A)$, we have
+    \begin{align}
+        Col(AB) \subset Col(A)
+    \end{align}
+    Since {\it rank} is defined to be the dimensionality of column space, we
+    proved
+    \begin{align}
+        \rank{AB} \leq \rank{A} \label{Sylvester:1}
+    \end{align}
+    By rank-nullity theorem:
+    \begin{align}
+        \rank{B} = n - nullity(B) \label{rank_null:1}
+    \end{align}
+    Similarly, we have
+    \begin{align}
+        \rank{AB} = n - nullity(AB) \label{rank_null:2}
+    \end{align}
+    Since $B\x \Rightarrow AB\x$ and $AB\x \not \Rightarrow B\x$, we have 
+    \begin{align}
+        nullity(B) \leq nullity(AB)
+    \end{align}
+    Based on \eqref{rank_null:1} and \eqref{rank_null:2}, we have 
+    \begin{align}
+        \rank{AB} \leq \rank{B} \label{Sylvester:2}
+    \end{align}
+    In terms of \eqref{Sylvester:1} and \eqref{Sylvester:2}, we have
+    \begin{align}
+        \rank{AB} \leq min\{\rank{A},\rank{B}\} \label{Sylvester:3}
+    \end{align}
+\end{proof}
+\begin{proof} [Proof of $\rank{A} + \rank{B} - k \leq \rank{AB}$]
+    We can make use of Frobenius rank inequality by instantiating $B$ as $I$,
+    $C$ as $B$.
+    \begin{align}
+        \rank{A I} + \rank{B I} \leq \rank{I} + \rank{AIB} 
+    \end{align}
+    Since  $\rank{I_{p \times k}} \leq min\{p, k\} \leq k$, then
+    \begin{align}
+        \rank{A} + \rank{B} \leq k + \rank{AB} \\
+        \rank{A} + \rank{B} -k \leq \rank{AB}
+    \end{align}
+    Hence, we leave the essential part of proof to frobenius rank inequality.
+\end{proof}
+\subsection{Subadditivity: $\rank{A+B} \leq \rank{A} + \rank{B}$}
+\begin{proof} 
+    Since both $A$ and $B$ are $m\times n$ matrix, we can denote them as 
+    \begin{align}
+        A = 
+        \begin{pmatrix}
+            \vrule & \vrule & \vrule & \vrule & \vrule& \vrule \\
+            a_0 & a_1 & \dots & a_j & \dots & a_n \\
+            \vrule & \vrule & \vrule & \vrule & \vrule& \vrule 
+        \end{pmatrix}
+        ,\
+        B = 
+        \begin{pmatrix}
+            \vrule & \vrule & \vrule & \vrule & \vrule& \vrule \\
+            b_0 & b_1 & \dots & b_j & \dots & b_n \\
+            \vrule & \vrule & \vrule & \vrule & \vrule& \vrule 
+        \end{pmatrix}
+    \end{align}
+    Obviously $a_j, b_j$ are column vector of $A$ and $B$ respectively. 
+    Then we can represent $(A+B)\x$ as 
+    \begin{align}
+        (A+B)\x = A\x + B\x = \sum_j^n a_j \x_j + \sum_j^n b_j \x_j
+    \end{align}
+    It is easy to see that 
+    \begin{align}
+        Col(A+B) = Col(A) + Col(B) - Col(A) \cap Col(B)
+    \end{align}
+    Note that we remove the space overlapped by $Col(A)$ and $Col(B)$ since
+    this space should not be counted twice for $Col(A+B)$.
+
+    In general, some $a_j$ or $b_j$ are coupled (mutally dependent), in which
+    cases, $ \emptyset \subset Col(A) \cap Col(B)$. 
+    In summary, we have 
+    \begin{align}
+        \rank{A+B} \leq \rank{A} + \rank{B}
+    \end{align}
+    At the best case, all $a_j$ and $b_j$ are linearly independent and then
+    $Col(A) \cap Col(B) = \emptyset$. Hence, in this case, $\rank{A+B} = \rank{A} +
+    \rank{B}$.
+\end{proof}
+\subsection{Frobenius Rank Inequality}
+\begin{proof}
+    If $U \subset V$ and $X: U \rightarrow W$, then
+    \begin{align}
+        dim\ ker X|_U \leq dim\ ker X
+    \end{align}
+    By Rank-Nullity Theorem, we have 
+    \begin{align}
+        dim\ ker X = dim V - dim\ Ran X
+    \end{align}
+    Hence, in general we have
+    \begin{align}
+        dim\ ker X|_U \leq dim V - dim\ Ran X
+    \end{align}
+    Let $U = Ran BC$ and $V = Ran B$ and $X = A$, we have
+    \begin{align}
+        dim\ ker A|_{Ran BC} &\leq dim\ Ran B - dim\ Ran A \\
+                             &\leq dim\ Ran B - dim\ Ran AB
+    \end{align}
+    Since $dim\ ker A|_{Ran BC} = dim\ Ran B - dim\ Ran ABC$, we have
+    \begin{align}
+        dim\ Ran BC - dim\ Ran ABC \leq dim\ Ran B - dim\ Ran AB
+    \end{align}
+    That is 
+    \begin{align}
+       dim\ Ran AB + dim\ Ran BC  \leq dim\ Ran B + dim\ Ran ABC
+    \end{align}
+
+\end{proof}
+
+\newpage
+\appendix
+\chapter{Codes Printout}
+
+\section{Sparse Recovery}
+\subsection{Algorithm 1: Least Square}
+\lstinputlisting{../ps0_matlab/algo1.m}
+\newpage
+\subsection{Algorithm 2: Optimization with LASSO}
+\lstinputlisting{../ps0_matlab/algo2.m}
+\newpage
+
+\section{Orthogonal Matching Pursuit}
+
+\subsection{OMP Routine}
+\lstinputlisting{../ps0_matlab/omp.m}
+
+\newpage
+\subsection{Regression Scripts}
+\lstinputlisting{../ps0_matlab/regress_omp.m}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% General Documentation ends
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}

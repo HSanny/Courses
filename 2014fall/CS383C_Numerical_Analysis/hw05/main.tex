@@ -1,0 +1,412 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%  THIS TEX FILE IS TO GENERATE PDF FILE FOR 
+%%% 
+%%%  COPYRIGHT (C) JIMMY LIN, 2013, UT AUSTIN
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[11pt,a4paper]{article}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%  PACKAGES USED IN THIS TEX SOURCE FILE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{geometry,amsthm,amsmath,graphicx,fancyheadings,amsfonts,tikz}
+\usepackage[colorlinks,
+            linkcolor=blue,
+            anchorcolor=red,
+            citecolor=green
+            ]{hyperref}
+% for my mac
+\IfFileExists{/Users/JimmyLin/.latex/UTA_CS/JS.sty}{ 
+    \usepackage{/Users/JimmyLin/.latex/UTA_CS/JS}
+    \usepackage{/Users/JimmyLin/.latex/UTA_CS/JSASGN}
+}{} 
+% for UT's linux machine
+\IfFileExists{/u/jimmylin/workspace/Configs/latex/UTA_CS/JS.sty}{
+    \usepackage{/u/jimmylin/.latex/UTA_CS/JS} 
+    \usepackage{/u/jimmylin/.latex/UTA_CS/JSASGN}
+}{} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% MACROS CONTAINING THE FILE INFORMATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\COURSE}{CS383C Numerical Analysis}
+\renewcommand{\LECTURER}{Robert A. van de Geijn}
+\renewcommand{\SECTION}{53180}
+\renewcommand{\TASK}{HW05 Numerical Stability}
+\renewcommand{\RELEASEDATE}{Oct. 08 2014}
+\renewcommand{\DUEDATE}{Oct. 14 2014}
+\renewcommand{\TIMECONSUME}{10 hours}
+
+\renewcommand{\thesection}{Exercise \arabic{section}.}
+\renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}
+\renewcommand{\contentsname}{Exercises}
+\newcommand{\bu}{\mathbf{u}}
+\newcommand{\dchi}{\delta \chi}
+\newcommand{\cchi}{\overset{\checkmark}{\chi}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% DOCUMENTATION STARTS FROM HERE 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% TITLE PAGE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{titlepage}
+    \maketitle
+\end{titlepage}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% CONTENT PAGE: TABLEOFCONTENTS, LISTOFTABLES, LIST OF FIGURES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{center} 
+    \tableofcontents  
+%
+%    %\listoftables 
+%    %\listoffigures
+\end{center}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% GENERAL DOCUMENTATION BEGINS 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\setcounter{section}{2}
+\section{}
+\subsection{}
+Write $1$ as floating number. 
+\begin{align}
+    .1\underbrace{00\cdots0}_{t-1} \times 2^1
+\end{align}
+
+\subsection{}
+Show that $\bu = \frac{1}{2} \cdot 2^{1-t}$
+\begin{proof}
+    Let $\chi = .\delta_0 \delta_1 \cdots \delta_{t-1} \delta_t \cdots$ and 
+    $\cchi$ to be the value stored in t-digit floating number with rounding
+    mechanism. Then if $\delta_t = 0$, then $\chi = \cchi$ and $|\dchi| = 0 \leq 2^{e-t-1}$.
+    But if $\delta_t = 1$, due to the rounding mechanism, then  $\chi < \cchi$ and 
+    \begin{align}
+        |\dchi| = |\chi - \cchi|
+        = |.\delta_0 \delta_1 \cdots \delta_{t-1} \delta_{t} \cdots \times 2^e
+            - .\delta_0 \delta_1 \cdots \delta_{t-1}' \times 2^e|
+            \leq .\underbrace{00\cdots0}_{t} 1 \times 2^e = 2^{e-t-1}
+    \end{align}
+    For $\chi$, since $\delta_0 = 1$ (normalized)
+    \begin{align}
+        | \chi | = | .\delta_0 \delta_1 ... \times 2^e | \geq .1 \times 2^e  \geq 2^{e-1}
+    \end{align}
+    Thus, 
+    \begin{align}
+        \frac{|\dchi|}{|\chi|} \leq \frac{2^{e-t-1}}{2^{e-1}} = \frac{1}{2} \cdot 2^{1-t}
+    \end{align}
+    Then, 
+    \begin{align}
+        |\dchi| \leq \frac{1}{2} \cdot 2^{1-t} |\chi|
+    \end{align}
+    Now, we have 
+    \begin{align}
+        \bu =  \frac{1}{2} 2^{1-t} 
+    \end{align}
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setcounter{section}{9}
+\section{}
+Show that $|AB| \leq |A| |B|$.
+
+\begin{proof}
+Let $C=AB$. And the $(i,j)$ entry of $|C|$ is given by 
+\begin{align}
+    |c_{i,j}| = \big| \sum_{p=0}^{k} a_{i,k} b_{k,j} \big|  
+    \leq \sum_{p=0}^{k} | a_{i,k} b_{k,j} | 
+    \leq \sum_{p=0}^{k} | a_{i,k} | |  b_{k,j} | 
+\end{align}
+which equals $(i,j)$ entry of $|A| |B|$. Hence, we have 
+\begin{align}
+    |AB| \leq |A| |B|
+\end{align}
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\setcounter{section}{11}
+\section{}
+\subsection{}
+Show that if $|A| \leq |B|$, then $||A||_1\leq||B||_1$.
+\begin{proof}
+    Partition 
+    $A_{m \times n} = \left( \begin{array}{c|c|c|c} a_0 & a_1 & ... & a_{n-1} \end{array} \right)$
+    where $a_j$ indicates the $j$-th column of matrix $A$. 
+    Similarly, we partition 
+    $B_{m \times n} = \left( \begin{array}{c|c|c|c} b_0 & b_1 & ... & b_{n-1} \end{array} \right)$
+    where $b_j$ indicates the $j$-th column of matrix $B$. 
+    Then we use $a_{ij}$ and $b_{ij}$ to denote $i$-th element of $a_j$ and $b_j$ respectively.
+    \begin{align}
+        || A ||_1 
+        = \max_{0 \leq j < n} || a_j ||_1 
+        = \max_{0 \leq j < n} \sum_{i=0}^{m-1} |a_{ij}| 
+        \leq \max_{0 \leq j < n} \sum_{i=0}^{m-1} |b_{ij}| 
+        = \max_{0 \leq j < n} || b_{j} ||_1 
+        = || B ||_1 
+    \end{align}
+\end{proof}
+\begin{lemma}
+    For arbitrary matrix
+    $A = \left( \begin{array}{c|c|c|c} a_0 & a_1 & ... & a_{n-1} \end{array} \right)$, 
+    $|| A ||_1 = \max_{0 \leq j < n} || a_j ||_1 $.
+\begin{proof}
+    This lemma has been proved in Notes on Norms.    
+\end{proof}
+\end{lemma}
+
+\subsection{}
+Show that if $|A| \leq |B|$, then $||A||_{\infty}\leq||B||_{\infty}$.
+\begin{proof}
+    Partition 
+    $A_{m \times n} = \left( \begin{array}{c} a_0 \\ \hline a_1 \\\hline \vdots \\\hline a_{m-1} \end{array} \right)$, 
+    where $a_i$ indicates the $i$-th row of matrix $A$. 
+    Similarly, we partition 
+    $B_{m \times n} = \left( \begin{array}{c} b_0 \\ \hline b_1 \\\hline \vdots \\\hline b_{m-1} \end{array} \right)$, 
+    where $b_i$ indicates the $i$-th row of matrix $B$. 
+    Then we use $a_{ij}$ and $b_{ij}$ to denote $j$-th element of $a_i$ and $b_i$ respectively.
+    \begin{align}
+        || A ||_{\infty}
+        = \max_{0 \leq i < m} || a_i ||_1 
+        = \max_{0 \leq i < m} \sum_{j=0}^{n-1} |a_{ij}| 
+        \leq \max_{0 \leq i < m} \sum_{j=}^{n-1} |b_{ij}| 
+        = \max_{0 \leq i < m} || b_i ||_1 
+        = || B ||_{\infty}
+    \end{align}
+\end{proof}
+\begin{lemma}
+    For arbitrary matrix
+    $A = \left( \begin{array}{c} a_0 \\ \hline a_1 \\\hline \vdots \\\hline a_{m-1} \end{array} \right)$, 
+    $|| A ||_{\infty} = \max_{0 \leq i < m} || a_i ||_1 $.
+\begin{proof}
+    This lemma has been proved in Notes on Norms.    
+\end{proof}
+\end{lemma}
+
+\subsection{}
+Show that if $|A| \leq |B|$, then $||A||_F\leq||B||_F$.
+Let $A, B \in \mathbb{R}^{m\times n}$ and 
+$a_{ij}$, $b_{ij}$ be $(i,j)$ entry of $A$, $B$ respectively.
+\begin{proof}
+    \begin{align}
+        ||A||_F 
+        = \sum_{i=0}^{m-1} \sum_{j=0}^{n-1} |a_{ij}|^2
+        \leq \sum_{i=0}^{m-1} \sum_{j=0}^{n-1} |b_{ij}|^2
+        = ||B||_F
+    \end{align}
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\setcounter{section}{12}
+\newcommand{\ckappa}{\overset{\checkmark}{\kappa}}
+\newcommand{\cp}[1]{\chi_{#1}\psi_{#1}}
+\newcommand{\ect}[1]{(1+\epsilon_{*}^{(#1)})}
+\newcommand{\ecp}[1]{(1+\epsilon_{+}^{(#1)})}
+\section{}
+\begin{align}
+    \ckappa 
+    & = [ (\cp{0} + \cp{1}) + \cp{2}] \\
+    & = [ [\cp{0} + \cp{1}] + [\cp{2}] ] \\
+    & = [ [[\cp{0}] + [\cp{1}]] + [\cp{2}] ] \\
+    & = [ [\cp{0}\ect{0} + \cp{1}\ect{1}] + \cp{2}\ect{2} ] \\
+    & = [ \big(\cp{0}\ect{0} + \cp{1}\ect{1}\big)\ecp{1} + \cp{2}\ect{2} ] \\
+    & = \bigg( \big(\cp{0}\ect{0} + \cp{1}\ect{1}\big)\ecp{1} + \cp{2}\ect{2} \bigg) \ecp{2} \\
+    & =  \cp{0}\ect{0}\ecp{1}\ecp{2} + \cp{1}\ect{1}\ecp{1}\ecp{2} + \cp{2}\ect{2}\ecp{2}  \\
+    & =  \left(\begin{array}{c} \chi_0 \\ \chi_1 \\ \chi_2 \\ \end{array} \right)^T 
+    \left(\begin{array}{c} \epsilon_0\ect{0}\ecp{1}\ecp{2} \\
+            \epsilon_1\ect{1}\ecp{1}\ecp{2} \\ \epsilon_2 \ect{2}\ecp{2} \\ \end{array} \right) \\
+    & =  \left(\begin{array}{c} \chi_0 \\ \chi_1 \\ \chi_2 \\ \end{array} \right)^T 
+        \left(\begin{array}{c|c|c} 
+            \ect{0}\ecp{1}\ecp{2} & 0 & 0 \\ 
+            0 & \ect{1}\ecp{1}\ecp{2} & 0 \\ 
+            0 & 0 & \ect{2}\ecp{2}  
+        \end{array} \right)
+    \left(\begin{array}{c} \epsilon_0 \\ \epsilon_1 \\ \epsilon_2 \\ \end{array} \right) \\
+    & =  \left(\begin{array}{c} 
+           \chi_0 \ect{0}\ecp{1}\ecp{2} \\
+           \chi_1 \ect{1}\ecp{1}\ecp{2} \\ 
+           \chi_2 \ect{2}\ecp{2} \\ \end{array} \right)^T 
+    \left(\begin{array}{c} \epsilon_0 \\ \epsilon_1 \\ \epsilon_2 \\ \end{array} \right)
+\end{align}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setcounter{section}{14}
+\section{}
+Now we complete the missing part for the Inductive Step Case 1 of Lemma 14.
+\begin{proof}
+    Case 1: $\prod_{i=0}^{n}(1+\epsilon)^{\pm 1}=\prod_{i=0}^{n-1}(1+\epsilon)^{\pm1} (1+\epsilon_n)$.\\
+    By the inductive hypothesis, there exists a $\theta_n$ such that 
+    \begin{align}
+        (1+\theta_n) = \prod_{i=0}^{n-1} (1+\epsilon_i)^{\pm 1} \text{ and }
+    |\theta_n| \leq n\bu/(1-n\bu)
+    \end{align}
+    Then
+    \begin{align}
+        \prod_{i=0}^{n}(1+\epsilon)^{\pm 1}
+        = \bigg( \prod_{i=0}^{n-1}(1+\epsilon)^{\pm1} \bigg) (1+\epsilon_n)
+        = (1+\theta_n) (1+\epsilon_n)
+        = 1 + \underbrace{\theta_n + \epsilon_n + \theta_n \cdot \epsilon_n}_{\theta_{n+1}}
+    \end{align}
+    which tells us how to pick up $\theta_{n+1}$. Then
+    \begin{align}
+       |\theta_{n+1}| 
+       &= |\theta_n + \epsilon_n + \theta_n \cdot \epsilon_n|\\
+       &\leq |\theta_n| + |\epsilon_n| + |\theta_n| \cdot |\epsilon_n|\\
+       &= \frac{n\bu}{1-n\bu} + \bu + \frac{n\bu}{1-n\bu} \cdot \bu \\
+       &= \frac{n\bu + \bu - n \bu^2 +n\bu^2 }{1-n\bu} \\
+       &= \frac{(n+1)\bu}{1-n\bu} \\
+       &\leq \frac{(n+1)\bu}{1-(n+1)\bu}
+    \end{align}
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\setcounter{section}{17}
+\section{}
+\subsection{}
+Show that if $n, b \geq 1$, then $\gamma_n \leq \gamma_{n+b}$. 
+\begin{proof}
+    \begin{align}
+        \gamma_n = \frac{n\bu}{1-n\bu} 
+        \leq \frac{n\bu}{1-(n+b)\bu} 
+        \leq \frac{(n+b)\bu}{1-(n+b)\bu} 
+        = \gamma_{n+b}
+    \end{align}
+    Note that since $\bu$ is extremely small, 
+    then $1-n\bu > 0$ and $1-(n+b)\bu > 0$.
+\end{proof}
+
+\subsection{}
+Show that if $n, b \geq 1$, then $\gamma_n + \gamma_b+\gamma_n\gamma_b \leq \gamma_{n+b}$. 
+\begin{proof}
+    \begin{align}
+        & \gamma_n + \gamma_b + \gamma_n \gamma_b  \\
+     = & \frac{n\bu}{1-n\bu} + \frac{b\bu}{1-b\bu} + \frac{n\bu}{1-n\bu}\cdot \frac{b\bu}{1-b\bu} \\
+     = & \frac{n\bu - nb\bu^2 + b\bu - nb\bu^2 + nb\bu^2}{(1-n\bu)(1-b\bu)} \\
+     = & \frac{n\bu - nb\bu^2 + b\bu}{1-n\bu-b\bu+nb\bu^2} \\
+     \leq & \frac{n\bu + b\bu}{1-n\bu-b\bu+nb\bu^2} \\
+     \leq & \frac{n\bu + b\bu}{1-n\bu-b\bu} \\
+     = & \frac{(n+b)\bu}{1-(n+b)\bu} \\
+     = & \gamma_{n+b}
+    \end{align}
+    Note that since $\bu$ is extremely small, 
+    then $1-n\bu > 0$ and $1-(n+b)\bu > 0$.
+    Also, note that $nb\bu^2 \geq 0$.
+\end{proof}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\setcounter{section}{18}
+\section{}
+\subsection{$k = 0$}
+Show that $\left(\begin{array}{c|c} I+\Sigma^{(k)}&0\\\hline0&(1+\epsilon_1)\end{array}\right) (1+\epsilon_2)=I+\Sigma^{(k+1)}$
+\begin{proof}
+    Given that if $k=0$, then $\epsilon_1 = 0$ and $\Sigma^{0}$ is $0 \times 0$
+    matrix, we have
+    \begin{align}
+        (1+0) \cdot (1+\epsilon_2) = \underbrace{1}_{I}+\underbrace{\epsilon_2}_{\Sigma^{(1)}}
+    \end{align}
+    Thus, 
+    $\left(\begin{array}{c|c} I+\Sigma^{(k)}&0\\\hline0&(1+\epsilon_1)\end{array}\right) (1+\epsilon_2)=I+\Sigma^{(k+1)}$
+    holds for $k=0$.
+\end{proof}
+
+\subsection{$k > 0$}
+\begin{proof}
+    For arbitrary $k > 0$,
+\begin{align}
+     \left(\begin{array}{c|c} I+\Sigma^{(k)}&0\\\hline0&(1+\epsilon_1)\end{array}\right) (1+\epsilon_2)
+    =\ & \left(\begin{array}{c|c}(I+\Sigma^{(k)}) (1+\epsilon_2)&0\\\hline0&(1+\epsilon_1)(1+\epsilon_2) \end{array}\right) \\
+    =\ & \left(\begin{array}{c|c}
+            I + \epsilon_2 I+ \Sigma^{(k)}+ \epsilon_2 \Sigma^{(k)} & 0\\\hline
+            0 &  1+\epsilon_1+\epsilon_2+\epsilon_1\epsilon_2
+        \end{array}\right) \\
+    =\ & \underbrace{\left( \begin{array}{c|c}  I & 0 \\\hline 0 & 1
+            \end{array} \right)}_{I}
+    + \underbrace{ \left(\begin{array}{c|c}
+            \epsilon_2 I+ \Sigma^{(k)}+ \epsilon_2 \Sigma^{(k)} & 0\\\hline
+            0 &  \epsilon_1+\epsilon_2+\epsilon_1\epsilon_2
+        \end{array}\right) }_{\Sigma^{(k+1)}}
+        \end{align}
+        Note that the the definition of $\Sigma^{(k+1)}$ are valid because if
+        $\Sigma^{(k)}$ is diagonal, then so as $\Sigma^{(k+1)}$. 
+        Hence,  
+        \begin{align}
+    \left(\begin{array}{c|c}
+            I+\Sigma^{(k)}&0\\\hline0&(1+\epsilon_1)\end{array}\right)
+    (1+\epsilon_2)=I+\Sigma^{(k+1)} \text{ holds for $k>0$. }
+    \end{align}
+    
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setcounter{section}{22}
+\section{}
+\subsection{}
+Show that $\overset{\checkmark}{\kappa} = (x + \delta x)^T y$, where $|\delta x| \leq \gamma_n |x|$. 
+\begin{proof}
+    Let $\delta x = \Sigma^{(n)} x$, where $\Sigma^{(n)}$ is as in Theorem 20.     
+    \begin{align}
+        |\delta x| = |\Sigma^{(n)} x| 
+         = \left(\begin{array}{c} |\theta_n\chi_0| \\ |\theta_n\chi_1| \\ \vdots \\ |\theta_2\chi_{n-1}| \end{array} \right)
+         \leq \left(\begin{array}{c} |\theta_n||\chi_0| \\ |\theta_n||\chi_1| \\ \vdots \\ |\theta_2||\chi_{n-1}| \end{array} \right)
+         \leq |\theta_n| \left(\begin{array}{c} |\chi_0| \\ |\chi_1| \\ \vdots \\ |\chi_{n-1}| \end{array} \right)
+         \leq \gamma_n \left(\begin{array}{c} |\chi_0| \\ |\chi_1| \\ \vdots \\ |\chi_{n-1}| \end{array} \right)
+         = \gamma_n |x|
+    \end{align}
+    Thus, it can be concluded for the backward analysis that 
+    \begin{align}
+        |\delta x| \leq \gamma_n |x|
+    \end{align}
+\end{proof}
+
+\subsection{}
+Show that $\overset{\checkmark}{\kappa} = x^T (y+\delta y)$, where $|\delta y| \leq \gamma_n |y|$. 
+\begin{proof}
+    The proof for perturbation on input $y$ is the same as that of perturbation
+    on input $x$.
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\setcounter{section}{24}
+\section{}
+\newcommand{\ycheck}{\overset{\checkmark}{y}}
+\begin{proof}
+    We partition matrix $A \in \mathbb{R}^{m\times n}$ and have
+    \begin{align}
+        A = \left(\begin{array}{c}a_0^T \\ a_1^T \\\vdots\\a_{m-1}^T \end{array}\right)
+    \end{align}
+    Then in terms of algorithm in Fig. 4 and R1-B, 
+    \begin{align}
+        \ycheck 
+        = \left(\begin{array}{c}\psi_0 \\ \psi_1 \\\vdots\\\psi_{m-1} \end{array}\right) 
+        = \left(\begin{array}{c}a_0^T(x+\delta x_0) \\ a_1^T(x+\delta x_1)
+                \\\vdots\\a_{m-1}^T(x+\delta x_{m-1}) \end{array}\right) 
+        = A x + \left(\begin{array}{c}a_0^T \delta x_0 \\ a_1^T\delta x_1
+                \\\vdots\\a_{m-1}^T\delta x_{m-1} \end{array}\right)
+    \end{align}
+    where $\forall i,\ |\delta x_i| \leq \gamma_n |x|$. However, 
+       $\left(\begin{array}{c}a_0^T \delta x_0 \\ a_1^T\delta x_1
+                \\\vdots\\a_{m-1}^T\delta x_{m-1} \end{array}\right)$
+        cannot be consolidated into $A \delta x$, then 
+    \begin{align}
+        \text{We \textbf{cannot} prove that } \ycheck = A (x+\delta x) 
+        \text{ where } \delta x \text{ is small. } 
+    \end{align}
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setcounter{section}{26}
+\section{}
+By suffering similar problem as the exercise 25 does, we have
+    \begin{align}
+        \text{We cannot prove that } C = (A + \Delta A) (B + \Delta B) 
+        \text{ where } \Delta A \text{ and } \Delta A \text{ is small. } 
+    \end{align}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% General Documentation ends
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}
